@@ -1,0 +1,1119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ex/rtl/ex_ctl.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "ex_ctl.v.p4.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<center><table class=NB cols=4 nosave><tr><td align="center"><font color="#808080">1</font></td><td align="center"><a  href="ex_ctl.v.p2.html">2</a></td><td align="center"><a  href="ex_ctl.v.p3.html">3</a></td><td align="center"><a  href="ex_ctl.v.p4.html">4</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<a name="ex_ctl"></a><a  href="ex.v.html#ex_ex_ctl"><IMG alt="[Up: ex ex_ctl]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>ex_ctl</span><a  href="hierarchy-m.html#ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>(
+
+<span class=C>// Input from IU
+</span>	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#223">inst_valid</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#225">iu_smiss</a>,	
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#227">sc_dcache_req</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#226">lduse_bypass</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#228">first_cyc_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#356">first_cyc_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#229">second_cyc_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#230">hold_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#231">hold_c</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#239">iu_addr_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#240">zero_addr_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#241">iu_addr_c</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#232">reissue_c</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#233">kill_inst_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#234">iu_trap_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#235">iu_trap_c</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#236">iu_data_vld</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#237">icu_data_vld</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#238">sc_data_vld</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#246">rs1_bypass_mux_out</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#247">pj_resume</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#248">trap_in_progress</a>,
+
+<span class=C>// Output to IU
+</span>	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#325">ucode_busy_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#326">wr_optop_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#327">iu_sbase_we</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#329">ret_optop_update</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#330">iu_brtaken_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#331">branch_taken_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#332">priv_inst_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#322">illegal_op_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#333">mis_align_c</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#334">emulated_trap_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#335">opcode_1_op_c</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#336">soft_trap_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#337">fpu_op_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#338">async_error</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#339">mem_prot_error_c</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#340">data_brk1_c</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#341">data_brk2_c</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#342">inst_brk1_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#343">inst_brk2_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#344">lock_count_overflow_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#345">lock_enter_miss_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#346">lock_exit_miss_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#347">lock_release_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#348">null_ptr_exception_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#349">priv_powerdown_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#350">priv_reset_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#351">all_load_c</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#352">icu_diag_ld_c</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#353">zero_trap_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#354">iu_bypass_rs1_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#355">iu_bypass_rs2_e</a>,
+
+<span class=C>// Output to DCU and ICU
+</span>	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#359">iu_inst_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#376">iu_dcu_flush_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#381">iu_icu_flush_e</a>, 
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#366">iu_zero_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#367">iu_special_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#368">iu_d_diag_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#372">iu_i_diag_e</a>,
+
+<span class=C>// Input from IFU
+</span>	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#242">opcode_1_op_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#243">opcode_2_op_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#244">valid_op_r</a>,
+
+<span class=C>// Input from ucode
+</span>	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#251">ucode_done</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#252">ucode_reg_wr</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#253">ucode_reg_rd</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#254">ucode_dcu_req</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#255">alu_adder_fn</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#256">mem_adder_fn</a>,
+
+<span class=C>// Input from E stage
+</span>	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#259">cmp_gt_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#261">cmp_eq_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#260">cmp_lt_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#262">null_objref_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#263">carry_out_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#264">psr_cac</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#265">psr_ace</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#266">psr_dce</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#267">psr_ice</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#268">psr_fle</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#269">psr_su</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#270">psr_drt</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#271">brk12c_brkm2</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#272">brk12c_brkm1</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#273">brk12c_subk2</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#274">brk12c_srcbk2</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#275">brk12c_brken2</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#276">brk12c_subk1</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#277">brk12c_srcbk1</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#278">brk12c_brken1</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#279">smu_ld</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#280">smu_st</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#281">range1_l_cmp1_lt</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#282">range1_h_cmp1_gt</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#283">range1_h_cmp1_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#284">range2_l_cmp1_lt</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#285">range2_h_cmp1_gt</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#286">range2_h_cmp1_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#287">range1_l_cmp2_lt</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#288">range1_h_cmp2_gt</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#289">range1_h_cmp2_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#290">range2_l_cmp2_lt</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#291">range2_h_cmp2_gt</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#292">range2_h_cmp2_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#293">data_brk1_31_13_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#294">data_brk1_11_4_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#295">data_brk1_misc_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#296">data_brk2_31_13_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#297">data_brk2_11_4_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#298">data_brk2_misc_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#299">inst_brk1_31_13_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#300">inst_brk1_11_4_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#301">inst_brk1_misc_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#302">inst_brk2_31_13_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#303">inst_brk2_11_4_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#304">inst_brk2_misc_eq</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#305">la0_hit</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#306">lc0_eq_255</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#307">lc0_eq_0</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#308">lc0_m1_eq_0</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#309">lockwant0</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#310">lc0_co_bit</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#311">la0_null_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#312">la1_hit</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#313">lc1_eq_255</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#314">lc1_eq_0</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#315">lc1_m1_eq_0</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#316">lockwant1</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#317">lc1_co_bit</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#318">la1_null_e</a>,
+	
+<span class=C>/******************** monitor caching change  *****************/</span>	
+	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#319">lockbit</a>,
+
+<span class=C>// Output to ex_dpath and ex_regs
+</span>	
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#385">lock0_cache</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#386">lock1_cache</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#387">lock0_uncache</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#388">lock1_uncache</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#389">carry_in_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#390">mul_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#391">div_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#392">rem_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#501">shift_dir_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#393">shift_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#394">sign_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#395">shift_count_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#396">lc0_count_reg_we</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#398">lc1_count_reg_we</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#400">priv_update_optop</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#401">dcu_data_reg_we</a>,
+
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#404">bit_cvt_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#407">alu_out_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#416">adder2_src1_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#418">adder2_src2_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#423">iu_data_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#426">reg_rd_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#448">reg_wr_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#468">load_data_c_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#473">fpu_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#476">forward_w_sel_din</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#479">cmp_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#482">adder_src1_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#485">adder_src2_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#489">bit_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#496">cvt_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#503">shifter_src1_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#509">shifter_src2_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#513">shifter_word_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#516">constant_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#520">iu_br_pc_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#524">offset_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#531">lc0_din_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#535">lc1_din_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#540">adder2_carry_in</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#542">wr_optop_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#544">load_buffer_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#999">monitorenter_e</a>,
+
+	      <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#549">reset_l</a>,
+	      <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#550">clk</a>,
+	      <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#551">sm</a>,
+	      <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#552">sin</a>,
+	      <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#553">so</a>
+	      );
+
+   <span class=C>// Input signals from IU
+</span><a name="223"></a>   <span class=K>input</span> [2:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#571">inst_valid</a><a  href="hierarchy-s.p9.html#inst_valid___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Valid bits for the pipe to keep
+</span>				<span class=C>// track of instructions 0=E, 1=C and 2=W
+</span><a name="225"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#572">iu_smiss</a><a  href="hierarchy-s.p9.html#iu_smiss___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Stack cache miss 
+</span><a name="226"></a>   <span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#573">lduse_bypass</a><a  href="hierarchy-s.p10.html#lduse_bypass___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Need to bypass data for lduse
+</span><a name="227"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#574">sc_dcache_req</a><a  href="hierarchy-s.p16.html#sc_dcache_req___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Stack cache miss request to DCU 
+</span><a name="228"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#575">first_cyc_r</a><a  href="hierarchy-s.p6.html#first_cyc_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Signal for 1st cycle of long operations 
+</span><a name="229"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#576">second_cyc_r</a><a  href="hierarchy-s.p16.html#second_cyc_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Signal for 2nd cycle of long operations   
+</span><a name="230"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#577">hold_e</a><a  href="hierarchy-s.p8.html#hold_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Signal to tell ex to hold in E stage	 
+</span><a name="231"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#578">hold_c</a><a  href="hierarchy-s.p8.html#hold_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Signal to tell ex to hold in C stage	 
+</span><a name="232"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#581">reissue_c</a><a  href="hierarchy-s.p15.html#reissue_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Re-issue the same instruction
+</span><a name="233"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#582">kill_inst_e</a><a  href="hierarchy-s.p10.html#kill_inst_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// kill any dcu requests/priv writes
+</span><a name="234"></a>   <span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#583">iu_trap_r</a><a  href="hierarchy-s.p9.html#iu_trap_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Indicates a trap in R stage.building frame
+</span><a name="235"></a>   <span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#584">iu_trap_c</a><a  href="hierarchy-s.p9.html#iu_trap_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Indicates a trap occurred in C stage
+</span><a name="236"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#585">iu_data_vld</a><a  href="hierarchy-s.p9.html#iu_data_vld___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// DCU indicates valid data has been returned
+</span><a name="237"></a>   <span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#623">icu_data_vld</a><a  href="hierarchy-s.p9.html#icu_data_vld___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// I$ diagnostic data is available.
+</span><a name="238"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#586">sc_data_vld</a><a  href="hierarchy-s.p16.html#sc_data_vld___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Similar to above but it's caused by S$ miss
+</span><a name="239"></a>   <span class=K>input</span> [30:28]<a  onClick="return qs(event,this)" class=SI href="ex.v.html#580">iu_addr_e</a><a  href="hierarchy-s.p9.html#iu_addr_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Address bits 30-28 at E stage for NC and OE  
+</span><a name="240"></a>   <span class=K>input</span> [29:28]<a  onClick="return qs(event,this)" class=SI href="ex.v.html#588">zero_addr_e</a><a  href="hierarchy-s.p21.html#zero_addr_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Address bits 30-28 at E stage for NC and OE  
+</span><a name="241"></a>   <span class=K>input</span> [1:0] 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#579">iu_addr_c</a><a  href="hierarchy-s.p9.html#iu_addr_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Address bits 1-0 at C stage for alignment  
+</span><a name="242"></a>   <span class=K>input</span> [7:0] 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#589">opcode_1_op_r</a><a  href="hierarchy-s.p13.html#opcode_1_op_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 1st byte of the opcode
+</span><a name="243"></a>   <span class=K>input</span> [7:0] 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#590">opcode_2_op_r</a><a  href="hierarchy-s.p13.html#opcode_2_op_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 2nd byte of the opcode
+</span><a name="244"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#591">valid_op_r</a><a  href="hierarchy-s.p19.html#valid_op_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// This indicates whether the opcode
+</span>				<span class=C>// is valid or not
+</span><a name="246"></a>   <span class=K>input</span> [5:0] 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#587">rs1_bypass_mux_out</a><a  href="hierarchy-s.p15.html#rs1_bypass_mux_out___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// To calculate shift_count_e
+</span><a name="247"></a>   <span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#614">pj_resume</a><a  href="hierarchy-s.p14.html#pj_resume___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// PJ RESUME signal for break points
+</span><a name="248"></a>   <span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#615">trap_in_progress</a><a  href="hierarchy-s.p17.html#trap_in_progress___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Indicates trap status
+</span>
+   <span class=C>// Input from ucode
+</span><a name="251"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#613">ucode_done</a><a  href="hierarchy-s.p18.html#ucode_done___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// ucode is using all the muxes
+</span><a name="252"></a>   <span class=K>input</span> [2:0] 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#616">ucode_reg_wr</a><a  href="hierarchy-s.p18.html#ucode_reg_wr___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// write ucode_porta to priv registers 
+</span><a name="253"></a>   <span class=K>input</span> [2:0] 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#617">ucode_reg_rd</a><a  href="hierarchy-s.p18.html#ucode_reg_rd___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Read priv registers to stack cache 
+</span><a name="254"></a>   <span class=K>input</span> [1:0] 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#618">ucode_dcu_req</a><a  href="hierarchy-s.p18.html#ucode_dcu_req___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Ucode dcu request 
+</span><a name="255"></a>   <span class=K>input</span> [1:0] 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#619">alu_adder_fn</a><a  href="hierarchy-s.html#alu_adder_fn___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Ucode using adder 
+</span><a name="256"></a>   <span class=K>input</span> [1:0] 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#620">mem_adder_fn</a><a  href="hierarchy-s.p11.html#mem_adder_fn___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Ucode using mem adder 
+</span>
+   <span class=C>// Input from E stage
+</span><a name="259"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#639">cmp_gt_e</a><a  href="hierarchy-s.p3.html#cmp_gt_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// GT output of dpath comparator
+</span><a name="260"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#641">cmp_lt_e</a><a  href="hierarchy-s.p3.html#cmp_lt_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// LT output of dpath comparator
+</span><a name="261"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#640">cmp_eq_e</a><a  href="hierarchy-s.p3.html#cmp_eq_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// EQ output of dpath comparator
+</span><a name="262"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#642">null_objref_e</a><a  href="hierarchy-s.p12.html#null_objref_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_porta_mux_out (Rs1) == zero
+</span><a name="263"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#705">carry_out_e</a><a  href="hierarchy-s.p3.html#carry_out_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Carry output of dpath ALU adder
+</span><a name="264"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#643">psr_cac</a><a  href="hierarchy-s.p14.html#psr_cac___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// PSR.CAC bit
+</span><a name="265"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#644">psr_ace</a><a  href="hierarchy-s.p14.html#psr_ace___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// PSR.ACE bit
+</span><a name="266"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#645">psr_dce</a><a  href="hierarchy-s.p14.html#psr_dce___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// PSR.DCE bit
+</span><a name="267"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#646">psr_ice</a><a  href="hierarchy-s.p14.html#psr_ice___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// PSR.ICE bit
+</span><a name="268"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#647">psr_fle</a><a  href="hierarchy-s.p14.html#psr_fle___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// PSR.FLE bit
+</span><a name="269"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#648">psr_su</a><a  href="hierarchy-s.p14.html#psr_su___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// PSR.SU  bit
+</span><a name="270"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#649">psr_drt</a><a  href="hierarchy-s.p14.html#psr_drt___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// PSR.DRT  bit
+</span><a name="271"></a>   <span class=K>input</span> [6:0]	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#650">brk12c_brkm2</a><a  href="hierarchy-s.p2.html#brk12c_brkm2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// BRK12C.BRKM2 bits
+</span><a name="272"></a>   <span class=K>input</span> [6:0]	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#651">brk12c_brkm1</a><a  href="hierarchy-s.p2.html#brk12c_brkm1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// BRK12C.BRKM1 bits
+</span><a name="273"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#652">brk12c_subk2</a><a  href="hierarchy-s.p2.html#brk12c_subk2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// BRK12C.SUBK2 bits
+</span><a name="274"></a>   <span class=K>input</span> [1:0]	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#653">brk12c_srcbk2</a><a  href="hierarchy-s.p2.html#brk12c_srcbk2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// BRK12C.SRCBK2 bits
+</span><a name="275"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#654">brk12c_brken2</a><a  href="hierarchy-s.p2.html#brk12c_brken2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// BRK12C.BRKEN2 bits
+</span><a name="276"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#655">brk12c_subk1</a><a  href="hierarchy-s.p2.html#brk12c_subk1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// BRK12C.SUBK1 bits
+</span><a name="277"></a>   <span class=K>input</span> [1:0]	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#656">brk12c_srcbk1</a><a  href="hierarchy-s.p2.html#brk12c_srcbk1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// BRK12C.SRCBK1 bits
+</span><a name="278"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#657">brk12c_brken1</a><a  href="hierarchy-s.p2.html#brk12c_brken1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// BRK12C.BRKEN1 bits
+</span><a name="279"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#658">smu_ld</a><a  href="hierarchy-s.p16.html#smu_ld___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Input from cpu.v
+</span><a name="280"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#659">smu_st</a><a  href="hierarchy-s.p16.html#smu_st___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Input from cpu.v
+</span><a name="281"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#660">range1_l_cmp1_lt</a><a  href="hierarchy-s.p15.html#range1_l_cmp1_lt___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// iu_addr_c &lt; userrange1.userlow
+</span><a name="282"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#661">range1_h_cmp1_gt</a><a  href="hierarchy-s.p15.html#range1_h_cmp1_gt___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// iu_addr_c &gt; userrange1.userhigh
+</span><a name="283"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#662">range1_h_cmp1_eq</a><a  href="hierarchy-s.p15.html#range1_h_cmp1_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// iu_addr_c = userrange1.userhigh
+</span><a name="284"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#663">range2_l_cmp1_lt</a><a  href="hierarchy-s.p15.html#range2_l_cmp1_lt___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// iu_addr_c &lt; userrange2.userlow
+</span><a name="285"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#664">range2_h_cmp1_gt</a><a  href="hierarchy-s.p15.html#range2_h_cmp1_gt___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// iu_addr_c &gt; userrange2.userhigh
+</span><a name="286"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#665">range2_h_cmp1_eq</a><a  href="hierarchy-s.p15.html#range2_h_cmp1_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// iu_addr_c = userrange2.userhigh
+</span><a name="287"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#666">range1_l_cmp2_lt</a><a  href="hierarchy-s.p15.html#range1_l_cmp2_lt___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// optop_c &lt; userrange1.userlow
+</span><a name="288"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#667">range1_h_cmp2_gt</a><a  href="hierarchy-s.p15.html#range1_h_cmp2_gt___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// optop_c &gt; userrange1.userhigh
+</span><a name="289"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#668">range1_h_cmp2_eq</a><a  href="hierarchy-s.p15.html#range1_h_cmp2_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// optop_c = userrange1.userhigh
+</span><a name="290"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#669">range2_l_cmp2_lt</a><a  href="hierarchy-s.p15.html#range2_l_cmp2_lt___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// optop_c &lt; userrange2.userlow
+</span><a name="291"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#670">range2_h_cmp2_gt</a><a  href="hierarchy-s.p15.html#range2_h_cmp2_gt___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// optop_c &gt; userrange2.userhigh
+</span><a name="292"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#671">range2_h_cmp2_eq</a><a  href="hierarchy-s.p15.html#range2_h_cmp2_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// optop_c = userrange2.userhigh
+</span><a name="293"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#672">data_brk1_31_13_eq</a><a  href="hierarchy-s.p4.html#data_brk1_31_13_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// iu_addr_c[31:13] == brk1a[31:13]
+</span><a name="294"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#673">data_brk1_11_4_eq</a><a  href="hierarchy-s.p4.html#data_brk1_11_4_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// iu_addr_c[11:4]  == brk1a[11:4]
+</span><a name="295"></a>   <span class=K>input</span> [4:0] 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#674">data_brk1_misc_eq</a><a  href="hierarchy-s.p4.html#data_brk1_misc_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// iu_addr_c[12,3:0]== brk1a[12,3:0]
+</span><a name="296"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#675">data_brk2_31_13_eq</a><a  href="hierarchy-s.p4.html#data_brk2_31_13_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// iu_addr_c[31:13] == brk2a[31:13]
+</span><a name="297"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#676">data_brk2_11_4_eq</a><a  href="hierarchy-s.p4.html#data_brk2_11_4_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// iu_addr_c[11:4]  == brk2a[11:4]
+</span><a name="298"></a>   <span class=K>input</span> [4:0] 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#677">data_brk2_misc_eq</a><a  href="hierarchy-s.p4.html#data_brk2_misc_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// iu_addr_c[12,3:0]== brk2a[12,3:0]
+</span><a name="299"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#678">inst_brk1_31_13_eq</a><a  href="hierarchy-s.p9.html#inst_brk1_31_13_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// pc_r[31:13] == brk1a[31:13]
+</span><a name="300"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#679">inst_brk1_11_4_eq</a><a  href="hierarchy-s.p9.html#inst_brk1_11_4_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// pc_r[11:4]  == brk1a[11:4]
+</span><a name="301"></a>   <span class=K>input</span> [4:0] 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#680">inst_brk1_misc_eq</a><a  href="hierarchy-s.p9.html#inst_brk1_misc_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// pc_r[12,3:0]== brk1a[12,3:0]
+</span><a name="302"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#681">inst_brk2_31_13_eq</a><a  href="hierarchy-s.p9.html#inst_brk2_31_13_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// pc_r[31:13] == brk2a[31:13]
+</span><a name="303"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#682">inst_brk2_11_4_eq</a><a  href="hierarchy-s.p9.html#inst_brk2_11_4_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// pc_r[11:4]  == brk2a[11:4]
+</span><a name="304"></a>   <span class=K>input</span> [4:0] 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#683">inst_brk2_misc_eq</a><a  href="hierarchy-s.p9.html#inst_brk2_misc_eq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// pc_r[12,3:0]== brk2a[12,3:0]
+</span><a name="305"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#685">la0_hit</a><a  href="hierarchy-s.p10.html#la0_hit___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1 if lockaddr0 == objref in data_in
+</span><a name="306"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#686">lc0_eq_255</a><a  href="hierarchy-s.p10.html#lc0_eq_255___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1 if lockcount0   == 255, 0 otherwise
+</span><a name="307"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#687">lc0_eq_0</a><a  href="hierarchy-s.p10.html#lc0_eq_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1 if lockcount0   ==   0, 0 otherwise
+</span><a name="308"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#688">lc0_m1_eq_0</a><a  href="hierarchy-s.p10.html#lc0_m1_eq_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1 if lockcount0-1 ==   0, 0 otherwise
+</span><a name="309"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#689">lockwant0</a><a  href="hierarchy-s.p10.html#lockwant0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Bit 14 of lockcount0 register
+</span><a name="310"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#690">lc0_co_bit</a><a  href="hierarchy-s.p10.html#lc0_co_bit___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Bit 15 of lockcount0 register
+</span><a name="311"></a>   <span class=K>input</span>        <a  onClick="return qs(event,this)" class=SI href="ex.v.html#691">la0_null_e</a><a  href="hierarchy-s.p10.html#la0_null_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1 if lockaddr0 == 0, 0 otherwise
+</span><a name="312"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#692">la1_hit</a><a  href="hierarchy-s.p10.html#la1_hit___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1 if lockaddr1 == objref in data_in
+</span><a name="313"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#693">lc1_eq_255</a><a  href="hierarchy-s.p10.html#lc1_eq_255___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1 if lockcount1   == 255, 0 otherwise
+</span><a name="314"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#694">lc1_eq_0</a><a  href="hierarchy-s.p10.html#lc1_eq_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1 if lockcount1   ==   0, 0 otherwise
+</span><a name="315"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#695">lc1_m1_eq_0</a><a  href="hierarchy-s.p10.html#lc1_m1_eq_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1 if lockcount1-1 ==   0, 0 otherwise
+</span><a name="316"></a>   <span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#696">lockwant1</a><a  href="hierarchy-s.p10.html#lockwant1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Bit 14 of lockcount1 register
+</span><a name="317"></a>   <span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#697">lc1_co_bit</a><a  href="hierarchy-s.p10.html#lc1_co_bit___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Bit 15 of lockcount0 register
+</span><a name="318"></a>   <span class=K>input</span>        <a  onClick="return qs(event,this)" class=SI href="ex.v.html#698">la1_null_e</a><a  href="hierarchy-s.p10.html#la1_null_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1 if lockaddr1 == 0, 0 otherwise
+</span><a name="319"></a>   <span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#699">lockbit</a><a  href="hierarchy-s.p10.html#lockbit___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// bit 0 of dcu_data_c	
+</span>
+  <span class=C>// Output from ex_decode.v
+</span><a name="322"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1134">illegal_op_r</a><a  href="hierarchy-s.p9.html#illegal_op_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Unused extended opcodes
+</span>
+   <span class=C>// Output signals to IU
+</span><a name="325"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3032">ucode_busy_e</a><a  href="hierarchy-s.p18.html#ucode_busy_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// UCODE is busy
+</span><a name="326"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1149">wr_optop_e</a><a  href="hierarchy-s.p20.html#wr_optop_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Tell IU it is a write_optop
+</span><a name="327"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2932">iu_sbase_we</a><a  href="hierarchy-s.p9.html#iu_sbase_we___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Write enable signal to SMU, whenever there's 
+</span>					<span class=C>// wr_sbase  etc.
+</span><a name="329"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1154">ret_optop_update</a><a  href="hierarchy-s.p15.html#ret_optop_update___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Tell IU it is a write_optop due to return
+</span><a name="330"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1357">iu_brtaken_e</a><a  href="hierarchy-s.p9.html#iu_brtaken_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Tell IU if branch taken 
+</span><a name="331"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1358">branch_taken_e</a><a  href="hierarchy-s.p2.html#branch_taken_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// internal signal in IU
+</span><a name="332"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1668">priv_inst_r</a><a  href="hierarchy-s.p14.html#priv_inst_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Privileged instructions
+</span><a name="333"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1763">mis_align_c</a><a  href="hierarchy-s.p11.html#mis_align_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Mis_aligned exception
+</span><a name="334"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1551">emulated_trap_r</a><a  href="hierarchy-s.p5.html#emulated_trap_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Emulated trap
+</span><a name="335"></a>   <span class=K>output</span> [7:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1595">opcode_1_op_c</a><a  href="hierarchy-s.p13.html#opcode_1_op_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Opcode at C stage
+</span><a name="336"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1602">soft_trap_r</a><a  href="hierarchy-s.p16.html#soft_trap_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Soft_trap in R stage
+</span><a name="337"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1899">fpu_op_r</a><a  href="hierarchy-s.p6.html#fpu_op_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// FPU opcode in R stage
+</span><a name="338"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2612">async_error</a><a  href="hierarchy-s.html#async_error___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// asynchronous_error due to smu access
+</span><a name="339"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2641">mem_prot_error_c</a><a  href="hierarchy-s.p11.html#mem_prot_error_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// mem_protection_error  in C stage
+</span><a name="340"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2666">data_brk1_c</a><a  href="hierarchy-s.p4.html#data_brk1_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data breakpoint1 exception in C stage
+</span><a name="341"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2681">data_brk2_c</a><a  href="hierarchy-s.p4.html#data_brk2_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data breakpoint2 exception in C stage
+</span><a name="342"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2695">inst_brk1_r</a><a  href="hierarchy-s.p9.html#inst_brk1_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Inst breakpoint1 exception in R stage
+</span><a name="343"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2706">inst_brk2_r</a><a  href="hierarchy-s.p9.html#inst_brk2_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Inst breakpoint2 exception in R stage
+</span><a name="344"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2745">lock_count_overflow_e</a><a  href="hierarchy-s.p10.html#lock_count_overflow_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// LockCountOverFlowTrap in E stage
+</span><a name="345"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2751">lock_enter_miss_e</a><a  href="hierarchy-s.p10.html#lock_enter_miss_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// LockEnterMissTrap	 in E stage
+</span><a name="346"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2753">lock_exit_miss_e</a><a  href="hierarchy-s.p10.html#lock_exit_miss_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// LockExitMissTrap	 in E stage
+</span><a name="347"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2758">lock_release_e</a><a  href="hierarchy-s.p10.html#lock_release_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// LockReleaseTrap	 in E stage
+</span><a name="348"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2711">null_ptr_exception_e</a><a  href="hierarchy-s.p12.html#null_ptr_exception_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// runtime_NullPtrException in E stage
+</span><a name="349"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1300">priv_powerdown_e</a><a  href="hierarchy-s.p14.html#priv_powerdown_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// prive_powerdown instruction in E stage 
+</span><a name="350"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1308">priv_reset_e</a><a  href="hierarchy-s.p14.html#priv_reset_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// prive_reset instruction in E stage 
+</span><a name="351"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1468">all_load_c</a><a  href="hierarchy-s.html#all_load_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// There is a load in C stage
+</span><a name="352"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2966">icu_diag_ld_c</a><a  href="hierarchy-s.p9.html#icu_diag_ld_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ICU Diagnostic load in C stage
+</span><a name="353"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1519">zero_trap_e</a><a  href="hierarchy-s.p21.html#zero_trap_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Take zero_line e-trap in E stage 
+</span><a name="354"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1888">iu_bypass_rs1_e</a><a  href="hierarchy-s.p9.html#iu_bypass_rs1_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// RS1 need bypass 
+</span><a name="355"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1896">iu_bypass_rs2_e</a><a  href="hierarchy-s.p9.html#iu_bypass_rs2_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// RS2 need bypass 
+</span><a name="356"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2558">first_cyc_e</a><a  href="hierarchy-s.p6.html#first_cyc_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// First cycle in EStage for two cycle instn.
+</span>
+   <span class=C>// Output to DCU
+</span><a name="359"></a>   <span class=K>output</span> [7:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1359">iu_inst_e</a><a  href="hierarchy-s.p9.html#iu_inst_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// [7] =  non allocating
+</span>					<span class=C>// [6] =  opposite endiannes
+</span>					<span class=C>// [5] =  signed
+</span>					<span class=C>// [4] =  noncacheable
+</span>					<span class=C>// [3] =  store
+</span>					<span class=C>// [2] =  load
+</span>					<span class=C>// [1:0] = size
+</span><a name="366"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1505">iu_zero_e</a><a  href="hierarchy-s.p9.html#iu_zero_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// cache zero line 
+</span><a name="367"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1514">iu_special_e</a><a  href="hierarchy-s.p9.html#iu_special_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// dcu related special inst in E
+</span><a name="368"></a>   <span class=K>output</span> [3:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1533">iu_d_diag_e</a><a  href="hierarchy-s.p9.html#iu_d_diag_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// [3] =  Dcache RAm Write
+</span>					<span class=C>// [2] =  Dcache Ram Read
+</span>					<span class=C>// [1] =  DTag	Write
+</span>					<span class=C>// [0] =  Dtag	Read
+</span><a name="372"></a>   <span class=K>output</span> [3:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1547">iu_i_diag_e</a><a  href="hierarchy-s.p9.html#iu_i_diag_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// [3] =  Icache RAm Write
+</span>					<span class=C>// [2] =  Icache Ram Read
+</span>					<span class=C>// [1] =  ITag	Write
+</span>					<span class=C>// [0] =  Itag	Read
+</span><a name="376"></a>   <span class=K>output</span> [2:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1495">iu_dcu_flush_e</a><a  href="hierarchy-s.p9.html#iu_dcu_flush_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Signal to DCU for cache_flush [2],
+</span>					<span class=C>// cache_index_flush [1] and 
+</span>					<span class=C>// cache_invaliddate [0] 
+</span>
+   <span class=C>// Output to ICU
+</span><a name="381"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p2.html#1481">iu_icu_flush_e</a><a  href="hierarchy-s.p9.html#iu_icu_flush_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Signal to ICU for cache_flush,
+</span>					<span class=C>// cache_index_flush and cache_invaliddate 
+</span>
+   <span class=C>// E stage control signals
+</span><a name="385"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2764">lock0_cache</a><a  href="hierarchy-s.p10.html#lock0_cache___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// control signal to cache a lock in lock pair 0
+</span><a name="386"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2765">lock1_cache</a><a  href="hierarchy-s.p10.html#lock1_cache___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// control signal to cache a lock in lock pair 1
+</span><a name="387"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2771">lock0_uncache</a><a  href="hierarchy-s.p10.html#lock0_uncache___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// control signal to uncache a lock in lock pair 0
+</span><a name="388"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2772">lock1_uncache</a><a  href="hierarchy-s.p10.html#lock1_uncache___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// control signal to uncache a lock in lock pair 1
+</span><a name="389"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2295">carry_in_e</a><a  href="hierarchy-s.p3.html#carry_in_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// carry_in bit to adder
+</span><a name="390"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2309">mul_e</a><a  href="hierarchy-s.p11.html#mul_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// IMDR:	 multiplication
+</span><a name="391"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2319">div_e</a><a  href="hierarchy-s.p4.html#div_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// IMDR:	 division
+</span><a name="392"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2329">rem_e</a><a  href="hierarchy-s.p15.html#rem_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// IMDR:	 remainder
+</span><a name="393"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2351">shift_sel</a><a  href="hierarchy-s.p16.html#shift_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Shifter:	 0: left, 1: right
+</span><a name="394"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2366">sign_e</a><a  href="hierarchy-s.p16.html#sign_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Shifter &amp; Converter: sign extension
+</span><a name="395"></a>   <span class=K>output</span> [5:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2393">shift_count_e</a><a  href="hierarchy-s.p16.html#shift_count_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Shifter: # of bits to shift
+</span><a name="396"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2731">lc0_count_reg_we</a><a  href="hierarchy-s.p10.html#lc0_count_reg_we___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Write enable of lockcount0_count_reg
+</span>					<span class=C>// in ex_regs
+</span><a name="398"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2737">lc1_count_reg_we</a><a  href="hierarchy-s.p10.html#lc1_count_reg_we___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Write enable of lockcount1_count_reg
+</span>					<span class=C>// in ex_regs
+</span><a name="400"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2203">priv_update_optop</a><a  href="hierarchy-s.p14.html#priv_update_optop___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Indicates priv_update_optop in R
+</span><a name="401"></a>   <span class=K>output</span> [1:0]	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2781">dcu_data_reg_we</a><a  href="hierarchy-s.p4.html#dcu_data_reg_we___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// The load buffer register write enables
+</span>
+
+<a name="404"></a>   <span class=K>output</span> [1:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2406">bit_cvt_mux_sel</a><a  href="hierarchy-s.p2.html#bit_cvt_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 1: bit operator output
+</span>					<span class=C>// 0: converter output
+</span>
+<a name="407"></a>   <span class=K>output</span> [7:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2454">alu_out_mux_sel</a><a  href="hierarchy-s.html#alu_out_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 7: constant_mux_out 
+</span>					<span class=C>// 6: imdr_data
+</span>					<span class=C>// 5: reg_rd_mux_out
+</span>					<span class=C>// 4: bit_cvt_mux_out
+</span>					<span class=C>// 3: shifter output
+</span>					<span class=C>// 2: adder output
+</span>					<span class=C>// 1: ucode_portc
+</span>					<span class=C>// 0: bypass
+</span>						 
+<a name="416"></a>   <span class=K>output</span>  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2491">adder2_src1_mux_sel</a><a  href="hierarchy-s.html#adder2_src1_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+						 
+<a name="418"></a>   <span class=K>output</span> [3:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2520">adder2_src2_mux_sel</a><a  href="hierarchy-s.html#adder2_src2_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	 <span class=C>// 0: ~u_m_adder_portb
+</span>   	 				 <span class=C>// 1: u_m_adder_portb
+</span>					 <span class=C>// 2: offset_e
+</span>					 <span class=C>// 3: zero
+</span>						 
+<a name="423"></a>   <span class=K>output</span> [1:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2538">iu_data_mux_sel</a><a  href="hierarchy-s.p9.html#iu_data_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	 <span class=C>// 1: ucode_portc  
+</span>					 <span class=C>// 0: rs2_bypass_mux_out
+</span>						 
+<a name="426"></a>   <span class=K>output</span> [20:0] <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2918">reg_rd_mux_sel</a><a  href="hierarchy-s.p15.html#reg_rd_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	 <span class=C>// 20: 0x80000: SC_BOTTOM
+</span>					 <span class=C>// 19: 0x40000: HCR
+</span>					 <span class=C>// 18: 0x20000: VERSIONID
+</span>					 <span class=C>// 17: 0x10000: USERRANGE2
+</span>					 <span class=C>// 16: 0x08000: BRK12C
+</span>					 <span class=C>// 15: 0x04000: BRK2A
+</span>					 <span class=C>// 14: 0x02000: BRK1A
+</span>					 <span class=C>// 13: 0x01000: GC_CONFIG
+</span>					 <span class=C>// 12: 0x00800: USERRANGE1
+</span>					 <span class=C>// 11: 0x00400: LOCKADDR1
+</span>					 <span class=C>// 10: 0x00200: LOCKADDR0
+</span>					 <span class=C>// 9:	0x00100: LOCKCOUNT1
+</span>					 <span class=C>// 8:	0x00080: LOCKCOUNT0
+</span>					 <span class=C>// 7:	0x00040: TRAPBASE
+</span>					 <span class=C>// 6:	0x00020: PSR
+</span>					 <span class=C>// 5:	0x00010: CONST_POOL
+</span>					 <span class=C>// 4:	0x00008: OPLIM
+</span>					 <span class=C>// 3:	0x00004: OPTOP
+</span>					 <span class=C>// 2:	0x00002: FRAME
+</span>					 <span class=C>// 1:	0x00001: VARS
+</span>					 <span class=C>// 0:	0x00000: PC
+</span>
+<a name="448"></a>   <span class=K>output</span> [18:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2944">reg_wr_mux_sel</a><a  href="hierarchy-s.p15.html#reg_wr_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* bit 18, 0x40000: SC_BOTTOM
+					 * bit 17, 0x20000: USERRANGE2
+					 * bit 16, 0x10000: BRK12C
+					 * bit 15, 0x08000: BRK2A
+					 * bit 14, 0x04000: BRK1A
+					 * bit 13, 0x02000: GC_CONFIG
+					 * bit 12, 0x01000: USERRANGE1
+					 * bit 11, 0x00800: LOCKADDR1
+					 * bit 10, 0x00400: LOCKADDR0
+					 * bit  9, 0x00200: LOCKCOUNT1
+					 * bit  8, 0x00100: LOCKCOUNT0
+					 * bit  7, 0x00080: TRAPBASE
+					 * bit  6, 0x00040: PSR
+					 * bit  5, 0x00020: CONST_POOL
+					 * bit  4, 0x00010: OPLIM
+					 * bit  3, 0x00008: OPTOP
+					 * bit  2, 0x00004: FRAME
+					 * bit  1, 0x00002: VARS
+					 * bit  0, 0x00001: PC
+					 */</span>
+<a name="468"></a>   <span class=K>output</span> [2:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2960">load_data_c_mux_sel</a><a  href="hierarchy-s.p10.html#load_data_c_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 2: icu_diag_data_c
+</span>					<span class=C>// 1: dcu_diag_data_c
+</span>					<span class=C>// 0: dcu_data
+</span>
+
+<a name="473"></a>   <span class=K>output</span> [1:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2974">fpu_mux_sel</a><a  href="hierarchy-s.p6.html#fpu_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1: fpu_data_e
+</span>					<span class=C>// 0: alu_out_e
+</span>
+<a name="476"></a>   <span class=K>output</span> [1:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2990">forward_w_sel_din</a><a  href="hierarchy-s.p6.html#forward_w_sel_din___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// 1: output of dcu_hold register 
+</span>					<span class=C>// 0: alu_out_c_d1
+</span>
+<a name="479"></a>   <span class=K>output</span> [2:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2999">cmp_mux_sel</a><a  href="hierarchy-s.p3.html#cmp_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1: Rs1, zero
+</span>					<span class=C>// 0: ~Rs1, Rs2
+</span>
+<a name="482"></a>   <span class=K>output</span> [1:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3017">adder_src1_mux_sel</a><a  href="hierarchy-s.html#adder_src1_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 1: ~Rs1
+</span>					<span class=C>// 0: Rs1
+</span>
+<a name="485"></a>   <span class=K>output</span> [2:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3027">adder_src2_mux_sel</a><a  href="hierarchy-s.html#adder_src2_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 2: zero
+</span>					<span class=C>// 1: ~Rs2
+</span>					<span class=C>// 0: Rs2
+</span>
+<a name="489"></a>   <span class=K>output</span> [4:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3056">bit_mux_sel</a><a  href="hierarchy-s.p2.html#bit_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 4: rs1_bypass_mux_out with bit 31
+</span>					<span class=C>//    flipped to support fneg and dneg
+</span>					<span class=C>// 3: pc_r 
+</span>					<span class=C>// 2: xor
+</span>					<span class=C>// 1: and
+</span>					<span class=C>// 0: or
+</span>
+<a name="496"></a>   <span class=K>output</span> [4:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3071">cvt_mux_sel</a><a  href="hierarchy-s.p3.html#cvt_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 4: i2s
+</span>					<span class=C>// 3: i2c
+</span>					<span class=C>// 2: i2b
+</span>					<span class=C>// 1: i2l
+</span>					<span class=C>// 0: sethi
+</span><a name="501"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2340">shift_dir_e</a><a  href="hierarchy-s.p16.html#shift_dir_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Shifter:	 0: left, 1: right
+</span>
+<a name="503"></a>   <span class=K>output</span> [4:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3084">shifter_src1_mux_sel</a><a  href="hierarchy-s.p16.html#shifter_src1_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 16: rs2_bypass_mux_out_d1
+					 *  8: {32{rs2_bypass_mux_out[31]}}
+					 *  4: rs2_bypass_mux_out
+					 *  2: rs1_bypass_mux_out
+					 *  1: zero
+					 */</span>
+<a name="509"></a>   <span class=K>output</span> [2:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3097">shifter_src2_mux_sel</a><a  href="hierarchy-s.p16.html#shifter_src2_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 4: rs2_bypass_mux_out_d1
+					 * 2: rs2_bypass_mux_out
+					 * 1: zero
+					 */</span>
+<a name="513"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3108">shifter_word_sel</a><a  href="hierarchy-s.p16.html#shifter_word_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 1: MSW
+</span>					<span class=C>// 0: LSW
+</span>
+<a name="516"></a>   <span class=K>output</span> [2:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2595">constant_mux_sel</a><a  href="hierarchy-s.p3.html#constant_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 2:	1 -- gt
+</span>					<span class=C>// 1:	0 -- eq
+</span>					<span class=C>// 0: -1 -- lt
+</span>
+<a name="520"></a>   <span class=K>output</span> [2:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3045">iu_br_pc_mux_sel</a><a  href="hierarchy-s.p9.html#iu_br_pc_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 2: ucode_porta_e
+</span>					<span class=C>// 1: pc_c
+</span>					<span class=C>// 0: adder2 output
+</span>
+<a name="524"></a>   <span class=K>output</span> [4:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3125">offset_mux_sel</a><a  href="hierarchy-s.p13.html#offset_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 16: 32-bit offset for ld/st index
+					 *  8: 16-bit offset for ld/st index
+					 *  4:  8-bit offset for ld/st index
+					 *  2: opcode_e (32-bit offset)
+					 *  1: offset16 (16-bit offset)
+					 */</span>
+
+<a name="531"></a>   <span class=K>output</span> [3:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2727">lc0_din_mux_sel</a><a  href="hierarchy-s.p10.html#lc0_din_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 4: lc0_p1
+					 * 2: lc0_m1
+					 * 1: data_in from priv_write_lockcount0
+					 */</span>
+<a name="535"></a>   <span class=K>output</span> [3:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2733">lc1_din_mux_sel</a><a  href="hierarchy-s.p10.html#lc1_din_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 4: lc1_p1
+					 * 2: lc1_m1
+					 * 1: data_in from priv_write_lockcount1
+					 */</span>
+
+<a name="540"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2527">adder2_carry_in</a><a  href="hierarchy-s.html#adder2_carry_in___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Carry input to the address adder
+</span>
+<a name="542"></a>   <span class=K>output</span> [1:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2529">wr_optop_mux_sel</a><a  href="hierarchy-s.p20.html#wr_optop_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;      <span class=C>// 1: vars_out
+</span>                                        <span class=C>// 0: ucode_porta_mux_out
+</span><a name="544"></a>   <span class=K>output</span> [1:0]  <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2778">load_buffer_mux_sel</a><a  href="hierarchy-s.p10.html#load_buffer_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 2: load_buffer_reg_out (in state 2)
+					 * 1: dcu_data_c (otherwise)
+					 */</span>
+
+   <span class=C>// Miscellaneous global signals
+</span><a name="549"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#744">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="550"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#745">clk</a><a  href="hierarchy-s.p3.html#clk___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="551"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#551">sm</a><a  href="hierarchy-s.p16.html#sm___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Scan enable
+</span><a name="552"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#552">sin</a><a  href="hierarchy-s.p16.html#sin___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Scan data input
+</span><a name="553"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#553">so</a><a  href="hierarchy-s.p16.html#so___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Scan data output
+</span>
+<a name="555"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2667">data_brk1_c_int</a><a  href="hierarchy-s.p4.html#data_brk1_c_int___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2683">data_brk2_c_int</a><a  href="hierarchy-s.p4.html#data_brk2_c_int___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="556"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1905">nop</a><a  href="hierarchy-s.p12.html#nop___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="557"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1906">aconst_null</a><a  href="hierarchy-s.html#aconst_null___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="558"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1907">iconst_m1</a><a  href="hierarchy-s.p9.html#iconst_m1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="559"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1908">iconst_0</a><a  href="hierarchy-s.p9.html#iconst_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="560"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1909">iconst_1</a><a  href="hierarchy-s.p9.html#iconst_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="561"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1910">iconst_2</a><a  href="hierarchy-s.p9.html#iconst_2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="562"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1911">iconst_3</a><a  href="hierarchy-s.p9.html#iconst_3___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="563"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1912">iconst_4</a><a  href="hierarchy-s.p9.html#iconst_4___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="564"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1913">iconst_5</a><a  href="hierarchy-s.p9.html#iconst_5___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="565"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1914">lconst_0</a><a  href="hierarchy-s.p10.html#lconst_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="566"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1915">lconst_1</a><a  href="hierarchy-s.p10.html#lconst_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="567"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1916">fconst_0</a><a  href="hierarchy-s.p6.html#fconst_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="568"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1917">fconst_1</a><a  href="hierarchy-s.p6.html#fconst_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="569"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1918">fconst_2</a><a  href="hierarchy-s.p6.html#fconst_2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="570"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1919">dconst_0</a><a  href="hierarchy-s.p4.html#dconst_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="571"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1920">dconst_1</a><a  href="hierarchy-s.p4.html#dconst_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="572"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1921">bipush</a><a  href="hierarchy-s.p2.html#bipush___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="573"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1922">sipush</a><a  href="hierarchy-s.p16.html#sipush___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="574"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1923">ldc</a><a  href="hierarchy-s.p10.html#ldc___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="575"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1924">ldc_w</a><a  href="hierarchy-s.p10.html#ldc_w___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="576"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1925">ldc2_w</a><a  href="hierarchy-s.p10.html#ldc2_w___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="577"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1926">iload</a><a  href="hierarchy-s.p9.html#iload___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="578"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1927">lload</a><a  href="hierarchy-s.p10.html#lload___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="579"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1928">fload</a><a  href="hierarchy-s.p6.html#fload___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="580"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1929">dload</a><a  href="hierarchy-s.p4.html#dload___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="581"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1930">aload</a><a  href="hierarchy-s.html#aload___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="582"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1931">iload_0</a><a  href="hierarchy-s.p9.html#iload_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="583"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1932">iload_1</a><a  href="hierarchy-s.p9.html#iload_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="584"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1933">iload_2</a><a  href="hierarchy-s.p9.html#iload_2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="585"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1934">iload_3</a><a  href="hierarchy-s.p9.html#iload_3___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="586"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1935">lload_0</a><a  href="hierarchy-s.p10.html#lload_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="587"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1936">lload_1</a><a  href="hierarchy-s.p10.html#lload_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="588"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1937">lload_2</a><a  href="hierarchy-s.p10.html#lload_2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="589"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1938">lload_3</a><a  href="hierarchy-s.p10.html#lload_3___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="590"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1939">fload_0</a><a  href="hierarchy-s.p6.html#fload_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="591"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1940">fload_1</a><a  href="hierarchy-s.p6.html#fload_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="592"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1941">fload_2</a><a  href="hierarchy-s.p6.html#fload_2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="593"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1942">fload_3</a><a  href="hierarchy-s.p6.html#fload_3___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="594"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1943">dload_0</a><a  href="hierarchy-s.p4.html#dload_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="595"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1944">dload_1</a><a  href="hierarchy-s.p4.html#dload_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="596"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1945">dload_2</a><a  href="hierarchy-s.p4.html#dload_2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="597"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1946">dload_3</a><a  href="hierarchy-s.p4.html#dload_3___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="598"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1947">aload_0</a><a  href="hierarchy-s.html#aload_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="599"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1948">aload_1</a><a  href="hierarchy-s.html#aload_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="600"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1949">aload_2</a><a  href="hierarchy-s.html#aload_2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="601"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1950">aload_3</a><a  href="hierarchy-s.html#aload_3___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="602"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1951">iaload</a><a  href="hierarchy-s.p9.html#iaload___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="603"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1952">laload</a><a  href="hierarchy-s.p10.html#laload___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="604"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1953">faload</a><a  href="hierarchy-s.p6.html#faload___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="605"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1954">daload</a><a  href="hierarchy-s.p4.html#daload___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="606"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1955">aaload</a><a  href="hierarchy-s.html#aaload___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="607"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1956">baload</a><a  href="hierarchy-s.p2.html#baload___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="608"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1957">caload</a><a  href="hierarchy-s.p3.html#caload___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="609"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1958">saload</a><a  href="hierarchy-s.p16.html#saload___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="610"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1959">istore</a><a  href="hierarchy-s.p9.html#istore___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="611"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1960">lstore</a><a  href="hierarchy-s.p10.html#lstore___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="612"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1961">fstore</a><a  href="hierarchy-s.p6.html#fstore___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="613"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1962">dstore</a><a  href="hierarchy-s.p4.html#dstore___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="614"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1963">astore</a><a  href="hierarchy-s.html#astore___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="615"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1964">istore_0</a><a  href="hierarchy-s.p9.html#istore_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="616"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1965">istore_1</a><a  href="hierarchy-s.p9.html#istore_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="617"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1966">istore_2</a><a  href="hierarchy-s.p9.html#istore_2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="618"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1967">istore_3</a><a  href="hierarchy-s.p9.html#istore_3___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="619"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1968">lstore_0</a><a  href="hierarchy-s.p10.html#lstore_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="620"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1969">lstore_1</a><a  href="hierarchy-s.p10.html#lstore_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="621"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1970">lstore_2</a><a  href="hierarchy-s.p10.html#lstore_2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="622"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1971">lstore_3</a><a  href="hierarchy-s.p10.html#lstore_3___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="623"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1972">fstore_0</a><a  href="hierarchy-s.p6.html#fstore_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="624"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1973">fstore_1</a><a  href="hierarchy-s.p6.html#fstore_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="625"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1974">fstore_2</a><a  href="hierarchy-s.p6.html#fstore_2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="626"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1975">fstore_3</a><a  href="hierarchy-s.p6.html#fstore_3___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="627"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1976">dstore_0</a><a  href="hierarchy-s.p4.html#dstore_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="628"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1977">dstore_1</a><a  href="hierarchy-s.p4.html#dstore_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="629"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1978">dstore_2</a><a  href="hierarchy-s.p4.html#dstore_2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="630"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1979">dstore_3</a><a  href="hierarchy-s.p4.html#dstore_3___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="631"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1980">astore_0</a><a  href="hierarchy-s.html#astore_0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="632"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1981">astore_1</a><a  href="hierarchy-s.html#astore_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="633"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1982">astore_2</a><a  href="hierarchy-s.html#astore_2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="634"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1983">astore_3</a><a  href="hierarchy-s.html#astore_3___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="635"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2126">aastore_quick</a><a  href="hierarchy-s.html#aastore_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="636"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1984">iastore</a><a  href="hierarchy-s.p9.html#iastore___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="637"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1985">lastore</a><a  href="hierarchy-s.p10.html#lastore___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="638"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1986">fastore</a><a  href="hierarchy-s.p6.html#fastore___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="639"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1987">dastore</a><a  href="hierarchy-s.p4.html#dastore___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="640"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1988">aastore</a><a  href="hierarchy-s.html#aastore___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="641"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1989">bastore</a><a  href="hierarchy-s.p2.html#bastore___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="642"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1990">castore</a><a  href="hierarchy-s.p3.html#castore___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="643"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1991">sastore</a><a  href="hierarchy-s.p16.html#sastore___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="644"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1992">pop</a><a  href="hierarchy-s.p14.html#pop___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="645"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1993">pop2</a><a  href="hierarchy-s.p14.html#pop2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="646"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1994">dup</a><a  href="hierarchy-s.p4.html#dup___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="647"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1995">dup_x1</a><a  href="hierarchy-s.p4.html#dup_x1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="648"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1996">dup_x2</a><a  href="hierarchy-s.p4.html#dup_x2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="649"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1997">dup2</a><a  href="hierarchy-s.p4.html#dup2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="650"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1998">dup2_x1</a><a  href="hierarchy-s.p4.html#dup2_x1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="651"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1999">dup2_x2</a><a  href="hierarchy-s.p4.html#dup2_x2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="652"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#2000">swap</a><a  href="hierarchy-s.p16.html#swap___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="653"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2001">iadd</a><a  href="hierarchy-s.p9.html#iadd___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="654"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2002">ladd</a><a  href="hierarchy-s.p10.html#ladd___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="655"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2003">fadd</a><a  href="hierarchy-s.p6.html#fadd___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="656"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2004">dadd</a><a  href="hierarchy-s.p4.html#dadd___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="657"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2005">isub</a><a  href="hierarchy-s.p9.html#isub___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="658"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2006">lsub</a><a  href="hierarchy-s.p10.html#lsub___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="659"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2007">fsub</a><a  href="hierarchy-s.p6.html#fsub___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="660"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2008">dsub</a><a  href="hierarchy-s.p4.html#dsub___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="661"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2009">imul</a><a  href="hierarchy-s.p9.html#imul___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="662"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2010">lmul</a><a  href="hierarchy-s.p10.html#lmul___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="663"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2011">fmul</a><a  href="hierarchy-s.p6.html#fmul___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="664"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2012">dmul</a><a  href="hierarchy-s.p4.html#dmul___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="665"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2013">idiv</a><a  href="hierarchy-s.p9.html#idiv___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="666"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2014">ldiv</a><a  href="hierarchy-s.p10.html#ldiv___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="667"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2015">fdiv</a><a  href="hierarchy-s.p6.html#fdiv___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="668"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2016">ddiv</a><a  href="hierarchy-s.p4.html#ddiv___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="669"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2017">irem</a><a  href="hierarchy-s.p9.html#irem___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="670"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2018">lrem</a><a  href="hierarchy-s.p10.html#lrem___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="671"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2019">frem</a><a  href="hierarchy-s.p6.html#frem___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="672"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2020">drem</a><a  href="hierarchy-s.p4.html#drem___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="673"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2021">ineg</a><a  href="hierarchy-s.p9.html#ineg___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="674"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2022">lneg</a><a  href="hierarchy-s.p10.html#lneg___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="675"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2023">fneg</a><a  href="hierarchy-s.p6.html#fneg___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="676"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2024">dneg</a><a  href="hierarchy-s.p4.html#dneg___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="677"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2025">ishl</a><a  href="hierarchy-s.p9.html#ishl___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="678"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2026">lshl</a><a  href="hierarchy-s.p10.html#lshl___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="679"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2027">ishr</a><a  href="hierarchy-s.p9.html#ishr___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="680"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2028">lshr</a><a  href="hierarchy-s.p10.html#lshr___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="681"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2029">iushr</a><a  href="hierarchy-s.p9.html#iushr___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="682"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2030">lushr</a><a  href="hierarchy-s.p10.html#lushr___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="683"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2031">iand</a><a  href="hierarchy-s.p9.html#iand___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="684"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2032">land</a><a  href="hierarchy-s.p10.html#land___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="685"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2033">ior</a><a  href="hierarchy-s.p9.html#ior___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="686"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2034">lor</a><a  href="hierarchy-s.p10.html#lor___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="687"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2035">ixor</a><a  href="hierarchy-s.p9.html#ixor___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="688"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2036">lxor</a><a  href="hierarchy-s.p10.html#lxor___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="689"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2037">iinc</a><a  href="hierarchy-s.p9.html#iinc___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="690"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2038">i2l</a><a  href="hierarchy-s.p9.html#i2l___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="691"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2039">i2f</a><a  href="hierarchy-s.p9.html#i2f___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="692"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2040">i2d</a><a  href="hierarchy-s.p9.html#i2d___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="693"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2041">l2i</a><a  href="hierarchy-s.p10.html#l2i___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="694"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2042">l2f</a><a  href="hierarchy-s.p10.html#l2f___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="695"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2043">l2d</a><a  href="hierarchy-s.p10.html#l2d___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="696"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2044">f2i</a><a  href="hierarchy-s.p6.html#f2i___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="697"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2045">f2l</a><a  href="hierarchy-s.p6.html#f2l___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="698"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2046">f2d</a><a  href="hierarchy-s.p6.html#f2d___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="699"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2047">d2i</a><a  href="hierarchy-s.p4.html#d2i___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="700"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2048">d2l</a><a  href="hierarchy-s.p4.html#d2l___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="701"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2049">d2f</a><a  href="hierarchy-s.p4.html#d2f___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="702"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2050">int2byte</a><a  href="hierarchy-s.p9.html#int2byte___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="703"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2051">int2char</a><a  href="hierarchy-s.p9.html#int2char___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="704"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2052">int2short</a><a  href="hierarchy-s.p9.html#int2short___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="705"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2053">lcmp</a><a  href="hierarchy-s.p10.html#lcmp___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="706"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2054">fcmpl</a><a  href="hierarchy-s.p6.html#fcmpl___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="707"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2055">fcmpg</a><a  href="hierarchy-s.p6.html#fcmpg___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="708"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2056">dcmpl</a><a  href="hierarchy-s.p4.html#dcmpl___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="709"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2057">dcmpg</a><a  href="hierarchy-s.p4.html#dcmpg___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="710"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2058">ifeq</a><a  href="hierarchy-s.p9.html#ifeq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="711"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2059">ifne</a><a  href="hierarchy-s.p9.html#ifne___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="712"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2060">iflt</a><a  href="hierarchy-s.p9.html#iflt___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="713"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2061">ifge</a><a  href="hierarchy-s.p9.html#ifge___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="714"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2062">ifgt</a><a  href="hierarchy-s.p9.html#ifgt___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="715"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2063">ifle</a><a  href="hierarchy-s.p9.html#ifle___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="716"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2064">if_icmpeq</a><a  href="hierarchy-s.p9.html#if_icmpeq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="717"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2065">if_icmpne</a><a  href="hierarchy-s.p9.html#if_icmpne___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="718"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2066">if_icmplt</a><a  href="hierarchy-s.p9.html#if_icmplt___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="719"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2067">if_icmpge</a><a  href="hierarchy-s.p9.html#if_icmpge___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="720"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2068">if_icmpgt</a><a  href="hierarchy-s.p9.html#if_icmpgt___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="721"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2069">if_icmple</a><a  href="hierarchy-s.p9.html#if_icmple___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="722"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2070">if_acmpeq</a><a  href="hierarchy-s.p9.html#if_acmpeq___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="723"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2071">if_acmpne</a><a  href="hierarchy-s.p9.html#if_acmpne___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="724"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2072">goto</a><a  href="hierarchy-s.p7.html#goto___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="725"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2073">jsr</a><a  href="hierarchy-s.p10.html#jsr___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="726"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2074">ret</a><a  href="hierarchy-s.p15.html#ret___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="727"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2075">tableswitch</a><a  href="hierarchy-s.p17.html#tableswitch___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="728"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2076">lookupswitch</a><a  href="hierarchy-s.p10.html#lookupswitch___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="729"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2077">ireturn</a><a  href="hierarchy-s.p9.html#ireturn___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="730"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2078">lreturn</a><a  href="hierarchy-s.p10.html#lreturn___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="731"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2079">freturn</a><a  href="hierarchy-s.p6.html#freturn___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="732"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2080">dreturn</a><a  href="hierarchy-s.p4.html#dreturn___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="733"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2081">areturn</a><a  href="hierarchy-s.html#areturn___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="734"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2082">return</a><a  href="hierarchy-s.p15.html#return___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="735"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2083">getstatic</a><a  href="hierarchy-s.p7.html#getstatic___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="736"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2084">putstatic</a><a  href="hierarchy-s.p14.html#putstatic___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="737"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2085">getfield</a><a  href="hierarchy-s.p7.html#getfield___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="738"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2086">putfield</a><a  href="hierarchy-s.p14.html#putfield___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="739"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2087">invokevirtual</a><a  href="hierarchy-s.p9.html#invokevirtual___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="740"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2088">invokenonvirtual</a><a  href="hierarchy-s.p9.html#invokenonvirtual___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="741"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2089">invokestatic</a><a  href="hierarchy-s.p9.html#invokestatic___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="742"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2090">invokeinterface</a><a  href="hierarchy-s.p9.html#invokeinterface___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="743"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2092">new</a><a  href="hierarchy-s.p12.html#new___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="744"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2093">newarray</a><a  href="hierarchy-s.p12.html#newarray___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="745"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2094">anewarray</a><a  href="hierarchy-s.html#anewarray___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="746"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2095">arraylength</a><a  href="hierarchy-s.html#arraylength___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="747"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2096">athrow</a><a  href="hierarchy-s.html#athrow___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="748"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2097">checkcast</a><a  href="hierarchy-s.p3.html#checkcast___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="749"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2098">instanceof</a><a  href="hierarchy-s.p9.html#instanceof___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="750"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2099">monitorenter</a><a  href="hierarchy-s.p11.html#monitorenter___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="751"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2100">monitorexit</a><a  href="hierarchy-s.p11.html#monitorexit___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="752"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2101">wide</a><a  href="hierarchy-s.p20.html#wide___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="753"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2102">multianewarray</a><a  href="hierarchy-s.p11.html#multianewarray___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="754"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2103">ifnull</a><a  href="hierarchy-s.p9.html#ifnull___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="755"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2104">ifnonnull</a><a  href="hierarchy-s.p9.html#ifnonnull___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="756"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2105">goto_w</a><a  href="hierarchy-s.p7.html#goto_w___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="757"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2106">jsr_w</a><a  href="hierarchy-s.p10.html#jsr_w___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="758"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2107">breakpoint</a><a  href="hierarchy-s.p2.html#breakpoint___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="759"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2108">ldc_quick</a><a  href="hierarchy-s.p10.html#ldc_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="760"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2109">ldc_w_quick</a><a  href="hierarchy-s.p10.html#ldc_w_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="761"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2110">ldc2_w_quick</a><a  href="hierarchy-s.p10.html#ldc2_w_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="762"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2111">getfield_quick</a><a  href="hierarchy-s.p7.html#getfield_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="763"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2112">putfield_quick</a><a  href="hierarchy-s.p14.html#putfield_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="764"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2113">getfield2_quick</a><a  href="hierarchy-s.p7.html#getfield2_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="765"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2114">putfield2_quick</a><a  href="hierarchy-s.p14.html#putfield2_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="766"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2115">getstatic_quick</a><a  href="hierarchy-s.p7.html#getstatic_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="767"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2116">putstatic_quick</a><a  href="hierarchy-s.p14.html#putstatic_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="768"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2117">getstatic2_quick</a><a  href="hierarchy-s.p7.html#getstatic2_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="769"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2118">putstatic2_quick</a><a  href="hierarchy-s.p14.html#putstatic2_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="770"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2119">invokevirtual_quick</a><a  href="hierarchy-s.p9.html#invokevirtual_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="771"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2120">invokenonvirtual_quick</a><a  href="hierarchy-s.p9.html#invokenonvirtual_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="772"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2121">invokesuper_quick</a><a  href="hierarchy-s.p9.html#invokesuper_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="773"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2122">invokestatic_quick</a><a  href="hierarchy-s.p9.html#invokestatic_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="774"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2123">invokeinterface_quick</a><a  href="hierarchy-s.p9.html#invokeinterface_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="775"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2124">invokevirtualobject_quick</a><a  href="hierarchy-s.p9.html#invokevirtualobject_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,		<span class=C>// Not supported 
+</span><a name="776"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#776">invokeignored_quick</a><a  href="hierarchy-s.p9.html#invokeignored_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="777"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2127">new_quick</a><a  href="hierarchy-s.p12.html#new_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="778"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2128">anewarray_quick</a><a  href="hierarchy-s.html#anewarray_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="779"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2129">multianewarray_quick</a><a  href="hierarchy-s.p11.html#multianewarray_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="780"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2130">checkcast_quick</a><a  href="hierarchy-s.p3.html#checkcast_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="781"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2131">instanceof_quick</a><a  href="hierarchy-s.p9.html#instanceof_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="782"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2132">invokevirtual_quick_w</a><a  href="hierarchy-s.p9.html#invokevirtual_quick_w___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="783"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2133">getfield_quick_w</a><a  href="hierarchy-s.p7.html#getfield_quick_w___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="784"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2134">putfield_quick_w</a><a  href="hierarchy-s.p14.html#putfield_quick_w___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="785"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2135">nonnull_quick</a><a  href="hierarchy-s.p12.html#nonnull_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,		<span class=C>// Not supported 
+</span><a name="786"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2136">agetfield_quick</a><a  href="hierarchy-s.html#agetfield_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="787"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2137">aputfield_quick</a><a  href="hierarchy-s.html#aputfield_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="788"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2138">agetstatic_quick</a><a  href="hierarchy-s.html#agetstatic_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="789"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2139">aputstatic_quick</a><a  href="hierarchy-s.html#aputstatic_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="790"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2140">aldc_quick</a><a  href="hierarchy-s.html#aldc_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="791"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2141">aldc_w_quick</a><a  href="hierarchy-s.html#aldc_w_quick___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="792"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2142">exit_sync_method</a><a  href="hierarchy-s.p5.html#exit_sync_method___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="793"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2143">sethi</a><a  href="hierarchy-s.p16.html#sethi___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="794"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2144">load_word_index</a><a  href="hierarchy-s.p10.html#load_word_index___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="795"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2145">load_short_index</a><a  href="hierarchy-s.p10.html#load_short_index___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="796"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2146">load_char_index</a><a  href="hierarchy-s.p10.html#load_char_index___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="797"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2147">load_byte_index</a><a  href="hierarchy-s.p10.html#load_byte_index___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="798"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2148">load_ubyte_index</a><a  href="hierarchy-s.p10.html#load_ubyte_index___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="799"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2149">store_word_index</a><a  href="hierarchy-s.p16.html#store_word_index___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="800"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2150">nastore_word_index</a><a  href="hierarchy-s.p12.html#nastore_word_index___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="801"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2151">store_short_index</a><a  href="hierarchy-s.p16.html#store_short_index___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="802"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2152">store_byte_index</a><a  href="hierarchy-s.p16.html#store_byte_index___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="803"></a>  <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2153">hardware</a><a  href="hierarchy-s.p8.html#hardware___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+
+<span class=C>// Exented bytecodes
+</span><a name="806"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2155">load_ubyte</a><a  href="hierarchy-s.p10.html#load_ubyte___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="807"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2156">load_byte</a><a  href="hierarchy-s.p10.html#load_byte___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="808"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2157">load_char</a><a  href="hierarchy-s.p10.html#load_char___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="809"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2158">load_short</a><a  href="hierarchy-s.p10.html#load_short___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="810"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2159">load_word</a><a  href="hierarchy-s.p10.html#load_word___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="811"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2160">priv_ret_from_trap</a><a  href="hierarchy-s.p14.html#priv_ret_from_trap___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="812"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2161">priv_read_dcache_tag</a><a  href="hierarchy-s.p14.html#priv_read_dcache_tag___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="813"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2162">priv_read_dcache_data</a><a  href="hierarchy-s.p14.html#priv_read_dcache_data___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="814"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2163">load_char_oe</a><a  href="hierarchy-s.p10.html#load_char_oe___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="815"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2164">load_short_oe</a><a  href="hierarchy-s.p10.html#load_short_oe___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="816"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2165">load_word_oe</a><a  href="hierarchy-s.p10.html#load_word_oe___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="817"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2166">return0</a><a  href="hierarchy-s.p15.html#return0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="818"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2167">priv_read_icache_tag</a><a  href="hierarchy-s.p14.html#priv_read_icache_tag___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="819"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2168">priv_read_icache_data</a><a  href="hierarchy-s.p14.html#priv_read_icache_data___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="820"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2169">ncload_ubyte</a><a  href="hierarchy-s.p12.html#ncload_ubyte___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="821"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2170">ncload_byte</a><a  href="hierarchy-s.p12.html#ncload_byte___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="822"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2171">ncload_char</a><a  href="hierarchy-s.p12.html#ncload_char___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="823"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2172">ncload_short</a><a  href="hierarchy-s.p12.html#ncload_short___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="824"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2173">ncload_word</a><a  href="hierarchy-s.p12.html#ncload_word___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="825"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2174">iucmp</a><a  href="hierarchy-s.p9.html#iucmp___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="826"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2175">priv_powerdown</a><a  href="hierarchy-s.p14.html#priv_powerdown___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="827"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2176">cache_invalidate</a><a  href="hierarchy-s.p3.html#cache_invalidate___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="828"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2177">ncload_char_oe</a><a  href="hierarchy-s.p12.html#ncload_char_oe___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="829"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2178">ncload_short_oe</a><a  href="hierarchy-s.p12.html#ncload_short_oe___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="830"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2179">ncload_word_oe</a><a  href="hierarchy-s.p12.html#ncload_word_oe___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="831"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2180">return1</a><a  href="hierarchy-s.p15.html#return1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="832"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2181">cache_flush</a><a  href="hierarchy-s.p3.html#cache_flush___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="833"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2182">cache_index_flush</a><a  href="hierarchy-s.p3.html#cache_index_flush___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="834"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2183">store_byte</a><a  href="hierarchy-s.p16.html#store_byte___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="835"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2184">store_short</a><a  href="hierarchy-s.p16.html#store_short___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="836"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2185">store_word</a><a  href="hierarchy-s.p16.html#store_word___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="837"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2186">soft_trap</a><a  href="hierarchy-s.p16.html#soft_trap___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="838"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2187">priv_write_dcache_tag</a><a  href="hierarchy-s.p14.html#priv_write_dcache_tag___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="839"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2188">priv_write_dcache_data</a><a  href="hierarchy-s.p14.html#priv_write_dcache_data___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="840"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2189">store_short_oe</a><a  href="hierarchy-s.p16.html#store_short_oe___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="841"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2190">store_word_oe</a><a  href="hierarchy-s.p16.html#store_word_oe___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="842"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2191">return2</a><a  href="hierarchy-s.p15.html#return2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="843"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2192">priv_write_icache_tag</a><a  href="hierarchy-s.p14.html#priv_write_icache_tag___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="844"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2193">priv_write_icache_data</a><a  href="hierarchy-s.p14.html#priv_write_icache_data___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="845"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2194">ncstore_byte</a><a  href="hierarchy-s.p12.html#ncstore_byte___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="846"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2195">ncstore_short</a><a  href="hierarchy-s.p12.html#ncstore_short___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="847"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2196">ncstore_word</a><a  href="hierarchy-s.p12.html#ncstore_word___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="848"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2197">priv_reset</a><a  href="hierarchy-s.p14.html#priv_reset___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="849"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2198">get_current_class</a><a  href="hierarchy-s.p7.html#get_current_class___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="850"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2199">ncstore_short_oe</a><a  href="hierarchy-s.p12.html#ncstore_short_oe___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="851"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2200">ncstore_word_oe</a><a  href="hierarchy-s.p12.html#ncstore_word_oe___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="852"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2201">call</a><a  href="hierarchy-s.p3.html#call___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="853"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2202">zero_line</a><a  href="hierarchy-s.p21.html#zero_line___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="854"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2204">read_pc</a><a  href="hierarchy-s.p15.html#read_pc___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="855"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2205">read_vars</a><a  href="hierarchy-s.p15.html#read_vars___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="856"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2206">read_frame</a><a  href="hierarchy-s.p15.html#read_frame___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="857"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2207">read_optop</a><a  href="hierarchy-s.p15.html#read_optop___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="858"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2208">priv_read_oplim</a><a  href="hierarchy-s.p14.html#priv_read_oplim___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="859"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2209">read_const_pool</a><a  href="hierarchy-s.p15.html#read_const_pool___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="860"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2210">priv_read_psr</a><a  href="hierarchy-s.p14.html#priv_read_psr___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="861"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2211">priv_read_trapbase</a><a  href="hierarchy-s.p14.html#priv_read_trapbase___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="862"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2212">priv_read_lockcount0</a><a  href="hierarchy-s.p14.html#priv_read_lockcount0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,	
+<a name="863"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2213">priv_read_lockcount1</a><a  href="hierarchy-s.p14.html#priv_read_lockcount1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,	
+<a name="864"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2214">priv_read_lockaddr0</a><a  href="hierarchy-s.p14.html#priv_read_lockaddr0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="865"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2215">priv_read_lockaddr1</a><a  href="hierarchy-s.p14.html#priv_read_lockaddr1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="866"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2216">priv_read_userrange1</a><a  href="hierarchy-s.p14.html#priv_read_userrange1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="867"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2217">priv_read_gc_config</a><a  href="hierarchy-s.p14.html#priv_read_gc_config___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="868"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2218">priv_read_brk1a</a><a  href="hierarchy-s.p14.html#priv_read_brk1a___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="869"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2219">priv_read_brk2a</a><a  href="hierarchy-s.p14.html#priv_read_brk2a___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="870"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2220">priv_read_brk12c</a><a  href="hierarchy-s.p14.html#priv_read_brk12c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="871"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2221">priv_read_userrange2</a><a  href="hierarchy-s.p14.html#priv_read_userrange2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="872"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2222">priv_read_versionid</a><a  href="hierarchy-s.p14.html#priv_read_versionid___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="873"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2223">priv_read_hcr</a><a  href="hierarchy-s.p14.html#priv_read_hcr___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="874"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2224">priv_read_sc_bottom</a><a  href="hierarchy-s.p14.html#priv_read_sc_bottom___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="875"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2225">read_global0</a><a  href="hierarchy-s.p15.html#read_global0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="876"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2226">read_global1</a><a  href="hierarchy-s.p15.html#read_global1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="877"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2227">read_global2</a><a  href="hierarchy-s.p15.html#read_global2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="878"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2228">read_global3</a><a  href="hierarchy-s.p15.html#read_global3___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="879"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2229">write_pc</a><a  href="hierarchy-s.p20.html#write_pc___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="880"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2230">write_vars</a><a  href="hierarchy-s.p20.html#write_vars___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="881"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2231">write_frame</a><a  href="hierarchy-s.p20.html#write_frame___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="882"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2232">write_optop</a><a  href="hierarchy-s.p20.html#write_optop___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="883"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2233">priv_write_oplim</a><a  href="hierarchy-s.p14.html#priv_write_oplim___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="884"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2234">write_const_pool</a><a  href="hierarchy-s.p20.html#write_const_pool___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="885"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2235">priv_write_psr</a><a  href="hierarchy-s.p14.html#priv_write_psr___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="886"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2236">priv_write_trapbase</a><a  href="hierarchy-s.p14.html#priv_write_trapbase___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="887"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2237">priv_write_lockcount0</a><a  href="hierarchy-s.p14.html#priv_write_lockcount0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,	
+<a name="888"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2238">priv_write_lockcount1</a><a  href="hierarchy-s.p14.html#priv_write_lockcount1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,	
+<a name="889"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2239">priv_write_lockaddr0</a><a  href="hierarchy-s.p14.html#priv_write_lockaddr0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="890"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2240">priv_write_lockaddr1</a><a  href="hierarchy-s.p14.html#priv_write_lockaddr1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="891"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2241">priv_write_userrange1</a><a  href="hierarchy-s.p14.html#priv_write_userrange1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="892"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2242">priv_write_gc_config</a><a  href="hierarchy-s.p14.html#priv_write_gc_config___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="893"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2243">priv_write_brk1a</a><a  href="hierarchy-s.p14.html#priv_write_brk1a___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="894"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2244">priv_write_brk2a</a><a  href="hierarchy-s.p14.html#priv_write_brk2a___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="895"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2245">priv_write_brk12c</a><a  href="hierarchy-s.p14.html#priv_write_brk12c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="896"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2246">priv_write_userrange2</a><a  href="hierarchy-s.p14.html#priv_write_userrange2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="897"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2247">priv_write_sc_bottom</a><a  href="hierarchy-s.p14.html#priv_write_sc_bottom___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="898"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2248">write_global0</a><a  href="hierarchy-s.p20.html#write_global0___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="899"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2249">write_global1</a><a  href="hierarchy-s.p20.html#write_global1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="900"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2250">write_global2</a><a  href="hierarchy-s.p20.html#write_global2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="901"></a>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2251">write_global3</a><a  href="hierarchy-s.p20.html#write_global3___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="903"></a>  <span class=K>wire</span>	[255:0]		<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1129">decodeout_1</a><a  href="hierarchy-s.p4.html#decodeout_1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Decode signals from JVM opcode[7:0]
+</span><a name="904"></a>  <span class=K>wire</span>	[255:0]		<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1130">decodeout_2</a><a  href="hierarchy-s.p4.html#decodeout_2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Decode signals from exented opcode[7:0]
+</span>
+  <span class=C>// R stage control signals
+</span><a name="907"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2262">monitorenter_r</a><a  href="hierarchy-s.p11.html#monitorenter_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2272">monitorexit_r</a><a  href="hierarchy-s.p11.html#monitorexit_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2283">carry_in_r</a><a  href="hierarchy-s.p3.html#carry_in_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="908"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2264">monitorenter_raw_e</a><a  href="hierarchy-s.p11.html#monitorenter_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2274">monitorexit_raw_e</a><a  href="hierarchy-s.p11.html#monitorexit_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2289">carry_in_raw_e</a><a  href="hierarchy-s.p3.html#carry_in_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="909"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2301">mul_r</a><a  href="hierarchy-s.p11.html#mul_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2311">div_r</a><a  href="hierarchy-s.p4.html#div_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2321">rem_r</a><a  href="hierarchy-s.p15.html#rem_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2343">shift_sel_r</a><a  href="hierarchy-s.p16.html#shift_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2353">sign_r</a><a  href="hierarchy-s.p16.html#sign_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="910"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2303">mul_raw_e</a><a  href="hierarchy-s.p11.html#mul_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2313">div_raw_e</a><a  href="hierarchy-s.p4.html#div_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2323">rem_raw_e</a><a  href="hierarchy-s.p15.html#rem_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2345">shift_sel_raw</a><a  href="hierarchy-s.p16.html#shift_sel_raw___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="911"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2360">sign_raw_e</a><a  href="hierarchy-s.p16.html#sign_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="912"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1302">priv_reset_raw_e</a><a  href="hierarchy-s.p14.html#priv_reset_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1294">priv_powerdown_raw_e</a><a  href="hierarchy-s.p14.html#priv_powerdown_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="913"></a>  <span class=K>wire</span> [1:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2400">bit_cvt_mux_sel_r</a><a  href="hierarchy-s.p2.html#bit_cvt_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="914"></a>  <span class=K>wire</span> [7:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2413">alu_out_mux_sel_r</a><a  href="hierarchy-s.html#alu_out_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="915"></a>  <span class=K>wire</span> [7:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2444">alu_out_mux_sel_raw_e</a><a  href="hierarchy-s.html#alu_out_mux_sel_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="916"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2469">adder2_src1_mux_sel_r</a><a  href="hierarchy-s.html#adder2_src1_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="917"></a>  <span class=K>wire</span> [1:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2534">iu_data_mux_sel_r</a><a  href="hierarchy-s.p9.html#iu_data_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="918"></a>  <span class=K>wire</span> [4:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3116">offset_mux_sel_r</a><a  href="hierarchy-s.p13.html#offset_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="919"></a>  <span class=K>wire</span> [20:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2830">reg_rd_mux_sel_r</a><a  href="hierarchy-s.p15.html#reg_rd_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="920"></a>  <span class=K>wire</span> [20:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2852">reg_rd_mux_sel_raw_e</a><a  href="hierarchy-s.p15.html#reg_rd_mux_sel_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="921"></a>  <span class=K>wire</span> [18:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2860">reg_wr_mux_sel_r</a><a  href="hierarchy-s.p15.html#reg_wr_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="922"></a>  <span class=K>wire</span> [18:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2883">reg_wr_mux_sel_raw_e</a><a  href="hierarchy-s.p15.html#reg_wr_mux_sel_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="923"></a>  <span class=K>wire</span> [18:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2926">reg_wr1_mux_sel</a><a  href="hierarchy-s.p15.html#reg_wr1_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>/* reg_wr_mux_sel before qualified with
+					 * inst_valid[0] and ~iu_trap_c
+					 */</span>
+<a name="926"></a>  <span class=K>wire</span> [2:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2949">load_data_mux_sel_r</a><a  href="hierarchy-s.p10.html#load_data_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="927"></a>  <span class=K>wire</span> [2:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2953">load_data_mux_sel_e</a><a  href="hierarchy-s.p10.html#load_data_mux_sel_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="928"></a>  <span class=K>wire</span> [2:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2994">cmp_mux_sel_r</a><a  href="hierarchy-s.p3.html#cmp_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="929"></a>  <span class=K>wire</span> [1:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3006">adder_src1_mux_sel_r</a><a  href="hierarchy-s.html#adder_src1_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="930"></a>  <span class=K>wire</span> [1:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3011">adder_src1_mux_sel_raw_e</a><a  href="hierarchy-s.html#adder_src1_mux_sel_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="931"></a>  <span class=K>wire</span>       <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3022">adder_src2_mux_sel_r</a><a  href="hierarchy-s.html#adder_src2_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="932"></a>  <span class=K>wire</span> [4:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3050">bit_mux_sel_r</a><a  href="hierarchy-s.p2.html#bit_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="933"></a>  <span class=K>wire</span> [4:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3064">cvt_mux_sel_r</a><a  href="hierarchy-s.p3.html#cvt_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="934"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2331">shift_dir_r</a><a  href="hierarchy-s.p16.html#shift_dir_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2334">shift_dir_raw_e</a><a  href="hierarchy-s.p16.html#shift_dir_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="935"></a>  <span class=K>wire</span> [4:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3079">shifter_src1_mux_sel_r</a><a  href="hierarchy-s.p16.html#shifter_src1_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="936"></a>  <span class=K>wire</span> [2:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3092">shifter_src2_mux_sel_r</a><a  href="hierarchy-s.p16.html#shifter_src2_mux_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="937"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1462">all_load_c_raw</a><a  href="hierarchy-s.html#all_load_c_raw___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1459">all_load_e</a><a  href="hierarchy-s.html#all_load_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  <span class=C>// There is a load in W stage
+</span><a name="938"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1767">ucode_busy_r</a><a  href="hierarchy-s.p18.html#ucode_busy_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="939"></a>  <span class=K>wire</span>[4:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1336">branch_qual</a><a  href="hierarchy-s.p2.html#branch_qual___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="940"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3105">shifter_word_sel_r</a><a  href="hierarchy-s.p16.html#shifter_word_sel_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="941"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3038">ucode_busy_c</a><a  href="hierarchy-s.p18.html#ucode_busy_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="942"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1131">invalid_op_r</a><a  href="hierarchy-s.p9.html#invalid_op_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="943"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1825">iu_bypass_rs1_r</a><a  href="hierarchy-s.p9.html#iu_bypass_rs1_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1771">iu_bypass_rs2_r</a><a  href="hierarchy-s.p9.html#iu_bypass_rs2_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="944"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1882">iu_bypass_rs1</a><a  href="hierarchy-s.p9.html#iu_bypass_rs1___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1890">iu_bypass_rs2</a><a  href="hierarchy-s.p9.html#iu_bypass_rs2___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="945"></a>  <span class=K>wire</span> [1:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2983">forward_data_w_mux_sel_c</a><a  href="hierarchy-s.p6.html#forward_data_w_mux_sel_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+  <span class=C>// Ucode signals
+</span><a name="948"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2891">ucode_rd_psr_e</a><a  href="hierarchy-s.p18.html#ucode_rd_psr_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// ucode_reg_rd[2:0] = 0x1
+</span><a name="949"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2892">ucode_rd_vars_e</a><a  href="hierarchy-s.p18.html#ucode_rd_vars_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_reg_rd[2:0] = 0x2
+</span><a name="950"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2893">ucode_rd_frame_e</a><a  href="hierarchy-s.p18.html#ucode_rd_frame_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_reg_rd[2:0] = 0x3
+</span><a name="951"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2894">ucode_rd_const_p_e</a><a  href="hierarchy-s.p18.html#ucode_rd_const_p_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_reg_rd[2:0] = 0x4
+</span><a name="952"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2895">ucode_rd_port_c_e</a><a  href="hierarchy-s.p18.html#ucode_rd_port_c_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_reg_rd[2:0] = 0x5
+</span><a name="953"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2896">ucode_rd_dcache_e</a><a  href="hierarchy-s.p18.html#ucode_rd_dcache_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_reg_rd[2:0] = 0x6
+</span><a name="954"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2899">ucode_rd_dcache_c</a><a  href="hierarchy-s.p18.html#ucode_rd_dcache_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_reg_rd[2:0] = 0x6 in C stage
+</span><a name="955"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2897">ucode_rd_part_dcache_e</a><a  href="hierarchy-s.p18.html#ucode_rd_part_dcache_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_reg_rd[2:0] = 0x7
+</span><a name="956"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2899">ucode_rd_part_dcache_c</a><a  href="hierarchy-s.p18.html#ucode_rd_part_dcache_c___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_reg_rd[2:0] = 0x7 in C stage
+</span><a name="957"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2907">ucode_wr_pc_e</a><a  href="hierarchy-s.p18.html#ucode_wr_pc_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// ucode_reg_wr[2:0] = 0x1
+</span><a name="958"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2908">ucode_wr_vars_e</a><a  href="hierarchy-s.p18.html#ucode_wr_vars_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_reg_wr[2:0] = 0x2
+</span><a name="959"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2909">ucode_wr_frame_e</a><a  href="hierarchy-s.p18.html#ucode_wr_frame_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_reg_wr[2:0] = 0x3
+</span><a name="960"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2910">ucode_wr_const_p_e</a><a  href="hierarchy-s.p18.html#ucode_wr_const_p_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_reg_wr[2:0] = 0x4
+</span><a name="961"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2911">ucode_wr_optop_e</a><a  href="hierarchy-s.p18.html#ucode_wr_optop_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_reg_wr[2:0] = 0x5
+</span><a name="962"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2912">ucode_wr_vars_optop_e</a><a  href="hierarchy-s.p18.html#ucode_wr_vars_optop_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_reg_wr[2:0] = 0x6
+</span><a name="963"></a>  <span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2913">ucode_wr_psr_e</a><a  href="hierarchy-s.p18.html#ucode_wr_psr_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// ucode_reg_wr[2:0] = 0x7
+</span>
+  <span class=C>// R stage control signals to IU 
+</span><a name="966"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1606">ucode_op_r</a><a  href="hierarchy-s.p18.html#ucode_op_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode opcodes
+</span><a name="967"></a>  <span class=K>wire</span> [7:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1588">opcode_1_op_e</a><a  href="hierarchy-s.p13.html#opcode_1_op_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Opcode in E stage
+</span><a name="968"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1132">illegal_op_raw_r</a><a  href="hierarchy-s.p9.html#illegal_op_raw_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Illegal instruction in R stage 
+</span>
+  <span class=C>// R stage control signals to DCU and IU
+</span><a name="971"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1139">wr_optop_r</a><a  href="hierarchy-s.p20.html#wr_optop_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Tell IU that OPTOP will be written 
+</span><a name="972"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1142">wr_optop_raw_e</a><a  href="hierarchy-s.p20.html#wr_optop_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		 
+<a name="973"></a>  <span class=K>wire</span> [7:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1365">iu_inst_r</a><a  href="hierarchy-s.p9.html#iu_inst_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		
+<a name="974"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2662">data_brk1_e</a><a  href="hierarchy-s.p4.html#data_brk1_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2679">data_brk2_e</a><a  href="hierarchy-s.p4.html#data_brk2_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="975"></a>  <span class=K>wire</span> [7:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1402">iu_inst_raw_e</a><a  href="hierarchy-s.p9.html#iu_inst_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		
+<a name="976"></a>  <span class=K>wire</span> [7:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1409">iu_inst_raw</a><a  href="hierarchy-s.p9.html#iu_inst_raw___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		
+<a name="977"></a>  <span class=K>wire</span> [7:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1438">ucode_inst_e</a><a  href="hierarchy-s.p18.html#ucode_inst_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		
+<a name="978"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1435">array_load_e</a><a  href="hierarchy-s.html#array_load_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="979"></a>  <span class=K>wire</span> [1:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1453">iu_inst_e_mux_sel</a><a  href="hierarchy-s.p9.html#iu_inst_e_mux_sel___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="980"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1473">iu_icu_flush_r</a><a  href="hierarchy-s.p9.html#iu_icu_flush_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="981"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1475">iu_icu_flush_raw_e</a><a  href="hierarchy-s.p9.html#iu_icu_flush_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="982"></a>  <span class=K>wire</span> [2:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1485">iu_dcu_flush_r</a><a  href="hierarchy-s.p9.html#iu_dcu_flush_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="983"></a>  <span class=K>wire</span> [2:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1489">iu_dcu_flush_raw_e</a><a  href="hierarchy-s.p9.html#iu_dcu_flush_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="984"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1497">iu_zero_r</a><a  href="hierarchy-s.p9.html#iu_zero_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1499">iu_zero_raw_e</a><a  href="hierarchy-s.p9.html#iu_zero_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="985"></a>  <span class=K>wire</span> [3:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1521">iu_d_diag_r</a><a  href="hierarchy-s.p9.html#iu_d_diag_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="986"></a>  <span class=K>wire</span> [3:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1535">iu_i_diag_r</a><a  href="hierarchy-s.p9.html#iu_i_diag_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="987"></a>  <span class=K>wire</span> [3:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1526">iu_d_diag_raw_e</a><a  href="hierarchy-s.p9.html#iu_d_diag_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="988"></a>  <span class=K>wire</span> [3:0] <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1540">iu_i_diag_raw_e</a><a  href="hierarchy-s.p9.html#iu_i_diag_raw_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+  <span class=C>// E stage instruction signals
+</span><a name="991"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1162">ifeq_e</a><a  href="hierarchy-s.p9.html#ifeq_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1168">if_icmpeq_e</a><a  href="hierarchy-s.p9.html#if_icmpeq_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1174">if_acmpeq_e</a><a  href="hierarchy-s.p9.html#if_acmpeq_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1180">ifge_e</a><a  href="hierarchy-s.p9.html#ifge_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1186">if_icmpge_e</a><a  href="hierarchy-s.p9.html#if_icmpge_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1192">ifle_e</a><a  href="hierarchy-s.p9.html#ifle_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1436">ucode_st_e</a><a  href="hierarchy-s.p18.html#ucode_st_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="992"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1198">if_icmple_e</a><a  href="hierarchy-s.p9.html#if_icmple_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1204">ifnull_e</a><a  href="hierarchy-s.p9.html#ifnull_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1210">ifne_e</a><a  href="hierarchy-s.p9.html#ifne_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1216">if_icmpne_e</a><a  href="hierarchy-s.p9.html#if_icmpne_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1222">if_acmpne_e</a><a  href="hierarchy-s.p9.html#if_acmpne_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="993"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1228">ifnonnull_e</a><a  href="hierarchy-s.p9.html#ifnonnull_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1234">ifgt_e</a><a  href="hierarchy-s.p9.html#ifgt_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1240">if_icmpgt_e</a><a  href="hierarchy-s.p9.html#if_icmpgt_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1246">iflt_e</a><a  href="hierarchy-s.p9.html#iflt_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1252">if_icmplt_e</a><a  href="hierarchy-s.p9.html#if_icmplt_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="994"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1258">goto_e</a><a  href="hierarchy-s.p7.html#goto_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1264">goto_w_e</a><a  href="hierarchy-s.p7.html#goto_w_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1270">jsr_e</a><a  href="hierarchy-s.p10.html#jsr_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1276">jsr_w_e</a><a  href="hierarchy-s.p10.html#jsr_w_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1288">ret_e</a><a  href="hierarchy-s.p15.html#ret_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1282">write_pc_e</a><a  href="hierarchy-s.p20.html#write_pc_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1313">all_return_e</a><a  href="hierarchy-s.html#all_return_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1310">all_return_r</a><a  href="hierarchy-s.html#all_return_r___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="995"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1417">baload_e</a><a  href="hierarchy-s.p2.html#baload_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1424">bastore_e</a><a  href="hierarchy-s.p2.html#bastore_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1424">castore_e</a><a  href="hierarchy-s.p3.html#castore_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1417">caload_e</a><a  href="hierarchy-s.p3.html#caload_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1417">saload_e</a><a  href="hierarchy-s.p16.html#saload_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1424">sastore_e</a><a  href="hierarchy-s.p16.html#sastore_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="996"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2451">ucode_read_reg_e</a><a  href="hierarchy-s.p18.html#ucode_read_reg_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1152">ret_optop_update_e</a><a  href="hierarchy-s.p15.html#ret_optop_update_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<a name="999"></a>   <span class=K>output</span>       <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p3.html#2270">monitorenter_e</a><a  href="hierarchy-s.p11.html#monitorenter_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// monitorenter
+</span><a name="1000"></a>   <span class=K>wire</span>       <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2280">monitorexit_e</a><a  href="hierarchy-s.p11.html#monitorexit_e___ex_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// monitorexit
+</span></pre>
+<center><table class=NB cols=5 nosave><tr><td align="center"><a  href="ex_ctl.v.p2.html">Next</a></td><td align="center"><font color="#808080">1</font></td><td align="center"><a  href="ex_ctl.v.p2.html">2</a></td><td align="center"><a  href="ex_ctl.v.p3.html">3</a></td><td align="center"><a  href="ex_ctl.v.p4.html">4</a></td></tr></table></center>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return "ex_ctl.v.p2.html"; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:58 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ex/rtl/ex_ctl.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

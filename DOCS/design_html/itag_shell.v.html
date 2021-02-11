@@ -1,0 +1,515 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/itag/rtl/itag_shell.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "itag_shell.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+
+
+<span class=M>`include</span>        <a  onClick="return qs(event,this)" class=S href="defines.h.html">&quot;../rtl/defines.h&quot;</a>
+
+<a name="itag_shell"></a><span class=K>module</span>  <span class=MM>itag_shell</span><a  href="hierarchy-m.p3.html#itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a> (    <a  onClick="return qs(event,this)" class=SI href="#46">icu_tag_in</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#47">icu_tag_vld</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#48">icu_tag_we</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#49">icu_tag_addr</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#50">enable</a>,
+                        <a  onClick="return qs(event,this)" class=SO href="#53">itag_vld</a>,
+                        <a  onClick="return qs(event,this)" class=SO href="#52">itag_dout</a>,
+                        <a  onClick="return qs(event,this)" class=SO href="#54">ic_hit</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#51">clk</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#57">bist_mode</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#58">bist_reset</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#56">test_mode</a>,
+                        <a  onClick="return qs(event,this)" class=SO href="#59">itag_test_err_l</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#60">sin</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#61">sm</a>,
+                        <a  onClick="return qs(event,this)" class=SO href="#62">so</a>
+                        );
+
+<a name="46"></a><span class=K>input</span>   [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0]     <a  onClick="return qs(event,this)" class=SI href="#46">icu_tag_in</a><a  href="hierarchy-s.p9.html#icu_tag_in___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// Write data_in  -- address portion of tag
+</span><a name="47"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#47">icu_tag_vld</a><a  href="hierarchy-s.p9.html#icu_tag_vld___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    <span class=C>// valid bit   -- valid bit of the tag
+</span><a name="48"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#48">icu_tag_we</a><a  href="hierarchy-s.p9.html#icu_tag_we___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// Write enable for tag array
+</span><a name="49"></a><span class=K>input</span>   [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:4]     <a  onClick="return qs(event,this)" class=SI href="#49">icu_tag_addr</a><a  href="hierarchy-s.p9.html#icu_tag_addr___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;   <span class=C>// Address inputs for reading tag
+</span><a name="50"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#50">enable</a><a  href="hierarchy-s.p5.html#enable___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// power down mode
+</span><a name="51"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#51">clk</a><a  href="hierarchy-s.p3.html#clk___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// Clock
+</span><a name="52"></a><span class=K>output</span>  [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0]     <a  onClick="return qs(event,this)" class=SO href="#86">itag_dout</a><a  href="hierarchy-s.p9.html#itag_dout___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;      <span class=C>// Tag output
+</span><a name="53"></a><span class=K>output</span>                  <a  onClick="return qs(event,this)" class=SO href="#87">itag_vld</a><a  href="hierarchy-s.p9.html#itag_vld___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       <span class=C>// valid bit
+</span><a name="54"></a><span class=K>output</span>                  <a  onClick="return qs(event,this)" class=SO href="#88">ic_hit</a><a  href="hierarchy-s.p9.html#ic_hit___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="56"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#56">test_mode</a><a  href="hierarchy-s.p17.html#test_mode___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// BIST enable
+</span><a name="57"></a><span class=K>input</span>         [1:0]     <a  onClick="return qs(event,this)" class=SI href="#57">bist_mode</a><a  href="hierarchy-s.p2.html#bist_mode___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// BIST mode
+</span><a name="58"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#58">bist_reset</a><a  href="hierarchy-s.p2.html#bist_reset___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// BIST reset
+</span><a name="59"></a><span class=K>output</span>                  <a  onClick="return qs(event,this)" class=SO href="#85">itag_test_err_l</a><a  href="hierarchy-s.p9.html#itag_test_err_l___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="60"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#60">sin</a><a  href="hierarchy-s.p16.html#sin___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="61"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#61">sm</a><a  href="hierarchy-s.p16.html#sm___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="62"></a><span class=K>output</span>                  <a  onClick="return qs(event,this)" class=SO href="#62">so</a><a  href="hierarchy-s.p16.html#so___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="64"></a><span class=K>wire</span>    [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0]     <a  onClick="return qs(event,this)" class=SW href="#64">bist_icu_tag_in</a><a  href="hierarchy-s.p2.html#bist_icu_tag_in___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// Write data_in  -- address portion of tag
+</span><a name="65"></a><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SW href="#65">bist_icu_tag_vld</a><a  href="hierarchy-s.p2.html#bist_icu_tag_vld___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    <span class=C>// valid bit   -- valid bit of the tag
+</span>
+<a name="67"></a><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SW href="#67">bist_icu_tag_we</a><a  href="hierarchy-s.p2.html#bist_icu_tag_we___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// Write enable for tag array
+</span><a name="68"></a><span class=K>wire</span>    [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:4]     <a  onClick="return qs(event,this)" class=SW href="#68">bist_icu_tag_addr</a><a  href="hierarchy-s.p2.html#bist_icu_tag_addr___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;   <span class=C>// Address inputs for reading tag
+</span><a name="69"></a><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SW href="#69">bist_enable</a><a  href="hierarchy-s.p2.html#bist_enable___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// power down mode
+</span>
+<span class=K>wire</span>    [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0]     <a  onClick="return qs(event,this)" class=SO href="#52">itag_dout</a>;      <span class=C>// Tag output
+</span><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SO href="#53">itag_vld</a>;       <span class=C>// valid bit
+</span><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SO href="#54">ic_hit</a>;
+<a name="74"></a><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SW href="#74">itag_enable</a><a  href="hierarchy-s.p9.html#itag_enable___itag_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="itag_shell_itag_top"></a><a name="76"></a><a  onClick="return qs(event,this)" class=MM href="#itag_top">itag_top</a> itag_top (	<span class=SI>.bist_reset</span>(<a  onClick="return qs(event,this)" class=SI href="#58">bist_reset</a>), 
+<a name="77"></a>			<span class=SI>.bist_mode</span>(<a  onClick="return qs(event,this)" class=SI href="#57">bist_mode</a>),
+<a name="78"></a>			<span class=SI>.icu_tag_addr</span>(<a  onClick="return qs(event,this)" class=SI href="#49">icu_tag_addr</a>),
+<a name="79"></a>			<span class=SI>.icu_tag_in</span>(<a  onClick="return qs(event,this)" class=SI href="#46">icu_tag_in</a>), 
+<a name="80"></a>			<span class=SI>.icu_tag_vld</span>(<a  onClick="return qs(event,this)" class=SI href="#47">icu_tag_vld</a>), 
+<a name="81"></a>			<span class=SI>.icu_tag_we</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icu_tag_we</a>), 
+<a name="82"></a>			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#51">clk</a>), 
+<a name="83"></a>			<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="#50">enable</a>), 
+<a name="84"></a>			<span class=SI>.test_mode</span>(<a  onClick="return qs(event,this)" class=SI href="#56">test_mode</a>), 
+<a name="85"></a>			<a  onClick="return qs(event,this)" class=SO href="#148">.ERROR</a>(<a  onClick="return qs(event,this)" class=SO href="#59">itag_test_err_l</a>), 
+<a name="86"></a>			<a  onClick="return qs(event,this)" class=SO href="#155">.itag_dout</a>(<a  onClick="return qs(event,this)" class=SO href="#52">itag_dout</a>), 
+<a name="87"></a>			<a  onClick="return qs(event,this)" class=SO href="#155">.itag_vld</a>(<a  onClick="return qs(event,this)" class=SO href="#53">itag_vld</a>), 
+<a name="88"></a>			<a  onClick="return qs(event,this)" class=SO href="#155">.itag_hit</a>(<a  onClick="return qs(event,this)" class=SO href="#54">ic_hit</a>)
+			);
+
+<a name="itag_shell_i_itag_misc"></a><a name="91"></a><a  onClick="return qs(event,this)" class=MM href="#itag_misc">itag_misc</a>  i_itag_misc (        <span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="#50">enable</a>),
+<a name="92"></a>                                <span class=SI>.icu_tag_in</span>(<a  onClick="return qs(event,this)" class=SI href="#46">icu_tag_in</a>),
+<a name="93"></a>                                <span class=SI>.icu_tag_vld</span>(<a  onClick="return qs(event,this)" class=SI href="#47">icu_tag_vld</a>),
+<a name="94"></a>                                <span class=SI>.icu_tag_we</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icu_tag_we</a>),
+<a name="95"></a>                                <span class=SI>.icu_tag_addr</span>(<a  onClick="return qs(event,this)" class=SI href="#49">icu_tag_addr</a>),
+<a name="96"></a>                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#51">clk</a>)
+                                );
+<span class=K>endmodule</span>
+
+
+<a name="itag_top"></a><a  href="itag_shell.v.html#itag_shell_itag_top"><IMG alt="[Up: itag_shell itag_top]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>itag_top</span><a  href="hierarchy-m.p3.html#itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a> (	<a  onClick="return qs(event,this)" class=SI href="#116">bist_reset</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#117">bist_mode</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#118">icu_tag_addr</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#119">icu_tag_in</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#120">icu_tag_vld</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#121">icu_tag_we</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#122">clk</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#123">enable</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#124">test_mode</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#126">ERROR</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#127">itag_dout</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#128">itag_vld</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#129">itag_hit</a>
+			);
+
+<a name="116"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="#76">bist_reset</a><a  href="hierarchy-s.p2.html#bist_reset___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="117"></a>   <span class=K>input</span> [1:0] <a  onClick="return qs(event,this)" class=SI href="#77">bist_mode</a><a  href="hierarchy-s.p2.html#bist_mode___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="118"></a>   <span class=K>input</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>-4:0] <a  onClick="return qs(event,this)" class=SI href="#78">icu_tag_addr</a><a  href="hierarchy-s.p9.html#icu_tag_addr___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="119"></a>   <span class=K>input</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0] <a  onClick="return qs(event,this)" class=SI href="#79">icu_tag_in</a><a  href="hierarchy-s.p9.html#icu_tag_in___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="120"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="#80">icu_tag_vld</a><a  href="hierarchy-s.p9.html#icu_tag_vld___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="121"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="#81">icu_tag_we</a><a  href="hierarchy-s.p9.html#icu_tag_we___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="122"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="#82">clk</a><a  href="hierarchy-s.p3.html#clk___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="123"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="#83">enable</a><a  href="hierarchy-s.p5.html#enable___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="124"></a>   <span class=K>input</span>  <a  onClick="return qs(event,this)" class=SI href="#84">test_mode</a><a  href="hierarchy-s.p17.html#test_mode___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+
+<a name="126"></a>   <span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#148">ERROR</a><a  href="hierarchy-s.p5.html#ERROR___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="127"></a>   <span class=K>output</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0] <a  onClick="return qs(event,this)" class=SO href="#155">itag_dout</a><a  href="hierarchy-s.p9.html#itag_dout___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="128"></a>   <span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#155">itag_vld</a><a  href="hierarchy-s.p9.html#itag_vld___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="129"></a>   <span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#155">itag_hit</a><a  href="hierarchy-s.p9.html#itag_hit___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="131"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#147">BACKGROUND</a><a  href="hierarchy-s.p2.html#BACKGROUND___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="132"></a>   <span class=K>wire</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>-4:0] <a  onClick="return qs(event,this)" class=SW href="#145">BIST_ADR</a><a  href="hierarchy-s.p2.html#BIST_ADR___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="133"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#133">BIST_CLK</a><a  href="hierarchy-s.p2.html#BIST_CLK___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="134"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#146">BIST_ON</a><a  href="hierarchy-s.p2.html#BIST_ON___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="135"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#145">BIST_WE</a><a  href="hierarchy-s.p2.html#BIST_WE___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="136"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#146">END_SEQ</a><a  href="hierarchy-s.p5.html#END_SEQ___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="137"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#146">ERRN_ON</a><a  href="hierarchy-s.p5.html#ERRN_ON___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="138"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#145">INVERSE</a><a  href="hierarchy-s.p9.html#INVERSE___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="139"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#147">NO_COMP</a><a  href="hierarchy-s.p12.html#NO_COMP___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="140"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#160">rritag_ERROR</a><a  href="hierarchy-s.p15.html#rritag_ERROR___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="141"></a>   <span class=K>wire</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>+1:0] <a  onClick="return qs(event,this)" class=SW href="#160">PATTERN</a><a  href="hierarchy-s.p14.html#PATTERN___itag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+
+<a name="itag_top_Controller_Ins"></a><a name="143"></a>   <a  onClick="return qs(event,this)" class=MM href="#itag_Controller">itag_Controller</a>  Controller_Ins ( <span class=SI>.TCLK</span>(<a  onClick="return qs(event,this)" class=SI href="#122">clk</a>), <span class=SI>.TRESET</span>(<a  onClick="return qs(event,this)" class=SI href="#116">bist_reset</a>), <span class=SI>.MODE</span>(<a  onClick="return qs(event,this)" class=SI href="#117">bist_mode</a>),
+<a name="144"></a>               <span class=SI>.test_mode</span>(<a  onClick="return qs(event,this)" class=SI href="#124">test_mode</a>), <span class=SI>.rritag_ERROR</span>(<a  onClick="return qs(event,this)" class=SW href="#160">rritag_ERROR</a>), 
+<a name="145"></a>               <a  onClick="return qs(event,this)" class=SO href="#317">.BIST_ADR</a>(<a  onClick="return qs(event,this)" class=SW href="#132">BIST_ADR</a>), <a  onClick="return qs(event,this)" class=SO href="#319">.BIST_WE</a>(<a  onClick="return qs(event,this)" class=SW href="#135">BIST_WE</a>), <a  onClick="return qs(event,this)" class=SO href="#319">.INVERSE</a>(<a  onClick="return qs(event,this)" class=SW href="#138">INVERSE</a>),
+<a name="146"></a>               <a  onClick="return qs(event,this)" class=SO href="#319">.END_SEQ</a>(<a  onClick="return qs(event,this)" class=SW href="#136">END_SEQ</a>), <a  onClick="return qs(event,this)" class=SO href="#319">.BIST_ON</a>(<a  onClick="return qs(event,this)" class=SW href="#134">BIST_ON</a>), <a  onClick="return qs(event,this)" class=SO href="#319">.ERRN_ON</a>(<a  onClick="return qs(event,this)" class=SW href="#137">ERRN_ON</a>),
+<a name="147"></a>               <a  onClick="return qs(event,this)" class=SO href="#319">.NO_COMP</a>(<a  onClick="return qs(event,this)" class=SW href="#139">NO_COMP</a>), <a  onClick="return qs(event,this)" class=SO href="#319">.BACKGROUND</a>(<a  onClick="return qs(event,this)" class=SW href="#131">BACKGROUND</a>), 
+<a name="148"></a>               <a  onClick="return qs(event,this)" class=SO href="#320">.DONE</a>(), <a  onClick="return qs(event,this)" class=SO href="#320">.ERROR</a>(<a  onClick="return qs(event,this)" class=SO href="#126">ERROR</a>), <a  onClick="return qs(event,this)" class=SO href="#320">.FAIL</a>() );
+
+<a name="itag_top_itag"></a><a name="150"></a>   <a  onClick="return qs(event,this)" class=MM href="#itag">itag</a>  itag ( <span class=SI>.icu_tag_addr</span>(<a  onClick="return qs(event,this)" class=SI href="#118">icu_tag_addr</a>), <span class=SI>.bist_icu_tag_addr</span>(<a  onClick="return qs(event,this)" class=SW href="#145">BIST_ADR</a>),
+<a name="151"></a>         <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#122">clk</a>), <span class=SI>.icu_tag_in</span>(<a  onClick="return qs(event,this)" class=SI href="#119">icu_tag_in</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0]), <span class=SI>.icu_tag_vld</span>(<a  onClick="return qs(event,this)" class=SI href="#120">icu_tag_vld</a>),
+<a name="152"></a>         <span class=SI>.bist_icu_tag_in</span>(<a  onClick="return qs(event,this)" class=SW href="#160">PATTERN</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>+1:1]), <span class=SI>.bist_icu_tag_vld</span>(<a  onClick="return qs(event,this)" class=SW href="#160">PATTERN</a>[0]), 
+<a name="153"></a>         <span class=SI>.icu_tag_we</span>(<a  onClick="return qs(event,this)" class=SI href="#121">icu_tag_we</a>), <span class=SI>.bist_icu_tag_we</span>(<a  onClick="return qs(event,this)" class=SW href="#145">BIST_WE</a>), <span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="#123">enable</a>),
+<a name="154"></a>         <span class=SI>.bist_enable</span>(1'b1), <span class=SI>.test_mode</span>(<a  onClick="return qs(event,this)" class=SI href="#124">test_mode</a>), 
+<a name="155"></a>         <a  onClick="return qs(event,this)" class=SO href="#234">.itag_dout</a>(<a  onClick="return qs(event,this)" class=SO href="#127">itag_dout</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0]), <a  onClick="return qs(event,this)" class=SO href="#234">.itag_vld</a>(<a  onClick="return qs(event,this)" class=SO href="#128">itag_vld</a>), <a  onClick="return qs(event,this)" class=SO href="#250">.itag_hit</a>(<a  onClick="return qs(event,this)" class=SO href="#129">itag_hit</a>) );
+
+<a name="itag_top_rritag_Bist_Ins"></a><a name="157"></a>   <a  onClick="return qs(event,this)" class=MM href="#rritag_LocalBist">rritag_LocalBist</a> rritag_Bist_Ins ( <span class=SI>.func_do</span>({<a  onClick="return qs(event,this)" class=SO href="#155">itag_dout</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0],<a  onClick="return qs(event,this)" class=SO href="#155">itag_vld</a>}), <span class=SI>.BIST_WE</span>(<a  onClick="return qs(event,this)" class=SW href="#145">BIST_WE</a>),
+<a name="158"></a>         <span class=SI>.ERRN_ON</span>(<a  onClick="return qs(event,this)" class=SW href="#146">ERRN_ON</a>), <span class=SI>.INVERSE</span>(<a  onClick="return qs(event,this)" class=SW href="#145">INVERSE</a>), <span class=SI>.NO_COMP</span>(<a  onClick="return qs(event,this)" class=SW href="#147">NO_COMP</a>),
+<a name="159"></a>         <span class=SI>.END_SEQ</span>(<a  onClick="return qs(event,this)" class=SW href="#146">END_SEQ</a>), <span class=SI>.BACKGROUND</span>(<a  onClick="return qs(event,this)" class=SW href="#147">BACKGROUND</a>), <span class=SI>.BIST_ADR</span>(<a  onClick="return qs(event,this)" class=SW href="#145">BIST_ADR</a>),
+<a name="160"></a>         <a  onClick="return qs(event,this)" class=SO href="#307">.rritag_ERROR</a>(<a  onClick="return qs(event,this)" class=SW href="#140">rritag_ERROR</a>), <a  onClick="return qs(event,this)" class=SO href="#308">.PATTERN</a>(<a  onClick="return qs(event,this)" class=SW href="#141">PATTERN</a>) );
+
+<span class=K>endmodule</span>
+
+
+<span class=C>// synopsys translate_off
+</span><a name="itag"></a><a  href="itag_shell.v.html#itag_top_itag"><IMG alt="[Up: itag_top itag]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span>  <span class=MM>itag</span><a  href="hierarchy-m.p3.html#itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>    (
+                <a  onClick="return qs(event,this)" class=SI href="#185">icu_tag_in</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#186">icu_tag_vld</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#187">icu_tag_we</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#188">icu_tag_addr</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#189">enable</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#190">test_mode</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#191">bist_icu_tag_in</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#192">bist_icu_tag_vld</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#193">bist_icu_tag_we</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#194">bist_icu_tag_addr</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#195">bist_enable</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#196">clk</a>,
+                <a  onClick="return qs(event,this)" class=SO href="#198">itag_vld</a>,
+                <a  onClick="return qs(event,this)" class=SO href="#197">itag_dout</a>,
+                <a  onClick="return qs(event,this)" class=SO href="#199">itag_hit</a>
+                );
+
+
+<a name="185"></a><span class=K>input</span>   [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0]     <a  onClick="return qs(event,this)" class=SI href="#151">icu_tag_in</a><a  href="hierarchy-s.p9.html#icu_tag_in___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// Write data_in  -- address portion of tag
+</span><a name="186"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#151">icu_tag_vld</a><a  href="hierarchy-s.p9.html#icu_tag_vld___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    <span class=C>// valid bit   -- valid bit of the tag
+</span><a name="187"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#153">icu_tag_we</a><a  href="hierarchy-s.p9.html#icu_tag_we___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// Write enable for tag array
+</span><a name="188"></a><span class=K>input</span>   [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:4]     <a  onClick="return qs(event,this)" class=SI href="#150">icu_tag_addr</a><a  href="hierarchy-s.p9.html#icu_tag_addr___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;   <span class=C>// Address inputs for reading tag
+</span><a name="189"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#153">enable</a><a  href="hierarchy-s.p5.html#enable___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// power down mode
+</span><a name="190"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#154">test_mode</a><a  href="hierarchy-s.p17.html#test_mode___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="191"></a><span class=K>input</span>   [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0]     <a  onClick="return qs(event,this)" class=SI href="#152">bist_icu_tag_in</a><a  href="hierarchy-s.p2.html#bist_icu_tag_in___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;        <span class=C>// BIST Write data_in  -- address portion of tag
+</span><a name="192"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#152">bist_icu_tag_vld</a><a  href="hierarchy-s.p2.html#bist_icu_tag_vld___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       <span class=C>// BIST valid bit   -- valid bit of the tag
+</span><a name="193"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#153">bist_icu_tag_we</a><a  href="hierarchy-s.p2.html#bist_icu_tag_we___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;        <span class=C>// BIST Write enable for tag array
+</span><a name="194"></a><span class=K>input</span>   [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:4]     <a  onClick="return qs(event,this)" class=SI href="#150">bist_icu_tag_addr</a><a  href="hierarchy-s.p2.html#bist_icu_tag_addr___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;      <span class=C>// BIST Address inputs for reading tag
+</span><a name="195"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#195">bist_enable</a><a  href="hierarchy-s.p2.html#bist_enable___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// BIST enable
+</span><a name="196"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#151">clk</a><a  href="hierarchy-s.p3.html#clk___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// Clock
+</span><a name="197"></a><span class=K>output</span>  [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0]     <a  onClick="return qs(event,this)" class=SO href="#234">itag_dout</a><a  href="hierarchy-s.p9.html#itag_dout___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;      <span class=C>// Tag output
+</span><a name="198"></a><span class=K>output</span>                  <a  onClick="return qs(event,this)" class=SO href="#234">itag_vld</a><a  href="hierarchy-s.p9.html#itag_vld___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       <span class=C>// valid bit
+</span><a name="199"></a><span class=K>output</span>                  <a  onClick="return qs(event,this)" class=SO href="#250">itag_hit</a><a  href="hierarchy-s.p9.html#itag_hit___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>wire</span>    [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0]     <a  onClick="return qs(event,this)" class=SO href="#197">itag_dout</a>;      <span class=C>// Tag output
+</span><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SO href="#198">itag_vld</a>;       <span class=C>// valid bit
+</span>
+
+<a name="205"></a><span class=K>reg</span>     [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>+1:0]   <a  onClick="return qs(event,this)" class=SR href="#226">tag_in_q</a><a  href="hierarchy-s.p17.html#tag_in_q___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="206"></a><span class=K>reg</span>     [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:4]     <a  onClick="return qs(event,this)" class=SR href="#227">addr_q</a><a  href="hierarchy-s.html#addr_q___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="207"></a><span class=K>reg</span>                     <a  onClick="return qs(event,this)" class=SR href="#229">tag_we_q</a><a  href="hierarchy-s.p17.html#tag_we_q___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="208"></a><span class=K>reg</span>                     <a  onClick="return qs(event,this)" class=SR href="#228">enable_q</a><a  href="hierarchy-s.p5.html#enable_q___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="209"></a><span class=K>reg</span>                     <a  onClick="return qs(event,this)" class=SR href="#225">test_mode_q</a><a  href="hierarchy-s.p17.html#test_mode_q___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="211"></a><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SW href="#217">itag_enable</a><a  href="hierarchy-s.p9.html#itag_enable___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="212"></a><span class=K>wire</span>    [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>+1:0]   <a  onClick="return qs(event,this)" class=SW href="#219">sel_tag_in</a><a  href="hierarchy-s.p16.html#sel_tag_in___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="213"></a><span class=K>wire</span>    [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:4]     <a  onClick="return qs(event,this)" class=SW href="#218">sel_addr</a><a  href="hierarchy-s.p16.html#sel_addr___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="214"></a><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SW href="#220">sel_tag_we</a><a  href="hierarchy-s.p16.html#sel_tag_we___itag"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<a name="217"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#211">itag_enable</a> = (<a  onClick="return qs(event,this)" class=SR href="#225">test_mode_q</a>)?<a  onClick="return qs(event,this)" class=SI href="#195">bist_enable</a>:<a  onClick="return qs(event,this)" class=SI href="#189">enable</a>;
+<a name="218"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#213">sel_addr</a> = (<a  onClick="return qs(event,this)" class=SR href="#225">test_mode_q</a>)?<a  onClick="return qs(event,this)" class=SI href="#194">bist_icu_tag_addr</a>:<a  onClick="return qs(event,this)" class=SI href="#188">icu_tag_addr</a>;
+<a name="219"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#212">sel_tag_in</a> = (<a  onClick="return qs(event,this)" class=SR href="#225">test_mode_q</a>)?{<a  onClick="return qs(event,this)" class=SI href="#191">bist_icu_tag_in</a>,<a  onClick="return qs(event,this)" class=SI href="#192">bist_icu_tag_vld</a> }:{<a  onClick="return qs(event,this)" class=SI href="#185">icu_tag_in</a>,<a  onClick="return qs(event,this)" class=SI href="#186">icu_tag_vld</a> };
+<a name="220"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#214">sel_tag_we</a> = (<a  onClick="return qs(event,this)" class=SR href="#225">test_mode_q</a>)?<a  onClick="return qs(event,this)" class=SI href="#193">bist_icu_tag_we</a>:<a  onClick="return qs(event,this)" class=SI href="#187">icu_tag_we</a>;
+
+<span class=C>/****** Latch the inputs *****/</span>
+
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#196">clk</a>) <span class=K>fork</span>
+<a name="225"></a>        <a  onClick="return qs(event,this)" class=SR href="#209">test_mode_q</a> = #1 <a  onClick="return qs(event,this)" class=SI href="#190">test_mode</a>;
+<a name="226"></a>        <a  onClick="return qs(event,this)" class=SR href="#205">tag_in_q</a> = #1 <a  onClick="return qs(event,this)" class=SW href="#219">sel_tag_in</a>;
+<a name="227"></a>        <a  onClick="return qs(event,this)" class=SR href="#206">addr_q</a> = #1 <a  onClick="return qs(event,this)" class=SW href="#218">sel_addr</a>;
+<a name="228"></a>        <a  onClick="return qs(event,this)" class=SR href="#208">enable_q</a> = #1 <a  onClick="return qs(event,this)" class=SW href="#217">itag_enable</a>;
+<a name="229"></a>        <a  onClick="return qs(event,this)" class=SR href="#207">tag_we_q</a> = #1 <a  onClick="return qs(event,this)" class=SW href="#220">sel_tag_we</a>;
+<span class=K>join</span>
+
+
+<a name="itag_itram"></a><a name="233"></a><a  onClick="return qs(event,this)" class=MM href="#itram">itram</a>   itram(  <span class=SI>.adr</span>(<a  onClick="return qs(event,this)" class=SR href="#227">addr_q</a>),
+<a name="234"></a>                  <a  onClick="return qs(event,this)" class=SO href="#289">.do</a> ({<a  onClick="return qs(event,this)" class=SO href="#197">itag_dout</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0],<a  onClick="return qs(event,this)" class=SO href="#198">itag_vld</a>}),
+<a name="235"></a>                  <span class=SI>.di</span> (<a  onClick="return qs(event,this)" class=SR href="#226">tag_in_q</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>+1:0]),
+<a name="236"></a>                  <span class=SI>.we</span> (<a  onClick="return qs(event,this)" class=SR href="#229">tag_we_q</a>),
+<a name="237"></a>                  <span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SR href="#228">enable_q</a>),
+<a name="238"></a>                  <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#196">clk</a>)
+                  );
+
+<span class=C>// Replacing hardcoded comparator with configurable (depending on cache size) code.
+</span>
+<span class=C>/*
+cmp19_e hit_cmp(  .ai({itag_vld,itag_dout[`it_msb:0]}),
+                  .bi({1'b1,tag_in_q[`it_msb+1:1]}),
+                  .a_eql_b(itag_hit)
+                  );
+*/</span>
+
+<a name="250"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#199">itag_hit</a> = ({<a  onClick="return qs(event,this)" class=SO href="#234">itag_vld</a>,<a  onClick="return qs(event,this)" class=SO href="#234">itag_dout</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0]} == {1'b1,<a  onClick="return qs(event,this)" class=SR href="#226">tag_in_q</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>+1:1]});
+
+
+
+<span class=K>endmodule</span>
+
+<span class=C>// Module Definition of Tag RAM
+</span>
+<a name="itram"></a><a  href="itag_shell.v.html#itag_itram"><IMG alt="[Up: itag itram]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>itram</span><a  href="hierarchy-m.p3.html#itram"><IMG align=top border=0 SRC="v2html-i.gif"></a>(
+                <a  onClick="return qs(event,this)" class=SI href="#267">adr</a>,
+                <a  onClick="return qs(event,this)" class=SO href="#269">do</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#268">di</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#271">we</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#272">enable</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#270">clk</a>
+                );
+
+<a name="267"></a><span class=K>input</span>   [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#136">it_index</a>:0]   <a  onClick="return qs(event,this)" class=SI href="#233">adr</a><a  href="hierarchy-s.html#adr___itram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="268"></a><span class=K>input</span>   [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>+1:0]   <a  onClick="return qs(event,this)" class=SI href="#235">di</a><a  href="hierarchy-s.p4.html#di___itram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="269"></a><span class=K>output</span>  [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>+1:0]   <a  onClick="return qs(event,this)" class=SO href="#289">do</a><a  href="hierarchy-s.p4.html#do___itram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="270"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#238">clk</a><a  href="hierarchy-s.p3.html#clk___itram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="271"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#236">we</a><a  href="hierarchy-s.p20.html#we___itram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="272"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#237">enable</a><a  href="hierarchy-s.p5.html#enable___itram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<a name="275"></a><span class=K>wire</span>    <a  onClick="return qs(event,this)" class=SW href="#284">we_</a><a  href="hierarchy-s.p20.html#we____itram"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="276"></a><span class=K>wire</span>    <a  onClick="return qs(event,this)" class=SW href="#286">unknown_adr</a><a  href="hierarchy-s.p18.html#unknown_adr___itram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+
+<span class=C>// itag ram instantiated, maxblocks = 512 by default
+</span><a name="281"></a><span class=K>reg</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>+1:0] <a  onClick="return qs(event,this)" class=SR href="#293">t_ram</a><a  href="hierarchy-s.p17.html#t_ram___itram"><IMG align=top border=0 SRC="v2html-i.gif"></a> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#137">it_mxblks</a>:0] ;
+
+
+<a name="284"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#275">we_</a>      = ~(<a  onClick="return qs(event,this)" class=SI href="#271">we</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#272">enable</a> &amp; ~<a  onClick="return qs(event,this)" class=SI href="#270">clk</a>);
+
+<a name="286"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#276">unknown_adr</a> = (^<a  onClick="return qs(event,this)" class=SI href="#267">adr</a> === 1'bx) ;
+
+<span class=C>// Itag Read
+</span><a name="289"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#269">do</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>+1:0]   = (!<a  onClick="return qs(event,this)" class=SI href="#272">enable</a>)? (<a  onClick="return qs(event,this)" class=SO href="#289">do</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>+1:0]):
+                            ((<a  onClick="return qs(event,this)" class=SW href="#286">unknown_adr</a>)? {2'bx,{<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>{1'bx}}}:<a  onClick="return qs(event,this)" class=SR href="#293">t_ram</a>[<a  onClick="return qs(event,this)" class=SI href="#267">adr</a>]);
+
+<span class=C>// Write itag
+</span><a name="293"></a><span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SW href="#275">we_</a>) <a  onClick="return qs(event,this)" class=SR href="#281">t_ram</a>[<a  onClick="return qs(event,this)" class=SI href="#267">adr</a>] = <a  onClick="return qs(event,this)" class=SI href="#268">di</a>;
+
+<span class=K>endmodule</span>
+<span class=C>// synopsys translate_on
+</span>
+
+<a name="rritag_LocalBist"></a><a  href="itag_shell.v.html#itag_top_rritag_Bist_Ins"><IMG alt="[Up: itag_top rritag_Bist_Ins]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>rritag_LocalBist</span><a  href="hierarchy-m.p4.html#rritag_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a> ( <a  onClick="return qs(event,this)" class=SI href="#304">BIST_ADR</a>, <a  onClick="return qs(event,this)" class=SI href="#305">BIST_WE</a>, <a  onClick="return qs(event,this)" class=SI href="#303">func_do</a>, 
+    <a  onClick="return qs(event,this)" class=SI href="#305">ERRN_ON</a>, <a  onClick="return qs(event,this)" class=SI href="#306">INVERSE</a>, <a  onClick="return qs(event,this)" class=SI href="#306">NO_COMP</a>, 
+    <a  onClick="return qs(event,this)" class=SI href="#306">END_SEQ</a>, <a  onClick="return qs(event,this)" class=SI href="#306">BACKGROUND</a>, <a  onClick="return qs(event,this)" class=SO href="#307">rritag_ERROR</a>, <a  onClick="return qs(event,this)" class=SO href="#308">PATTERN</a> );
+
+<a name="303"></a><span class=K>input</span>  [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>+1:0] <a  onClick="return qs(event,this)" class=SI href="#157">func_do</a><a  href="hierarchy-s.p6.html#func_do___rritag_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="304"></a><span class=K>input</span>  [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>-4:0] <a  onClick="return qs(event,this)" class=SI href="#159">BIST_ADR</a><a  href="hierarchy-s.p2.html#BIST_ADR___rritag_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="305"></a><span class=K>input</span>  <a  onClick="return qs(event,this)" class=SI href="#157">BIST_WE</a><a  href="hierarchy-s.p2.html#BIST_WE___rritag_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#158">ERRN_ON</a><a  href="hierarchy-s.p5.html#ERRN_ON___rritag_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="306"></a>    <a  onClick="return qs(event,this)" class=SI href="#158">INVERSE</a><a  href="hierarchy-s.p9.html#INVERSE___rritag_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#158">NO_COMP</a><a  href="hierarchy-s.p12.html#NO_COMP___rritag_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#159">END_SEQ</a><a  href="hierarchy-s.p5.html#END_SEQ___rritag_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#159">BACKGROUND</a><a  href="hierarchy-s.p2.html#BACKGROUND___rritag_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="307"></a><span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#307">rritag_ERROR</a><a  href="hierarchy-s.p15.html#rritag_ERROR___rritag_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="308"></a><span class=K>output</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>+1:0] <a  onClick="return qs(event,this)" class=SO href="#308">PATTERN</a><a  href="hierarchy-s.p14.html#PATTERN___rritag_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>endmodule</span>
+
+
+<a name="itag_Controller"></a><a  href="itag_shell.v.html#itag_top_Controller_Ins"><IMG alt="[Up: itag_top Controller_Ins]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>itag_Controller</span><a  href="hierarchy-m.p3.html#itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a> ( <a  onClick="return qs(event,this)" class=SI href="#318">TCLK</a>, <a  onClick="return qs(event,this)" class=SI href="#318">TRESET</a>, <a  onClick="return qs(event,this)" class=SI href="#316">MODE</a>, <a  onClick="return qs(event,this)" class=SI href="#318">rritag_ERROR</a>, <a  onClick="return qs(event,this)" class=SO href="#317">BIST_ADR</a>, <a  onClick="return qs(event,this)" class=SO href="#319">BIST_WE</a>, 
+    <a  onClick="return qs(event,this)" class=SO href="#319">INVERSE</a>, <a  onClick="return qs(event,this)" class=SO href="#319">END_SEQ</a>, <a  onClick="return qs(event,this)" class=SO href="#319">BIST_ON</a>, <a  onClick="return qs(event,this)" class=SO href="#319">ERRN_ON</a>, <a  onClick="return qs(event,this)" class=SO href="#319">NO_COMP</a>, <a  onClick="return qs(event,this)" class=SO href="#319">BACKGROUND</a>, <a  onClick="return qs(event,this)" class=SO href="#320">DONE</a>, 
+    <a  onClick="return qs(event,this)" class=SO href="#320">ERROR</a>, <a  onClick="return qs(event,this)" class=SO href="#320">FAIL</a>, <a  onClick="return qs(event,this)" class=SI href="#318">test_mode</a> );
+<a name="316"></a><span class=K>input</span>  [1:0] <a  onClick="return qs(event,this)" class=SI href="#143">MODE</a><a  href="hierarchy-s.p11.html#MODE___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="317"></a><span class=K>output</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>-4:0] <a  onClick="return qs(event,this)" class=SO href="#317">BIST_ADR</a><a  href="hierarchy-s.p2.html#BIST_ADR___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="318"></a><span class=K>input</span>  <a  onClick="return qs(event,this)" class=SI href="#143">TCLK</a><a  href="hierarchy-s.p17.html#TCLK___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#143">TRESET</a><a  href="hierarchy-s.p17.html#TRESET___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#144">rritag_ERROR</a><a  href="hierarchy-s.p15.html#rritag_ERROR___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#144">test_mode</a><a  href="hierarchy-s.p17.html#test_mode___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="319"></a><span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#319">BIST_WE</a><a  href="hierarchy-s.p2.html#BIST_WE___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#319">INVERSE</a><a  href="hierarchy-s.p9.html#INVERSE___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#319">END_SEQ</a><a  href="hierarchy-s.p5.html#END_SEQ___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#319">BIST_ON</a><a  href="hierarchy-s.p2.html#BIST_ON___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#319">ERRN_ON</a><a  href="hierarchy-s.p5.html#ERRN_ON___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#319">NO_COMP</a><a  href="hierarchy-s.p12.html#NO_COMP___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#319">BACKGROUND</a><a  href="hierarchy-s.p2.html#BACKGROUND___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="320"></a>    <a  onClick="return qs(event,this)" class=SO href="#320">DONE</a><a  href="hierarchy-s.p4.html#DONE___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#320">ERROR</a><a  href="hierarchy-s.p5.html#ERROR___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#320">FAIL</a><a  href="hierarchy-s.p6.html#FAIL___itag_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>endmodule</span>
+
+
+<a name="itag_misc"></a><a  href="itag_shell.v.html#itag_shell_i_itag_misc"><IMG alt="[Up: itag_shell i_itag_misc]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span>  <span class=MM>itag_misc</span><a  href="hierarchy-m.p3.html#itag_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a> (     <a  onClick="return qs(event,this)" class=SI href="#333">enable</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#334">icu_tag_in</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#335">icu_tag_vld</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#336">icu_tag_we</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#337">icu_tag_addr</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#338">clk</a>
+                        );
+
+<a name="333"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#91">enable</a><a  href="hierarchy-s.p5.html#enable___itag_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// power down mode
+</span><a name="334"></a><span class=K>input</span>   [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0]     <a  onClick="return qs(event,this)" class=SI href="#92">icu_tag_in</a><a  href="hierarchy-s.p9.html#icu_tag_in___itag_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// Write data_in  -- address portion of tag
+</span><a name="335"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#93">icu_tag_vld</a><a  href="hierarchy-s.p9.html#icu_tag_vld___itag_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    <span class=C>// valid bit   -- valid bit of the tag
+</span><a name="336"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#94">icu_tag_we</a><a  href="hierarchy-s.p9.html#icu_tag_we___itag_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// Write enable for tag array
+</span><a name="337"></a><span class=K>input</span>   [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:4]     <a  onClick="return qs(event,this)" class=SI href="#95">icu_tag_addr</a><a  href="hierarchy-s.p9.html#icu_tag_addr___itag_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;   <span class=C>// Address inputs for reading tag
+</span><a name="338"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#96">clk</a><a  href="hierarchy-s.p3.html#clk___itag_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// Clock
+</span><a name="339"></a><span class=K>reg</span>    [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:0]     <a  onClick="return qs(event,this)" class=SR href="#372">icu_tag_in_q</a><a  href="hierarchy-s.p9.html#icu_tag_in_q___itag_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;   <span class=C>// Write data_in  -- address portion of tag
+</span><a name="340"></a><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SW href="#377">icu_tag_vld_q</a><a  href="hierarchy-s.p9.html#icu_tag_vld_q___itag_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  <span class=C>// valid bit   -- valid bit of the tag
+</span><a name="341"></a><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SW href="#382">icu_tag_we_q</a><a  href="hierarchy-s.p9.html#icu_tag_we_q___itag_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;   <span class=C>// Write enable for tag array
+</span><a name="342"></a><span class=K>reg</span>    [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:4]     <a  onClick="return qs(event,this)" class=SR href="#357">icu_tag_addr_q</a><a  href="hierarchy-s.p9.html#icu_tag_addr_q___itag_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>; <span class=C>// Address inputs for reading tag
+</span><a name="343"></a><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SW href="#387">enable_q</a><a  href="hierarchy-s.p5.html#enable_q___itag_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       <span class=C>// power down mode
+</span>
+
+
+<span class=C>// Replacing hardcoded flops with configurable (depending on cache size) code.
+</span><span class=C>/*
+mj_s_ff_s_d_10 i_icu_tag_addr_ff (      .out(icu_tag_addr_q), 
+                                        .din(icu_tag_addr),
+                                        .clk(clk)
+                                        );
+*/</span>
+
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#338">clk</a>) <span class=K>begin</span>
+
+<a name="357"></a>	<a  onClick="return qs(event,this)" class=SR href="#342">icu_tag_addr_q</a> = #1 <a  onClick="return qs(event,this)" class=SI href="#337">icu_tag_addr</a>;
+<span class=K>end</span>
+
+
+<span class=C>// Replacing hardcoded flops with configurable (depending on cache size) code.
+</span>
+<span class=C>/*
+mj_s_ff_s_d_18 i_icu_tag_in_ff (        .out(icu_tag_in_q), 
+                                        .din(icu_tag_in),
+                                        .clk(clk)
+                                        );
+*/</span>
+
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#338">clk</a>) <span class=K>begin</span>
+
+<a name="372"></a>	<a  onClick="return qs(event,this)" class=SR href="#339">icu_tag_in_q</a> = #1 <a  onClick="return qs(event,this)" class=SI href="#334">icu_tag_in</a>;
+<span class=K>end</span>
+
+
+
+<a name="itag_misc_i_icu_tag_vld_ff"></a><a name="377"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_s_d">mj_s_ff_s_d</a> i_icu_tag_vld_ff (  <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#32">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#340">icu_tag_vld_q</a>),
+                                <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SI href="#335">icu_tag_vld</a>), 
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#338">clk</a>)
+                                );
+
+<a name="itag_misc_i_icu_tag_we_ff"></a><a name="382"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_s_d">mj_s_ff_s_d</a> i_icu_tag_we_ff (   <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#32">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#341">icu_tag_we_q</a>),
+                                <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SI href="#336">icu_tag_we</a>), 
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#338">clk</a>)
+                                );
+
+<a name="itag_misc_i_enable_ff"></a><a name="387"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_s_d">mj_s_ff_s_d</a> i_enable_ff (       <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#32">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#343">enable_q</a>), 
+                                <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SI href="#333">enable</a>),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#338">clk</a>)
+                                );
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:05 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/itag/rtl/itag_shell.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

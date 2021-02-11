@@ -1,0 +1,414 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/dcu/rtl/miss_cntl.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "miss_cntl.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+<a name="miss_cntl"></a><a  href="dcctl.v.html#dcctl_miss_cntl"><IMG alt="[Up: dcctl miss_cntl]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>miss_cntl</span><a  href="hierarchy-m.p3.html#miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>( 	
+			<a  onClick="return qs(event,this)" class=SO href="#55">dc_req</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#54">dc_idle</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#62">miss_wait</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#63">miss_idle</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#57">first_fill_cyc</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#56">last_fill_cyc</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#58">fill_cyc_active</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#61">dc_wr_cyc123</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#59">zeroline_busy</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#60">zeroline_cyc</a>,
+		        <a  onClick="return qs(event,this)" class=SO href="#64">dc_error</a>,
+	
+			<span class=C>// INPUTS
+</span>			<a  onClick="return qs(event,this)" class=SI href="#71">normal_ack</a>,
+	 		<a  onClick="return qs(event,this)" class=SI href="#70">zeroline_c</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#66">repl_start</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#73">error_ack</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#65">req_outstanding</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#68">dcu_miss_c</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#69">smu_na_st_c</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#72">nc_xaction</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#75">clk</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#77">so</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#76">sin</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#78">sm</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#74">reset_l</a>
+			 );
+
+
+
+<a name="54"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#105">dc_idle</a><a  href="hierarchy-s.p4.html#dc_idle___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>		;	<span class=C>// miss state m/c is in idle state
+</span><a name="55"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#109">dc_req</a><a  href="hierarchy-s.p4.html#dc_req___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>		;	<span class=C>// waiting for first ack 
+</span><a name="56"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#101">last_fill_cyc</a><a  href="hierarchy-s.p10.html#last_fill_cyc___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// The cycle of cache fill operation
+</span><a name="57"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#102">first_fill_cyc</a><a  href="hierarchy-s.p6.html#first_fill_cyc___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// first write to cache of the cache fill operation
+</span><a name="58"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#103">fill_cyc_active</a><a  href="hierarchy-s.p6.html#fill_cyc_active___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// cache fill cycle . data written into cache next cycle
+</span><a name="59"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#140">zeroline_busy</a><a  href="hierarchy-s.p21.html#zeroline_busy___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// zeroline instruction in progress
+</span><a name="60"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#141">zeroline_cyc</a><a  href="hierarchy-s.p21.html#zeroline_cyc___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// fill operation of zeroline active
+</span><a name="61"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#104">dc_wr_cyc123</a><a  href="hierarchy-s.p4.html#dc_wr_cyc123___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// the first 3 cycles of cache fill data written into cache.
+</span><a name="62"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#100">miss_wait</a><a  href="hierarchy-s.p11.html#miss_wait___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// wait until first ack is back
+</span><a name="63"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#108">miss_idle</a><a  href="hierarchy-s.p11.html#miss_idle___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// miss state machine is in idle state 
+</span><a name="64"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#113">dc_error</a><a  href="hierarchy-s.p4.html#dc_error___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// Erroneous transaction occurred
+</span><a name="65"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#442">req_outstanding</a><a  href="hierarchy-s.p15.html#req_outstanding___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;	<span class=C>// There is an outstanding memory request
+</span><a name="66"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#443">repl_start</a><a  href="hierarchy-s.p15.html#repl_start___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// need to replace line
+</span>
+<a name="68"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#444">dcu_miss_c</a><a  href="hierarchy-s.p4.html#dcu_miss_c___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// Cache miss in c stage
+</span><a name="69"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#445">smu_na_st_c</a><a  href="hierarchy-s.p16.html#smu_na_st_c___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// Not allocating Cache line
+</span><a name="70"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#446">zeroline_c</a><a  href="hierarchy-s.p21.html#zeroline_c___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// zeroline instruction in C stage
+</span><a name="71"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#447">normal_ack</a><a  href="hierarchy-s.p12.html#normal_ack___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// Normal acknowledge from memory. data valid in cycle
+</span><a name="72"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#448">nc_xaction</a><a  href="hierarchy-s.p12.html#nc_xaction___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// Noncacheable transaction
+</span><a name="73"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#449">error_ack</a><a  href="hierarchy-s.p5.html#error_ack___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// Erroneous transaction
+</span><a name="74"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#450">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>		;	<span class=C>// Reset
+</span><a name="75"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#451">clk</a><a  href="hierarchy-s.p3.html#clk___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>		;	<span class=C>// Clock
+</span><a name="76"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#76">sin</a><a  href="hierarchy-s.p16.html#sin___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>		;	<span class=C>// Scan Input
+</span><a name="77"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#77">so</a><a  href="hierarchy-s.p16.html#so___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>		;	<span class=C>// Scan Output
+</span><a name="78"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#78">sm</a><a  href="hierarchy-s.p16.html#sm___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>		;	<span class=C>// Scan Enable
+</span>
+
+<a name="81"></a><span class=K>wire</span>	[5:0]		<a  onClick="return qs(event,this)" class=SW href="#123">miss_state</a><a  href="hierarchy-s.p11.html#miss_state___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SO href="#64">dc_error</a>;
+<a name="83"></a><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SW href="#110">dc_wr_cyc1</a><a  href="hierarchy-s.p4.html#dc_wr_cyc1___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="84"></a><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SW href="#111">dc_wr_cyc2</a><a  href="hierarchy-s.p4.html#dc_wr_cyc2___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="85"></a><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SW href="#112">dc_wr_cyc3</a><a  href="hierarchy-s.p4.html#dc_wr_cyc3___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="86"></a><span class=K>wire</span>	[5:0]		<a  onClick="return qs(event,this)" class=SW href="#116">next_miss_state</a><a  href="hierarchy-s.p12.html#next_miss_state___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="87"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#139">zero_idle</a><a  href="hierarchy-s.p21.html#zero_idle___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="88"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#138">zero_last_cyc</a><a  href="hierarchy-s.p21.html#zero_last_cyc___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="89"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#137">zero_first_cyc</a><a  href="hierarchy-s.p21.html#zero_first_cyc___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="90"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#136">zero_fill_cyc</a><a  href="hierarchy-s.p21.html#zero_fill_cyc___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="91"></a><span class=K>wire</span>	[5:0]		<a  onClick="return qs(event,this)" class=SW href="#143">next_zero_state</a><a  href="hierarchy-s.p12.html#next_zero_state___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="92"></a><span class=K>wire</span>	[5:0]		<a  onClick="return qs(event,this)" class=SW href="#147">zero_state</a><a  href="hierarchy-s.p21.html#zero_state___miss_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<span class=C>// Cache fill write cycles
+</span>
+<span class=C>// Generation of miss_wait -- release pipe only when this is low.
+</span><span class=C>// release pipe once the first word has been returned or there is
+</span><span class=C>// an error.
+</span><a name="100"></a><span class=K>assign</span> 		<a  onClick="return qs(event,this)" class=SO href="#62">miss_wait</a> 	=  <a  onClick="return qs(event,this)" class=SO href="#109">dc_req</a> ;
+<a name="101"></a><span class=K>assign</span>          <a  onClick="return qs(event,this)" class=SO href="#56">last_fill_cyc</a>   = <a  onClick="return qs(event,this)" class=SW href="#112">dc_wr_cyc3</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#71">normal_ack</a> |<a  onClick="return qs(event,this)" class=SW href="#138">zero_last_cyc</a>;
+<a name="102"></a><span class=K>assign</span>          <a  onClick="return qs(event,this)" class=SO href="#57">first_fill_cyc</a>  = <a  onClick="return qs(event,this)" class=SO href="#109">dc_req</a> &amp;(<a  onClick="return qs(event,this)" class=SI href="#71">normal_ack</a>|<a  onClick="return qs(event,this)" class=SI href="#73">error_ack</a>) | <a  onClick="return qs(event,this)" class=SW href="#137">zero_first_cyc</a> ;
+<a name="103"></a><span class=K>assign</span>          <a  onClick="return qs(event,this)" class=SO href="#58">fill_cyc_active</a> = !<a  onClick="return qs(event,this)" class=SO href="#108">miss_idle</a>&amp; (<a  onClick="return qs(event,this)" class=SI href="#71">normal_ack</a> |<a  onClick="return qs(event,this)" class=SI href="#73">error_ack</a>) | <a  onClick="return qs(event,this)" class=SW href="#136">zero_fill_cyc</a> ;
+<a name="104"></a><span class=K>assign</span>          <a  onClick="return qs(event,this)" class=SO href="#61">dc_wr_cyc123</a>    = <a  onClick="return qs(event,this)" class=SI href="#71">normal_ack</a>&amp;(<a  onClick="return qs(event,this)" class=SO href="#109">dc_req</a> | <a  onClick="return qs(event,this)" class=SW href="#110">dc_wr_cyc1</a> | <a  onClick="return qs(event,this)" class=SW href="#111">dc_wr_cyc2</a> ) | <a  onClick="return qs(event,this)" class=SW href="#136">zero_fill_cyc</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="#138">zero_last_cyc</a>;
+<a name="105"></a><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SO href="#54">dc_idle</a>		=  <a  onClick="return qs(event,this)" class=SO href="#108">miss_idle</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#139">zero_idle</a> ;
+
+<span class=C>/********************************  MISS STATE MACHINE ***************************************/</span>
+<a name="108"></a><span class=K>assign</span>          <a  onClick="return qs(event,this)" class=SO href="#63">miss_idle</a>         = <a  onClick="return qs(event,this)" class=SW href="#123">miss_state</a>[0];
+<a name="109"></a><span class=K>assign</span>          <a  onClick="return qs(event,this)" class=SO href="#55">dc_req</a>          = <a  onClick="return qs(event,this)" class=SW href="#123">miss_state</a>[1];
+<a name="110"></a><span class=K>assign</span>          <a  onClick="return qs(event,this)" class=SW href="#83">dc_wr_cyc1</a>      = <a  onClick="return qs(event,this)" class=SW href="#123">miss_state</a>[2];
+<a name="111"></a><span class=K>assign</span>          <a  onClick="return qs(event,this)" class=SW href="#84">dc_wr_cyc2</a>      = <a  onClick="return qs(event,this)" class=SW href="#123">miss_state</a>[3];
+<a name="112"></a><span class=K>assign</span>          <a  onClick="return qs(event,this)" class=SW href="#85">dc_wr_cyc3</a>      = <a  onClick="return qs(event,this)" class=SW href="#123">miss_state</a>[4];
+<a name="113"></a><span class=K>assign</span>          <a  onClick="return qs(event,this)" class=SO href="#64">dc_error</a>        = <a  onClick="return qs(event,this)" class=SW href="#123">miss_state</a>[5];
+
+		
+<a name="116"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#86">next_miss_state</a>[5:0]	=	<a  onClick="return qs(event,this)" class=F href="#miss_cntl_miss_state_fn">miss_state_fn</a>(<a  onClick="return qs(event,this)" class=SW href="#123">miss_state</a>[5:0],
+					<a  onClick="return qs(event,this)" class=SI href="#65">req_outstanding</a>,
+					<a  onClick="return qs(event,this)" class=SI href="#68">dcu_miss_c</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="#70">zeroline_c</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="#69">smu_na_st_c</a>,
+					<a  onClick="return qs(event,this)" class=SI href="#71">normal_ack</a>,
+					<a  onClick="return qs(event,this)" class=SI href="#72">nc_xaction</a>,
+					<a  onClick="return qs(event,this)" class=SI href="#73">error_ack</a> );
+
+<a name="miss_cntl_miss_state_reg"></a><a name="123"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_5">ff_sr_5</a>        miss_state_reg( <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3878">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#81">miss_state</a>[5:1]),
+                                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#116">next_miss_state</a>[5:1]),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#75">clk</a>),
+                                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#74">reset_l</a>));
+
+<a name="miss_cntl_miss_state_reg_0"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s">ff_s</a>		miss_state_reg_0(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2137">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#81">miss_state</a>[0]),
+				<span class=SI>.din</span>(!<a  onClick="return qs(event,this)" class=SI href="#74">reset_l</a> | <a  onClick="return qs(event,this)" class=SW href="#116">next_miss_state</a>[0]),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#75">clk</a>));
+
+
+<span class=C>/********************************* ZEROLINE STATE MACHINE ************************************/</span>
+
+
+<a name="136"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#90">zero_fill_cyc</a>	= 	<a  onClick="return qs(event,this)" class=SW href="#147">zero_state</a>[2] | <a  onClick="return qs(event,this)" class=SW href="#147">zero_state</a>[3] | <a  onClick="return qs(event,this)" class=SW href="#147">zero_state</a>[4] | <a  onClick="return qs(event,this)" class=SW href="#147">zero_state</a>[5] ;
+<a name="137"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#89">zero_first_cyc</a>	=	<a  onClick="return qs(event,this)" class=SW href="#147">zero_state</a>[2] ;
+<a name="138"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#88">zero_last_cyc</a>	=	<a  onClick="return qs(event,this)" class=SW href="#147">zero_state</a>[5] ;
+<a name="139"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#87">zero_idle</a>	=	<a  onClick="return qs(event,this)" class=SW href="#147">zero_state</a>[0] ;
+<a name="140"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#59">zeroline_busy</a>	=	!<a  onClick="return qs(event,this)" class=SW href="#139">zero_idle</a>;
+<a name="141"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#60">zeroline_cyc</a>	=	<a  onClick="return qs(event,this)" class=SW href="#136">zero_fill_cyc</a> ;
+
+<a name="143"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#91">next_zero_state</a>[5:0]	=	<a  onClick="return qs(event,this)" class=F href="#miss_cntl_zero_state_fn">zero_state_fn</a>(<a  onClick="return qs(event,this)" class=SW href="#147">zero_state</a>[5:0],
+					<a  onClick="return qs(event,this)" class=SI href="#70">zeroline_c</a>,
+					<a  onClick="return qs(event,this)" class=SI href="#66">repl_start</a> );
+
+<a name="miss_cntl_zero_state_reg"></a><a name="147"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_5">ff_sr_5</a>	zero_state_reg( <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3878">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#92">zero_state</a>[5:1]),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#143">next_zero_state</a>[5:1]),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#75">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#74">reset_l</a>));
+
+<a name="miss_cntl_zero_state_reg_0"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s">ff_s</a>            zero_state_reg_0(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2137">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#92">zero_state</a>[0]),
+                                <span class=SI>.din</span>(!<a  onClick="return qs(event,this)" class=SI href="#74">reset_l</a> | <a  onClick="return qs(event,this)" class=SW href="#143">next_zero_state</a>[0]),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#75">clk</a>));
+
+				
+<span class=C>/******************************************************************************************/</span>
+
+<a name="miss_cntl_miss_state_fn"></a><span class=K>function</span> [5:0] <a  onClick="return qs(event,this)" class=F href="#miss_cntl_miss_state_fn">miss_state_fn</a> ;
+ 
+<a name="161"></a><span class=K>input</span>   [5:0]  <a  onClick="return qs(event,this)" class=SI href="#161">cur_state</a> ;
+<a name="162"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="#162">req_outstanding</a>;
+<a name="163"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="#163">dcu_miss</a> ;
+<a name="164"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="#164">normal_ack</a>;
+<a name="165"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="#165">noncacheable</a> ;
+<a name="166"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="#166">error_ack</a> ;
+ 
+<a name="168"></a><span class=K>reg</span>     [5:0]  <a  onClick="return qs(event,this)" class=SR href="#182">next_state</a>;
+<span class=C>// State Encoding
+</span><span class=K>parameter</span> 
+<a name="171"></a>        <a  onClick="return qs(event,this)" class=PA href="#248">IDLE</a>            = 6'b000001,
+<a name="172"></a>        <a  onClick="return qs(event,this)" class=PA href="#172">REQ_STATE</a>       = 6'b000010 ,
+<a name="173"></a>        <a  onClick="return qs(event,this)" class=PA href="#173">FILL_CYC1</a>     	= 6'b000100 ,
+<a name="174"></a>        <a  onClick="return qs(event,this)" class=PA href="#174">FILL_CYC2</a>     	= 6'b001000 ,
+<a name="175"></a>        <a  onClick="return qs(event,this)" class=PA href="#175">FILL_CYC3</a>     	= 6'b010000 ,
+<a name="176"></a>        <a  onClick="return qs(event,this)" class=PA href="#176">ERROR_STATE</a>     = 6'b100000 ;
+<span class=K>begin</span>
+ 
+<span class=K>case</span>    (<a  onClick="return qs(event,this)" class=SI href="#161">cur_state</a>)     <span class=C>// synopsys full_case parallel_case
+</span>        <a  onClick="return qs(event,this)" class=PA href="#248">IDLE</a>:   <span class=K>begin</span>
+                <span class=K>if</span>(!<a  onClick="return qs(event,this)" class=SI href="#162">req_outstanding</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#163">dcu_miss</a> ) <span class=K>begin</span>
+<a name="182"></a>                <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#172">REQ_STATE</a> ;
+                <span class=K>end</span>
+                <span class=K>else</span>    <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#161">cur_state</a> ;
+        <span class=K>end</span>
+        <a  onClick="return qs(event,this)" class=PA href="#172">REQ_STATE</a>: <span class=K>begin</span>
+                <span class=K>if</span> ( <a  onClick="return qs(event,this)" class=SI href="#164">normal_ack</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#165">noncacheable</a> ) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#248">IDLE</a> ;
+		<span class=K>end</span>
+                <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#164">normal_ack</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#165">noncacheable</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#173">FILL_CYC1</a> ;
+                <span class=K>end</span>
+                <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#166">error_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#176">ERROR_STATE</a> ;
+                <span class=K>end</span>
+                <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#161">cur_state</a> ;
+        <span class=K>end</span>
+ 
+	<a  onClick="return qs(event,this)" class=PA href="#173">FILL_CYC1</a>: <span class=K>begin</span>
+                <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#164">normal_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#174">FILL_CYC2</a> ;
+                <span class=K>end</span>
+                <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#166">error_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#176">ERROR_STATE</a> ;
+                <span class=K>end</span>
+                <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#161">cur_state</a> ;
+        <span class=K>end</span>
+
+        <a  onClick="return qs(event,this)" class=PA href="#174">FILL_CYC2</a>: <span class=K>begin</span>
+                <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#164">normal_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#175">FILL_CYC3</a> ;
+		<span class=K>end</span>
+                <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#166">error_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#176">ERROR_STATE</a> ;
+                <span class=K>end</span>
+                <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#161">cur_state</a> ;
+        <span class=K>end</span>
+ 
+        <a  onClick="return qs(event,this)" class=PA href="#175">FILL_CYC3</a>: <span class=K>begin</span>
+                <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#164">normal_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#248">IDLE</a> ;
+		<span class=K>end</span>
+                <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#166">error_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#176">ERROR_STATE</a> ;
+                <span class=K>end</span>
+                <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#161">cur_state</a> ;
+        <span class=K>end</span>
+
+        <a  onClick="return qs(event,this)" class=PA href="#176">ERROR_STATE</a>: <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#248">IDLE</a> ;
+                <span class=K>end</span>
+	<span class=K>default</span>:	<a  onClick="return qs(event,this)" class=SR href="#168">next_state</a> = 6'bx;
+<span class=K>endcase</span>
+<a  onClick="return qs(event,this)" class=F href="#miss_cntl_miss_state_fn">miss_state_fn</a> = <a  onClick="return qs(event,this)" class=SR href="#182">next_state</a> ;
+<span class=K>end</span>
+<span class=K>endfunction</span>
+	
+<span class=C>/**************************************************************************/</span>
+<a name="miss_cntl_zero_state_fn"></a><span class=K>function</span> [5:0]	<a  onClick="return qs(event,this)" class=F href="#miss_cntl_zero_state_fn">zero_state_fn</a> ;
+
+<a name="241"></a><span class=K>input</span> [5:0]	<a  onClick="return qs(event,this)" class=SI href="#241">cur_state</a>;
+<a name="242"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#242">zeroline_c</a>;
+<a name="243"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#243">repl_start</a>;
+
+<a name="245"></a><span class=K>reg</span>     [5:0]  <a  onClick="return qs(event,this)" class=SR href="#259">next_state</a>;
+<span class=C>// State Encoding
+</span><span class=K>parameter</span>
+<a name="248"></a>        <a  onClick="return qs(event,this)" class=PA href="#248">IDLE</a>         = 6'b000001,
+<a name="249"></a>	<a  onClick="return qs(event,this)" class=PA href="#249">WAIT</a>	     = 6'b000010,
+<a name="250"></a>        <a  onClick="return qs(event,this)" class=PA href="#250">FILL_1</a>       = 6'b000100 ,
+<a name="251"></a>        <a  onClick="return qs(event,this)" class=PA href="#251">FILL_2</a>       = 6'b001000 ,
+<a name="252"></a>        <a  onClick="return qs(event,this)" class=PA href="#252">FILL_3</a>       = 6'b010000 ,
+<a name="253"></a>        <a  onClick="return qs(event,this)" class=PA href="#253">FILL_4</a>       = 6'b100000 ;
+<span class=K>begin</span>
+ 
+<span class=K>case</span>    (<a  onClick="return qs(event,this)" class=SI href="#241">cur_state</a>)     <span class=C>// synopsys full_case parallel_case
+</span>        <a  onClick="return qs(event,this)" class=PA href="#248">IDLE</a>:   <span class=K>begin</span>
+		<span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#242">zeroline_c</a>&amp; !<a  onClick="return qs(event,this)" class=SI href="#243">repl_start</a>) <span class=K>begin</span>
+<a name="259"></a>		<a  onClick="return qs(event,this)" class=SR href="#245">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#250">FILL_1</a> ;
+		<span class=K>end</span>
+		<span class=K>else</span> <span class=K>if</span>	(<a  onClick="return qs(event,this)" class=SI href="#242">zeroline_c</a>&amp; <a  onClick="return qs(event,this)" class=SI href="#243">repl_start</a>) <span class=K>begin</span>
+		<a  onClick="return qs(event,this)" class=SR href="#245">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#249">WAIT</a> ;
+		<span class=K>end</span>
+		<span class=K>else</span>	<a  onClick="return qs(event,this)" class=SR href="#245">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#241">cur_state</a> ;
+	<span class=K>end</span>
+
+	<a  onClick="return qs(event,this)" class=PA href="#249">WAIT</a>:	<span class=K>begin</span>	
+		<a  onClick="return qs(event,this)" class=SR href="#245">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#250">FILL_1</a> ;
+		<span class=K>end</span>
+	
+	<a  onClick="return qs(event,this)" class=PA href="#250">FILL_1</a>:	<span class=K>begin</span>
+		<a  onClick="return qs(event,this)" class=SR href="#245">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#251">FILL_2</a>;
+		<span class=K>end</span>
+
+	<a  onClick="return qs(event,this)" class=PA href="#251">FILL_2</a>:	<span class=K>begin</span>
+		<a  onClick="return qs(event,this)" class=SR href="#245">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#252">FILL_3</a>;
+		<span class=K>end</span>
+
+	<a  onClick="return qs(event,this)" class=PA href="#252">FILL_3</a>:	<span class=K>begin</span>
+		<a  onClick="return qs(event,this)" class=SR href="#245">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#253">FILL_4</a>;
+		<span class=K>end</span>
+
+	<a  onClick="return qs(event,this)" class=PA href="#253">FILL_4</a>:	<span class=K>begin</span>
+		<a  onClick="return qs(event,this)" class=SR href="#245">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#248">IDLE</a> ;
+		<span class=K>end</span>
+	<span class=K>default</span>: <a  onClick="return qs(event,this)" class=SR href="#245">next_state</a> = 6'bx;
+<span class=K>endcase</span>
+
+<a  onClick="return qs(event,this)" class=F href="#miss_cntl_zero_state_fn">zero_state_fn</a> = <a  onClick="return qs(event,this)" class=SR href="#259">next_state</a> ;
+<span class=K>end</span>
+<span class=K>endfunction</span>
+	
+<a name="miss_cntl_spare"></a><a  onClick="return qs(event,this)" class=MM href="spare.v.html#mj_spare">mj_spare</a> spare(	<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#75">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#74">reset_l</a>));
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:45:52 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/dcu/rtl/miss_cntl.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

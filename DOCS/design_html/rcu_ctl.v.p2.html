@@ -1,0 +1,1121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/rcu/rtl/rcu_ctl.v page 2</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return "rcu_ctl.v.html"; }
+function last_page() { return ""; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<center><table class=NB cols=4 nosave><tr><td align="center"><a  href="rcu_ctl.v.html#bottom_of_page">Prev</a></td><td align="center"><a  href="rcu_ctl.v.html">1</a></td><td align="center"><font color="#808080">2</font></td><td align="center"><a  href="rcu_ctl.v.p3.html">3</a></td></tr></table></center>
+<pre>
+<span class=C>// All the bypass signals are latched in ex_dpath to imrpove timing on RS1 and RS2
+</span><span class=C>// The following flops are all moved to ex_dpath to improve timing 
+</span>
+<span class=C>// ff_sre	flop_bypass_rs1_estage(.out(bypass_data_rs1_estage_e),
+</span><span class=C>// 				.din(bypass_data_rs1_estage_r),
+</span><span class=C>// 				.clk(clk),
+</span><span class=C>// 				.enable(!(hold_e &amp; !ucode_active)),
+</span><span class=C>// 				.reset_l(reset_l));
+</span>
+<span class=C>// ff_sre	flop_bypass_rs1_cstage(.out(bypass_data_rs1_cstage_e),
+</span><span class=C>// 				.din(bypass_data_rs1_cstage_r),
+</span><span class=C>// 				.clk(clk),
+</span><span class=C>// 				.enable(!(hold_e &amp; !ucode_active)),
+</span><span class=C>// 				.reset_l(reset_l));
+</span>
+<span class=C>// ff_sre	flop_bypass_rs1_wstage(.out(bypass_data_rs1_wstage_e),
+</span><span class=C>// 				.din(bypass_data_rs1_wstage_r),
+</span><span class=C>// 				.clk(clk),
+</span><span class=C>// 				.enable(!(hold_e &amp; !ucode_active)),
+</span><span class=C>// 				.reset_l(reset_l));
+</span>
+<span class=C>// ff_sre	flop_nobypass_rs1(.out(nobypass_rs1_e),
+</span><span class=C>// 			.din(nobypass_rs1_r),
+</span><span class=C>// 			.clk(clk),
+</span><span class=C>// 			.enable(!(hold_e &amp; !ucode_active)),
+</span><span class=C>// 			.reset_l(reset_l));
+</span>
+<span class=C>//  This signal is used for selecting appr. data in EX stage
+</span><span class=C>// assign	rs1_forward_mux_sel[3] = bypass_data_rs1_estage_e;
+</span><span class=C>// assign	rs1_forward_mux_sel[2] = bypass_data_rs1_cstage_e;
+</span><span class=C>// assign	rs1_forward_mux_sel[1] = bypass_data_rs1_wstage_e;
+</span><span class=C>// assign	rs1_forward_mux_sel[0] = nobypass_rs1_e;
+</span>
+<a name="1034"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#232">rs1_forward_mux_sel</a>[3] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#988">bypass_data_rs1_estage_r</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#232">rs1_forward_mux_sel</a>[2] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#990">bypass_data_rs1_cstage_r</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#232">rs1_forward_mux_sel</a>[1] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#992">bypass_data_rs1_wstage_r</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#232">rs1_forward_mux_sel</a>[0] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#995">nobypass_rs1_r</a>;
+
+<span class=C>// For RS2
+</span>
+<span class=C>// In case of Global Reg matches or scache addr matches in estage 
+</span><span class=C>// bypass estage data and so-on.
+</span>
+<span class=C>// Removed the priority Encoder. bypass signals are used as mux selects in RS1 and
+</span><span class=C>// RS2 and these mux selects already go througha priority encoder. This improves
+</span><span class=C>// timing on byapss as well as RS1 and RS2 paths 
+</span>
+<span class=C>// assign	bypass_data_rs2_estage_r = ( bypass_gl_reg_rs2[0] | bypass_scache_rs2[0]);
+</span><span class=C>// assign	bypass_data_rs2_cstage_r = ( bypass_gl_reg_rs2[1] | bypass_scache_rs2[1]);
+</span><span class=C>// assign	bypass_data_rs2_wstage_r = ( bypass_gl_reg_rs2[2] | bypass_scache_rs2[2]);
+</span>
+<a name="1052"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#278">bypass_data_rs2_estage_r</a> = ( (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#885">bypass_gl_reg_rs2_e</a> &amp;<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#184">ucode_done</a>)
+						 | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#957">act_bypass_scache_rs2_e</a>);
+<a name="1054"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#279">bypass_data_rs2_cstage_r</a> = ( (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#890">bypass_gl_reg_rs2_c</a> &amp;<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#184">ucode_done</a>)
+						 | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#179">bypass_scache_rs2_c</a>);
+<a name="1056"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#280">bypass_data_rs2_wstage_r</a> = ( (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#895">bypass_gl_reg_rs2_w</a> &amp;<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#184">ucode_done</a>)
+						 | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#180">bypass_scache_rs2_w</a>);
+
+<a name="1059"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#288">nobypass_rs2_r</a> = !(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1052">bypass_data_rs2_estage_r</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1054">bypass_data_rs2_cstage_r</a> |
+			   <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1056">bypass_data_rs2_wstage_r</a>);
+
+<span class=C>// Whenver there's a bypass hit, we should not generate any scache read miss
+</span><a name="1063"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#274">bypass_hit_rs2_r</a> = (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1052">bypass_data_rs2_estage_r</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1054">bypass_data_rs2_cstage_r</a> |
+				<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1056">bypass_data_rs2_wstage_r</a>);
+
+<span class=C>// All the bypass signals are latched in ex_dpath to imrpove timing on RS1 and RS2
+</span><span class=C>// The following flops are all moved to ex_dpath to improve timing 
+</span>
+<span class=C>// ff_sre	flop_bypass_rs2_estage(.out(bypass_data_rs2_estage_e),
+</span><span class=C>// 				.din(bypass_data_rs2_estage_r),
+</span><span class=C>// 				.clk(clk),
+</span><span class=C>// 				.enable(!hold_e),
+</span><span class=C>// 				.reset_l(reset_l));
+</span>
+<span class=C>// ff_sre	flop_bypass_rs2_cstage(.out(bypass_data_rs2_cstage_e),
+</span><span class=C>// 				.din(bypass_data_rs2_cstage_r),
+</span><span class=C>// 				.clk(clk),
+</span><span class=C>// 				.enable(!hold_e),
+</span><span class=C>// 				.reset_l(reset_l));
+</span>
+<span class=C>// ff_sre	flop_bypass_rs2_wstage(.out(bypass_data_rs2_wstage_e),
+</span><span class=C>// 				.din(bypass_data_rs2_wstage_r),
+</span><span class=C>// 				.clk(clk),
+</span><span class=C>// 				.enable(!hold_e),
+</span><span class=C>// 				.reset_l(reset_l));
+</span>
+<span class=C>// ff_sre	flop_nobypass_rs2(.out(nobypass_rs2_e),
+</span><span class=C>// 			.din(nobypass_rs2_r),
+</span><span class=C>// 			.clk(clk),
+</span><span class=C>// 			.enable(!hold_e),
+</span><span class=C>// 			.reset_l(reset_l));
+</span>
+<span class=C>//  This signal is used for selecting appr. data in EX stage
+</span>
+<span class=C>// assign  rs2_forward_mux_sel[3] = bypass_data_rs2_wstage_e;
+</span><span class=C>// assign  rs2_forward_mux_sel[2] = bypass_data_rs2_cstage_e;
+</span><span class=C>// assign  rs2_forward_mux_sel[1] = bypass_data_rs2_estage_e;
+</span><span class=C>// assign  rs2_forward_mux_sel[0] = nobypass_rs2_e;
+</span>
+<a name="1100"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#233">rs2_forward_mux_sel</a>[3] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1052">bypass_data_rs2_estage_r</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#233">rs2_forward_mux_sel</a>[2] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1054">bypass_data_rs2_cstage_r</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#233">rs2_forward_mux_sel</a>[1] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1056">bypass_data_rs2_wstage_r</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#233">rs2_forward_mux_sel</a>[0] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1059">nobypass_rs2_r</a>;
+ 
+
+
+<span class=C>// This function is used for multi-cycle r-stage operations //
+</span>
+<a name="rcu_ctl_mult_cyc_state"></a><span class=K>function</span> [1:0]	<a  onClick="return qs(event,this)" class=F href="rcu_ctl.v.p2.html#rcu_ctl_mult_cyc_state">mult_cyc_state</a>;
+<a name="1110"></a><span class=K>input</span>	[1:0]	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1110">curr_state</a>;
+<a name="1111"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1111">help_rs1_r</a>;
+<a name="1112"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1112">hold_e</a>;
+
+<a name="1114"></a><span class=K>reg</span>	[1:0]	<a  onClick="return qs(event,this)" class=SR href="rcu_ctl.v.p2.html#1128">nxt_state</a>;
+
+<span class=K>parameter</span>
+
+<a name="1118"></a>	<a  onClick="return qs(event,this)" class=PA href="rcu_ctl.v.p2.html#1118">IDLE</a> 	= 2'b01,
+<a name="1119"></a>	<a  onClick="return qs(event,this)" class=PA href="rcu_ctl.v.p2.html#1119">SEC_CYC</a>	= 2'b10;
+<span class=K>begin</span>
+
+	<span class=K>case</span> (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1110">curr_state</a>)
+
+		<a  onClick="return qs(event,this)" class=PA href="rcu_ctl.v.p2.html#1118">IDLE</a>: <span class=K>begin</span>
+
+			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1111">help_rs1_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1112">hold_e</a>) <span class=K>begin</span>
+				
+<a name="1128"></a>				<a  onClick="return qs(event,this)" class=SR href="rcu_ctl.v.p2.html#1114">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="rcu_ctl.v.p2.html#1119">SEC_CYC</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="rcu_ctl.v.p2.html#1114">nxt_state</a> = <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1110">curr_state</a>;
+		<span class=K>end</span>
+
+		<a  onClick="return qs(event,this)" class=PA href="rcu_ctl.v.p2.html#1119">SEC_CYC</a>: <span class=K>begin</span>
+
+			<span class=K>if</span> (!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1112">hold_e</a>) <span class=K>begin</span>
+				<a  onClick="return qs(event,this)" class=SR href="rcu_ctl.v.p2.html#1114">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="rcu_ctl.v.p2.html#1118">IDLE</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="rcu_ctl.v.p2.html#1114">nxt_state</a> = <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1110">curr_state</a>;
+		<span class=K>end</span>
+
+		<span class=K>default</span>: <a  onClick="return qs(event,this)" class=SR href="rcu_ctl.v.p2.html#1114">nxt_state</a> = 2'bx;
+	<span class=K>endcase</span>
+
+<a  onClick="return qs(event,this)" class=F href="rcu_ctl.v.p2.html#rcu_ctl_mult_cyc_state">mult_cyc_state</a> = <a  onClick="return qs(event,this)" class=SR href="rcu_ctl.v.p2.html#1128">nxt_state</a>;
+
+<span class=K>end</span>
+
+<span class=K>endfunction</span>
+
+<a name="1150"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#243">nxt_mul_cyc_state</a> = <a  onClick="return qs(event,this)" class=F href="rcu_ctl.v.p2.html#rcu_ctl_mult_cyc_state">mult_cyc_state</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1154">mul_cyc_state</a>,
+					<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#124">help_rs1_r</a>,
+					<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#169">hold_e</a> );
+
+<a name="rcu_ctl_flop_mult_cyc_st"></a><a name="1154"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	flop_mult_cyc_st(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#242">mul_cyc_state</a>[1]),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1150">nxt_mul_cyc_state</a>[1]),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>) );
+
+<a name="rcu_ctl_flop_mult_cyc_st_0"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s">ff_s</a>	flop_mult_cyc_st_0(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2137">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#242">mul_cyc_state</a>[0]),
+			<span class=SI>.din</span>(~<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1150">nxt_mul_cyc_state</a>[0]),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>));
+
+<a name="1163"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#237">second_cycle</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1154">mul_cyc_state</a>[1];
+<a name="1164"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#236">first_cycle</a> = <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#124">help_rs1_r</a> &amp; !<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>;
+
+<span class=C>// Misc. Logic
+</span><span class=C>// COSIM SIGNALS
+</span><span class=C>// Provide inst_complete_w signal to cosim
+</span><span class=C>// inst_vld_w is valid for both the cycles in case of a long op.
+</span><span class=C>// But cosim needs only one signal during the second cycle. So, we propogate 
+</span><span class=C>// first_cycle through pipe and then use first_cycle_w to qualify inst_vld[2]
+</span>
+<a name="rcu_ctl_flop_fc_e"></a><a name="1173"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  flop_fc_e (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#266">first_cycle_e</a>),
+                        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1164">first_cycle</a>&amp;<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#153">valid_op_r</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>),
+                        <span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#169">hold_e</a>),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>));
+
+<a name="rcu_ctl_flop_fc_c"></a><a name="1179"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  flop_fc_c (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#267">first_cycle_c</a>),
+                        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1173">first_cycle_e</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>),
+                        <span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#170">hold_c</a>),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>));
+
+<span class=C>// Whenver there's a Write Enable signal in C-stage and it's 
+</span><span class=C>// a first cycle, generate a signal &quot;first_vld_c&quot; to pipe
+</span><span class=C>// so as to hold the pipe appropriately in case of fpu ops.
+</span><span class=C>// Especially inthe case of dcmpg and dcmpl ops
+</span>
+<a name="1190"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#238">first_vld_c</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1179">first_cycle_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#738">iu_data_we_c</a>;
+
+<span class=C>// Whenever there's a hold_c, we need to kill inst_complete_w
+</span><span class=C>// This is because we donot hold w-stage and hold_w == hold_c
+</span>
+<a name="rcu_ctl_flop_fc_w"></a><a name="1195"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>  flop_fc_w (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#268">first_cycle_w</a>),
+                        <span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1179">first_cycle_c</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#170">hold_c</a>)),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>));
+
+
+<span class=C>// We need to qualify inst_complete with ucode_done_w
+</span>
+<a name="rcu_ctl_flop_udone_c"></a><a name="1203"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_udone_c(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#261">ucode_done_c</a>),
+		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#184">ucode_done</a>),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>),
+		<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#170">hold_c</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>) );
+
+<a name="rcu_ctl_flop_udone_w"></a><a name="1209"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_udone_w(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#262">ucode_done_w</a>),
+		<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1203">ucode_done_c</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#170">hold_c</a>)),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>),
+		<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#170">hold_c</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>) );
+		
+<a name="1215"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#239">inst_complete_w</a> = <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#172">inst_vld</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1195">first_cycle_w</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1209">ucode_done_w</a>;
+
+
+
+<a name="rcu_ctl_spare1"></a><a  onClick="return qs(event,this)" class=MM href="spare.v.html#mj_spare">mj_spare</a> spare1( <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>),
+                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>));
+
+<a name="rcu_ctl_spare2"></a><a  onClick="return qs(event,this)" class=MM href="spare.v.html#mj_spare">mj_spare</a> spare2( <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>),
+                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>));
+ 
+
+ 
+<span class=K>endmodule</span>
+
+<a name="decode_opcode"></a><a  href="rcu_ctl.v.html#rcu_ctl_decode_opcode_rs1"><IMG alt="[Up: rcu_ctl decode_opcode_rs1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="rcu_ctl.v.html#rcu_ctl_decode_opcode_rs2"><IMG alt="[Up: rcu_ctl decode_opcode_rs2]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span>	<span class=MM>decode_opcode</span><a  href="hierarchy-m.html#decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1257">aconst_null</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1258">iconst_m1</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1259">iconst_0</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1260">iconst_1</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1261">iconst_2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1262">iconst_3</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1263">iconst_4</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1264">iconst_5</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1265">lconst_0</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1266">lconst_1</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1267">fconst_0</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1268">fconst_1</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1269">fconst_2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1270">dconst_0</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1271">dconst_1</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1272">bipush</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1273">sipush</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1274">read_gl0</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1275">read_gl1</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1276">read_gl2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1277">read_gl3</a>
+);
+
+<a name="1255"></a><span class=K>input</span>	[15:0]	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a><a  href="hierarchy-s.p13.html#opcode___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1256"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a><a  href="hierarchy-s.p19.html#valid___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1257"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1281">aconst_null</a><a  href="hierarchy-s.html#aconst_null___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1258"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1282">iconst_m1</a><a  href="hierarchy-s.p9.html#iconst_m1___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1259"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1283">iconst_0</a><a  href="hierarchy-s.p9.html#iconst_0___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1260"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1284">iconst_1</a><a  href="hierarchy-s.p9.html#iconst_1___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1261"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1285">iconst_2</a><a  href="hierarchy-s.p9.html#iconst_2___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1262"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1286">iconst_3</a><a  href="hierarchy-s.p9.html#iconst_3___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1263"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1287">iconst_4</a><a  href="hierarchy-s.p9.html#iconst_4___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1264"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1288">iconst_5</a><a  href="hierarchy-s.p9.html#iconst_5___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1265"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1289">lconst_0</a><a  href="hierarchy-s.p10.html#lconst_0___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1266"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1290">lconst_1</a><a  href="hierarchy-s.p10.html#lconst_1___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1267"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1291">fconst_0</a><a  href="hierarchy-s.p6.html#fconst_0___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1268"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1292">fconst_1</a><a  href="hierarchy-s.p6.html#fconst_1___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1269"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1293">fconst_2</a><a  href="hierarchy-s.p6.html#fconst_2___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1270"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1294">dconst_0</a><a  href="hierarchy-s.p4.html#dconst_0___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1271"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1295">dconst_1</a><a  href="hierarchy-s.p4.html#dconst_1___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1272"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1296">bipush</a><a  href="hierarchy-s.p2.html#bipush___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1273"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1297">sipush</a><a  href="hierarchy-s.p16.html#sipush___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1274"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1300">read_gl0</a><a  href="hierarchy-s.p15.html#read_gl0___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1275"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1301">read_gl1</a><a  href="hierarchy-s.p15.html#read_gl1___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1276"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1302">read_gl2</a><a  href="hierarchy-s.p15.html#read_gl2___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1277"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1303">read_gl3</a><a  href="hierarchy-s.p15.html#read_gl3___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="1279"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1299">ext_opcode</a><a  href="hierarchy-s.p5.html#ext_opcode___decode_opcode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="1281"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1257">aconst_null</a> =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd1)  &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1282"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1258">iconst_m1</a> =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd2)  &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1283"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1259">iconst_0</a>  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd3)  &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1284"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1260">iconst_1</a>  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd4)  &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1285"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1261">iconst_2</a>  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd5)  &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1286"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1262">iconst_3</a>  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd6)  &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1287"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1263">iconst_4</a>  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd7)  &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1288"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1264">iconst_5</a>  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd8)  &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1289"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1265">lconst_0</a>  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd9)  &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1290"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1266">lconst_1</a>  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd10) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1291"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1267">fconst_0</a>  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd11) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1292"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1268">fconst_1</a>  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd12) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1293"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1269">fconst_2</a>  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd13) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1294"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1270">dconst_0</a>  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd14) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1295"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1271">dconst_1</a>  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd15) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1296"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1272">bipush</a>	  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd16) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1297"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1273">sipush</a>	  =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'd17) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+
+<a name="1299"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1279">ext_opcode</a> = (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[15:8] == 8'hff) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>;
+<a name="1300"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1274">read_gl0</a>   = ((<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[7:0]  == 8'd90) &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1299">ext_opcode</a>) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>; 
+<a name="1301"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1275">read_gl1</a>   = ((<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[7:0]  == 8'd91) &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1299">ext_opcode</a>) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>; 
+<a name="1302"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1276">read_gl2</a>   = ((<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[7:0]  == 8'd92) &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1299">ext_opcode</a>) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>; 
+<a name="1303"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1277">read_gl3</a>   = ((<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1255">opcode</a>[7:0]  == 8'd93) &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1299">ext_opcode</a>) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1256">valid</a>; 
+
+<span class=K>endmodule</span>
+
+<a name="dest_decoder"></a><a  href="rcu_ctl.v.html#rcu_ctl_dest_dec"><IMG alt="[Up: rcu_ctl dest_dec]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>dest_decoder</span><a  href="hierarchy-m.html#dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1322">opcode</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1323">valid</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1326">group_2_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1327">group_3_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1328">group_5_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1329">group_6_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1330">group_7_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1331">optop_incr_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1332">dest_we</a>
+);
+
+<a name="1322"></a><span class=K>input</span>	[15:0]	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#638">opcode</a><a  href="hierarchy-s.p13.html#opcode___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1323"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#641">valid</a><a  href="hierarchy-s.p19.html#valid___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1324"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#639">first_cyc</a><a  href="hierarchy-s.p6.html#first_cyc___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1325"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#640">second_cyc</a><a  href="hierarchy-s.p16.html#second_cyc___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1326"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#642">group_2_r</a><a  href="hierarchy-s.p7.html#group_2_r___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1327"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#643">group_3_r</a><a  href="hierarchy-s.p7.html#group_3_r___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1328"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#644">group_5_r</a><a  href="hierarchy-s.p7.html#group_5_r___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1329"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#645">group_6_r</a><a  href="hierarchy-s.p7.html#group_6_r___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1330"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#646">group_7_r</a><a  href="hierarchy-s.p7.html#group_7_r___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1331"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1538">optop_incr_sel</a><a  href="hierarchy-s.p13.html#optop_incr_sel___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1332"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1580">dest_we</a><a  href="hierarchy-s.p4.html#dest_we___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="1334"></a><span class=K>wire</span>	[15:0]	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a><a  href="hierarchy-s.p13.html#opcode_int___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1335"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a><a  href="hierarchy-s.p5.html#ext_opcode___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1336"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1355">curr_inc_optop_1</a><a  href="hierarchy-s.p3.html#curr_inc_optop_1___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1337"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1400">curr_inc_optop_2</a><a  href="hierarchy-s.p3.html#curr_inc_optop_2___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1338"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1433">curr_inc_optop_3</a><a  href="hierarchy-s.p3.html#curr_inc_optop_3___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1339"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1454">curr_inc_optop_4</a><a  href="hierarchy-s.p3.html#curr_inc_optop_4___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1340"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1474">curr_dec_optop_1</a><a  href="hierarchy-s.p3.html#curr_dec_optop_1___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1341"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1492">curr_no_change_optop</a><a  href="hierarchy-s.p3.html#curr_no_change_optop___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1342"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1516">act_inc_optop_1</a><a  href="hierarchy-s.html#act_inc_optop_1___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1343"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1512">act_inc_optop_2</a><a  href="hierarchy-s.html#act_inc_optop_2___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1344"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1509">act_inc_optop_3</a><a  href="hierarchy-s.html#act_inc_optop_3___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1345"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1507">act_inc_optop_4</a><a  href="hierarchy-s.html#act_inc_optop_4___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1346"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1524">act_dec_optop_1</a><a  href="hierarchy-s.html#act_dec_optop_1___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1347"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1528">act_dec_optop_2</a><a  href="hierarchy-s.html#act_dec_optop_2___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1348"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1531">act_dec_optop_3</a><a  href="hierarchy-s.html#act_dec_optop_3___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1349"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1520">act_no_change_optop</a><a  href="hierarchy-s.html#act_no_change_optop___dest_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="1351"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1334">opcode_int</a>[15:0] = (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1322">opcode</a>[15:0] ) &amp; ({16{<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1323">valid</a>}});
+<a name="1352"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1335">ext_opcode</a> = (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd255);
+
+
+<a name="1355"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1336">curr_inc_optop_1</a> = (
+
+		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd116)  |			<span class=C>// ineg
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd118)  |			<span class=C>// fneg
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd134)  |                 <span class=C>// i2f
+</span>                ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd135) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>)  |   <span class=C>// i2d
+</span>                ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd141) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>)  |   <span class=C>// f2d
+</span>                ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd138) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  |  <span class=C>// l2d
+</span>                (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd139)  |                 <span class=C>// f2i
+</span>                ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd140) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) |    <span class=C>// f2l
+</span>                ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd143) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  |  <span class=C>// d2l
+</span>                (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd145)  |                 <span class=C>// i2b
+</span>                (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd146)  |                 <span class=C>// i2c
+</span>                (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd147)  |                 <span class=C>// i2s
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd237)  | 		<span class=C>// sethi
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd0))| 	<span class=C>// load_ubyte
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd1))| 	<span class=C>// load_byte
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd2))| 	<span class=C>// load_char
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd3))| 	<span class=C>// load_short
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd4))| 	<span class=C>// load_word
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd6))| 	<span class=C>// priv_read_dcache_tag
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd7))| 	<span class=C>// priv_read_dcache_data
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd10))| 	<span class=C>// load_char_oe
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd11))| 	<span class=C>// load_short_oe
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd12))| 	<span class=C>// load_word_oe
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd14)
+						&amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// priv_read_icache_tag
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd15)
+						&amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// priv_read_icache_data
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd16))| 	<span class=C>// ncload_ubyte
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd17))| 	<span class=C>// ncload_byte
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd18))| 	<span class=C>// ncload_char
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd19))| 	<span class=C>// ncload_short
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd20))| 	<span class=C>// ncload_word
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd23))| 	<span class=C>// cache_invalidate
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd26))| 	<span class=C>// ncload_char_oe
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd27))| 	<span class=C>// ncload_short_oe
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd28))| 	<span class=C>// ncload_word_oe
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd30))| 	<span class=C>// cache_flush
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd31))| 	<span class=C>// cache_index_flush
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd117) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) |	<span class=C>// lneg
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd119) 			<span class=C>// dneg
+</span>
+		);
+
+<a name="1400"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1337">curr_inc_optop_2</a> = (
+
+		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd96)  |			<span class=C>// iadd
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd98)  |			<span class=C>// fadd
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd100)  |			<span class=C>// isub
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd102)  |			<span class=C>// fsub
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd104)  |			<span class=C>// imul
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd106)  |			<span class=C>// fmul
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd108)  |			<span class=C>// idiv
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd110)  |			<span class=C>// fdiv
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd112)  |			<span class=C>// irem
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd114)  |			<span class=C>// frem
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd117) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>)  |	<span class=C>// lneg
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd120)  |			<span class=C>// ishl
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd121) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  |	<span class=C>// lshl
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd122)  |			<span class=C>// ishr
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd123) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>)  |	<span class=C>// lshr
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd124)  |			<span class=C>// iushr
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd125) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>)  |	<span class=C>// lushr
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd126)  |			<span class=C>// iand
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd128)  |			<span class=C>// ior
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd130)  |			<span class=C>// ixor
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd137)  |			<span class=C>// l2f
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd138) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>)  |	<span class=C>// l2d
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd142)  |			<span class=C>// d2i
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd143) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>)  |	<span class=C>// d2l
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd144)  |			<span class=C>// d2f
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd149)  |			<span class=C>// fcmpl
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd150)  |			<span class=C>// fcmpg
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd21)) 	<span class=C>// iucmp
+</span>
+	);
+
+<a name="1433"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1338">curr_inc_optop_3</a> = (
+
+   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd97) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// ladd
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd99) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// dadd
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd101) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) | 	<span class=C>// lsub
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd103) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) | 	<span class=C>// dsub
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd105) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) | 	<span class=C>// lmul
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd107) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) | 	<span class=C>// dmul
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd109) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) | 	<span class=C>// ldiv
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd111) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) | 	<span class=C>// ddiv
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd113) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) | 	<span class=C>// lrem
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd115) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) | 	<span class=C>// drem
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd121) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// lshl
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd123) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) | 	<span class=C>// lshr
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd125) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) | 	<span class=C>// lushr
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd127) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) | 	<span class=C>// land
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd129) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) | 	<span class=C>// lor
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd131) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  	<span class=C>// lxor
+</span>
+	);
+
+<a name="1454"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1339">curr_inc_optop_4</a> = (
+
+   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd97) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>)  | 	<span class=C>// ladd
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd99) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>)  | 	<span class=C>// dadd
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd101) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// lsub
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd103) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// dsub
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd105) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// lmul
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd107) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// dmul
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd109) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// ldiv
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd111) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// ddiv
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd113) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// lrem
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd115) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// drem
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd127) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// land
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd129) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// lor
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd131) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) |  	<span class=C>// lxor
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd148) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) |	<span class=C>// lcmp
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd151) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) |	<span class=C>// dcmpl
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd152) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)   	<span class=C>// dcmpg
+</span>	);
+
+<a name="1474"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1340">curr_dec_optop_1</a> = (
+
+   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd9) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// lconst_0
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd10) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// lconst_1
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd14) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// dconst_0
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd15) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// dconst_1
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd22) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// lload
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd24) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// dload
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd30) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// lload_0
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd31) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// lload_1
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd32) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// lload_2
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd33) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// lload_3
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd38) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// dload_0
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd39) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// dload_1
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd40) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)  | 	<span class=C>// dload_2
+</span>   	         ((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd41) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>)   	<span class=C>// dload_3
+</span>	);
+
+<a name="1492"></a><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1341">curr_no_change_optop</a> = !(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1355">curr_inc_optop_1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1400">curr_inc_optop_2</a> | 
+					<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1433">curr_inc_optop_3</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1454">curr_inc_optop_4</a> | 
+					<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1474">curr_dec_optop_1</a>);
+
+<span class=C>// BG2 op sometimes pushes 1 item onto stack and sometimes 2. Because of
+</span><span class=C>// this it's difficult to determine the dest_offset just from group
+</span><span class=C>// information. Hence we need  to decode BG2 and then use grouping
+</span><span class=C>// info. to calculate the offset. For ex. for LV LB BG2 (group_3_r)
+</span><span class=C>// If BG2 pushes one item onto stack, then decoding BG2 we'll get dest
+</span><span class=C>// offset as +1 (it consumes 2 and pushes 1), but if we use the group info.
+</span><span class=C>// (in this case group_3), then offset is -2 +1 (since 2 operands needed by
+</span><span class=C>// BG2 are now available within the instruction itself  instead of popping
+</span><span class=C>// them from scache. Same holds good for groups  5 and 6 (LV BG2 and LV BG1)
+</span><span class=C>// for groups 2 and 7 (LV LV OP and LV OP), dest offsets are 0 and +1 resp
+</span>
+<a name="1507"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1345">act_inc_optop_4</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1454">curr_inc_optop_4</a> &amp; !(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1327">group_3_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1328">group_5_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1329">group_6_r</a>);
+
+<a name="1509"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1344">act_inc_optop_3</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1433">curr_inc_optop_3</a> &amp; !(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1327">group_3_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1328">group_5_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1329">group_6_r</a>) |
+			  <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1454">curr_inc_optop_4</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1328">group_5_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1329">group_6_r</a>);
+
+<a name="1512"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1343">act_inc_optop_2</a> =  <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1400">curr_inc_optop_2</a> &amp;!(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1327">group_3_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1328">group_5_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1329">group_6_r</a>) |
+			    <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1454">curr_inc_optop_4</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1327">group_3_r</a>) |
+			    <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1433">curr_inc_optop_3</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1328">group_5_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1329">group_6_r</a>);
+
+<a name="1516"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1342">act_inc_optop_1</a> =  <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1355">curr_inc_optop_1</a> &amp;!(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1327">group_3_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1328">group_5_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1329">group_6_r</a>) |
+			    <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1433">curr_inc_optop_3</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1327">group_3_r</a>) |
+			    <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1400">curr_inc_optop_2</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1328">group_5_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1329">group_6_r</a>);
+
+<a name="1520"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1349">act_no_change_optop</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1492">curr_no_change_optop</a> &amp;!(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1327">group_3_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1328">group_5_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1329">group_6_r</a>) |
+			    <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1400">curr_inc_optop_2</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1327">group_3_r</a>) |
+			    <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1355">curr_inc_optop_1</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1328">group_5_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1329">group_6_r</a>);
+
+<a name="1524"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1346">act_dec_optop_1</a> =  <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1474">curr_dec_optop_1</a> &amp;!(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1327">group_3_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1328">group_5_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1329">group_6_r</a>) |
+			    <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1492">curr_no_change_optop</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1328">group_5_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1329">group_6_r</a>) |
+			    <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1355">curr_inc_optop_1</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1327">group_3_r</a>);
+
+<a name="1528"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1347">act_dec_optop_2</a> =  <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1474">curr_dec_optop_1</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1328">group_5_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1329">group_6_r</a>) |
+			    <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1492">curr_no_change_optop</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1327">group_3_r</a>) ;
+
+<a name="1531"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1348">act_dec_optop_3</a> =  <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1474">curr_dec_optop_1</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1327">group_3_r</a> );
+
+
+
+<span class=C>// Instead of providing the offset, we are now providing the selects to MUXes
+</span><span class=C>// to improve timing 
+</span>
+<a name="1538"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1331">optop_incr_sel</a>[7] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1507">act_inc_optop_4</a> &amp; !(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1330">group_7_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1326">group_2_r</a>);
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1331">optop_incr_sel</a>[6] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1509">act_inc_optop_3</a> &amp; !(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1330">group_7_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1326">group_2_r</a>);
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1331">optop_incr_sel</a>[5] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1512">act_inc_optop_2</a> &amp; !(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1330">group_7_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1326">group_2_r</a>);
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1331">optop_incr_sel</a>[4] = (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1516">act_inc_optop_1</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1330">group_7_r</a>) &amp; !<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1326">group_2_r</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1331">optop_incr_sel</a>[3] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1524">act_dec_optop_1</a> &amp; !(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1330">group_7_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1326">group_2_r</a>);
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1331">optop_incr_sel</a>[2] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1528">act_dec_optop_2</a> &amp; !(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1330">group_7_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1326">group_2_r</a>);
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1331">optop_incr_sel</a>[1] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1531">act_dec_optop_3</a> &amp; !(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1330">group_7_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1326">group_2_r</a>);
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1331">optop_incr_sel</a>[0] = !(|<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1538">optop_incr_sel</a>[7:1]); 
+			
+
+<span class=C>/*
+mux8_32		mux_dest_offset_int (.out(dest_offset_int),
+				.in0(32'h0),
+				.in1(32'hfffffff4),	// 2's complement of 4*-3
+				.in2(32'hfffffff8),	// 2's complement of 4*-2
+				.in3(32'hfffffffc),	// 2's complement of 4*-1
+				.in4(32'h4),		// 4*1
+				.in5(32'h8),		// 4*2
+				.in6(32'hc),		// 4*3
+				.in7(32'h10),		// 4*4
+				.sel({
+					act_inc_optop_4,
+					act_inc_optop_3,
+					act_inc_optop_2,
+					act_inc_optop_1,
+					act_dec_optop_1,
+					act_dec_optop_2,
+					act_dec_optop_3,
+					(default_ch_optop | act_no_change_optop) 
+				     }) );
+				    
+mux3_32		mux_dest_offset(.out(dest_offset),
+				.in0(dest_offset_int),
+				.in1(32'h0),
+				.in2(32'h4),
+				.sel ( {
+					group_7_r,
+					group_2_r,
+					!(group_7_r | group_2_r)
+					}) );
+*/</span>
+
+<a name="1580"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1332">dest_we</a>	= (
+
+		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd1) |			<span class=C>// aconst_null
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd2) |			<span class=C>// iconst_m1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd3) |			<span class=C>// iconst_0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd4) |			<span class=C>// iconst_1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd5) |			<span class=C>// iconst_2
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd6) |			<span class=C>// iconst_3
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd7) |			<span class=C>// iconst_4
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd8) |			<span class=C>// iconst_5
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd9) |			<span class=C>// lconst_0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd10) |			<span class=C>// lconst_1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd11) |			<span class=C>// fconst_0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd12) |			<span class=C>// fconst_1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd13) |			<span class=C>// fconst_2
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd14) |			<span class=C>// dconst_0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd15) |			<span class=C>// dconst_1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd16) |			<span class=C>// bipush
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd17) |			<span class=C>// sipush
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd21) |			<span class=C>// iload
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd22) |			<span class=C>// lload
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd23) |			<span class=C>// fload
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd24) |			<span class=C>// dload
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd25) |			<span class=C>// aload
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd26) |			<span class=C>// iload_0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd27) |			<span class=C>// iload_1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd28) |			<span class=C>// iload_2
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd29) |			<span class=C>// iload_3
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd30) |			<span class=C>// lload_0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd31) |			<span class=C>// lload_1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd32) |			<span class=C>// lload_2
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd33) |			<span class=C>// lload_3
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd34) |			<span class=C>// fload_0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd35) |			<span class=C>// fload_1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd36) |			<span class=C>// fload_2
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd37) |			<span class=C>// fload_3
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd38) |			<span class=C>// dload_0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd39) |			<span class=C>// dload_1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd40) |			<span class=C>// dload_2
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd41) |			<span class=C>// dload_3
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd42) |			<span class=C>// aload_0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd43) |			<span class=C>// aload_1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd44) |			<span class=C>// aload_2
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd45) |			<span class=C>// aload_3
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd89) |			<span class=C>// dup
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd96) |			<span class=C>// iadd
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd97) |			<span class=C>// ladd
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd98) |			<span class=C>// fadd
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd99) |			<span class=C>// dadd
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd100) |			<span class=C>// isub
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd101) |			<span class=C>// lsub
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd102) |			<span class=C>// fsub
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd103) |			<span class=C>// dsub
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd104) |			<span class=C>// imul
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd106) |			<span class=C>// fmul
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd107) |			<span class=C>// dmul
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd108) |			<span class=C>// idiv
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd110) |			<span class=C>// fdiv
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd111) |			<span class=C>// ddiv
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd112) |			<span class=C>// irem
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd114) |			<span class=C>// frem
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd115) |			<span class=C>// drem
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd116) |			<span class=C>// ineg
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd117) |			<span class=C>// lneg
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd118) |			<span class=C>// fneg
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd119) |			<span class=C>// dneg
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd120) |			<span class=C>// ishl
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd121) |			<span class=C>// lshl
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd122) |			<span class=C>// ishr
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd123) |			<span class=C>// lshr
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd124) |			<span class=C>// iushr
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd125) |			<span class=C>// lushr
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd126) |			<span class=C>// iand
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd127) |			<span class=C>// iand
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd128) |			<span class=C>// ior
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd129) |			<span class=C>// ior
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd130) |			<span class=C>// ixor
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd131) |			<span class=C>// ixor
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd132) |			<span class=C>// iinc
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd133) |			<span class=C>// i2l
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd134) |			<span class=C>// i2f
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd135) |			<span class=C>// i2d
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd137) |			<span class=C>// l2f
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd138) |			<span class=C>// l2d
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd139) |			<span class=C>// f2i
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd140) |			<span class=C>// f2l
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd141) |			<span class=C>// f2d
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd142) |			<span class=C>// d2i
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd143) |			<span class=C>// d2l
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd144) |			<span class=C>// d2f
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd145) |			<span class=C>// i2b
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd146) |			<span class=C>// i2c
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd147) |			<span class=C>// i2s
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd148) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) |	<span class=C>// lcmp
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd149) |			<span class=C>// fcmpl
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd150) |			<span class=C>// fcmpg
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd151) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) |	<span class=C>// dcmpl
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd152) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1325">second_cyc</a>) |	<span class=C>// dcmpg
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd168) |			<span class=C>// jsr
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd201) |			<span class=C>// jsr_w
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd237) |			<span class=C>// sethi
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd238) |			<span class=C>// load_word_index
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd239) |			<span class=C>// load_short_index
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd240) |			<span class=C>// load_char_index
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd241) |			<span class=C>// load_byte_index
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[15:8] == 8'd242) |			<span class=C>// load_ubyte_index
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd0))| 	<span class=C>// load_ubyte
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd1))| 	<span class=C>// load_byte
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd2))| 	<span class=C>// load_char
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd3))| 	<span class=C>// load_short
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd4))| 	<span class=C>// load_word
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd6))| 	<span class=C>// priv_read_dcache_tag
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd7))| 	<span class=C>// priv_read_dcache_data
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd10))| 	<span class=C>// load_char_oe
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd11))| 	<span class=C>// load_short_oe
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd12))| 	<span class=C>// load_word_oe
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd14) 
+						&amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// priv_read_icache_tag
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd15) 
+						&amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1324">first_cyc</a>) | 	<span class=C>// priv_read_icache_data
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd16))| 	<span class=C>// ncload_ubyte
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd17))| 	<span class=C>// ncload_byte
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd18))| 	<span class=C>// ncload_char
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd19))| 	<span class=C>// ncload_short
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd20))| 	<span class=C>// ncload_word
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd21))| 	<span class=C>// iucmp
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd23))| 	<span class=C>// cache_invalidate
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd26))| 	<span class=C>// ncload_char_oe
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd27))| 	<span class=C>// ncload_short_oe
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd28))| 	<span class=C>// ncload_word_oe
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd30))| 	<span class=C>// cache_flush
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd31))| 	<span class=C>// cache_index_flush
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd64))| 	<span class=C>// read_pc
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd65))| 	<span class=C>// read_vars
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd66))| 	<span class=C>// read_frame
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd67))| 	<span class=C>// read_optop
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd68))| 	<span class=C>// priv_read_oplim
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd69))| 	<span class=C>// read_const_pool
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd70))| 	<span class=C>// priv_read_psr
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd71))| 	<span class=C>// priv_read_trapbase
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd72))| 	<span class=C>// priv_read_lockcount0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd73))| 	<span class=C>// priv_read_lockcount1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd76))| 	<span class=C>// priv_read_lockaddr0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd77))| 	<span class=C>// priv_read_lockaddr1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd80))| 	<span class=C>// priv_read_userrange1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd81))| 	<span class=C>// priv_read_gc_config
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd82))| 	<span class=C>// priv_read_brk1a
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd83))| 	<span class=C>// priv_read_brk2a
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd84))| 	<span class=C>// priv_read_brk12c
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd85))| 	<span class=C>// priv_read_userrange2
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd87))| 	<span class=C>// priv_read_versionid
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd88))| 	<span class=C>// priv_read_hcr
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd89))| 	<span class=C>// priv_read_sc_bottom
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd90))| 	<span class=C>// read_global0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd91))| 	<span class=C>// read_global1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd92))| 	<span class=C>// read_global2
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1352">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1351">opcode_int</a>[7:0] == 8'd93)) 	<span class=C>// read_global3
+</span>
+	);
+<span class=K>endmodule</span>
+
+<a name="optop_decoder"></a><a  href="rcu_ctl.v.html#rcu_ctl_optop_dec"><IMG alt="[Up: rcu_ctl optop_dec]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>optop_decoder</span><a  href="hierarchy-m.p4.html#optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1755">opcode</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1756">valid</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1758">group_3_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1759">group_5_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1760">group_6_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1761">net_optop_sel1</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1762">net_optop_sel2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1763">net_optop_sel</a>
+
+);
+
+<a name="1755"></a><span class=K>input</span>	[15:0]	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#677">opcode</a><a  href="hierarchy-s.p13.html#opcode___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1756"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#678">valid</a><a  href="hierarchy-s.p19.html#valid___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1757"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#679">second_cyc</a><a  href="hierarchy-s.p16.html#second_cyc___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1758"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#680">group_3_r</a><a  href="hierarchy-s.p7.html#group_3_r___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1759"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#681">group_5_r</a><a  href="hierarchy-s.p7.html#group_5_r___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1760"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#682">group_6_r</a><a  href="hierarchy-s.p7.html#group_6_r___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1761"></a><span class=K>output</span>	[4:0]	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p3.html#2092">net_optop_sel1</a><a  href="hierarchy-s.p12.html#net_optop_sel1___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1762"></a><span class=K>output</span>	[3:0]	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p3.html#2108">net_optop_sel2</a><a  href="hierarchy-s.p12.html#net_optop_sel2___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1763"></a><span class=K>output</span>	[1:0]	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p3.html#2122">net_optop_sel</a><a  href="hierarchy-s.p12.html#net_optop_sel___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="1765"></a><span class=K>wire</span>	[15:0]	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a><a  href="hierarchy-s.p13.html#opcode_int___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1766"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1883">inc_optop_1</a><a  href="hierarchy-s.p9.html#inc_optop_1___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1767"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1998">inc_optop_2</a><a  href="hierarchy-s.p9.html#inc_optop_2___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1768"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p3.html#2050">inc_optop_3</a><a  href="hierarchy-s.p9.html#inc_optop_3___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1769"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p3.html#2064">inc_optop_4</a><a  href="hierarchy-s.p9.html#inc_optop_4___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1770"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1779">dec_optop_1</a><a  href="hierarchy-s.p4.html#dec_optop_1___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1771"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1860">dec_optop_2</a><a  href="hierarchy-s.p4.html#dec_optop_2___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1772"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a><a  href="hierarchy-s.p5.html#ext_opcode___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1773"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p3.html#2087">no_change</a><a  href="hierarchy-s.p12.html#no_change___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="1774"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p3.html#2071">no_change_optop</a><a  href="hierarchy-s.p12.html#no_change_optop___optop_decoder"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="1776"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1765">opcode_int</a>[15:0] = (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1755">opcode</a>[15:0] ) &amp; ({16{<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1756">valid</a>}});
+<a name="1777"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1772">ext_opcode</a>	= (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1755">opcode</a>[15:8] == 8'd255);
+
+<a name="1779"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1770">dec_optop_1</a>	= (
+
+		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd1) |			<span class=C>// aconst_null	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd2) |			<span class=C>// iconst_m1	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd3) |			<span class=C>// iconst_0	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd4) |			<span class=C>// iconst_1	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd5) |			<span class=C>// iconst_2	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd6) |			<span class=C>// iconst_3	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd7) |			<span class=C>// iconst_4	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd8) |			<span class=C>// iconst_5	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd11) |			<span class=C>// fconst_0	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd12) |			<span class=C>// fconst_1	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd13) |			<span class=C>// fconst_2	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd16) |			<span class=C>// bipush	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd17) |			<span class=C>// sipush	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd21) |			<span class=C>// iload	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd23) |			<span class=C>// fload	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd25) |			<span class=C>// aload	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd26) |			<span class=C>// iload_0	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd27) |			<span class=C>// iload_1	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd28) |			<span class=C>// iload_2	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd29) |			<span class=C>// iload_3	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd34) |			<span class=C>// fload_0	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd35) |			<span class=C>// fload_1	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd36) |			<span class=C>// fload_2	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd37) |			<span class=C>// fload_3	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd42) |			<span class=C>// aload_0	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd43) |			<span class=C>// aload_1	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd44) |			<span class=C>// aload_2	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd45) |			<span class=C>// aload_3	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd89) |			<span class=C>// dup	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd90) |			<span class=C>// dup_x1	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd91) |			<span class=C>// dup_x2	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd133) |			<span class=C>// i2l	
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd135) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// i2d	
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd140) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// f2l	
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd141) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// f2d	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd168) |			<span class=C>// jsr	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd201) |			<span class=C>// jsr_w	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd203) |			<span class=C>// ldc_quick	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd204) |			<span class=C>// ldc_w_quick	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd208) |			<span class=C>// getfield2_quick	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd210) |			<span class=C>// getstatic_quick	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd232) |			<span class=C>// agetstatic_quick	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd234) |			<span class=C>// aldc_quick	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd235) |			<span class=C>// aldc_w_quick	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd238) |			<span class=C>// load_word_index	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd239) |			<span class=C>// load_short_index	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd240) |			<span class=C>// load_char_index	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd241) |			<span class=C>// load_byte_index	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd242) |			<span class=C>// load_ubyte_index	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd55)) |	<span class=C>// get_current_class	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd64)) |	<span class=C>// read_pc	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd65)) |	<span class=C>// read_vars	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd66)) |	<span class=C>// read_frame	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd67)) |	<span class=C>// read_optop	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd68)) |	<span class=C>// read_oplim	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd69)) |	<span class=C>// read_const_pool	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd70)) |	<span class=C>// priv_read_psr	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd71)) |	<span class=C>// priv_read_trapbase	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd72)) |	<span class=C>// priv_read_lockcount0	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd73)) |	<span class=C>// priv_read_lockcount1	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd76)) |	<span class=C>// priv_read_lockaddr0	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd77)) |	<span class=C>// priv_read_lockaddr1	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd80)) |	<span class=C>// priv_readuserrange1	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd81)) |	<span class=C>// priv_read_gc_config	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd82)) |	<span class=C>// priv_read_brk1a	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd83)) |	<span class=C>// priv_read_brk2a	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd84)) |	<span class=C>// priv_read_brk12c	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd85)) |	<span class=C>// priv_read_userrange2	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd87)) |	<span class=C>// priv_read_versionid	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd88)) |	<span class=C>// priv_read_hcr	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd89)) |	<span class=C>// priv_read_sc_bottom	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd90)) |	<span class=C>// priv_read_global0	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd91)) |	<span class=C>// priv_read_global1	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd92)) |	<span class=C>// priv_read_global2	
+</span>		( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd93)) 	<span class=C>// priv_read_global3	
+</span>
+	);
+
+
+<a name="1860"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1771">dec_optop_2</a> = (
+
+		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd9) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// lconst_0	
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd10) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// lconst_1	
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd14) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// dconst_0	
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd15) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// dconst_1	
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd22) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// lload
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd24) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// dload
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd30) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// lload_0	
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd31) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// lload_1	
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd32) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// lload_2	
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd33) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// lload_3	
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd38) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// dload_0	
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd39) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// dload_1	
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd40) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// dload_2	
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd41) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// dload_3	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd92) |			<span class=C>// dup2	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd93) |			<span class=C>// dup2_x1	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd94) |			<span class=C>// dup2_x2	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd205) |			<span class=C>// ldc2_w_quick	
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd212) 			<span class=C>// getstatic2_quick	
+</span>	);
+
+<a name="1883"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1766">inc_optop_1</a> = (
+
+		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd46) |			<span class=C>// iaload
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd48) |			<span class=C>// faload
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd50) |			<span class=C>// aaload
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd51) |			<span class=C>// baload
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd52) |			<span class=C>// caload
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd53) |			<span class=C>// saload
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd54) |			<span class=C>// istore
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd56) |			<span class=C>// fstore
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd58) |			<span class=C>// astore
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd59) |			<span class=C>// istore_0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd60) |			<span class=C>// istore_1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd61) |			<span class=C>// istore_2
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd62) |			<span class=C>// istore_3
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd67) |			<span class=C>// fstore_0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd68) |			<span class=C>// fstore_1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd69) |			<span class=C>// fstore_2
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd70) |			<span class=C>// fstore_3
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd75) |			<span class=C>// astore_0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd76) |			<span class=C>// astore_1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd77) |			<span class=C>// astore_2
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd78) |			<span class=C>// astore_3
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd87) |			<span class=C>// pop
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd96) |			<span class=C>// iadd
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd98) |			<span class=C>// fadd
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd100) |			<span class=C>// isub
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd102) |			<span class=C>// fsub
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd104) |			<span class=C>// imul
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd106) |			<span class=C>// fmul
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd108) |			<span class=C>// idiv
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd110) |			<span class=C>// fdiv
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd112) |			<span class=C>// irem
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd114) |			<span class=C>// frem
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd120) |			<span class=C>// ishl
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd121) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// lshl
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd122) |			<span class=C>// ishr
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd123) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// lshr
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd124) |			<span class=C>// iushr
+</span>		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd125) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// lushr
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd126) |			<span class=C>// iand
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd128) |			<span class=C>// ior
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd130) |			<span class=C>// ixor
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd136) |			<span class=C>// l2i
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd137) |			<span class=C>// l2f
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd142) |			<span class=C>// d2i
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd144) |			<span class=C>// d2f
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd149) |			<span class=C>// fcmpl
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd150) |			<span class=C>// fcmpg
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd153) |			<span class=C>// ifeq
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd154) |			<span class=C>// ifne
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd155) |			<span class=C>// iflt
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd156) |			<span class=C>// ifge
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd157) |			<span class=C>// ifgt
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd158) |			<span class=C>// ifle
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd170) |			<span class=C>// tableswitch
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd172) |			<span class=C>// ireturn
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd174) |			<span class=C>// freturn
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd176) |			<span class=C>// areturn
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd194) |			<span class=C>// monitorenter
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd195) |			<span class=C>// monitorexit
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd198) |			<span class=C>// ifnull
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd199) |			<span class=C>// ifnonnull
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd211) |			<span class=C>// putstatic_quick
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd229) |			<span class=C>// nunull_quick
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd233) |			<span class=C>// aputstatic_quick
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd243) |			<span class=C>// store_word_index
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd244) |			<span class=C>// nastore_word_index
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd245) |			<span class=C>// store_short_index
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd246) |			<span class=C>// store_byte_index
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd21)) |	<span class=C>// iucmp
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd62)) |	<span class=C>// zero_line
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd96)) |	<span class=C>// write_pc
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd97) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// write_vars
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd98) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// write_frame
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd99) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// write_optop
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd100) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// write_oplim
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd101) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// write_const_pool
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd102) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// priv_write_psr
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd103) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// priv_write_trapbase
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd104) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// priv_write_lockcount0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd105) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// priv_write_lockcount1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd108) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// priv_write_lockaddr0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd109) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// priv_write_lockaddr1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd112) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// priv_write_userrange1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd113) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// priv_write_gc_config
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd114) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// priv_write_brk1a
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd115) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// priv_write_brk2a
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd116) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// priv_write_brk12c
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd117) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// priv_write_userrange2
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd121) &amp;
+						<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// priv_write_sc_bottom
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd122)) |	<span class=C>// write_gl0
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd123)) |	<span class=C>// write_gl1
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd124)) |	<span class=C>// write_gl2
+</span>		(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1777">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[7:0] == 8'd125)) 	<span class=C>// write_gl3
+</span>	);
+
+<a name="1998"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1767">inc_optop_2</a> = (
+
+		((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1776">opcode_int</a>[15:8] == 8'd55) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.p2.html#1757">second_cyc</a>) |	<span class=C>// lstore
+</span></pre>
+<center><table class=NB cols=4 nosave><tr><td align="center"><a  href="rcu_ctl.v.p3.html">Next</a></td><td align="center"><a  href="rcu_ctl.v.html">1</a></td><td align="center"><font color="#808080">2</font></td><td align="center"><a  href="rcu_ctl.v.p3.html">3</a></td></tr></table></center>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return "rcu_ctl.v.p3.html"; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:21 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/rcu/rtl/rcu_ctl.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

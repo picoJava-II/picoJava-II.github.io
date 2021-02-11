@@ -1,0 +1,640 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/pipe/rtl/trap.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "trap.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<a name="trap"></a><a  href="iu.v.html#iu_trap"><IMG alt="[Up: iu trap]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span>	<span class=MM>trap</span><a  href="hierarchy-m.p4.html#trap"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+		<a  onClick="return qs(event,this)" class=SO href="#96">iu_trap_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#97">trap_vld_r</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#98">trap_vld_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#99">trap_in_progress</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#101">iu_kill_fpu</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#102">iu_kill_ucode</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#103">iu_kill_dcu</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#104">kill_powerdown</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#100">iu_trap_r</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#95">tt_we</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#94">tt_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#107">pj_in_halt</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#105">pj_brk1_sync</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#106">pj_brk2_sync</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#110">pj_resume</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#111">pj_irl</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#112">pj_nmi</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#113">pj_no_fpu</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#117">ucode_abort</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#114">iu_psr_pil</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#115">iu_psr_ie</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#119">iu_psr_fpe</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#116">hold_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#118">iu_psr_ace</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#120">iu_psr_aem</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#121">inst_brk1_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#122">inst_brk2_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#123">first_cyc_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#124">inst_vld_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#125">imem_acc_err_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#126">illegal_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#128">priv_inst_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#129">fpu_inst_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#130">zero_trap_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#127">soft_trap_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#132">arithm_exe_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#131">null_ptr_exe_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#133">lock_trap_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#134">u_ref_null_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#135">u_ary_ovf_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#136">u_ptr_un_eq_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#137">dcu_err_ack</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#138">async_mem_prot_err</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#108">async_error</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#139">mem_prot_err_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#141">data_brk1_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#142">data_brk2_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#143">oplim_trap_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#144">align_err_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#145">emul_op_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#146">gc_trap_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#147">opcode_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#148">fold_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#149">fold_sc_miss_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#140">powerdown_op_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#151">brk12c_halt</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#150">iu_brtaken_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#152">ucode_done</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#153">ucode_last</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#160">sm</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#161">sin</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#162">so</a>
+
+);
+
+
+<a name="94"></a><span class=K>output</span>	[7:0]		<a  onClick="return qs(event,this)" class=SO href="#479">tt_c</a><a  href="hierarchy-s.p17.html#tt_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// TT field of Trapbase Reg
+</span><a name="95"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#389">tt_we</a><a  href="hierarchy-s.p17.html#tt_we___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// TT field write enable
+</span><a name="96"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#395">iu_trap_c</a><a  href="hierarchy-s.p9.html#iu_trap_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Trap taken in C stage
+</span><a name="97"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#355">trap_vld_r</a><a  href="hierarchy-s.p17.html#trap_vld_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// possible trap in R stage
+</span><a name="98"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#365">trap_vld_e</a><a  href="hierarchy-s.p17.html#trap_vld_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// possible trap in E stage
+</span><a name="99"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#379">trap_in_progress</a><a  href="hierarchy-s.p17.html#trap_in_progress___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// trap frame building in progress
+</span><a name="100"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#385">iu_trap_r</a><a  href="hierarchy-s.p9.html#iu_trap_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// request for ucode to build trap
+</span><a name="101"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#508">iu_kill_fpu</a><a  href="hierarchy-s.p9.html#iu_kill_fpu___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// kill any fpu operation
+</span><a name="102"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#509">iu_kill_ucode</a><a  href="hierarchy-s.p9.html#iu_kill_ucode___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// kill any ucode op.
+</span><a name="103"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#507">iu_kill_dcu</a><a  href="hierarchy-s.p9.html#iu_kill_dcu___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// kill any dcu operation in C
+</span><a name="104"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#242">kill_powerdown</a><a  href="hierarchy-s.p10.html#kill_powerdown___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// kill the powerdown hold
+</span><a name="105"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#274">pj_brk1_sync</a><a  href="hierarchy-s.p14.html#pj_brk1_sync___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// breakpoint 1
+</span><a name="106"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#275">pj_brk2_sync</a><a  href="hierarchy-s.p14.html#pj_brk2_sync___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// breakpoint 2
+</span><a name="107"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#517">pj_in_halt</a><a  href="hierarchy-s.p14.html#pj_in_halt___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// in halt mode.
+</span><a name="108"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#351">async_error</a><a  href="hierarchy-s.html#async_error___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// asynchronous error
+</span>
+<a name="110"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#910">pj_resume</a><a  href="hierarchy-s.p14.html#pj_resume___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// resume the processor
+</span><a name="111"></a><span class=K>input</span>	[3:0]		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#912">pj_irl</a><a  href="hierarchy-s.p14.html#pj_irl___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// interrupt level
+</span><a name="112"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#913">pj_nmi</a><a  href="hierarchy-s.p14.html#pj_nmi___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// nmi interrupt
+</span><a name="113"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#915">pj_no_fpu</a><a  href="hierarchy-s.p14.html#pj_no_fpu___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// fpu not present in core
+</span><a name="114"></a><span class=K>input</span>	[3:0]		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#916">iu_psr_pil</a><a  href="hierarchy-s.p9.html#iu_psr_pil___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// processor interrupt level
+</span><a name="115"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#917">iu_psr_ie</a><a  href="hierarchy-s.p9.html#iu_psr_ie___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Interrupt enable bit
+</span><a name="116"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#919">hold_r</a><a  href="hierarchy-s.p8.html#hold_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Hold the R stage trap
+</span><a name="117"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#914">ucode_abort</a><a  href="hierarchy-s.p18.html#ucode_abort___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// abort dcu/stack read/write
+</span><a name="118"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#920">iu_psr_ace</a><a  href="hierarchy-s.p9.html#iu_psr_ace___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// address compare enable bit
+</span><a name="119"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#918">iu_psr_fpe</a><a  href="hierarchy-s.p9.html#iu_psr_fpe___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// fpu enable bit
+</span><a name="120"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#921">iu_psr_aem</a><a  href="hierarchy-s.p9.html#iu_psr_aem___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// memory protection check bit
+</span><a name="121"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#922">inst_brk1_r</a><a  href="hierarchy-s.p9.html#inst_brk1_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// instr brk point 1 in R
+</span><a name="122"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#923">inst_brk2_r</a><a  href="hierarchy-s.p9.html#inst_brk2_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// instr brk point 2 in R
+</span><a name="123"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#924">first_cyc_e</a><a  href="hierarchy-s.p6.html#first_cyc_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// First cyle in Estage of 2 cycle instn.
+</span><a name="124"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#909">inst_vld_c</a><a  href="hierarchy-s.p9.html#inst_vld_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Instruction valid in CStage
+</span><a name="125"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#925">imem_acc_err_r</a><a  href="hierarchy-s.p9.html#imem_acc_err_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// instruction memory error in R
+</span><a name="126"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#926">illegal_r</a><a  href="hierarchy-s.p9.html#illegal_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// illegal inst in R
+</span><a name="127"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#930">soft_trap_r</a><a  href="hierarchy-s.p16.html#soft_trap_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// softtrap in R
+</span><a name="128"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#927">priv_inst_r</a><a  href="hierarchy-s.p14.html#priv_inst_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// privileged inst in R
+</span><a name="129"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#928">fpu_inst_r</a><a  href="hierarchy-s.p6.html#fpu_inst_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// fpu instr in R
+</span><a name="130"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#929">zero_trap_e</a><a  href="hierarchy-s.p21.html#zero_trap_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// zeroline trap in E stage
+</span><a name="131"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#933">null_ptr_exe_e</a><a  href="hierarchy-s.p12.html#null_ptr_exe_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// null ptr exception
+</span><a name="132"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#931">arithm_exe_e</a><a  href="hierarchy-s.html#arithm_exe_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// arithmatic exception
+</span><a name="133"></a><span class=K>input</span>	[3:0]		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#934">lock_trap_e</a><a  href="hierarchy-s.p10.html#lock_trap_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// lock trap
+</span><a name="134"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#935">u_ref_null_c</a><a  href="hierarchy-s.p18.html#u_ref_null_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode exception.reference null
+</span><a name="135"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#936">u_ary_ovf_c</a><a  href="hierarchy-s.p18.html#u_ary_ovf_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// array overflow exception
+</span><a name="136"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#937">u_ptr_un_eq_c</a><a  href="hierarchy-s.p18.html#u_ptr_un_eq_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ptr unequal exception.ucode
+</span><a name="137"></a><span class=K>input</span>	[2:0]		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#938">dcu_err_ack</a><a  href="hierarchy-s.p4.html#dcu_err_ack___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// dcache memory error
+</span><a name="138"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#939">async_mem_prot_err</a><a  href="hierarchy-s.html#async_mem_prot_err___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Memory protection error due to smu
+</span><a name="139"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#941">mem_prot_err_c</a><a  href="hierarchy-s.p11.html#mem_prot_err_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Memory protection error
+</span><a name="140"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#932">powerdown_op_e</a><a  href="hierarchy-s.p14.html#powerdown_op_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// powerdown inst in E
+</span><a name="141"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#942">data_brk1_c</a><a  href="hierarchy-s.p4.html#data_brk1_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// data brk point in C
+</span><a name="142"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#943">data_brk2_c</a><a  href="hierarchy-s.p4.html#data_brk2_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// data brk point in C
+</span><a name="143"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#944">oplim_trap_c</a><a  href="hierarchy-s.p13.html#oplim_trap_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// oplim trap in C
+</span><a name="144"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#945">align_err_c</a><a  href="hierarchy-s.html#align_err_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Misaligned trap in C
+</span><a name="145"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#946">emul_op_r</a><a  href="hierarchy-s.p5.html#emul_op_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// emulated inst in R
+</span><a name="146"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#947">gc_trap_c</a><a  href="hierarchy-s.p7.html#gc_trap_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Garbage collection trap
+</span><a name="147"></a><span class=K>input</span>	[7:0]		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#948">opcode_c</a><a  href="hierarchy-s.p13.html#opcode_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// opcode in C stage
+</span><a name="148"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#949">fold_c</a><a  href="hierarchy-s.p6.html#fold_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// folded group in C stage
+</span><a name="149"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#950">fold_sc_miss_e</a><a  href="hierarchy-s.p6.html#fold_sc_miss_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// folded group missed in E stage
+</span><a name="150"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#952">iu_brtaken_e</a><a  href="hierarchy-s.p9.html#iu_brtaken_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// branch taken in E stage
+</span><a name="151"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#951">brk12c_halt</a><a  href="hierarchy-s.p2.html#brk12c_halt___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// on a brkpoint,halt the processor
+</span><a name="152"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#953">ucode_done</a><a  href="hierarchy-s.p18.html#ucode_done___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode has completed execution
+</span><a name="153"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#954">ucode_last</a><a  href="hierarchy-s.p18.html#ucode_last___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// last cycle of ucode
+</span>
+
+<a name="156"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#955">hold_e</a><a  href="hierarchy-s.p8.html#hold_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// hold E stage flop
+</span><a name="157"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#956">hold_c</a><a  href="hierarchy-s.p8.html#hold_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// hold / stage flop
+</span><a name="158"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#957">clk</a><a  href="hierarchy-s.p3.html#clk___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="159"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#958">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="160"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#160">sm</a><a  href="hierarchy-s.p16.html#sm___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="161"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#161">sin</a><a  href="hierarchy-s.p16.html#sin___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="162"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#162">so</a><a  href="hierarchy-s.p16.html#so___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+
+<a name="166"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#212">irl_r</a><a  href="hierarchy-s.p9.html#irl_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#215">irl_e</a><a  href="hierarchy-s.p9.html#irl_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#216">irl_c</a><a  href="hierarchy-s.p9.html#irl_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#239">nmi_e</a><a  href="hierarchy-s.p12.html#nmi_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#240">nmi_c</a><a  href="hierarchy-s.p12.html#nmi_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#210">irl_r_out</a><a  href="hierarchy-s.p9.html#irl_r_out___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#237">nmi_r_out</a><a  href="hierarchy-s.p12.html#nmi_r_out___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="167"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#252">inst_brk1_e</a><a  href="hierarchy-s.p9.html#inst_brk1_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#254">inst_brk2_e</a><a  href="hierarchy-s.p9.html#inst_brk2_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#258">inst_brk2_c</a><a  href="hierarchy-s.p9.html#inst_brk2_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#256">inst_brk1_c</a><a  href="hierarchy-s.p9.html#inst_brk1_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="168"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#361">br_c</a><a  href="hierarchy-s.p2.html#br_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="169"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#378">trap_state</a><a  href="hierarchy-s.p17.html#trap_state___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#377">new_trap</a><a  href="hierarchy-s.p12.html#new_trap___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="170"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#280">imem_acc_err_e</a><a  href="hierarchy-s.p9.html#imem_acc_err_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#282">imem_acc_err_c</a><a  href="hierarchy-s.p9.html#imem_acc_err_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="171"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#287">ill_inst_e</a><a  href="hierarchy-s.p9.html#ill_inst_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#289">ill_inst_c</a><a  href="hierarchy-s.p9.html#ill_inst_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="172"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#299">fpu_unimp_r</a><a  href="hierarchy-s.p6.html#fpu_unimp_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#300">fpu_unimp_e</a><a  href="hierarchy-s.p6.html#fpu_unimp_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#302">fpu_unimp_c</a><a  href="hierarchy-s.p6.html#fpu_unimp_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="173"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#329">zero_trap_c</a><a  href="hierarchy-s.p21.html#zero_trap_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="174"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#320">lock_trap_c</a><a  href="hierarchy-s.p10.html#lock_trap_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="175"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#322">lock_ov_trap_c</a><a  href="hierarchy-s.p10.html#lock_ov_trap_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#324">lock_enter_trap_c</a><a  href="hierarchy-s.p10.html#lock_enter_trap_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#323">lock_exit_trap_c</a><a  href="hierarchy-s.p10.html#lock_exit_trap_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#325">lock_release_trap_c</a><a  href="hierarchy-s.p10.html#lock_release_trap_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="176"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#263">brk1_c</a><a  href="hierarchy-s.p2.html#brk1_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#264">brk2_c</a><a  href="hierarchy-s.p2.html#brk2_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="177"></a><span class=K>wire</span>   	<a  onClick="return qs(event,this)" class=SW href="#404">dcu_async_err</a><a  href="hierarchy-s.p4.html#dcu_async_err___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#405">mem_prot_err</a><a  href="hierarchy-s.p11.html#mem_prot_err___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#406">brk1</a><a  href="hierarchy-s.p2.html#brk1___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#407">brk2</a><a  href="hierarchy-s.p2.html#brk2___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#408">imem_acc_err</a><a  href="hierarchy-s.p9.html#imem_acc_err___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#409">ill_inst</a><a  href="hierarchy-s.p9.html#ill_inst___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#410">priv_inst</a><a  href="hierarchy-s.p14.html#priv_inst___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="178"></a><span class=K>wire</span>  	<a  onClick="return qs(event,this)" class=SW href="#411">oplim_trap</a><a  href="hierarchy-s.p13.html#oplim_trap___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#412">align_err</a><a  href="hierarchy-s.html#align_err___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#413">dmem_acc_err</a><a  href="hierarchy-s.p4.html#dmem_acc_err___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#414">femul</a><a  href="hierarchy-s.p6.html#femul___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#415">iemul_op</a><a  href="hierarchy-s.p9.html#iemul_op___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#416">java_vm_err</a><a  href="hierarchy-s.p10.html#java_vm_err___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#417">gc_trap</a><a  href="hierarchy-s.p7.html#gc_trap___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="179"></a><span class=K>wire</span>  	<a  onClick="return qs(event,this)" class=SW href="#418">pj_nmi_prio</a><a  href="hierarchy-s.p14.html#pj_nmi_prio___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#419">any_irl</a><a  href="hierarchy-s.html#any_irl___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="180"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#213">nmi_r</a><a  href="hierarchy-s.p12.html#nmi_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#293">priv_inst_e</a><a  href="hierarchy-s.p14.html#priv_inst_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#295">priv_inst_c</a><a  href="hierarchy-s.p14.html#priv_inst_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#306">emul_op_e</a><a  href="hierarchy-s.p5.html#emul_op_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#308">emul_op_c</a><a  href="hierarchy-s.p5.html#emul_op_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#336">arithm_exe_c</a><a  href="hierarchy-s.html#arithm_exe_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="181"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#338">null_ptr_exe_c</a><a  href="hierarchy-s.p12.html#null_ptr_exe_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#340">java_vm_err_c</a><a  href="hierarchy-s.p10.html#java_vm_err_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="182"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#350">dcu_io_err_c</a><a  href="hierarchy-s.p4.html#dcu_io_err_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#349">dcu_mem_err_c</a><a  href="hierarchy-s.p4.html#dcu_mem_err_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="183"></a><span class=K>wire</span>	[15:0]	<a  onClick="return qs(event,this)" class=SW href="#421">trap_vec_c</a><a  href="hierarchy-s.p17.html#trap_vec_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="184"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#315">soft_trap_c</a><a  href="hierarchy-s.p16.html#soft_trap_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#313">soft_trap_e</a><a  href="hierarchy-s.p16.html#soft_trap_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="185"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#459">other_tt_c</a><a  href="hierarchy-s.p13.html#other_tt_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="186"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#374">trap_vld_c</a><a  href="hierarchy-s.p17.html#trap_vld_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#371">trap_vld_c_raw</a><a  href="hierarchy-s.p17.html#trap_vld_c_raw___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#363">trap_vld_r_new</a><a  href="hierarchy-s.p17.html#trap_vld_r_new___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#368">trap_vld_e_new</a><a  href="hierarchy-s.p17.html#trap_vld_e_new___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="187"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#439">trap_in_c</a><a  href="hierarchy-s.p17.html#trap_in_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#491">trap_in_w</a><a  href="hierarchy-s.p17.html#trap_in_w___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="188"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#206">irl_d</a><a  href="hierarchy-s.p9.html#irl_d___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#207">irl_d_new</a><a  href="hierarchy-s.p9.html#irl_d_new___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#208">nmi_d_new</a><a  href="hierarchy-s.p12.html#nmi_d_new___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="189"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#189">halt</a><a  href="hierarchy-s.p8.html#halt___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="190"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#348">dcu_async_err_c</a><a  href="hierarchy-s.p4.html#dcu_async_err_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#503">brtaken_c</a><a  href="hierarchy-s.p2.html#brtaken_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="191"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#344">async_mem_prot_error</a><a  href="hierarchy-s.html#async_mem_prot_error___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="192"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#502">new_brtaken_e</a><a  href="hierarchy-s.p12.html#new_brtaken_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="193"></a><span class=K>wire</span> [3:0] <a  onClick="return qs(event,this)" class=SW href="#218">pj_irl_r</a><a  href="hierarchy-s.p14.html#pj_irl_r___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#224">pj_irl_e</a><a  href="hierarchy-s.p14.html#pj_irl_e___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#230">pj_irl_c</a><a  href="hierarchy-s.p14.html#pj_irl_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="194"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#394">fast_trap</a><a  href="hierarchy-s.p6.html#fast_trap___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="195"></a><span class=K>wire</span> 	<a  onClick="return qs(event,this)" class=SW href="#249">inst_brk1_r_new</a><a  href="hierarchy-s.p9.html#inst_brk1_r_new___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="196"></a><span class=K>wire</span> 	<a  onClick="return qs(event,this)" class=SW href="#250">inst_brk2_r_new</a><a  href="hierarchy-s.p9.html#inst_brk2_r_new___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+
+<span class=C>// Interrupt Pipe
+</span><span class=C>// Treat Interrrupts like instructions. Interrupts will enter the pipe in D stage.
+</span><span class=C>// they propagate down the pipe till the C stage and trap in taken in C stage.
+</span><span class=C>// In case of powerdown instruction in E,even though there is a hold_r,propagate
+</span><span class=C>// the irl ,so the interrupt is taken immediately after powerdown inst.
+</span>
+<a name="206"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#188">irl_d</a>= (|<a  onClick="return qs(event,this)" class=SI href="#111">pj_irl</a>[3:0]);
+<a name="207"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#188">irl_d_new</a> = <a  onClick="return qs(event,this)" class=SW href="#206">irl_d</a>&amp;~<a  onClick="return qs(event,this)" class=SO href="#379">trap_in_progress</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#150">iu_brtaken_e</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#361">br_c</a>;
+<a name="208"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#188">nmi_d_new</a> = <a  onClick="return qs(event,this)" class=SI href="#112">pj_nmi</a>&amp;~<a  onClick="return qs(event,this)" class=SO href="#379">trap_in_progress</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#150">iu_brtaken_e</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#361">br_c</a>;
+
+<a name="trap_irl_r_reg"></a><a name="210"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  irl_r_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#166">irl_r_out</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#207">irl_d_new</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),
+	<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#116">hold_r</a>|<a  onClick="return qs(event,this)" class=SO href="#379">trap_in_progress</a>|<a  onClick="return qs(event,this)" class=SI href="#150">iu_brtaken_e</a>|<a  onClick="return qs(event,this)" class=SI href="#140">powerdown_op_e</a>));
+<a name="212"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#166">irl_r</a> = <a  onClick="return qs(event,this)" class=SW href="#210">irl_r_out</a>&amp; (<a  onClick="return qs(event,this)" class=SW href="#218">pj_irl_r</a>[3:0]&gt;<a  onClick="return qs(event,this)" class=SI href="#114">iu_psr_pil</a>[3:0])&amp;<a  onClick="return qs(event,this)" class=SI href="#115">iu_psr_ie</a>;
+<a name="213"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#180">nmi_r</a> = <a  onClick="return qs(event,this)" class=SW href="#237">nmi_r_out</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#115">iu_psr_ie</a>;
+
+<a name="trap_irl_e_reg"></a><a name="215"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	irl_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#166">irl_e</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#212">irl_r</a>)    ,<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>));
+<a name="trap_irl_c_reg"></a><a name="216"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	irl_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#166">irl_c</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#215">irl_e</a>)    ,<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>));
+
+<a name="trap_pj_irl_r_reg"></a><a name="218"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_4">ff_sre_4</a> pj_irl_r_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4704">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#193">pj_irl_r</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#111">pj_irl</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+			<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#116">hold_r</a> | <a  onClick="return qs(event,this)" class=SI href="#140">powerdown_op_e</a>|<a  onClick="return qs(event,this)" class=SO href="#379">trap_in_progress</a>|<a  onClick="return qs(event,this)" class=SI href="#150">iu_brtaken_e</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>));
+
+<a name="trap_pj_irl_e_reg"></a><a name="224"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_4">ff_sre_4</a> pj_irl_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4704">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#193">pj_irl_e</a>),
+                        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#218">pj_irl_r</a>),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+                        <span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>));
+ 
+<a name="trap_pj_irl_c_reg"></a><a name="230"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_4">ff_sre_4</a> pj_irl_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4704">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#193">pj_irl_c</a>),
+                        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#224">pj_irl_e</a>),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+                        <span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>));
+ 
+
+<a name="trap_nmi_r_reg"></a><a name="237"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	nmi_r_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#166">nmi_r_out</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#208">nmi_d_new</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),
+	<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#116">hold_r</a>|<a  onClick="return qs(event,this)" class=SO href="#379">trap_in_progress</a>|<a  onClick="return qs(event,this)" class=SI href="#150">iu_brtaken_e</a>|<a  onClick="return qs(event,this)" class=SI href="#140">powerdown_op_e</a>));
+<a name="trap_nmi_e_reg"></a><a name="239"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	nmi_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#166">nmi_e</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#213">nmi_r</a>)    ,<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>));
+<a name="trap_nmi_c_reg"></a><a name="240"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	nmi_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#166">nmi_c</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#239">nmi_e</a>)    ,<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>));
+
+<a name="242"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#104">kill_powerdown</a> = <a  onClick="return qs(event,this)" class=SW href="#212">irl_r</a> | <a  onClick="return qs(event,this)" class=SW href="#213">nmi_r</a> ;
+
+<span class=C>// Instruction Break point pipe
+</span>
+
+<span class=C>// Kill the breakpoint if previous instn. is branch or trap
+</span>
+<a name="249"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#195">inst_brk1_r_new</a> = <a  onClick="return qs(event,this)" class=SI href="#121">inst_brk1_r</a> &amp; ~<a  onClick="return qs(event,this)" class=SI href="#150">iu_brtaken_e</a> &amp; ~<a  onClick="return qs(event,this)" class=SO href="#379">trap_in_progress</a> &amp; ~<a  onClick="return qs(event,this)" class=SW href="#361">br_c</a>;
+<a name="250"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#196">inst_brk2_r_new</a> = <a  onClick="return qs(event,this)" class=SI href="#122">inst_brk2_r</a> &amp; ~<a  onClick="return qs(event,this)" class=SI href="#150">iu_brtaken_e</a> &amp; ~<a  onClick="return qs(event,this)" class=SO href="#379">trap_in_progress</a> &amp; ~<a  onClick="return qs(event,this)" class=SW href="#361">br_c</a>;
+
+<a name="trap_inst_brk1_e_reg"></a><a name="252"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  inst_brk1_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#167">inst_brk1_e</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#249">inst_brk1_r_new</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>));
+<a name="trap_inst_brk2_e_reg"></a><a name="254"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  inst_brk2_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#167">inst_brk2_e</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#250">inst_brk2_r_new</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>));
+<a name="trap_inst_brk1_c_reg"></a><a name="256"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  inst_brk1_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#167">inst_brk1_c</a>),<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="#252">inst_brk1_e</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>)),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>((<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#110">pj_resume</a>)),<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>));
+<a name="trap_inst_brk2_c_reg"></a><a name="258"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  inst_brk2_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#167">inst_brk2_c</a>),<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="#254">inst_brk2_e</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>)),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>((<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#110">pj_resume</a>)),<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>));
+
+
+<span class=C>// Instruction &amp; data break points
+</span><a name="263"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#176">brk1_c</a> = (<a  onClick="return qs(event,this)" class=SW href="#256">inst_brk1_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#374">trap_vld_c</a> | <a  onClick="return qs(event,this)" class=SI href="#141">data_brk1_c</a>)&amp;~<a  onClick="return qs(event,this)" class=SI href="#151">brk12c_halt</a> ;
+<a name="264"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#176">brk2_c</a> = (<a  onClick="return qs(event,this)" class=SW href="#258">inst_brk2_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#374">trap_vld_c</a> | <a  onClick="return qs(event,this)" class=SI href="#142">data_brk2_c</a>)&amp;~<a  onClick="return qs(event,this)" class=SI href="#151">brk12c_halt</a> ;
+
+
+<a name="trap_first_cyc_c_reg"></a><a name="267"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a> first_cyc_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>     (<a  onClick="return qs(event,this)" class=SW href="#267">first_cyc_c</a><a  href="hierarchy-s.p6.html#first_cyc_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>),
+                        <span class=SI>.din</span>     (<a  onClick="return qs(event,this)" class=SI href="#123">first_cyc_e</a>),
+                        <span class=SI>.enable</span>  (~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>),
+                        <span class=SI>.reset_l</span> (<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),
+                        <span class=SI>.clk</span>     (<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>)
+                        );
+
+<a name="274"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#105">pj_brk1_sync</a> = (<a  onClick="return qs(event,this)" class=SW href="#256">inst_brk1_c</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="#374">trap_vld_c</a>| (<a  onClick="return qs(event,this)" class=SI href="#151">brk12c_halt</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#124">inst_vld_c</a>)) | <a  onClick="return qs(event,this)" class=SI href="#141">data_brk1_c</a>) &amp; ~<a  onClick="return qs(event,this)" class=SW href="#267">first_cyc_c</a>;
+<a name="275"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#106">pj_brk2_sync</a> = (<a  onClick="return qs(event,this)" class=SW href="#258">inst_brk2_c</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="#374">trap_vld_c</a>| (<a  onClick="return qs(event,this)" class=SI href="#151">brk12c_halt</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#124">inst_vld_c</a>)) | <a  onClick="return qs(event,this)" class=SI href="#142">data_brk2_c</a>) &amp; ~<a  onClick="return qs(event,this)" class=SW href="#267">first_cyc_c</a>;
+
+
+
+<span class=C>// Instruction Memory exception pipe
+</span><a name="trap_imem_e_reg"></a><a name="280"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  imem_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#170">imem_acc_err_e</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#125">imem_acc_err_r</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>));
+<a name="trap_imem_c_reg"></a><a name="282"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  imem_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#170">imem_acc_err_c</a>),<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="#280">imem_acc_err_e</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>)),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>));
+
+
+<span class=C>// Illegal Instruction pipe
+</span><a name="trap_ill_e_reg"></a><a name="287"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  ill_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#171">ill_inst_e</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#126">illegal_r</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>));
+<a name="trap_ill_c_reg"></a><a name="289"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  ill_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#171">ill_inst_c</a>),<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="#287">ill_inst_e</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>)),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>));
+ 
+<span class=C>// Privileged Instruction trap pipe
+</span><a name="trap_priv_e_reg"></a><a name="293"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  priv_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#180">priv_inst_e</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#128">priv_inst_r</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>));
+<a name="trap_priv_c_reg"></a><a name="295"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  priv_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#180">priv_inst_c</a>),<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="#293">priv_inst_e</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>)),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>));
+ 
+<span class=C>// FPU unimplemented trap pipe
+</span><a name="299"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#172">fpu_unimp_r</a>	=	<a  onClick="return qs(event,this)" class=SI href="#129">fpu_inst_r</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="#113">pj_no_fpu</a>|~<a  onClick="return qs(event,this)" class=SI href="#119">iu_psr_fpe</a>);
+<a name="trap_fpu_e_reg"></a><a name="300"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  fpu_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#172">fpu_unimp_e</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#299">fpu_unimp_r</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>));
+<a name="trap_fpu_c_reg"></a><a name="302"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  fpu_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#172">fpu_unimp_c</a>),<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="#300">fpu_unimp_e</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>)),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>));
+
+<span class=C>// Emulated opcodes pipe
+</span><a name="trap_emul_op_e_reg"></a><a name="306"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  emul_op_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#180">emul_op_e</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#145">emul_op_r</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>));
+<a name="trap_emul_op_c_reg"></a><a name="308"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  emul_op_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#180">emul_op_c</a>),<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="#306">emul_op_e</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>)),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>));
+
+
+<span class=C>// software trap pipe
+</span><a name="trap_soft_e_reg"></a><a name="313"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  soft_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#184">soft_trap_e</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#127">soft_trap_r</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>));
+<a name="trap_soft_c_reg"></a><a name="315"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  soft_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#184">soft_trap_c</a>),<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="#313">soft_trap_e</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>)),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>));
+
+
+<span class=C>//Lock traps
+</span><a name="trap_lock_trap_reg"></a><a name="320"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_4">ff_sre_4</a> lock_trap_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4704">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#174">lock_trap_c</a>[3:0]),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#133">lock_trap_e</a>[3:0]),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>));
+<a name="322"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#175">lock_ov_trap_c</a>		=	<a  onClick="return qs(event,this)" class=SW href="#320">lock_trap_c</a>[3];
+<a name="323"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#175">lock_exit_trap_c</a>	=	<a  onClick="return qs(event,this)" class=SW href="#320">lock_trap_c</a>[2];
+<a name="324"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#175">lock_enter_trap_c</a>	=	<a  onClick="return qs(event,this)" class=SW href="#320">lock_trap_c</a>[1];
+<a name="325"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#175">lock_release_trap_c</a>	=	<a  onClick="return qs(event,this)" class=SW href="#320">lock_trap_c</a>[0];
+
+
+<span class=C>// Zeroline Trap pipe
+</span><a name="trap_zero_c_reg"></a><a name="329"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	zero_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#173">zero_trap_c</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#130">zero_trap_e</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>));
+
+
+<span class=C>// Coalese the jvm errors. No need to prioritize them.
+</span><span class=C>// ucode exceptions are considered C stage ,so that any ucode related ld/st can
+</span><span class=C>// killed in time. to avoid killing the wrong ld/st ,we need to qualify it with
+</span><a name="trap_vm_err_c_reg"></a><a name="336"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  vm_err_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#180">arithm_exe_c</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#132">arithm_exe_e</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>));
+<a name="trap_null_ptr_c_reg"></a><a name="338"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  null_ptr_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#181">null_ptr_exe_c</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#131">null_ptr_exe_e</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>));
+<a name="340"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#181">java_vm_err_c</a>	= <a  onClick="return qs(event,this)" class=SI href="#134">u_ref_null_c</a> | <a  onClick="return qs(event,this)" class=SI href="#135">u_ary_ovf_c</a> | (<a  onClick="return qs(event,this)" class=SW href="#336">arithm_exe_c</a> | <a  onClick="return qs(event,this)" class=SW href="#338">null_ptr_exe_c</a>)&amp;<a  onClick="return qs(event,this)" class=SW href="#374">trap_vld_c</a>;
+
+
+<span class=C>// Dcache Memory exceptions
+</span><a name="trap_async_err_reg"></a><a name="344"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>  async_err_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#191">async_mem_prot_error</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#138">async_mem_prot_err</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>));
+
+
+<a name="348"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#190">dcu_async_err_c</a>	=  	<a  onClick="return qs(event,this)" class=SI href="#137">dcu_err_ack</a>[2] | <a  onClick="return qs(event,this)" class=SW href="#344">async_mem_prot_error</a>;
+<a name="349"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#182">dcu_mem_err_c</a>	=	<a  onClick="return qs(event,this)" class=SI href="#137">dcu_err_ack</a>[0];
+<a name="350"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#182">dcu_io_err_c</a>	=	<a  onClick="return qs(event,this)" class=SI href="#137">dcu_err_ack</a>[1];
+<a name="351"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#108">async_error</a> 	=  	<a  onClick="return qs(event,this)" class=SW href="#348">dcu_async_err_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#120">iu_psr_aem</a>;
+
+
+<span class=C>// Trap valid pipe 
+</span><a name="355"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#97">trap_vld_r</a> =	<a  onClick="return qs(event,this)" class=SW href="#212">irl_r</a> | <a  onClick="return qs(event,this)" class=SW href="#213">nmi_r</a> | (<a  onClick="return qs(event,this)" class=SI href="#121">inst_brk1_r</a>| <a  onClick="return qs(event,this)" class=SI href="#122">inst_brk2_r</a>)&amp;~<a  onClick="return qs(event,this)" class=SI href="#151">brk12c_halt</a> |<a  onClick="return qs(event,this)" class=SI href="#128">priv_inst_r</a> | <a  onClick="return qs(event,this)" class=SI href="#126">illegal_r</a>
+			| <a  onClick="return qs(event,this)" class=SI href="#125">imem_acc_err_r</a> | <a  onClick="return qs(event,this)" class=SW href="#299">fpu_unimp_r</a> | <a  onClick="return qs(event,this)" class=SI href="#145">emul_op_r</a> | <a  onClick="return qs(event,this)" class=SI href="#127">soft_trap_r</a> ;
+
+
+<span class=C>// Need to kill any trap for an extra cycle after branch,bcos the PC pipe is
+</span><span class=C>// not correct and need 1 cycles to adjust the pipe to fetch the branch pc.
+</span><a name="trap_br_c_reg"></a><a name="361"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>   br_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#168">br_c</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#150">iu_brtaken_e</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>));
+
+<a name="363"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#186">trap_vld_r_new</a> =  <a  onClick="return qs(event,this)" class=SO href="#355">trap_vld_r</a> &amp; ~<a  onClick="return qs(event,this)" class=SI href="#150">iu_brtaken_e</a> &amp;~<a  onClick="return qs(event,this)" class=SI href="#149">fold_sc_miss_e</a>&amp;~<a  onClick="return qs(event,this)" class=SO href="#379">trap_in_progress</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#361">br_c</a>;
+
+<a name="trap_trap_vld_e_reg"></a><a name="365"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  trap_vld_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#98">trap_vld_e</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#363">trap_vld_r_new</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a> |<a  onClick="return qs(event,this)" class=SO href="#379">trap_in_progress</a>|<a  onClick="return qs(event,this)" class=SI href="#150">iu_brtaken_e</a>));
+
+<a name="368"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#186">trap_vld_e_new</a>	=  (<a  onClick="return qs(event,this)" class=SO href="#365">trap_vld_e</a>| (|<a  onClick="return qs(event,this)" class=SI href="#133">lock_trap_e</a>[3:0])|<a  onClick="return qs(event,this)" class=SI href="#132">arithm_exe_e</a> |
+			   <a  onClick="return qs(event,this)" class=SI href="#130">zero_trap_e</a>|<a  onClick="return qs(event,this)" class=SI href="#131">null_ptr_exe_e</a>)&amp;~<a  onClick="return qs(event,this)" class=SO href="#379">trap_in_progress</a>;
+
+<a name="trap_trap_vld_c_reg"></a><a name="371"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  trap_vld_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#186">trap_vld_c_raw</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#368">trap_vld_e_new</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>|<a  onClick="return qs(event,this)" class=SO href="#379">trap_in_progress</a>));
+
+<a name="374"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#186">trap_vld_c</a> = <a  onClick="return qs(event,this)" class=SW href="#371">trap_vld_c_raw</a>;
+
+<span class=C>// To generate a state which indicates trap frame building is in progress.
+</span><a name="377"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#169">new_trap</a>	=  <a  onClick="return qs(event,this)" class=SO href="#385">iu_trap_r</a> | <a  onClick="return qs(event,this)" class=SW href="#378">trap_state</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#152">ucode_done</a>;
+<a name="trap_trap_stat_reg"></a><a name="378"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	trap_stat_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#169">trap_state</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#377">new_trap</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>));
+<a name="379"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#99">trap_in_progress</a>	=	<a  onClick="return qs(event,this)" class=SW href="#439">trap_in_c</a> | <a  onClick="return qs(event,this)" class=SO href="#385">iu_trap_r</a>| <a  onClick="return qs(event,this)" class=SW href="#378">trap_state</a>;
+ 
+<span class=C>// To generate trap signal in R stage for ucode to start building a trap frame.
+</span><span class=C>// even if the ucode is not ready to read iu_trap_r (due to hold..),iu_trap_r is
+</span><span class=C>// held by using hold_e. but if there is a hold_e when trap occurs, we still need
+</span><span class=C>// to latch iu_trap_c. do not activate trap if there is a folded group.
+</span><a name="trap_iu_trap_reg"></a><a name="385"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	iu_trap_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#100">iu_trap_r</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#439">trap_in_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#148">fold_c</a>| <a  onClick="return qs(event,this)" class=SO href="#351">async_error</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#156">hold_e</a>|<a  onClick="return qs(event,this)" class=SW href="#439">trap_in_c</a>),
+	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>));
+
+<span class=C>// Write to TT field only if there is no folded group or an async_error .
+</span><a name="389"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#95">tt_we</a>		=	<a  onClick="return qs(event,this)" class=SW href="#439">trap_in_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#148">fold_c</a> | <a  onClick="return qs(event,this)" class=SO href="#351">async_error</a>;
+
+
+<span class=C>// iu_trap_c maybe be valid only for one cycle .Thus,even ifthere is hold_c,
+</span><span class=C>// we need to latch it into iu_trap_r.
+</span><a name="394"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#194">fast_trap</a> 	=  <a  onClick="return qs(event,this)" class=SW href="#421">trap_vec_c</a>[15] |(|<a  onClick="return qs(event,this)" class=SW href="#421">trap_vec_c</a>[11:9]) |(|<a  onClick="return qs(event,this)" class=SW href="#421">trap_vec_c</a>[7:0]) ;
+<a name="395"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#96">iu_trap_c</a> 	=  <a  onClick="return qs(event,this)" class=SI href="#139">mem_prot_err_c</a>|<a  onClick="return qs(event,this)" class=SW href="#263">brk1_c</a>|<a  onClick="return qs(event,this)" class=SW href="#264">brk2_c</a>| <a  onClick="return qs(event,this)" class=SI href="#143">oplim_trap_c</a>| <a  onClick="return qs(event,this)" class=SW href="#394">fast_trap</a>;
+
+ <span class=C>// The C-stage partial Priority Encoder module.
+</span><a name="398"></a><span class=K>wire</span> [15:0] <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a><a  href="hierarchy-s.p14.html#ptrap_in_c___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="trap_trap_encoder"></a><a name="399"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p6.html#pencoder_16">pencoder_16</a> trap_encoder( <span class=SI>.trap_vec_c</span>(<a  onClick="return qs(event,this)" class=SW href="#421">trap_vec_c</a>[15:0]),
+<a name="400"></a>                          <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p6.html#5711">.ptrap_in_c</a>(<a  onClick="return qs(event,this)" class=SW href="#398">ptrap_in_c</a>[15:0]));
+ 
+ 
+ <span class=C>// Extract the signals from the prioritized output
+</span><a name="404"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#177">dcu_async_err</a>   =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[15];
+<a name="405"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#177">mem_prot_err</a>    =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[14];
+<a name="406"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#177">brk1</a>            =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[13];
+<a name="407"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#177">brk2</a>            =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[12];
+<a name="408"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#177">imem_acc_err</a>    =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[11];
+<a name="409"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#177">ill_inst</a>        =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[10];
+<a name="410"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#177">priv_inst</a>       =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[9];
+<a name="411"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#178">oplim_trap</a>      =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[8];
+<a name="412"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#178">align_err</a>       =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[7];
+<a name="413"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#178">dmem_acc_err</a>    =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[6];
+<a name="414"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#178">femul</a>           =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[5];
+<a name="415"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#178">iemul_op</a>        =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[4];
+<a name="416"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#178">java_vm_err</a>     =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[3];
+<a name="417"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#178">gc_trap</a>         =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[2];
+<a name="418"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#179">pj_nmi_prio</a>     =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[1];
+<a name="419"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#179">any_irl</a>         =       <a  onClick="return qs(event,this)" class=SW href="#400">ptrap_in_c</a>[0];
+ 
+<a name="421"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[15]  =       <a  onClick="return qs(event,this)" class=SW href="#348">dcu_async_err_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#120">iu_psr_aem</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[14]  =       <a  onClick="return qs(event,this)" class=SI href="#139">mem_prot_err_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#118">iu_psr_ace</a> ;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[13]  =       <a  onClick="return qs(event,this)" class=SW href="#263">brk1_c</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[12]  =       <a  onClick="return qs(event,this)" class=SW href="#264">brk2_c</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[11]  =       <a  onClick="return qs(event,this)" class=SW href="#282">imem_acc_err_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#374">trap_vld_c</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[10]  =       <a  onClick="return qs(event,this)" class=SW href="#289">ill_inst_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#374">trap_vld_c</a> ;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[9]   =       <a  onClick="return qs(event,this)" class=SW href="#295">priv_inst_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#374">trap_vld_c</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[8]   =       <a  onClick="return qs(event,this)" class=SI href="#143">oplim_trap_c</a> ;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[7]   =       <a  onClick="return qs(event,this)" class=SI href="#144">align_err_c</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[6]   =       <a  onClick="return qs(event,this)" class=SW href="#349">dcu_mem_err_c</a> | <a  onClick="return qs(event,this)" class=SW href="#350">dcu_io_err_c</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[5]   =       <a  onClick="return qs(event,this)" class=SW href="#302">fpu_unimp_c</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="#113">pj_no_fpu</a> | ~<a  onClick="return qs(event,this)" class=SI href="#119">iu_psr_fpe</a>)&amp;<a  onClick="return qs(event,this)" class=SW href="#374">trap_vld_c</a> ;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[4]   =       (<a  onClick="return qs(event,this)" class=SW href="#308">emul_op_c</a>| <a  onClick="return qs(event,this)" class=SW href="#315">soft_trap_c</a>| <a  onClick="return qs(event,this)" class=SW href="#324">lock_enter_trap_c</a>|
+                                <a  onClick="return qs(event,this)" class=SW href="#322">lock_ov_trap_c</a>| <a  onClick="return qs(event,this)" class=SW href="#323">lock_exit_trap_c</a>| <a  onClick="return qs(event,this)" class=SW href="#325">lock_release_trap_c</a>)&amp;<a  onClick="return qs(event,this)" class=SW href="#374">trap_vld_c</a>|<a  onClick="return qs(event,this)" class=SI href="#136">u_ptr_un_eq_c</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[3]   =       <a  onClick="return qs(event,this)" class=SW href="#340">java_vm_err_c</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[2]   =       <a  onClick="return qs(event,this)" class=SI href="#146">gc_trap_c</a> | <a  onClick="return qs(event,this)" class=SW href="#329">zero_trap_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#374">trap_vld_c</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[1]   =       <a  onClick="return qs(event,this)" class=SW href="#240">nmi_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#374">trap_vld_c</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">trap_vec_c</a>[0]   =       <a  onClick="return qs(event,this)" class=SW href="#216">irl_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#374">trap_vld_c</a>;
+
+<a name="439"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#187">trap_in_c</a>       =       (|<a  onClick="return qs(event,this)" class=SW href="#421">trap_vec_c</a>[15:0]);
+
+<a name="441"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#441">data_acc_io_err</a><a  href="hierarchy-s.p4.html#data_acc_io_err___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a> = <a  onClick="return qs(event,this)" class=SW href="#413">dmem_acc_err</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#350">dcu_io_err_c</a>;
+<a name="442"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#442">data_acc_mem_err</a><a  href="hierarchy-s.p4.html#data_acc_mem_err___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>= <a  onClick="return qs(event,this)" class=SW href="#413">dmem_acc_err</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#349">dcu_mem_err_c</a>;
+<a name="443"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#443">soft_trap</a><a  href="hierarchy-s.p16.html#soft_trap___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>= <a  onClick="return qs(event,this)" class=SW href="#415">iemul_op</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#315">soft_trap_c</a>;
+<a name="444"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#444">lock_enter_trap</a><a  href="hierarchy-s.p10.html#lock_enter_trap___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>= <a  onClick="return qs(event,this)" class=SW href="#324">lock_enter_trap_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#415">iemul_op</a>;
+<a name="445"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#445">lock_ov_trap</a><a  href="hierarchy-s.p10.html#lock_ov_trap___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>= <a  onClick="return qs(event,this)" class=SW href="#322">lock_ov_trap_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#415">iemul_op</a>;
+<a name="446"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#446">lock_exit_trap</a><a  href="hierarchy-s.p10.html#lock_exit_trap___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>= <a  onClick="return qs(event,this)" class=SW href="#323">lock_exit_trap_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#415">iemul_op</a>;
+<a name="447"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#447">lock_release_trap</a><a  href="hierarchy-s.p10.html#lock_release_trap___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>= <a  onClick="return qs(event,this)" class=SW href="#325">lock_release_trap_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#415">iemul_op</a>;
+<a name="448"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#448">zero_trap</a><a  href="hierarchy-s.p21.html#zero_trap___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>		= <a  onClick="return qs(event,this)" class=SW href="#329">zero_trap_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#417">gc_trap</a>;
+<a name="449"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#449">gc_notify</a><a  href="hierarchy-s.p7.html#gc_notify___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>		= <a  onClick="return qs(event,this)" class=SW href="#417">gc_trap</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#329">zero_trap_c</a>;
+ 
+<a name="451"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#451">arith_excptn</a><a  href="hierarchy-s.html#arith_excptn___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>= <a  onClick="return qs(event,this)" class=SW href="#416">java_vm_err</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#336">arithm_exe_c</a>;
+<a name="452"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#452">index_out_bnd_excptn</a><a  href="hierarchy-s.p9.html#index_out_bnd_excptn___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>= <a  onClick="return qs(event,this)" class=SW href="#416">java_vm_err</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#135">u_ary_ovf_c</a>;
+<a name="453"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#453">nullptr_excptn</a><a  href="hierarchy-s.p12.html#nullptr_excptn___trap"><IMG align=top border=0 SRC="v2html-i.gif"></a>= <a  onClick="return qs(event,this)" class=SW href="#416">java_vm_err</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="#134">u_ref_null_c</a>| <a  onClick="return qs(event,this)" class=SW href="#338">null_ptr_exe_c</a>);
+ 
+
+
+ <span class=C>// TBR.tt generation logic
+</span>
+<a name="459"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#185">other_tt_c</a>[7]	=	1'b0;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#185">other_tt_c</a>[6]	=	1'b0;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#185">other_tt_c</a>[5]	=	<a  onClick="return qs(event,this)" class=SW href="#447">lock_release_trap</a>|<a  onClick="return qs(event,this)" class=SW href="#446">lock_exit_trap</a>|<a  onClick="return qs(event,this)" class=SW href="#445">lock_ov_trap</a>|<a  onClick="return qs(event,this)" class=SW href="#444">lock_enter_trap</a> | <a  onClick="return qs(event,this)" class=SW href="#417">gc_trap</a> | <a  onClick="return qs(event,this)" class=SW href="#418">pj_nmi_prio</a>|<a  onClick="return qs(event,this)" class=SW href="#419">any_irl</a>;
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#185">other_tt_c</a>[4]	=	<a  onClick="return qs(event,this)" class=SW href="#451">arith_excptn</a> | <a  onClick="return qs(event,this)" class=SW href="#452">index_out_bnd_excptn</a> | <a  onClick="return qs(event,this)" class=SW href="#453">nullptr_excptn</a> | <a  onClick="return qs(event,this)" class=SW href="#418">pj_nmi_prio</a>|<a  onClick="return qs(event,this)" class=SW href="#419">any_irl</a>;
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#185">other_tt_c</a>[3]	=	<a  onClick="return qs(event,this)" class=SW href="#407">brk2</a> | <a  onClick="return qs(event,this)" class=SW href="#411">oplim_trap</a> | <a  onClick="return qs(event,this)" class=SW href="#412">align_err</a> | <a  onClick="return qs(event,this)" class=SW href="#441">data_acc_io_err</a> | <a  onClick="return qs(event,this)" class=SW href="#443">soft_trap</a> | <a  onClick="return qs(event,this)" class=SW href="#452">index_out_bnd_excptn</a> | 
+				<a  onClick="return qs(event,this)" class=SW href="#453">nullptr_excptn</a>| <a  onClick="return qs(event,this)" class=SW href="#448">zero_trap</a> | <a  onClick="return qs(event,this)" class=SW href="#419">any_irl</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#230">pj_irl_c</a>[3];
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#185">other_tt_c</a>[2]	=	<a  onClick="return qs(event,this)" class=SW href="#406">brk1</a> | <a  onClick="return qs(event,this)" class=SW href="#408">imem_acc_err</a> | <a  onClick="return qs(event,this)" class=SW href="#409">ill_inst</a> | <a  onClick="return qs(event,this)" class=SW href="#410">priv_inst</a> | <a  onClick="return qs(event,this)" class=SW href="#411">oplim_trap</a> | <a  onClick="return qs(event,this)" class=SW href="#443">soft_trap</a> | <a  onClick="return qs(event,this)" class=SW href="#451">arith_excptn</a>|
+				<a  onClick="return qs(event,this)" class=SW href="#444">lock_enter_trap</a> |<a  onClick="return qs(event,this)" class=SW href="#447">lock_release_trap</a>|<a  onClick="return qs(event,this)" class=SW href="#446">lock_exit_trap</a> | <a  onClick="return qs(event,this)" class=SW href="#449">gc_notify</a> | <a  onClick="return qs(event,this)" class=SW href="#419">any_irl</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#230">pj_irl_c</a>[2];
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#185">other_tt_c</a>[1]	=	<a  onClick="return qs(event,this)" class=SW href="#406">brk1</a> | <a  onClick="return qs(event,this)" class=SW href="#405">mem_prot_err</a> | <a  onClick="return qs(event,this)" class=SW href="#409">ill_inst</a> | <a  onClick="return qs(event,this)" class=SW href="#442">data_acc_mem_err</a> | <a  onClick="return qs(event,this)" class=SW href="#441">data_acc_io_err</a> | <a  onClick="return qs(event,this)" class=SW href="#451">arith_excptn</a> | <a  onClick="return qs(event,this)" class=SW href="#453">nullptr_excptn</a> |
+				<a  onClick="return qs(event,this)" class=SW href="#445">lock_ov_trap</a>|<a  onClick="return qs(event,this)" class=SW href="#446">lock_exit_trap</a> | <a  onClick="return qs(event,this)" class=SW href="#449">gc_notify</a> | <a  onClick="return qs(event,this)" class=SW href="#419">any_irl</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#230">pj_irl_c</a>[1];
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#185">other_tt_c</a>[0]	=	<a  onClick="return qs(event,this)" class=SW href="#406">brk1</a> | <a  onClick="return qs(event,this)" class=SW href="#404">dcu_async_err</a>| <a  onClick="return qs(event,this)" class=SW href="#410">priv_inst</a> | <a  onClick="return qs(event,this)" class=SW href="#412">align_err</a> | <a  onClick="return qs(event,this)" class=SW href="#442">data_acc_mem_err</a> | <a  onClick="return qs(event,this)" class=SW href="#443">soft_trap</a> | <a  onClick="return qs(event,this)" class=SW href="#452">index_out_bnd_excptn</a> 
+				|<a  onClick="return qs(event,this)" class=SW href="#445">lock_ov_trap</a>|<a  onClick="return qs(event,this)" class=SW href="#453">nullptr_excptn</a> |<a  onClick="return qs(event,this)" class=SW href="#447">lock_release_trap</a> | <a  onClick="return qs(event,this)" class=SW href="#449">gc_notify</a> | <a  onClick="return qs(event,this)" class=SW href="#448">zero_trap</a> | <a  onClick="return qs(event,this)" class=SW href="#419">any_irl</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#230">pj_irl_c</a>[0];
+
+
+<span class=C>// Switch for emulation traps
+</span><a name="479"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#94">tt_c</a>= (<a  onClick="return qs(event,this)" class=SW href="#414">femul</a> | <a  onClick="return qs(event,this)" class=SW href="#415">iemul_op</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="#308">emul_op_c</a>|<a  onClick="return qs(event,this)" class=SI href="#136">u_ptr_un_eq_c</a>)) ? <a  onClick="return qs(event,this)" class=SI href="#147">opcode_c</a>[7:0]: <a  onClick="return qs(event,this)" class=SW href="#459">other_tt_c</a>[7:0];
+
+<span class=C>// kill any outstanding fpu or dcu operations
+</span><span class=C>// iu_brtaken_e is qualified with ucode_done to avoid killing
+</span><span class=C>// ucode when ucode issues a branch.
+</span>
+<span class=C>// if there is a trap instruction in C and dcu instruction in E stage,
+</span><span class=C>// we need to kill the dcu request. bcos of timing reasons,we will kill
+</span><span class=C>// when it enters C stage. thus,we use trap_in_w also to kill_dcu
+</span><span class=C>// Need to qualify done with ucode_last because ucode_done is high
+</span><span class=C>// one cycle early.
+</span>
+<a name="trap_trap_w_reg"></a><a name="491"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>   trap_w_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#187">trap_in_w</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#439">trap_in_c</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+		   <span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>|<a  onClick="return qs(event,this)" class=SW href="#439">trap_in_c</a>),<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>));
+
+<span class=C>// Because ucode can write to Pc in the last cycle, and if there is
+</span><span class=C>// a hold and another S$ write to be done, the write is lost if we kill
+</span><span class=C>// ucode in the same cycle. therefore we latch the brtaken signal
+</span><span class=C>// and kill the ucode/fpu in the next cycle. this also fixes the
+</span><span class=C>// the timing path to fpu.
+</span><span class=C>// But,do not assert brtaken_c,if there was a trap along with branch.
+</span><span class=C>// bcos, we need to build trap frame by ucode and dont want to kill
+</span><span class=C>// ucode.
+</span><a name="502"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#192">new_brtaken_e</a> 	= <a  onClick="return qs(event,this)" class=SI href="#150">iu_brtaken_e</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#152">ucode_done</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#439">trap_in_c</a>;
+<a name="trap_brtaken_reg"></a><a name="503"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>   brtaken_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#190">brtaken_c</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#502">new_brtaken_e</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+                   <span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#157">hold_c</a>|<a  onClick="return qs(event,this)" class=SW href="#439">trap_in_c</a>),<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>));
+ 
+
+<a name="507"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#103">iu_kill_dcu</a>	= <a  onClick="return qs(event,this)" class=SO href="#395">iu_trap_c</a> | <a  onClick="return qs(event,this)" class=SW href="#491">trap_in_w</a>  | <a  onClick="return qs(event,this)" class=SI href="#117">ucode_abort</a>;
+<a name="508"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#101">iu_kill_fpu</a>	= <a  onClick="return qs(event,this)" class=SW href="#491">trap_in_w</a> | <a  onClick="return qs(event,this)" class=SO href="#365">trap_vld_e</a> | <a  onClick="return qs(event,this)" class=SI href="#149">fold_sc_miss_e</a> |<a  onClick="return qs(event,this)" class=SW href="#503">brtaken_c</a>;
+<a name="509"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#102">iu_kill_ucode</a>   = <a  onClick="return qs(event,this)" class=SO href="#395">iu_trap_c</a> | <a  onClick="return qs(event,this)" class=SO href="#365">trap_vld_e</a> | <a  onClick="return qs(event,this)" class=SI href="#149">fold_sc_miss_e</a> |<a  onClick="return qs(event,this)" class=SW href="#503">brtaken_c</a>;
+
+
+
+
+
+<span class=C>// Halt &amp; Resume Logic
+</span>
+<a name="517"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#107">pj_in_halt</a>	= <a  onClick="return qs(event,this)" class=SI href="#151">brk12c_halt</a>&amp;(<a  onClick="return qs(event,this)" class=SO href="#274">pj_brk1_sync</a> | <a  onClick="return qs(event,this)" class=SO href="#275">pj_brk2_sync</a>);
+
+<a name="trap_spare"></a><a  onClick="return qs(event,this)" class=MM href="spare.v.html#mj_spare">mj_spare</a> spare( <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#158">clk</a>),
+                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#159">reset_l</a>));
+ 
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:46:09 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/pipe/rtl/trap.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

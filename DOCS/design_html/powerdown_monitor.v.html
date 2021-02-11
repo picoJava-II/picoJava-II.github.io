@@ -1,0 +1,643 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/sim/env/powerdown_monitor.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "powerdown_monitor.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+<span class=C>/* ************************************************************************
+ * This powerdown monitor interfaces to PCSU 
+ * and performs the following tasks:
+ *
+ * 1) Drive pj_standby, nmi, and irl at random fashion. 
+ *
+ * 2) Test powerdown features.
+ *
+ * 3) Record the powerdown cycles as low-power performance meter.  
+ *
+ *  Command line arguments
+ *
+ *   +standy                            ; default: pj_standby is low  
+ *   +int_random			; default: pj_nmi is low 
+ *                           		; default: pj_irl[3:0] is low 
+ *   +int_cntl				; default: interrupt controller  
+ *					           is off
+ *   +int_cmd				; default: interrupt commands  
+ *					           are off
+ * 
+ * Note:
+ *   1) If +int_cntl plug is used, +int_random will be ignored.
+ *      With +int_cntl being used, the interrupt controller becomes
+ *      active and initiates the basic interrupt patterns including:
+ *        a. Nested interrupts
+ *	  b. Priority of interrupts
+ *
+ *   2) If +int_cmd plug is used, it overrides +int_cntl and +int_cmd.
+ *      For this case the command file will be in charge of scheduling
+ *      nmi, and irl[3:0] events to check:
+ *        a. Priority of traps and interrupts    
+ *        b. other units' interrupt-related functions
+ *
+ *   3) POWERDOWN_WAIT_NUMBER is used as the upper limit of the 
+ *   wait cycles for the function units to enter powerdown state 
+ *   after the pcsu asserts the pcsu_powerdown. 
+ * 
+ *   In order to have more aggressive powersaving design,
+ *   this number can always be changed to a smaller number 
+ *   to make simulation stop. So the design engineer can study 
+ *   the unit that exceeds the limit.  
+ *
+ * *********************************************************************** */</span>
+
+<a name="powerdown_monitor"></a><a  href="monitor.v.html#monitor_powerdown_monitor"><IMG alt="[Up: monitor powerdown_monitor]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>powerdown_monitor</span><a  href="hierarchy-m.p4.html#powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>(
+        <a  onClick="return qs(event,this)" class=SI href="#80">pj_clk</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#81">pj_standby_out</a>,
+        <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>,
+        <a  onClick="return qs(event,this)" class=SOR href="#87">pj_nmi</a>,
+        <a  onClick="return qs(event,this)" class=SOR href="#86">pj_standby</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#82">pj_address</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#83">pj_tv</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#84">pj_reset</a>
+	);
+
+<a name="78"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#78">POWERDOWN_WAIT_NUMBER</a> 16'h0100
+
+<a name="80"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#89">pj_clk</a><a  href="hierarchy-s.p14.html#pj_clk___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+<a name="81"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#90">pj_standby_out</a><a  href="hierarchy-s.p14.html#pj_standby_out___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+<a name="82"></a><span class=K>input</span>  [29:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#94">pj_address</a><a  href="hierarchy-s.p14.html#pj_address___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+<a name="83"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#95">pj_tv</a><a  href="hierarchy-s.p14.html#pj_tv___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="84"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#96">pj_reset</a><a  href="hierarchy-s.p14.html#pj_reset___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="86"></a><span class=K>output</span> 		<a  onClick="return qs(event,this)" class=SOR href="#172">pj_standby</a><a  href="hierarchy-s.p14.html#pj_standby___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="87"></a><span class=K>output</span> 		<a  onClick="return qs(event,this)" class=SOR href="#173">pj_nmi</a><a  href="hierarchy-s.p14.html#pj_nmi___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="88"></a><span class=K>output</span> [3:0]    <a  onClick="return qs(event,this)" class=SOR href="#174">pj_irl</a><a  href="hierarchy-s.p14.html#pj_irl___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+
+<span class=K>reg</span>	 	<a  onClick="return qs(event,this)" class=SOR href="#86">pj_standby</a>;
+<span class=K>reg</span>		<a  onClick="return qs(event,this)" class=SOR href="#87">pj_nmi</a>;
+<span class=K>reg</span>	[3:0]	<a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>;
+
+<a name="95"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#152">seed_num</a><a  href="hierarchy-s.p16.html#seed_num___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="97"></a><span class=K>real</span>            <a  onClick="return qs(event,this)" class=SR href="#170">total_standby_cyc_count</a><a  href="hierarchy-s.p17.html#total_standby_cyc_count___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// total powerdown meters
+</span><a name="98"></a><span class=K>real</span>            <a  onClick="return qs(event,this)" class=SR href="#189">total_sys_cyc_count</a><a  href="hierarchy-s.p17.html#total_sys_cyc_count___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	 
+<a name="99"></a><span class=K>real</span>            <a  onClick="return qs(event,this)" class=SR href="#190">save_power_percent</a><a  href="hierarchy-s.p16.html#save_power_percent___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// powersaving percentage 
+</span>
+<a name="101"></a><span class=K>reg</span>             <a  onClick="return qs(event,this)" class=SR href="#153">standby_flag</a><a  href="hierarchy-s.p16.html#standby_flag___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// standby plug
+</span><a name="102"></a><span class=K>reg</span>             <a  onClick="return qs(event,this)" class=SR href="#154">int_random_flag</a><a  href="hierarchy-s.p9.html#int_random_flag___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// int_random plug
+</span><a name="103"></a><span class=K>reg</span>             <a  onClick="return qs(event,this)" class=SR href="#155">int_cntl_flag</a><a  href="hierarchy-s.p9.html#int_cntl_flag___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// int_cntl plug 
+</span><a name="104"></a><span class=K>reg</span>             <a  onClick="return qs(event,this)" class=SR href="#156">int_cmd_flag</a><a  href="hierarchy-s.p9.html#int_cmd_flag___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// int_cmd plug 
+</span>
+<a name="106"></a><span class=K>reg</span>     [31:0]  <a  onClick="return qs(event,this)" class=SR href="#161">standby_rand_cyc</a><a  href="hierarchy-s.p16.html#standby_rand_cyc___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// random number of cycles 
+</span>					<span class=C>// for standby high pulse
+</span>
+<a name="109"></a><span class=K>reg</span>     [31:0]  <a  onClick="return qs(event,this)" class=SR href="#163">icu_wait_pwdn_count</a><a  href="hierarchy-s.p9.html#icu_wait_pwdn_count___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// icu powderdown monitor
+</span><a name="110"></a><span class=K>reg</span>     [31:0]  <a  onClick="return qs(event,this)" class=SR href="#164">dcu_wait_pwdn_count</a><a  href="hierarchy-s.p4.html#dcu_wait_pwdn_count___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// dcu powderdown monitor
+</span>
+<a name="112"></a><span class=K>reg</span>     [31:0]  <a  onClick="return qs(event,this)" class=SR href="#168">standby_cyc_count</a><a  href="hierarchy-s.p16.html#standby_cyc_count___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+<a name="113"></a><span class=K>reg</span>     [9:0]   <a  onClick="return qs(event,this)" class=SR href="#160">random_int_cyc</a><a  href="hierarchy-s.p15.html#random_int_cyc___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+<a name="114"></a><span class=K>reg</span>     [10:0]  <a  onClick="return qs(event,this)" class=SR href="#165">int_timeout_count</a><a  href="hierarchy-s.p9.html#int_timeout_count___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+
+<a name="116"></a><span class=K>reg</span>     [16:1] <a  onClick="return qs(event,this)" class=SR href="#157">pending_reg</a><a  href="hierarchy-s.p14.html#pending_reg___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// interrupt pending register
+</span>					<span class=C>// bit 16 : nmi
+</span>					<span class=C>// bit 15 : irl_15
+</span>					<span class=C>// bit 14 : irl_14
+</span>					<span class=C>// bit 13 : irl_13 ...
+</span>					<span class=C>// bit  1 : irl_1
+</span>
+<a name="123"></a><span class=K>reg</span>     [16:1] <a  onClick="return qs(event,this)" class=SR href="#158">pending_reg_temp</a><a  href="hierarchy-s.p14.html#pending_reg_temp___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="125"></a><span class=K>reg</span>     [16:1] <a  onClick="return qs(event,this)" class=SR href="#159">random_int_reg</a><a  href="hierarchy-s.p15.html#random_int_reg___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// interrupt random generation 
+</span>					<span class=C>// registers
+</span>
+<a name="128"></a><span class=K>reg</span>	[3:0]  <a  onClick="return qs(event,this)" class=SR href="#320">random_sel</a><a  href="hierarchy-s.p15.html#random_sel___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="130"></a><span class=K>reg</span>     <a  onClick="return qs(event,this)" class=SR href="#137">int_ack</a><a  href="hierarchy-s.p9.html#int_ack___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  			<span class=C>// interrupt ack from pico 
+</span><a name="131"></a><span class=K>reg</span>     <a  onClick="return qs(event,this)" class=SR href="#141">stop_int</a><a  href="hierarchy-s.p16.html#stop_int___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 			<span class=C>// stop random interrupt, 
+</span>          				<span class=C>// issued by the software. 
+</span><a name="133"></a><span class=K>reg</span>	<a  onClick="return qs(event,this)" class=SR href="#166">en_int_timeout</a><a  href="hierarchy-s.p5.html#en_int_timeout___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#80">pj_clk</a>) <span class=K>begin</span>
+<a name="137"></a>  <a  onClick="return qs(event,this)" class=SR href="#130">int_ack</a>  &lt;= #1 (<a  onClick="return qs(event,this)" class=SI href="#83">pj_tv</a> === 1'b1) &amp;
+                 (<a  onClick="return qs(event,this)" class=SI href="#82">pj_address</a> === <span class=D>`PENDING_REGISTER</span>) &amp;
+                 (<span class=D>`PICOJAVAII</span>.pj_type === 4'b0111);
+
+<a name="141"></a>  <a  onClick="return qs(event,this)" class=SR href="#131">stop_int</a> &lt;= #1 (<a  onClick="return qs(event,this)" class=SI href="#83">pj_tv</a> === 1'b1) &amp;
+                 (<a  onClick="return qs(event,this)" class=SI href="#82">pj_address</a> === <span class=D>`STOP_RANDOM_INTERRUPT</span>) &amp;
+		 (<span class=D>`PICOJAVAII</span>.pj_type === 4'h7);
+
+  <span class=K>end</span>
+  
+
+<span class=K>initial</span>   
+  <span class=K>begin</span>
+        <a  onClick="return qs(event,this)" class=SR href="#130">int_ack</a> = 0;
+        <a  onClick="return qs(event,this)" class=SR href="#131">stop_int</a> = 0;
+<a name="152"></a>        <a  onClick="return qs(event,this)" class=SIT href="#95">seed_num</a> = 0; 
+<a name="153"></a>        <a  onClick="return qs(event,this)" class=SR href="#101">standby_flag</a> = 1'b0;
+<a name="154"></a>        <a  onClick="return qs(event,this)" class=SR href="#102">int_random_flag</a> = 1'b0;
+<a name="155"></a>        <a  onClick="return qs(event,this)" class=SR href="#103">int_cntl_flag</a> = 1'b0;
+<a name="156"></a>        <a  onClick="return qs(event,this)" class=SR href="#104">int_cmd_flag</a> = 1'b0;
+<a name="157"></a>        <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a> = 16'h0000;
+<a name="158"></a>        <a  onClick="return qs(event,this)" class=SR href="#123">pending_reg_temp</a> = 16'h0000;
+<a name="159"></a>        <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a> = 16'h0000; 
+<a name="160"></a>        <a  onClick="return qs(event,this)" class=SR href="#113">random_int_cyc</a> = 10'b0000000000;
+<a name="161"></a>	<a  onClick="return qs(event,this)" class=SR href="#106">standby_rand_cyc</a> = 32'h0000003C; <span class=C>//default powerdown cycle is 60 cycles 
+</span>
+<a name="163"></a>        <a  onClick="return qs(event,this)" class=SR href="#109">icu_wait_pwdn_count</a> = 0;
+<a name="164"></a>        <a  onClick="return qs(event,this)" class=SR href="#110">dcu_wait_pwdn_count</a> = 0;
+<a name="165"></a>        <a  onClick="return qs(event,this)" class=SR href="#114">int_timeout_count</a> = 0;
+<a name="166"></a>        <a  onClick="return qs(event,this)" class=SR href="#133">en_int_timeout</a> = 1'b0;
+
+<a name="168"></a>        <a  onClick="return qs(event,this)" class=SR href="#112">standby_cyc_count</a> = 0; 
+
+<a name="170"></a>        <a  onClick="return qs(event,this)" class=SR href="#97">total_standby_cyc_count</a> = 0; 
+
+<a name="172"></a>        <a  onClick="return qs(event,this)" class=SOR href="#86">pj_standby</a> = 1'b0; 
+<a name="173"></a>        <a  onClick="return qs(event,this)" class=SOR href="#87">pj_nmi</a> = 1'b0; 
+<a name="174"></a>        <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a> = 4'b0000; 
+
+    <span class=K>if</span>(<span class=ST>$test$plusargs</span>(<span class=S>&quot;int_cmd&quot;</span>))  <a  onClick="return qs(event,this)" class=SR href="#104">int_cmd_flag</a> = 1'b1;
+    <span class=K>else</span> 
+      <span class=K>if</span>(<span class=ST>$test$plusargs</span>(<span class=S>&quot;int_cntl&quot;</span>)) <a  onClick="return qs(event,this)" class=SR href="#103">int_cntl_flag</a> = 1'b1;
+      <span class=K>else</span> 
+        <span class=K>if</span>(<span class=ST>$test$plusargs</span>(<span class=S>&quot;int_random&quot;</span>)) <a  onClick="return qs(event,this)" class=SR href="#102">int_random_flag</a> = 1'b1;
+
+    <span class=K>if</span>(<span class=ST>$test$plusargs</span>(<span class=S>&quot;standby&quot;</span>)) <a  onClick="return qs(event,this)" class=SR href="#101">standby_flag</a> = 1'b1;
+
+  <span class=K>end</span>
+
+
+  <span class=K>always</span> @(<span class=K>posedge</span> <span class=D>`PICOJAVAII</span>.end_of_simulation)
+     <span class=K>begin</span>
+<a name="189"></a>     <a  onClick="return qs(event,this)" class=SR href="#98">total_sys_cyc_count</a> = <span class=D>`PICOJAVAII</span>.clk_count; 
+<a name="190"></a>     <a  onClick="return qs(event,this)" class=SR href="#99">save_power_percent</a>=(<a  onClick="return qs(event,this)" class=SR href="#170">total_standby_cyc_count</a>/<a  onClick="return qs(event,this)" class=SR href="#189">total_sys_cyc_count</a>)*100;
+     <span class=ST>$display</span>(<span class=S>&quot;Total Standby cycle counts = %g&quot;</span>,<a  onClick="return qs(event,this)" class=SR href="#97">total_standby_cyc_count</a>); 
+     <span class=ST>$display</span>(<span class=S>&quot;Saving Power = %% %g&quot;</span>,<a  onClick="return qs(event,this)" class=SR href="#99">save_power_percent</a>); 
+     <span class=K>end</span>
+
+
+<span class=K>always</span> @ (<a  onClick="return qs(event,this)" class=SI href="#81">pj_standby_out</a>) <span class=K>begin</span>
+        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#81">pj_standby_out</a> == 1'b1)  
+           <span class=ST>$display</span>(<span class=S>&quot;Enter powerdown Mode&quot;</span>);
+        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#81">pj_standby_out</a> == 1'b0)  
+           <span class=ST>$display</span>(<span class=S>&quot;Exit powerdown mode&quot;</span>);
+        <span class=K>end</span>
+ 
+<span class=K>always</span> @ (<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#80">pj_clk</a>) <span class=K>begin</span> <span class=C>// {
+</span>
+        <span class=K>if</span> (<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.pcsu_powerdown) <span class=K>begin</span>
+           <span class=K>if</span> (!<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.icu_in_powerdown) 
+              <a  onClick="return qs(event,this)" class=SR href="#109">icu_wait_pwdn_count</a> &lt;= #1 <a  onClick="return qs(event,this)" class=SR href="#163">icu_wait_pwdn_count</a> + 1;
+           <span class=K>if</span> (!<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.dcu_in_powerdown) 
+              <a  onClick="return qs(event,this)" class=SR href="#110">dcu_wait_pwdn_count</a> &lt;= #1 <a  onClick="return qs(event,this)" class=SR href="#164">dcu_wait_pwdn_count</a> + 1;
+        <span class=K>end</span> <span class=K>else</span> <span class=K>begin</span>
+        <a  onClick="return qs(event,this)" class=SR href="#109">icu_wait_pwdn_count</a> &lt;= #1      0;
+        <a  onClick="return qs(event,this)" class=SR href="#110">dcu_wait_pwdn_count</a> &lt;= #1      0;
+        <span class=K>end</span>
+
+
+       <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#109">icu_wait_pwdn_count</a> &gt; <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#78">POWERDOWN_WAIT_NUMBER</a>) <span class=K>begin</span>
+          <span class=ST>$display</span>(<span class=S>&quot;Warning! icu_wait_pwdn_count = %d, It exceeds the limit.&quot;</span>,
+                   <a  onClick="return qs(event,this)" class=SR href="#109">icu_wait_pwdn_count</a>); 
+          <span class=K>end</span>
+
+       <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#110">dcu_wait_pwdn_count</a> &gt; <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#78">POWERDOWN_WAIT_NUMBER</a>) <span class=K>begin</span>
+          <span class=ST>$display</span>(<span class=S>&quot;Warning! dcu_wait_pwdn_count = %d, It exceeds the limit.&quot;</span>,
+                   <a  onClick="return qs(event,this)" class=SR href="#110">dcu_wait_pwdn_count</a>); 
+          <span class=K>end</span>
+
+
+	<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#81">pj_standby_out</a>)  
+	   <a  onClick="return qs(event,this)" class=SR href="#97">total_standby_cyc_count</a> &lt;= #1 <a  onClick="return qs(event,this)" class=SR href="#170">total_standby_cyc_count</a> + 1;
+
+        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#112">standby_cyc_count</a> &gt;= <a  onClick="return qs(event,this)" class=SR href="#161">standby_rand_cyc</a>) <span class=K>begin</span>
+
+           <a  onClick="return qs(event,this)" class=SR href="#168">standby_cyc_count</a> &lt;= #1 32'h00000000;
+	   
+           <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SR href="#101">standby_flag</a>) <span class=K>begin</span>
+             <a  onClick="return qs(event,this)" class=SR href="#106">standby_rand_cyc</a> = {<span class=ST>$random</span>(<a  onClick="return qs(event,this)" class=SIT href="#152">seed_num</a>)}%100;
+             <a  onClick="return qs(event,this)" class=SOR href="#86">pj_standby</a> &lt;= #1 ~<a  onClick="return qs(event,this)" class=SOR href="#172">pj_standby</a> ;
+             <a  onClick="return qs(event,this)" class=SIT href="#95">seed_num</a> = <a  onClick="return qs(event,this)" class=SIT href="#152">seed_num</a> + 1;
+           <span class=K>end</span>
+        <span class=K>end</span>
+
+        <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#112">standby_cyc_count</a> &lt;= #1 <a  onClick="return qs(event,this)" class=SR href="#168">standby_cyc_count</a> + 1;
+  <span class=K>end</span>  <span class=C>// }
+</span>
+<span class=C>/* ******************************************************
+ * Interrupt Controller schedules the following events: * 	
+ *							*
+ *   1) Fill the pending register to create nested 	*
+ *      interrupts, and prioritized interrupts.		* 
+ *   2) Fire NMI if an internl trap occurs.		*		
+ *							*
+ * **************************************************** */</span>   
+     
+
+<span class=C>// Include int_cmd_file
+</span>
+
+<span class=M>`include</span> <a  onClick="return qs(event,this)" class=S href="int_cmd_file.v.html">&quot;int_cmd_file.v&quot;</a> 
+<span class=M>`include</span> <a  onClick="return qs(event,this)" class=S href="interrupt_table.v.html">&quot;interrupt_table.v&quot;</a>
+
+<a name="260"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#260">MIN_INT_GAP</a> 150
+
+<a name="262"></a><span class=K>integer</span> <a  onClick="return qs(event,this)" class=SIT href="#262">i</a><a  href="hierarchy-s.p9.html#i___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// Fill the pending register
+</span>
+<span class=K>initial</span> <span class=K>begin</span> <span class=C>// {
+</span>
+ <span class=K>repeat</span>(5) @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#80">pj_clk</a>); 
+  <span class=K>wait</span>(!<a  onClick="return qs(event,this)" class=SI href="#84">pj_reset</a> ) <span class=K>begin</span> <span class=C>// { 
+</span>
+   <span class=K>if</span> (!<a  onClick="return qs(event,this)" class=SR href="#104">int_cmd_flag</a> &amp;&amp; (<a  onClick="return qs(event,this)" class=SR href="#103">int_cntl_flag</a> | <a  onClick="return qs(event,this)" class=SR href="#102">int_random_flag</a>)) <span class=K>begin</span>
+       <span class=ST>$display</span>(<span class=S>&quot;IRL_1 is asserted.&quot;</span>);
+       <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[1] &lt;= #1 1'b1;
+       <a  onClick="return qs(event,this)" class=SR href="#123">pending_reg_temp</a>[1] &lt;= #1 1'b1;
+       <span class=K>end</span>
+
+   <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#103">int_cntl_flag</a>) <span class=K>begin</span> <span class=C>// {
+</span>       <span class=K>for</span> (<a  onClick="return qs(event,this)" class=SIT href="#262">i</a>= 0; <a  onClick="return qs(event,this)" class=SIT href="#262">i</a> &lt; 16 ; <a  onClick="return qs(event,this)" class=SIT href="#262">i</a> = <a  onClick="return qs(event,this)" class=SIT href="#262">i</a>+1 ) <span class=K>begin</span> <span class=C>// {
+</span>         @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SR href="#137">int_ack</a>) 
+             <a  onClick="return qs(event,this)" class=SR href="#158">pending_reg_temp</a>[16:1] &lt;= #1 {<a  onClick="return qs(event,this)" class=SR href="#157">pending_reg</a>[15:1] , 1'b1};  
+       <span class=K>end</span> <span class=C>// }
+</span>       @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SR href="#130">int_ack</a>) #3 
+       <a  onClick="return qs(event,this)" class=SR href="#123">pending_reg_temp</a> = 16'h0000;
+       <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a> = 16'h0000;
+   <span class=K>end</span> <span class=C>// }
+</span>
+  <span class=K>end</span> <span class=C>// }
+</span>
+<span class=K>end</span> <span class=C>// }
+</span>
+
+<a name="292"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#292">any_int</a><a  href="hierarchy-s.html#any_int___powerdown_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a> = |<a  onClick="return qs(event,this)" class=SR href="#157">pending_reg</a>;
+
+<span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>)
+         #1 <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SW href="#292">any_int</a>) <a  onClick="return qs(event,this)" class=SR href="#133">en_int_timeout</a> = 1'b1; 
+
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#80">pj_clk</a> <span class=K>or</span> <span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SR href="#130">int_ack</a>) <span class=K>begin</span> 
+         <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#130">int_ack</a>)  <span class=K>begin</span>
+             <a  onClick="return qs(event,this)" class=SR href="#114">int_timeout_count</a> = 0; 
+             <a  onClick="return qs(event,this)" class=SR href="#133">en_int_timeout</a> = 1'b0;
+             <span class=K>end</span> 
+         <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#133">en_int_timeout</a>) 
+                  <a  onClick="return qs(event,this)" class=SR href="#114">int_timeout_count</a> = <a  onClick="return qs(event,this)" class=SR href="#165">int_timeout_count</a> + 1;
+                  <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SR href="#114">int_timeout_count</a> == 11'b11111111111) <span class=K>begin</span> 
+                  <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a> = 0;
+                  <a  onClick="return qs(event,this)" class=SR href="#114">int_timeout_count</a> = 0;
+                  <a  onClick="return qs(event,this)" class=SR href="#133">en_int_timeout</a> = 1'b0;
+                  <span class=ST>$display</span>(<span class=S>&quot;Time out! Interrupt Ack Return exceeds the max cycles:&quot;</span>);
+                  <span class=ST>$display</span>(<span class=S>&quot;         **** Clear Pending Register ****             &quot;</span>);
+                  <span class=K>end</span>
+        <span class=K>end</span>
+                  
+             
+<span class=C>// interrupt_table interrupt_table ();
+</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SR href="#130">int_ack</a> <span class=K>or</span> <span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SR href="#133">en_int_timeout</a>) <span class=K>begin</span> <span class=C>// {
+</span>
+ #2
+       <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SR href="#102">int_random_flag</a>) <span class=K>begin</span>
+<a name="320"></a>          <a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> = <span class=ST>$random</span> % 16;
+          <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a> = 0;
+          <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 15) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[16] = 1'b1; 
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 14) <span class=K>begin</span>
+                <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;powerdown&quot;</span>))
+                        <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[15] = 1'b1;
+                <span class=K>else</span> <span class=K>begin</span>
+                        <a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> = 13;
+                        <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[14] = 1'b1;
+                <span class=K>end</span>
+          <span class=K>end</span>
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 13) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[14] = 1'b1;
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 12) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[13] = 1'b1;
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 11) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[12] = 1'b1;
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 10) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[11] = 1'b1;
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 9) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[10] = 1'b1;
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 8) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[9] = 1'b1;
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 7) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[8] = 1'b1;
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 6) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[7] = 1'b1;
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 5) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[6] = 1'b1;
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 4) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[5] = 1'b1;
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 3) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[4] = 1'b1;
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 2) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[3] = 1'b1;
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 1) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[2] = 1'b1;
+          <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#128">random_sel</a> == 0) <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a>[1] = 1'b1;
+      <span class=K>end</span>
+
+<span class=C>// Clear the pending bit if the core sends ack
+</span>
+      <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[16])      <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[16] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending NMI is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[15]) <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[15] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_15 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[14]) <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[14] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_14 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[13]) <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[13] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_13 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[12]) <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[12] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_12 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[11]) <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[11] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_11 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[10]) <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[10] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_10 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[9])  <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[9] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_9 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[8])  <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[8] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_8 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[7])  <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[7] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_7 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[6])  <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[6] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_6 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[5])  <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[5] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_5 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[4])  <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[4] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_4 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[3])  <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[3] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_3 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[2])  <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[2] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_2 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[1])  <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[1] = 1'b0 ; 
+          <span class=ST>$display</span>(<span class=S>&quot;The pending IRL_1 is acknowledged.&quot;</span>);  
+          <span class=K>end</span>
+
+
+      <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#103">int_cntl_flag</a>) <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a> = <a  onClick="return qs(event,this)" class=SR href="#157">pending_reg</a> |<a  onClick="return qs(event,this)" class=SR href="#158">pending_reg_temp</a>; 
+
+      <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#103">int_cntl_flag</a> &amp;&amp; (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a> == 16'h0000)) <span class=K>begin</span>
+          <span class=ST>$display</span>(<span class=S>&quot;All interrupt signals, irl, nmi have been asserted&quot;</span>); 
+          <span class=ST>$display</span>(<span class=S>&quot;Wait for the simulation to complete ...&quot;</span>);
+          <span class=K>end</span>
+
+      <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#102">int_random_flag</a>) <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="#113">random_int_cyc</a> = (<span class=ST>$random</span> % 1024);
+	  <a  onClick="return qs(event,this)" class=SR href="#113">random_int_cyc</a>[9] = 1'b0;
+	  <a  onClick="return qs(event,this)" class=SR href="#113">random_int_cyc</a> = <a  onClick="return qs(event,this)" class=SR href="#160">random_int_cyc</a> + <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#260">MIN_INT_GAP</a>;
+          <span class=K>repeat</span>(<a  onClick="return qs(event,this)" class=SR href="#113">random_int_cyc</a>) @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#80">pj_clk</a>);
+          <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a> = <a  onClick="return qs(event,this)" class=SR href="#157">pending_reg</a> |<a  onClick="return qs(event,this)" class=SR href="#159">random_int_reg</a>;
+          <span class=K>end</span>
+
+      <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[16])      <span class=K>begin</span>
+          <span class=ST>$display</span>(<span class=S>&quot;Another NMI is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[15]) <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_15 is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[14]) <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_14 is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[13]) <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_13 is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[12]) <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_12 is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[11]) <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_11 is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[10]) <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_10 is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[9])  <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_9 is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[8])  <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_8 is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[7])  <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_7 is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[6])  <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_6 is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[5])  <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_5 is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[4])  <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_4 is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[3])  <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_3 is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[2])  <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_2 is asserted.&quot;</span>);
+          <span class=K>end</span>
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[1])  <span class=K>begin</span>
+           <span class=ST>$display</span>(<span class=S>&quot;Another IRL_1 is asserted.&quot;</span>);
+          <span class=K>end</span>
+<span class=K>end</span> <span class=C>// } 
+</span>
+
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SR href="#131">stop_int</a>)
+  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#102">int_random_flag</a>)<span class=K>begin</span>
+      <a  onClick="return qs(event,this)" class=SR href="#102">int_random_flag</a> = 1'b0;  
+      <a  onClick="return qs(event,this)" class=SR href="#125">random_int_reg</a> = 16'h0000;
+      <a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a> = 16'h0000;  
+      <a  onClick="return qs(event,this)" class=SR href="#101">standby_flag</a> = 1'b0; 
+      <a  onClick="return qs(event,this)" class=SOR href="#86">pj_standby</a> = 1'b0;
+      <span class=ST>$display</span>(<span class=S>&quot;STOP asserting pj_standby and random interrupt signals!&quot;</span>);
+      <span class=ST>$display</span>(<span class=S>&quot;Wait for the simulation to complete ...&quot;</span>);
+      <span class=K>end</span>
+
+
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#80">pj_clk</a>)
+  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#104">int_cmd_flag</a> == 1'b1) {<a  onClick="return qs(event,this)" class=SOR href="#87">pj_nmi</a>,<a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]} = 5'b00000;
+
+  
+<span class=C>// Priority encoding ( nmi, irl[15:1]) -&gt; (nmi, irl[3:0])
+</span>
+<span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>) <span class=K>begin</span>
+
+  <span class=K>casex</span> (<a  onClick="return qs(event,this)" class=SR href="#116">pending_reg</a>[15:1])
+  15'b1xxxxxxxxxxxxxx : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b1111; 
+  15'b01xxxxxxxxxxxxx : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b1110; 
+  15'b001xxxxxxxxxxxx : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b1101; 
+  15'b0001xxxxxxxxxxx : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b1100; 
+  15'b00001xxxxxxxxxx : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b1011; 
+  15'b000001xxxxxxxxx : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b1010; 
+  15'b0000001xxxxxxxx : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b1001; 
+  15'b00000001xxxxxxx : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b1000; 
+  15'b000000001xxxxxx : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b0111; 
+  15'b0000000001xxxxx : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b0110; 
+  15'b00000000001xxxx : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b0101; 
+  15'b000000000001xxx : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b0100; 
+  15'b0000000000001xx : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b0011; 
+  15'b00000000000001x : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b0010; 
+  15'b000000000000001 : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b0001; 
+  15'b000000000000000 : <a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]=4'b0000; 
+  <span class=K>endcase</span>
+  <a  onClick="return qs(event,this)" class=SOR href="#87">pj_nmi</a> = <a  onClick="return qs(event,this)" class=SR href="#157">pending_reg</a>[16];
+
+  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#104">int_cmd_flag</a> == 1'b1) {<a  onClick="return qs(event,this)" class=SOR href="#87">pj_nmi</a>,<a  onClick="return qs(event,this)" class=SOR href="#88">pj_irl</a>[3:0]} = 5'b00000;
+
+  <span class=K>end</span>
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:45:51 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/sim/env/powerdown_monitor.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

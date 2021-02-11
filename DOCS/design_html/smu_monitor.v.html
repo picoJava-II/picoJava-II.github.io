@@ -1,0 +1,298 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/sim/env/smu_monitor.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "smu_monitor.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<a name="smu_monitor"></a><a  href="monitor.v.html#monitor_smu_monitor"><IMG alt="[Up: monitor smu_monitor]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>smu_monitor</span><a  href="hierarchy-m.p4.html#smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>(
+	<a  onClick="return qs(event,this)" class=SI href="#52">pj_clk</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#53">pj_reset</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#54">und_flw_bit</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#55">num_entries</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#56">fill_d</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#57">spill_d</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#58">und_flw_d</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#59">ovr_flw_d</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#60">low_mark</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#61">high_mark</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#62">less_than_6</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#63">dribble_stall</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#64">smu_st</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#65">smu_data</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#66">smu_data_vld</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#67">dcu_data</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#68">spill</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#69">fill</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#70">iu_int</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#71">dcu_smu_st</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#72">dcu_smu_data</a>,
+	<a  onClick="return qs(event,this)" class=SOR href="#78">smu_monitor_end_sim</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#73">smu_sbase</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#74">smu_sbase_we</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#75">smu_we</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#76">load_w</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#77">squash_fill</a>
+	);
+
+<a name="52"></a><span class=K>input</span> 		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#135">pj_clk</a><a  href="hierarchy-s.p14.html#pj_clk___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="53"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#136">pj_reset</a><a  href="hierarchy-s.p14.html#pj_reset___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="54"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#137">und_flw_bit</a><a  href="hierarchy-s.p18.html#und_flw_bit___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="55"></a><span class=K>input</span>	[29:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#138">num_entries</a><a  href="hierarchy-s.p12.html#num_entries___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="56"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#139">fill_d</a><a  href="hierarchy-s.p6.html#fill_d___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="57"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#140">spill_d</a><a  href="hierarchy-s.p16.html#spill_d___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="58"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#141">und_flw_d</a><a  href="hierarchy-s.p18.html#und_flw_d___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="59"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#142">ovr_flw_d</a><a  href="hierarchy-s.p13.html#ovr_flw_d___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="60"></a><span class=K>input</span>	[5:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#143">low_mark</a><a  href="hierarchy-s.p10.html#low_mark___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="61"></a><span class=K>input</span>	[5:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#144">high_mark</a><a  href="hierarchy-s.p8.html#high_mark___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="62"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#145">less_than_6</a><a  href="hierarchy-s.p10.html#less_than_6___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="63"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#146">dribble_stall</a><a  href="hierarchy-s.p4.html#dribble_stall___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="64"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#147">smu_st</a><a  href="hierarchy-s.p16.html#smu_st___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="65"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#148">smu_data</a><a  href="hierarchy-s.p16.html#smu_data___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="66"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#149">smu_data_vld</a><a  href="hierarchy-s.p16.html#smu_data_vld___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="67"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#150">dcu_data</a><a  href="hierarchy-s.p4.html#dcu_data___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="68"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#151">spill</a><a  href="hierarchy-s.p16.html#spill___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="69"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#152">fill</a><a  href="hierarchy-s.p6.html#fill___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="70"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#153">iu_int</a><a  href="hierarchy-s.p9.html#iu_int___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="71"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#154">dcu_smu_st</a><a  href="hierarchy-s.p4.html#dcu_smu_st___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="72"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#155">dcu_smu_data</a><a  href="hierarchy-s.p4.html#dcu_smu_data___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="73"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#161">smu_sbase</a><a  href="hierarchy-s.p16.html#smu_sbase___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="74"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#157">smu_sbase_we</a><a  href="hierarchy-s.p16.html#smu_sbase_we___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="75"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#158">smu_we</a><a  href="hierarchy-s.p16.html#smu_we___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="76"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#159">load_w</a><a  href="hierarchy-s.p10.html#load_w___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="77"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#160">squash_fill</a><a  href="hierarchy-s.p16.html#squash_fill___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="78"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SOR href="#83">smu_monitor_end_sim</a><a  href="hierarchy-s.p16.html#smu_monitor_end_sim___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>reg</span>		<a  onClick="return qs(event,this)" class=SOR href="#78">smu_monitor_end_sim</a>;
+
+<span class=K>initial</span> <span class=K>begin</span>
+<a name="83"></a>  <a  onClick="return qs(event,this)" class=SOR href="#78">smu_monitor_end_sim</a> = 'b0;
+<span class=K>end</span>
+
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#52">pj_clk</a>) <span class=K>begin</span>
+  #2;
+  <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#53">pj_reset</a> == 1'b0) <span class=K>begin</span>
+    <span class=K>if</span>( (<a  onClick="return qs(event,this)" class=SI href="#54">und_flw_bit</a> == 1'b0) &amp;&amp; (<a  onClick="return qs(event,this)" class=SI href="#55">num_entries</a> &gt;= 6'd60))  <span class=K>begin</span>
+      <span class=ST>$display</span> (<span class=ST>$stime</span>,<span class=S>&quot; SMU rtl: there are more than 60 (%d) entries in stack cache\n&quot;</span>, <a  onClick="return qs(event,this)" class=SI href="#55">num_entries</a>);
+    <span class=K>end</span>
+  <span class=K>end</span>
+  <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#56">fill_d</a> == 1'b1) <span class=K>begin</span>
+    <span class=K>if</span>((<a  onClick="return qs(event,this)" class=SI href="#58">und_flw_d</a> == 1'b0) &amp;&amp; (<a  onClick="return qs(event,this)" class=SI href="#53">pj_reset</a> == 1'b0)) <span class=K>begin</span>
+      <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#55">num_entries</a> &gt;= <a  onClick="return qs(event,this)" class=SI href="#60">low_mark</a>) <span class=K>begin</span>
+        <span class=ST>$display</span>(<span class=ST>$stime</span>,<span class=S>&quot; ERROR: fill is asserted with %d entries\n&quot;</span>,
+                          <a  onClick="return qs(event,this)" class=SI href="#55">num_entries</a>);
+      <span class=K>end</span>
+    <span class=K>end</span>
+  <span class=K>end</span>
+  <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#57">spill_d</a> == 1'b1) <span class=K>begin</span>
+    <span class=K>if</span>((<a  onClick="return qs(event,this)" class=SI href="#59">ovr_flw_d</a> == 1'b0) &amp;&amp; (<a  onClick="return qs(event,this)" class=SI href="#53">pj_reset</a> == 1'b0)) <span class=K>begin</span>
+      <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#55">num_entries</a> &lt;= <a  onClick="return qs(event,this)" class=SI href="#61">high_mark</a>) <span class=K>begin</span>
+        <span class=ST>$display</span>(<span class=ST>$stime</span>,<span class=S>&quot; ERROR: spill is asserted with %d entries\n&quot;</span>,
+                          <a  onClick="return qs(event,this)" class=SI href="#55">num_entries</a>);
+      <span class=K>end</span>
+    <span class=K>end</span>
+  <span class=K>end</span>
+  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#62">less_than_6</a> == 1'b1) <span class=K>begin</span>
+    <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#63">dribble_stall</a> != 1'b1) <span class=K>begin</span>
+      <span class=ST>$display</span> (<span class=ST>$stime</span>, <span class=S>&quot; ERROR: IU is not stalled when less than 6 S$ entries.&quot;</span>);
+    <span class=K>end</span>
+  <span class=K>end</span>
+  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#64">smu_st</a> == 1'b1) <span class=K>begin</span>
+    <span class=K>if</span> (^<a  onClick="return qs(event,this)" class=SI href="#65">smu_data</a> == 1'bx) <span class=K>begin</span>
+      <span class=ST>$display</span> (<span class=ST>$stime</span>, <span class=S>&quot; ERROR: smu_st is asserted when smu_data = %h&quot;</span>,
+                         <a  onClick="return qs(event,this)" class=SI href="#65">smu_data</a>);
+    <span class=K>end</span>
+  <span class=K>end</span>
+  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#66">smu_data_vld</a> == 1'b1) <span class=K>begin</span>
+    <span class=K>if</span> (^<a  onClick="return qs(event,this)" class=SI href="#67">dcu_data</a> == 1'bx) <span class=K>begin</span>
+      <span class=ST>$display</span> (<span class=ST>$stime</span>, <span class=S>&quot; ERROR: dcu writing xx's to s$. dcu_data = %h&quot;</span>,
+                         <a  onClick="return qs(event,this)" class=SI href="#67">dcu_data</a>);
+    <span class=K>end</span>
+  <span class=K>end</span>
+  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#68">spill</a> == 1'b1) <span class=K>begin</span>
+    <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#69">fill</a> == 1'b1) <span class=K>begin</span>
+      <span class=ST>$display</span> (<span class=ST>$stime</span>, <span class=S>&quot; ERROR: spill and fill asserted at the same time.&quot;</span>);
+    <span class=K>end</span>
+  <span class=K>end</span>
+
+<span class=M>`ifdef</span> <span class=D>VERBOSE_SMU_MON</span>
+<span class=P>
+</span><span class=P>  if (iu_int == 1'b1) begin
+</span><span class=P>    $display($stime, </span><span class=P>&quot; iu_int asserted.&quot;</span><span class=P>);
+</span><span class=P>  end
+</span><span class=P>  if(num_entries > high_mark) begin
+</span><span class=P>    $display($stime,</span><span class=P>&quot; num_entries = %d&quot;</span><span class=P>, num_entries);
+</span><span class=P>  end
+</span><span class=P>  if(num_entries < low_mark) begin
+</span><span class=P>    $display($stime,</span><span class=P>&quot; num_entries = %d&quot;</span><span class=P>, num_entries);
+</span><span class=P>  end
+</span><span class=P>
+</span><span class=M>`endif</span>
+ 
+  <span class=K>if</span> ((<a  onClick="return qs(event,this)" class=SI href="#71">dcu_smu_st</a> == 1'b1) &amp;&amp; (^<a  onClick="return qs(event,this)" class=SI href="#72">dcu_smu_data</a> === 1'bx)) <span class=K>begin</span>
+    <span class=ST>$display</span> (<span class=S>&quot;SMU:ERROR: Xs being written to Data cache by smu , %h&quot;</span>,
+               <a  onClick="return qs(event,this)" class=SI href="#72">dcu_smu_data</a>);
+    <a  onClick="return qs(event,this)" class=SOR href="#78">smu_monitor_end_sim</a> = 'b1;
+  <span class=K>end</span>
+<span class=K>end</span>
+
+
+<a name="154"></a><span class=K>reg</span> [31:0] <a  onClick="return qs(event,this)" class=SR href="#167">mem_data</a><a  href="hierarchy-s.p11.html#mem_data___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SR href="#169">smu_ld_data</a><a  href="hierarchy-s.p16.html#smu_ld_data___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="155"></a><span class=K>integer</span> <a  onClick="return qs(event,this)" class=SIT href="#155">dsv_status</a><a  href="hierarchy-s.p4.html#dsv_status___smu_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+ <span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#52">pj_clk</a>) <span class=K>begin</span>
+
+<span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;smu_check&quot;</span>)) <span class=K>begin</span>
+
+
+	<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#77">squash_fill</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#74">smu_sbase_we</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#75">smu_we</a>)
+		<span class=ST>$display</span>(<span class=S>&quot;\nSmu Monitor: WARNING: Clk: %d: Data being written to S$ during update of SC_Bottom = Optop\n&quot;</span>,<span class=D>`PICOJAVAII</span>.clk_count);
+
+	<span class=K>if</span> (!<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.dcu.iu_psr_dce &amp; <a  onClick="return qs(event,this)" class=SI href="#74">smu_sbase_we</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#77">squash_fill</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#76">load_w</a>) <span class=K>begin</span>
+
+<a name="167"></a>		<a  onClick="return qs(event,this)" class=SR href="#154">mem_data</a> = 32'h0;
+		<span class=ST>$decaf_cm_read</span>(<a  onClick="return qs(event,this)" class=SI href="#73">smu_sbase</a>,<a  onClick="return qs(event,this)" class=SR href="#154">mem_data</a>, 2'b10,<a  onClick="return qs(event,this)" class=SIT href="#155">dsv_status</a>);
+<a name="169"></a>		<a  onClick="return qs(event,this)" class=SR href="#154">smu_ld_data</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.rcu.rcu_dpath.smu_data;
+
+		<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SIT href="#155">dsv_status</a> &amp;&amp; (<a  onClick="return qs(event,this)" class=SR href="#154">mem_data</a> !== <a  onClick="return qs(event,this)" class=SR href="#154">smu_ld_data</a>)) <span class=K>begin</span>
+			<span class=ST>$display</span>(<span class=S>&quot;\nSmu Monitor: Error: Data Mismatch for smu fills\n&quot;</span>);
+			<span class=ST>$display</span>(<span class=S>&quot;Clk: %d\tExpected Data: %x\tRTL data: %x\n&quot;</span>,<span class=D>`PICOJAVAII</span>.clk_count,<a  onClick="return qs(event,this)" class=SR href="#154">mem_data</a>,<a  onClick="return qs(event,this)" class=SR href="#154">smu_ld_data</a>);
+		<span class=K>end</span>
+	<span class=K>end</span>		
+<span class=K>end</span>
+<span class=K>end</span>
+
+<span class=K>endmodule</span>
+
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:09 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/sim/env/smu_monitor.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

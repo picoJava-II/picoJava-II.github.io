@@ -1,0 +1,586 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ex/rtl/imdr/imdr_ctrl.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "imdr_ctrl.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<a name="imdr_ctrl"></a><a  href="imdr.v.html#imdr_imdr_ctrl_0"><IMG alt="[Up: imdr imdr_ctrl_0]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>imdr_ctrl</span><a  href="hierarchy-m.p3.html#imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+                  <a  onClick="return qs(event,this)" class=SI href="#85">ie_mul_raw_d</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#86">ie_div_raw_d</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#87">ie_rem_raw_d</a>,
+		  <a  onClick="return qs(event,this)" class=SI href="#88">kill_inst_e</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#89">ie_dataA_d_31</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#90">ie_dataB_d_31</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#91">pj_hold</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#93">sm</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#94">sin</a>,
+		  <a  onClick="return qs(event,this)" class=SO href="#95">so</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#96">clk</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#97">imdr_done_e</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#98">imdr_div0_e</a>,
+
+                  <a  onClick="return qs(event,this)" class=SOR href="#100">sel_rac</a>,
+                  <a  onClick="return qs(event,this)" class=SOR href="#101">sel_ra</a>,
+                  <a  onClick="return qs(event,this)" class=SOR href="#102">sel_rb</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#104">clr_rac</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#105">clr_ra2</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#106">clr_rb</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#107">clr_rbb</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#109">clr_aop_</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#110">sel_rem_a</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#111">sel_mag_a</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#113">sel_rsh_b</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#114">sel_rb_b</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#115">sel_neg_b</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#117">sel_sum_a</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#118">sel_compl_a</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#119">sel_sum</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#121">cyc_compare</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#122">ld_a_oprd0</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#123">ld_b_oprd0</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#124">ld_leading0</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#125">clr_a_oprd0</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#126">clr_b_oprd0</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#127">clr_leading0</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#129">ain_is0</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#130">bin_is0</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#131">div_ovf</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#132">leading0_r</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#134">ld_sign</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#135">clr_sign</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#136">bin_sign</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#137">out_sign</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#138">out_sign_r</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#140">cin</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#141">mask32_</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#142">mul_cmp</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#143">div_cmp</a>,
+                  <a  onClick="return qs(event,this)" class=SO href="#144">rem_cmp</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#145">sum_32</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#146">cout</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#147">extreme_1</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#148">extreme_2</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#149">rem_sum32</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#150">nxt_booth_0</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#151">booth_neg</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#152">cur_rbb1</a> 
+                  );
+
+<a name="85"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#149">ie_mul_raw_d</a><a  href="hierarchy-s.p9.html#ie_mul_raw_d___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// imul request, validate operands
+</span><a name="86"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#150">ie_div_raw_d</a><a  href="hierarchy-s.p9.html#ie_div_raw_d___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// idiv request, validate operands
+</span><a name="87"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#151">ie_rem_raw_d</a><a  href="hierarchy-s.p9.html#ie_rem_raw_d___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// irem request, validate operands
+</span><a name="88"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="imdr.v.html#152">kill_inst_e</a><a  href="hierarchy-s.p10.html#kill_inst_e___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	   <span class=C>// kill the instruction in E stage
+</span><a name="89"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#153">ie_dataA_d_31</a><a  href="hierarchy-s.p9.html#ie_dataA_d_31___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       <span class=C>// ie_data_a_operand bit 31
+</span><a name="90"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#154">ie_dataB_d_31</a><a  href="hierarchy-s.p9.html#ie_dataB_d_31___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       <span class=C>// ie_data_b_operand bit 31
+</span><a name="91"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#155">pj_hold</a><a  href="hierarchy-s.p14.html#pj_hold___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// hold 
+</span><a name="92"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#156">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// reset
+</span><a name="93"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="#93">sm</a><a  href="hierarchy-s.p16.html#sm___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                  <span class=C>// register scan mode
+</span><a name="94"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="#94">sin</a><a  href="hierarchy-s.p16.html#sin___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                 <span class=C>// register scan_input
+</span><a name="95"></a><span class=K>output</span>	      <a  onClick="return qs(event,this)" class=SO href="#95">so</a><a  href="hierarchy-s.p16.html#so___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		   <span class=C>// register scan output
+</span><a name="96"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#160">clk</a><a  href="hierarchy-s.p3.html#clk___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// clock 
+</span><a name="97"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#322">imdr_done_e</a><a  href="hierarchy-s.p9.html#imdr_done_e___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// imul or idiv or irem done
+</span><a name="98"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#450">imdr_div0_e</a><a  href="hierarchy-s.p9.html#imdr_div0_e___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// a zero divisor is detected
+</span>
+<a name="100"></a><span class=K>output</span>  [1:0] <a  onClick="return qs(event,this)" class=SOR href="#220">sel_rac</a><a  href="hierarchy-s.p16.html#sel_rac___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// sel next regster_ac's input
+</span><a name="101"></a><span class=K>output</span>  [1:0] <a  onClick="return qs(event,this)" class=SOR href="#221">sel_ra</a><a  href="hierarchy-s.p16.html#sel_ra___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// sel next regster_a's  input
+</span><a name="102"></a><span class=K>output</span>  [1:0] <a  onClick="return qs(event,this)" class=SOR href="#222">sel_rb</a><a  href="hierarchy-s.p16.html#sel_rb___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// sel next regster_b's  input(and rbb)
+</span>
+<a name="104"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#259">clr_rac</a><a  href="hierarchy-s.p3.html#clr_rac___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// clear regster_ac   in next cycle
+</span><a name="105"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#262">clr_ra2</a><a  href="hierarchy-s.p3.html#clr_ra2___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// clear regster_a    in next cycle
+</span><a name="106"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#268">clr_rb</a><a  href="hierarchy-s.p3.html#clr_rb___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// clear regster_b    in next cycle
+</span><a name="107"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#272">clr_rbb</a><a  href="hierarchy-s.p3.html#clr_rbb___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// clear regster_bb   in next cycle
+</span>
+<a name="109"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#453">clr_aop_</a><a  href="hierarchy-s.p3.html#clr_aop____imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// force aop to zroe, active low
+</span><a name="110"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#453">sel_rem_a</a><a  href="hierarchy-s.p16.html#sel_rem_a___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// select partail remainder as aop
+</span><a name="111"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#408">sel_mag_a</a><a  href="hierarchy-s.p16.html#sel_mag_a___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// select magnitude of a    as aop
+</span>
+<a name="113"></a><span class=K>output</span>  [3:0] <a  onClick="return qs(event,this)" class=SO href="#460">sel_rsh_b</a><a  href="hierarchy-s.p16.html#sel_rsh_b___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// select r_shift amount   for bop
+</span><a name="114"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#460">sel_rb_b</a><a  href="hierarchy-s.p16.html#sel_rb_b___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// select rb                as bop
+</span><a name="115"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#460">sel_neg_b</a><a  href="hierarchy-s.p16.html#sel_neg_b___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// select negating the bop
+</span>
+<a name="117"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#453">sel_sum_a</a><a  href="hierarchy-s.p16.html#sel_sum_a___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// select ra to be complemented 
+</span><a name="118"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#453">sel_compl_a</a><a  href="hierarchy-s.p16.html#sel_compl_a___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// select    to do complement 
+</span><a name="119"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#297">sel_sum</a><a  href="hierarchy-s.p16.html#sel_sum___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// select sum as the final data output
+</span>
+<a name="121"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#302">cyc_compare</a><a  href="hierarchy-s.p3.html#cyc_compare___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// the cycle comparing dataA,B
+</span><a name="122"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#303">ld_a_oprd0</a><a  href="hierarchy-s.p10.html#ld_a_oprd0___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// update the a_oprd0  in next cycle
+</span><a name="123"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#304">ld_b_oprd0</a><a  href="hierarchy-s.p10.html#ld_b_oprd0___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// update the b_oprd0  in next cycle
+</span><a name="124"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#305">ld_leading0</a><a  href="hierarchy-s.p10.html#ld_leading0___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// update the leading0 in next cycle
+</span><a name="125"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#306">clr_a_oprd0</a><a  href="hierarchy-s.p3.html#clr_a_oprd0___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// force a_oprd0  = 0
+</span><a name="126"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#307">clr_b_oprd0</a><a  href="hierarchy-s.p3.html#clr_b_oprd0___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// force b_oprd0  = 0
+</span><a name="127"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#308">clr_leading0</a><a  href="hierarchy-s.p3.html#clr_leading0___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;        <span class=C>// force leading0 = 0
+</span>
+<a name="129"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#187">ain_is0</a><a  href="hierarchy-s.html#ain_is0___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// a_input from D_stage is 0
+</span><a name="130"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#188">bin_is0</a><a  href="hierarchy-s.p2.html#bin_is0___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// b_input from D_stage is 0
+</span><a name="131"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#189">div_ovf</a><a  href="hierarchy-s.p4.html#div_ovf___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// divide   is overflow
+</span><a name="132"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#190">leading0_r</a><a  href="hierarchy-s.p10.html#leading0_r___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// leading bits of b_operand are 0, reg
+</span>
+<a name="134"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#313">ld_sign</a><a  href="hierarchy-s.p10.html#ld_sign___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// update the leading0 in next cycle
+</span><a name="135"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#314">clr_sign</a><a  href="hierarchy-s.p3.html#clr_sign___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// force aop/bop/out_sign = 0
+</span><a name="136"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#193">bin_sign</a><a  href="hierarchy-s.p2.html#bin_sign___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// b_input sign
+</span><a name="137"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#194">out_sign</a><a  href="hierarchy-s.p13.html#out_sign___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// final output result sign
+</span><a name="138"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#195">out_sign_r</a><a  href="hierarchy-s.p13.html#out_sign_r___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// final output result sign, registered
+</span>
+<a name="140"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#328">cin</a><a  href="hierarchy-s.p3.html#cin___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                 <span class=C>// carry-in  for the adder
+</span><a name="141"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#332">mask32_</a><a  href="hierarchy-s.p11.html#mask32____imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// masking off bop_add[32], active low
+</span><a name="142"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#315">mul_cmp</a><a  href="hierarchy-s.p11.html#mul_cmp___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// bufferd mul_e, at the compare cycle
+</span><a name="143"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#316">div_cmp</a><a  href="hierarchy-s.p4.html#div_cmp___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// bufferd rem_e, at the compare cycle
+</span><a name="144"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#317">rem_cmp</a><a  href="hierarchy-s.p15.html#rem_cmp___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// bufferd rem_e, at the compare cycle
+</span><a name="145"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#201">sum_32</a><a  href="hierarchy-s.p16.html#sum_32___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// carray-out of the adder
+</span><a name="146"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#202">cout</a><a  href="hierarchy-s.p3.html#cout___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// carry-out from the adder
+</span><a name="147"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#203">extreme_1</a><a  href="hierarchy-s.p5.html#extreme_1___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// 
+</span><a name="148"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#204">extreme_2</a><a  href="hierarchy-s.p5.html#extreme_2___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// 
+</span><a name="149"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#205">rem_sum32</a><a  href="hierarchy-s.p15.html#rem_sum32___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// sum32 &amp;&amp; rem_cmp
+</span><a name="150"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#206">nxt_booth_0</a><a  href="hierarchy-s.p12.html#nxt_booth_0___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// Booth recoder value = 0
+</span><a name="151"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#207">booth_neg</a><a  href="hierarchy-s.p2.html#booth_neg___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// Booth recoder negate
+</span><a name="152"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="imdr.v.html#208">cur_rbb1</a><a  href="hierarchy-s.p3.html#cur_rbb1___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// current rbb[1]
+</span>
+<span class=C>// -------------- Non-scalable parameters --------------------------------
+</span><span class=K>parameter</span>
+<a name="156"></a>  <a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>      = 5'b00001,            <span class=C>// imdr idle
+</span><a name="157"></a>  <a  onClick="return qs(event,this)" class=PA href="#157">R_ADDBACK</a> = 5'b00010,            <span class=C>// Remainder last add-back
+</span><a name="158"></a>  <a  onClick="return qs(event,this)" class=PA href="#158">L_SUB</a>     = 5'b00100,            <span class=C>// Div/Rem   left-shift by 1, then sub
+</span><a name="159"></a>  <a  onClick="return qs(event,this)" class=PA href="#159">L_ADD</a>     = 5'b01000,            <span class=C>// Div/Rem   left-shift by 1, then add
+</span><a name="160"></a>  <a  onClick="return qs(event,this)" class=PA href="#160">R_ADD</a>     = 5'b01100,            <span class=C>// multiply  right-shift by 2, then add
+</span><a name="161"></a>  <a  onClick="return qs(event,this)" class=PA href="#161">D_POST</a>    = 5'b10100,            <span class=C>// Divide    post complement
+</span><a name="162"></a>  <a  onClick="return qs(event,this)" class=PA href="#162">M_POST</a>    = 5'b11000,            <span class=C>// multiply  post complement,  aligned
+</span><a name="163"></a>  <a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a> = 5'b11100;            <span class=C>// data pre-complemented and swapped
+</span>
+<span class=K>parameter</span>
+<a name="166"></a>  <a  onClick="return qs(event,this)" class=PA href="#166">LAST</a>      = 5'b11111;            <span class=C>// last bit iteration of div/rem.
+</span>
+<span class=C>// -------------- Internal buses -----------------------------------------
+</span><a name="169"></a><span class=K>wire</span>    [4:0] <a  onClick="return qs(event,this)" class=SW href="#420">st</a><a  href="hierarchy-s.p16.html#st___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="170"></a><span class=K>wire</span>    [4:0] <a  onClick="return qs(event,this)" class=SW href="#430">cnt</a><a  href="hierarchy-s.p3.html#cnt___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="171"></a><span class=K>reg</span>     [4:0]      <a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a><a  href="hierarchy-s.p12.html#nxt_st___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="172"></a><span class=K>reg</span>     [4:0]      <a  onClick="return qs(event,this)" class=SR href="#342">nxt_cnt</a><a  href="hierarchy-s.p12.html#nxt_cnt___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="174"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#437">mul_e</a><a  href="hierarchy-s.p11.html#mul_e___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#437">div_e</a><a  href="hierarchy-s.p4.html#div_e___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#437">rem_e</a><a  href="hierarchy-s.p15.html#rem_e___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="175"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#208">ie_mul_d</a><a  href="hierarchy-s.p9.html#ie_mul_d___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#210">ie_div_d</a><a  href="hierarchy-s.p9.html#ie_div_d___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#209">ie_rem_d</a><a  href="hierarchy-s.p9.html#ie_rem_d___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>reg</span>     [1:0] <a  onClick="return qs(event,this)" class=SOR href="#100">sel_rac</a>;
+<span class=K>reg</span>     [1:0] <a  onClick="return qs(event,this)" class=SOR href="#101">sel_ra</a>;
+<span class=K>reg</span>     [1:0] <a  onClick="return qs(event,this)" class=SOR href="#102">sel_rb</a>;
+
+<a name="181"></a><span class=K>reg</span>           <a  onClick="return qs(event,this)" class=SR href="#343">nxt_mul_e</a><a  href="hierarchy-s.p12.html#nxt_mul_e___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#344">nxt_div_e</a><a  href="hierarchy-s.p12.html#nxt_div_e___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#345">nxt_rem_e</a><a  href="hierarchy-s.p12.html#nxt_rem_e___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="183"></a><span class=K>wire</span>	      <a  onClick="return qs(event,this)" class=SW href="#415">st_0_l</a><a  href="hierarchy-s.p16.html#st_0_l___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="184"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#243">d_extreme</a><a  href="hierarchy-s.p4.html#d_extreme___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="185"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#246">r_extreme</a><a  href="hierarchy-s.p15.html#r_extreme___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=C>//  wire          extreme_1;
+</span><span class=C>//  wire          extreme_2;
+</span><span class=C>//  wire          extreme_2;
+</span><span class=C>//  wire          rem_sum32;
+</span>
+<a name="191"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#444">r_extreme_r</a><a  href="hierarchy-s.p15.html#r_extreme_r___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#256">nxt_r_extreme_r</a><a  href="hierarchy-s.p12.html#nxt_r_extreme_r___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="192"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#444">d_extreme_r</a><a  href="hierarchy-s.p4.html#d_extreme_r___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#254">nxt_d_extreme_r</a><a  href="hierarchy-s.p12.html#nxt_d_extreme_r___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="194"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#325">nxt_div0_e</a><a  href="hierarchy-s.p12.html#nxt_div0_e___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SO href="#98">imdr_div0_e</a>;
+
+<span class=K>wire</span>              <a  onClick="return qs(event,this)" class=SO href="#109">clr_aop_</a>, <a  onClick="return qs(event,this)" class=SO href="#110">sel_rem_a</a>, <a  onClick="return qs(event,this)" class=SO href="#111">sel_mag_a</a>, <a  onClick="return qs(event,this)" class=SO href="#117">sel_sum_a</a>, <a  onClick="return qs(event,this)" class=SO href="#118">sel_compl_a</a>;
+<a name="198"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#275">nxt_clr_aop_</a><a  href="hierarchy-s.p12.html#nxt_clr_aop____imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#276">nxt_rem_a</a><a  href="hierarchy-s.p12.html#nxt_rem_a___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#277">nxt_mag_a</a><a  href="hierarchy-s.p12.html#nxt_mag_a___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#291">nxt_sum_a</a><a  href="hierarchy-s.p12.html#nxt_sum_a___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#293">nxt_compl_a</a><a  href="hierarchy-s.p12.html#nxt_compl_a___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>wire</span>    [3:0] <a  onClick="return qs(event,this)" class=SO href="#113">sel_rsh_b</a>;
+<a name="201"></a><span class=K>wire</span>    [3:0] <a  onClick="return qs(event,this)" class=SW href="#280">nxt_rsh_b</a><a  href="hierarchy-s.p12.html#nxt_rsh_b___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SO href="#114">sel_rb_b</a>, <a  onClick="return qs(event,this)" class=SO href="#115">sel_neg_b</a>;
+<a name="204"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#282">nxt_rb_b</a><a  href="hierarchy-s.p12.html#nxt_rb_b___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#286">nxt_neg_b</a><a  href="hierarchy-s.p12.html#nxt_neg_b___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="205"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#444">imdr_div0_e_raw</a><a  href="hierarchy-s.p9.html#imdr_div0_e_raw___imdr_ctrl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<a name="208"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#175">ie_mul_d</a> = <a  onClick="return qs(event,this)" class=SI href="#85">ie_mul_raw_d</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#88">kill_inst_e</a> ;
+<a name="209"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#175">ie_rem_d</a> = <a  onClick="return qs(event,this)" class=SI href="#87">ie_rem_raw_d</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#88">kill_inst_e</a> ;
+<a name="210"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#175">ie_div_d</a> = <a  onClick="return qs(event,this)" class=SI href="#86">ie_div_raw_d</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#88">kill_inst_e</a> ;
+
+<span class=C>// -------------- pipe register input selects ----------------------------
+</span>  <span class=K>always</span> @ (<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a> <span class=K>or</span>
+            <a  onClick="return qs(event,this)" class=SW href="#175">ie_mul_d</a>   <span class=K>or</span> <a  onClick="return qs(event,this)" class=SW href="#175">ie_div_d</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SW href="#175">ie_rem_d</a> <span class=K>or</span>
+               <a  onClick="return qs(event,this)" class=SW href="#174">mul_e</a>   <span class=K>or</span>    <a  onClick="return qs(event,this)" class=SW href="#174">div_e</a> <span class=K>or</span>    <a  onClick="return qs(event,this)" class=SW href="#174">rem_e</a> <span class=K>or</span>
+            <a  onClick="return qs(event,this)" class=SI href="#149">rem_sum32</a>  <span class=K>or</span>
+            <a  onClick="return qs(event,this)" class=SW href="#169">st</a>         <span class=K>or</span> <a  onClick="return qs(event,this)" class=SR href="#171">nxt_st</a>
+           ) <span class=K>begin</span>
+    <span class=K>if</span> (~<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>) <span class=K>begin</span>
+<a name="220"></a>      <a  onClick="return qs(event,this)" class=SOR href="#100">sel_rac</a> = 2'b00;
+<a name="221"></a>      <a  onClick="return qs(event,this)" class=SOR href="#101">sel_ra</a>  = 2'b00;
+<a name="222"></a>      <a  onClick="return qs(event,this)" class=SOR href="#102">sel_rb</a>  = 2'b00;
+    <span class=K>end</span> <span class=C>// end if
+</span>    <span class=K>else</span> <span class=K>begin</span>
+      <a  onClick="return qs(event,this)" class=SOR href="#100">sel_rac</a> =((<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) || (<span class=C>/*nxt_st==R_ADDBACK*/</span><a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>[1])) &amp;&amp;
+                                            (   <a  onClick="return qs(event,this)" class=SW href="#437">div_e</a> ||    <a  onClick="return qs(event,this)" class=SW href="#437">rem_e</a>) ? 2'b11 :
+               !(<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#157">R_ADDBACK</a>) &amp;&amp;          (   <a  onClick="return qs(event,this)" class=SW href="#437">div_e</a> ||    <a  onClick="return qs(event,this)" class=SW href="#437">rem_e</a>) ? 2'b10 :
+               !(<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#162">M_POST</a>)    &amp;&amp; (<a  onClick="return qs(event,this)" class=SW href="#437">mul_e</a>)                         ? 2'b01 :
+                                                                     2'b00;
+
+      <a  onClick="return qs(event,this)" class=SOR href="#101">sel_ra</a>  = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>)   &amp;&amp; (<a  onClick="return qs(event,this)" class=SW href="#208">ie_mul_d</a> || <a  onClick="return qs(event,this)" class=SW href="#210">ie_div_d</a> || <a  onClick="return qs(event,this)" class=SW href="#209">ie_rem_d</a>) ? 2'b11 :
+                (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) &amp;&amp; (<a  onClick="return qs(event,this)" class=SW href="#437">mul_e</a> ||    <a  onClick="return qs(event,this)" class=SW href="#437">div_e</a> ||<a  onClick="return qs(event,this)" class=SI href="#149">rem_sum32</a>) ? 2'b10 :
+               ((<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#158">L_SUB</a>) || (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#159">L_ADD</a>)) &amp;&amp; (<a  onClick="return qs(event,this)" class=SW href="#437">div_e</a> ||    <a  onClick="return qs(event,this)" class=SW href="#437">rem_e</a>) ? 2'b01 :
+                                                                     2'b00;
+       
+      <a  onClick="return qs(event,this)" class=SOR href="#102">sel_rb</a>  = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>)   &amp;&amp; (<a  onClick="return qs(event,this)" class=SW href="#208">ie_mul_d</a> || <a  onClick="return qs(event,this)" class=SW href="#210">ie_div_d</a> || <a  onClick="return qs(event,this)" class=SW href="#209">ie_rem_d</a>) ? 2'b11 :
+                (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) &amp;&amp; (<a  onClick="return qs(event,this)" class=SW href="#437">mul_e</a> ||    <a  onClick="return qs(event,this)" class=SW href="#437">div_e</a> ||    <a  onClick="return qs(event,this)" class=SW href="#437">rem_e</a>) ? 2'b10 :
+               !(<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#162">M_POST</a>)    &amp;&amp; (<a  onClick="return qs(event,this)" class=SW href="#437">mul_e</a>)                         ? 2'b01 :
+                                                                     2'b00;
+    <span class=K>end</span> <span class=C>// end else
+</span>  <span class=K>end</span> <span class=C>// end the always
+</span>
+<a name="243"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#184">d_extreme</a> = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) &amp;&amp; <a  onClick="return qs(event,this)" class=SW href="#437">div_e</a> &amp;&amp;
+                       (<a  onClick="return qs(event,this)" class=SI href="#131">div_ovf</a> || <a  onClick="return qs(event,this)" class=SI href="#130">bin_is0</a> || !<a  onClick="return qs(event,this)" class=SI href="#145">sum_32</a>);
+
+<a name="246"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#185">r_extreme</a> = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) &amp;&amp; <a  onClick="return qs(event,this)" class=SW href="#437">rem_e</a> &amp;&amp;
+                       (<a  onClick="return qs(event,this)" class=SI href="#131">div_ovf</a> || <a  onClick="return qs(event,this)" class=SI href="#130">bin_is0</a> || !<a  onClick="return qs(event,this)" class=SI href="#145">sum_32</a>);
+
+<span class=C>//  datapath  assign extreme_1 = (!mul_e &amp;&amp; !sum_32);
+</span><span class=C>//  datapath  assign extreme_2 = (!mul_e &amp;&amp; div_ovf) || ain_is0 || bin_is0;
+</span>
+<span class=C>//  datapath  assign rem_sum32 = sum_32 &amp;&amp; rem_e;
+</span>
+<a name="254"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#192">nxt_d_extreme_r</a> = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) ? <a  onClick="return qs(event,this)" class=SW href="#243">d_extreme</a> :
+                                             !(<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>)&amp;&amp;<a  onClick="return qs(event,this)" class=SW href="#444">d_extreme_r</a>;
+<a name="256"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#191">nxt_r_extreme_r</a> = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) ? <a  onClick="return qs(event,this)" class=SW href="#246">r_extreme</a> :
+                                             !(<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>)&amp;&amp;<a  onClick="return qs(event,this)" class=SW href="#444">r_extreme_r</a>;
+
+<a name="259"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#104">clr_rac</a> = ~<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a> ||
+                   (<a  onClick="return qs(event,this)" class=SW href="#437">mul_e</a> ?  (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) : (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>) );
+
+<a name="262"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#105">clr_ra2</a> = ~<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a> ||
+                   (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) &amp;&amp;
+                        (<a  onClick="return qs(event,this)" class=SI href="#130">bin_is0</a> ||
+<span class=C>//  in datapath      div_e &amp;&amp; !sum_32 ||
+</span>                         <a  onClick="return qs(event,this)" class=SW href="#437">rem_e</a> &amp;&amp; <a  onClick="return qs(event,this)" class=SI href="#131">div_ovf</a>);
+
+<a name="268"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#106">clr_rb</a>  = ~<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a> ||
+                   (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) &amp;&amp; <a  onClick="return qs(event,this)" class=SI href="#129">ain_is0</a> ||
+                   (<span class=C>/*nxt_st==R_ADDBACK*/</span><a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>[1]) &amp;&amp; <a  onClick="return qs(event,this)" class=SI href="#146">cout</a>; <span class=C>// this stage can cut
+</span>
+<a name="272"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#107">clr_rbb</a> = ~<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>;
+
+<span class=C>// -------------- E_stage, A_oprand path ---------------------------------
+</span><a name="275"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#198">nxt_clr_aop_</a>  = !(<a  onClick="return qs(event,this)" class=SI href="#150">nxt_booth_0</a> || (<a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>==<a  onClick="return qs(event,this)" class=PA href="#162">M_POST</a>) );
+<a name="276"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#198">nxt_rem_a</a>     =  (<a  onClick="return qs(event,this)" class=SR href="#344">nxt_div_e</a>   ||  <a  onClick="return qs(event,this)" class=SR href="#345">nxt_rem_e</a>);
+<a name="277"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#198">nxt_mag_a</a>     =  (<a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>);
+
+<span class=C>// -------------- E_stage, B_oprand path ---------------------------------
+</span><a name="280"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#201">nxt_rsh_b</a> = (<a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>==<a  onClick="return qs(event,this)" class=PA href="#162">M_POST</a>) ? <a  onClick="return qs(event,this)" class=SR href="#342">nxt_cnt</a>[3:0] : 4'b0000;
+
+<a name="282"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#204">nxt_rb_b</a>  = (<a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>)      ||
+                     (<a  onClick="return qs(event,this)" class=SR href="#344">nxt_div_e</a> || <a  onClick="return qs(event,this)" class=SR href="#345">nxt_rem_e</a>) ||
+                     (<a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>==<a  onClick="return qs(event,this)" class=PA href="#162">M_POST</a>) &amp;&amp; <a  onClick="return qs(event,this)" class=SR href="#342">nxt_cnt</a>[4];
+
+<a name="286"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#204">nxt_neg_b</a> = (<a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) &amp;&amp; !<a  onClick="return qs(event,this)" class=SI href="#90">ie_dataB_d_31</a> ||
+                     (<a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>==<a  onClick="return qs(event,this)" class=PA href="#162">M_POST</a>)    &amp;&amp;  <a  onClick="return qs(event,this)" class=SI href="#137">out_sign</a> &amp;&amp; !<a  onClick="return qs(event,this)" class=SR href="#345">nxt_rem_e</a> ||
+                     (<a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>==<a  onClick="return qs(event,this)" class=PA href="#158">L_SUB</a>);
+
+<span class=C>// -------------- E_stage, final data out --------------------------------
+</span><a name="291"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#198">nxt_sum_a</a>   = (<a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>==<a  onClick="return qs(event,this)" class=PA href="#157">R_ADDBACK</a>);
+
+<a name="293"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#198">nxt_compl_a</a> = (<a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) ? <a  onClick="return qs(event,this)" class=SI href="#89">ie_dataA_d_31</a> :
+                       (<a  onClick="return qs(event,this)" class=SR href="#344">nxt_div_e</a> &amp;&amp; !(<a  onClick="return qs(event,this)" class=SW href="#243">d_extreme</a> || <a  onClick="return qs(event,this)" class=SW href="#444">d_extreme_r</a>) ||
+                        <a  onClick="return qs(event,this)" class=SR href="#345">nxt_rem_e</a> &amp;&amp; !(<a  onClick="return qs(event,this)" class=SW href="#246">r_extreme</a> || <a  onClick="return qs(event,this)" class=SW href="#444">r_extreme_r</a>)) &amp;&amp; <a  onClick="return qs(event,this)" class=SI href="#137">out_sign</a>;
+
+<a name="297"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#119">sel_sum</a>     = <a  onClick="return qs(event,this)" class=SW href="#437">mul_e</a> ||
+                       <a  onClick="return qs(event,this)" class=SW href="#437">rem_e</a> &amp;&amp; !(<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#157">R_ADDBACK</a>) &amp;&amp; !<a  onClick="return qs(event,this)" class=SW href="#444">r_extreme_r</a>;
+
+<span class=C>// -------------- E_stage, A, B_operand zero detect ----------------------
+</span><span class=C>//  dpath  assign sel_swap     = (st==PRE_COMPL) &amp;&amp; mul_e &amp;&amp; !sum_32;
+</span><a name="302"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#121">cyc_compare</a>  = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>);
+<a name="303"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#122">ld_a_oprd0</a>   = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>);
+<a name="304"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#123">ld_b_oprd0</a>   = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>);
+<a name="305"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#124">ld_leading0</a>  = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) || <a  onClick="return qs(event,this)" class=SW href="#437">mul_e</a>;
+<a name="306"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#125">clr_a_oprd0</a>  = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>) || ~<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>;
+<a name="307"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#126">clr_b_oprd0</a>  = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>) || ~<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>;
+<a name="308"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#127">clr_leading0</a> = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>) || ~<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>;
+
+<span class=C>// -------------- E_stage, Booth recoder ---------------------------------
+</span><span class=C>// -------------- E_stage, mag_a,b to a,b_oprd, 32 bits wide -------------
+</span><span class=C>// -------------- Sign bit -----------------------------------------------
+</span><a name="313"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#134">ld_sign</a>  = ~<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a> || (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>);
+<a name="314"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#135">clr_sign</a> = <a  onClick="return qs(event,this)" class=SI href="#129">ain_is0</a> || <a  onClick="return qs(event,this)" class=SI href="#130">bin_is0</a> || ~<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>;
+<a name="315"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#142">mul_cmp</a>  = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) &amp;&amp; <a  onClick="return qs(event,this)" class=SW href="#437">mul_e</a>;
+<a name="316"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#143">div_cmp</a>  = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) &amp;&amp; <a  onClick="return qs(event,this)" class=SW href="#437">div_e</a>;
+<a name="317"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#144">rem_cmp</a>  = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) &amp;&amp; <a  onClick="return qs(event,this)" class=SW href="#437">rem_e</a>;
+
+<span class=C>// -------------- output to ieu ------------------------------------------
+</span><span class=C>// fix timing problem. remove hold from done equation
+</span><span class=C>//  assign imdr_done_e =  (nxt_st[0]);
+</span><a name="322"></a>    <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#97">imdr_done_e</a> =  (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#161">D_POST</a>) || (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#162">M_POST</a>) || (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#157">R_ADDBACK</a>) ||
+			  !(<a  onClick="return qs(event,this)" class=SI href="#85">ie_mul_raw_d</a> |<a  onClick="return qs(event,this)" class=SI href="#86">ie_div_raw_d</a> |<a  onClick="return qs(event,this)" class=SI href="#87">ie_rem_raw_d</a>)&amp;&amp;(<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>);
+
+<a name="325"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#194">nxt_div0_e</a>  = !(<a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>==<a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>) &amp;&amp; (<a  onClick="return qs(event,this)" class=SW href="#437">div_e</a> || <a  onClick="return qs(event,this)" class=SW href="#437">rem_e</a>) &amp;&amp; <a  onClick="return qs(event,this)" class=SI href="#130">bin_is0</a>;
+
+<span class=C>// -------------- carry-in and carry-out for the adder -------------------
+</span><a name="328"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#140">cin</a> = (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) &amp;&amp; !<a  onClick="return qs(event,this)" class=SI href="#136">bin_sign</a> ||            <span class=C>// need early
+</span>               (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#160">R_ADD</a>)  &amp;&amp; <a  onClick="return qs(event,this)" class=SI href="#151">booth_neg</a> ||
+               (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#162">M_POST</a>) &amp;&amp; <a  onClick="return qs(event,this)" class=SI href="#138">out_sign_r</a> ||
+               (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#158">L_SUB</a>);
+<a name="332"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#141">mask32_</a> = !( (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#162">M_POST</a>) || (<a  onClick="return qs(event,this)" class=SW href="#420">st</a>==<a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>) );
+
+<span class=C>// -------------- imul/idiv/irem state machine ---------------------------
+</span>  <span class=K>always</span> @ (<a  onClick="return qs(event,this)" class=SW href="#169">st</a>         <span class=K>or</span> <a  onClick="return qs(event,this)" class=SW href="#170">cnt</a>      <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#146">cout</a>     <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#91">pj_hold</a> <span class=K>or</span>
+            <a  onClick="return qs(event,this)" class=SW href="#175">ie_mul_d</a>   <span class=K>or</span> <a  onClick="return qs(event,this)" class=SW href="#175">ie_div_d</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SW href="#175">ie_rem_d</a> <span class=K>or</span> 
+               <a  onClick="return qs(event,this)" class=SW href="#174">mul_e</a>   <span class=K>or</span>    <a  onClick="return qs(event,this)" class=SW href="#174">div_e</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SW href="#174">rem_e</a>    <span class=K>or</span>
+            <a  onClick="return qs(event,this)" class=SI href="#147">extreme_1</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#148">extreme_2</a> <span class=K>or</span>
+            <a  onClick="return qs(event,this)" class=SI href="#132">leading0_r</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#152">cur_rbb1</a>) <span class=K>begin</span> 
+
+<a name="341"></a>    <a  onClick="return qs(event,this)" class=SR href="#171">nxt_st</a>    = <a  onClick="return qs(event,this)" class=SW href="#420">st</a>;
+<a name="342"></a>    <a  onClick="return qs(event,this)" class=SR href="#172">nxt_cnt</a>   = <a  onClick="return qs(event,this)" class=SW href="#430">cnt</a>;
+<a name="343"></a>    <a  onClick="return qs(event,this)" class=SR href="#181">nxt_mul_e</a> = <a  onClick="return qs(event,this)" class=SW href="#437">mul_e</a>;
+<a name="344"></a>    <a  onClick="return qs(event,this)" class=SR href="#181">nxt_div_e</a> = <a  onClick="return qs(event,this)" class=SW href="#437">div_e</a>;
+<a name="345"></a>    <a  onClick="return qs(event,this)" class=SR href="#181">nxt_rem_e</a> = <a  onClick="return qs(event,this)" class=SW href="#437">rem_e</a>;
+
+    <span class=K>case</span> (<a  onClick="return qs(event,this)" class=SW href="#169">st</a>)   <span class=C>//synopsys parallel_case
+</span>      <a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>     : <span class=K>begin</span>
+                   <a  onClick="return qs(event,this)" class=SR href="#171">nxt_st</a>    = (<a  onClick="return qs(event,this)" class=SW href="#208">ie_mul_d</a> || <a  onClick="return qs(event,this)" class=SW href="#210">ie_div_d</a> || <a  onClick="return qs(event,this)" class=SW href="#209">ie_rem_d</a>) ?
+                                <a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a> : <a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>;
+                   <a  onClick="return qs(event,this)" class=SR href="#181">nxt_mul_e</a> = <a  onClick="return qs(event,this)" class=SW href="#208">ie_mul_d</a>;
+                   <a  onClick="return qs(event,this)" class=SR href="#181">nxt_div_e</a> = <a  onClick="return qs(event,this)" class=SW href="#210">ie_div_d</a>;
+                   <a  onClick="return qs(event,this)" class=SR href="#181">nxt_rem_e</a> = <a  onClick="return qs(event,this)" class=SW href="#209">ie_rem_d</a>;
+                 <span class=K>end</span>
+
+      <a  onClick="return qs(event,this)" class=PA href="#163">PRE_COMPL</a>: <span class=K>begin</span>
+                   <a  onClick="return qs(event,this)" class=SR href="#171">nxt_st</a> = (<a  onClick="return qs(event,this)" class=SI href="#147">extreme_1</a> || <a  onClick="return qs(event,this)" class=SI href="#148">extreme_2</a>) ? <a  onClick="return qs(event,this)" class=PA href="#162">M_POST</a> :
+                            (<a  onClick="return qs(event,this)" class=SW href="#437">mul_e</a> ? <a  onClick="return qs(event,this)" class=PA href="#160">R_ADD</a> : <a  onClick="return qs(event,this)" class=PA href="#158">L_SUB</a>); 
+                   <a  onClick="return qs(event,this)" class=SR href="#172">nxt_cnt</a> =       5'b1;
+                 <span class=K>end</span>
+
+      <a  onClick="return qs(event,this)" class=PA href="#160">R_ADD</a>    : <span class=K>begin</span>
+                   <a  onClick="return qs(event,this)" class=SR href="#171">nxt_st</a> = (<a  onClick="return qs(event,this)" class=SI href="#132">leading0_r</a> &amp;&amp; !<a  onClick="return qs(event,this)" class=SI href="#152">cur_rbb1</a>) ? <a  onClick="return qs(event,this)" class=PA href="#162">M_POST</a> : <a  onClick="return qs(event,this)" class=PA href="#160">R_ADD</a>;
+                   <a  onClick="return qs(event,this)" class=SR href="#172">nxt_cnt</a> = <a  onClick="return qs(event,this)" class=SW href="#430">cnt</a> + !(<a  onClick="return qs(event,this)" class=SI href="#132">leading0_r</a> &amp;&amp; !<a  onClick="return qs(event,this)" class=SI href="#152">cur_rbb1</a>);
+                 <span class=K>end</span>
+
+      <a  onClick="return qs(event,this)" class=PA href="#162">M_POST</a>   : <span class=K>begin</span>
+                   <a  onClick="return qs(event,this)" class=SR href="#171">nxt_st</a>    = <a  onClick="return qs(event,this)" class=SI href="#91">pj_hold</a> ? <a  onClick="return qs(event,this)" class=PA href="#162">M_POST</a> : <a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>;
+                 <span class=K>end</span>
+
+      <a  onClick="return qs(event,this)" class=PA href="#158">L_SUB</a>    : <span class=K>begin</span>           <span class=C>//if cout=1, R_ADDBACK can be skipped
+</span>                   <a  onClick="return qs(event,this)" class=SR href="#171">nxt_st</a> = (<a  onClick="return qs(event,this)" class=SW href="#430">cnt</a>==<a  onClick="return qs(event,this)" class=PA href="#166">LAST</a>) ? (<a  onClick="return qs(event,this)" class=SW href="#437">div_e</a> ? <a  onClick="return qs(event,this)" class=PA href="#161">D_POST</a> : <a  onClick="return qs(event,this)" class=PA href="#157">R_ADDBACK</a>) :
+                                          (<a  onClick="return qs(event,this)" class=SI href="#146">cout</a>  ? <a  onClick="return qs(event,this)" class=PA href="#158">L_SUB</a>  : <a  onClick="return qs(event,this)" class=PA href="#159">L_ADD</a>);
+                   <a  onClick="return qs(event,this)" class=SR href="#172">nxt_cnt</a> = <a  onClick="return qs(event,this)" class=SW href="#430">cnt</a> + 5'b1;
+                 <span class=K>end</span>
+
+      <a  onClick="return qs(event,this)" class=PA href="#159">L_ADD</a>    : <span class=K>begin</span>           <span class=C>//if cout=1, R_ADDBACK can be skipped
+</span>                   <a  onClick="return qs(event,this)" class=SR href="#171">nxt_st</a> = (<a  onClick="return qs(event,this)" class=SW href="#430">cnt</a>==<a  onClick="return qs(event,this)" class=PA href="#166">LAST</a>) ? (<a  onClick="return qs(event,this)" class=SW href="#437">div_e</a> ? <a  onClick="return qs(event,this)" class=PA href="#161">D_POST</a> : <a  onClick="return qs(event,this)" class=PA href="#157">R_ADDBACK</a>) :
+                                          (<a  onClick="return qs(event,this)" class=SI href="#146">cout</a>  ? <a  onClick="return qs(event,this)" class=PA href="#158">L_SUB</a>  : <a  onClick="return qs(event,this)" class=PA href="#159">L_ADD</a>);
+                   <a  onClick="return qs(event,this)" class=SR href="#172">nxt_cnt</a> = <a  onClick="return qs(event,this)" class=SW href="#430">cnt</a> + 5'b1;
+                 <span class=K>end</span>
+
+      <a  onClick="return qs(event,this)" class=PA href="#161">D_POST</a>   : <span class=K>begin</span>
+                   <a  onClick="return qs(event,this)" class=SR href="#171">nxt_st</a>    = <a  onClick="return qs(event,this)" class=SI href="#91">pj_hold</a> ? <a  onClick="return qs(event,this)" class=PA href="#161">D_POST</a> : <a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>;
+                 <span class=K>end</span>
+
+      <a  onClick="return qs(event,this)" class=PA href="#157">R_ADDBACK</a>: <span class=K>begin</span> 
+                   <a  onClick="return qs(event,this)" class=SR href="#171">nxt_st</a>    = <a  onClick="return qs(event,this)" class=SI href="#91">pj_hold</a> ? <a  onClick="return qs(event,this)" class=PA href="#157">R_ADDBACK</a> : <a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>;
+                 <span class=K>end</span>
+
+      <span class=K>default</span>  : <span class=K>begin</span>
+                   <a  onClick="return qs(event,this)" class=SR href="#171">nxt_st</a> = <a  onClick="return qs(event,this)" class=PA href="#156">IDLE</a>;
+<span class=C>// synopsys translate_off
+</span><span class=C>/* 
+                   if (!($time   ==0))
+                     $display(&quot;Warning @ %d, imdr_ctrl.v: st reached default!&quot;,
+                               $time); 
+*/</span>
+<span class=C>// synopsys translate_on
+</span>                 <span class=K>end</span>
+    <span class=K>endcase</span> 
+
+  <span class=K>end</span> <span class=C>// end the always, the state machine
+</span>
+<span class=C>// -------------- registers ----------------------------------------------
+</span>
+<a name="imdr_ctrl_ff_ss_0"></a> <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>  ff_ss_0   (
+<a name="408"></a>                    <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#111">sel_mag_a</a>),
+                    <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#277">nxt_mag_a</a>),
+                    <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>),
+                    <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#96">clk</a>)
+                   );
+
+<a name="imdr_ctrl_ff_ss_1"></a> <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>  ff_ss_1   (
+<a name="415"></a>                    <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#183">st_0_l</a>),
+                    <span class=SI>.din</span>(~<a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>[0]),
+                    <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>),
+                    <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#96">clk</a>)
+                   );
+<a name="420"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#169">st</a>[0] = !<a  onClick="return qs(event,this)" class=SW href="#415">st_0_l</a>;
+
+<a name="imdr_ctrl_ff_sr_4_0"></a> <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_4">ff_sr_4</a> ff_sr_4_0 (
+                    <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3864">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#169">st</a>[4:1]),
+                    <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SR href="#341">nxt_st</a>[4:1]),
+                    <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>),
+                    <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#96">clk</a>)
+                   );
+
+<a name="imdr_ctrl_ff_sr_5_0"></a> <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_5">ff_sr_5</a> ff_sr_5_0 (
+<a name="430"></a>                    <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3878">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#170">cnt</a>),
+                    <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SR href="#342">nxt_cnt</a>),
+                    <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>),
+                    <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#96">clk</a>)
+                   );
+
+<a name="imdr_ctrl_ff_sr_3_1"></a> <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_3">ff_sr_3</a> ff_sr_3_1 ( 
+<a name="437"></a>                    <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3851">.out</a>({    <a  onClick="return qs(event,this)" class=SW href="#174">mul_e</a>,    <a  onClick="return qs(event,this)" class=SW href="#174">div_e</a>,    <a  onClick="return qs(event,this)" class=SW href="#174">rem_e</a>}),
+                    <span class=SI>.din</span>({<a  onClick="return qs(event,this)" class=SR href="#343">nxt_mul_e</a>,<a  onClick="return qs(event,this)" class=SR href="#344">nxt_div_e</a>,<a  onClick="return qs(event,this)" class=SR href="#345">nxt_rem_e</a>}),
+                    <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>),  
+                    <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#96">clk</a>)
+                   );
+
+<a name="imdr_ctrl_ff_sr_3_2"></a> <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_3">ff_sr_3</a> ff_sr_3_2 ( 
+<a name="444"></a>                    <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3851">.out</a>({    <a  onClick="return qs(event,this)" class=SW href="#191">r_extreme_r</a>,    <a  onClick="return qs(event,this)" class=SW href="#192">d_extreme_r</a>,<a  onClick="return qs(event,this)" class=SW href="#205">imdr_div0_e_raw</a>}),
+                    <span class=SI>.din</span>({<a  onClick="return qs(event,this)" class=SW href="#256">nxt_r_extreme_r</a>,<a  onClick="return qs(event,this)" class=SW href="#254">nxt_d_extreme_r</a>, <a  onClick="return qs(event,this)" class=SW href="#325">nxt_div0_e</a>}),
+                    <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>),  
+                    <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#96">clk</a>)
+                   );
+
+<a name="450"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#98">imdr_div0_e</a> = <a  onClick="return qs(event,this)" class=SW href="#444">imdr_div0_e_raw</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="#210">ie_div_d</a>|<a  onClick="return qs(event,this)" class=SW href="#209">ie_rem_d</a>);
+
+<a name="imdr_ctrl_ff_sr_4_1"></a> <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_4">ff_sr_4</a> ff_sr_4_1 (
+<a name="453"></a>                    <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3864">.out</a>({    <a  onClick="return qs(event,this)" class=SO href="#109">clr_aop_</a>,<a  onClick="return qs(event,this)" class=SO href="#110">sel_rem_a</a>,<a  onClick="return qs(event,this)" class=SO href="#117">sel_sum_a</a>,<a  onClick="return qs(event,this)" class=SO href="#118">sel_compl_a</a>}),
+                    <span class=SI>.din</span>({<a  onClick="return qs(event,this)" class=SW href="#275">nxt_clr_aop_</a>,<a  onClick="return qs(event,this)" class=SW href="#276">nxt_rem_a</a>,<a  onClick="return qs(event,this)" class=SW href="#291">nxt_sum_a</a>,<a  onClick="return qs(event,this)" class=SW href="#293">nxt_compl_a</a>}),
+                    <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>),
+                    <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#96">clk</a>)
+                   );
+
+<a name="imdr_ctrl_ff_sr_6_0"></a> <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_6">ff_sr_6</a> ff_sr_6_0 (
+<a name="460"></a>                    <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3893">.out</a>({<a  onClick="return qs(event,this)" class=SO href="#113">sel_rsh_b</a>,<a  onClick="return qs(event,this)" class=SO href="#114">sel_rb_b</a>,<a  onClick="return qs(event,this)" class=SO href="#115">sel_neg_b</a>}),
+<a name="461"></a>                    <span class=SI>.din</span>({<a  onClick="return qs(event,this)" class=SW href="#280">nxt_rsh_b</a>,<a  onClick="return qs(event,this)" class=SW href="#282">nxt_rb_b</a>,<a  onClick="return qs(event,this)" class=SW href="#286">nxt_neg_b</a>}),
+<a name="462"></a>                    <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#92">reset_l</a>),
+<a name="463"></a>                    <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#96">clk</a>)
+                   );
+
+<span class=K>endmodule</span>
+
+
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:45:04 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ex/rtl/imdr/imdr_ctrl.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

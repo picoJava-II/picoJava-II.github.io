@@ -1,0 +1,1119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ex/rtl/ex_dpath.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "ex_dpath.v.p2.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<center><table class=NB cols=2 nosave><tr><td align="center"><font color="#808080">1</font></td><td align="center"><a  href="ex_dpath.v.p2.html">2</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+<a name="ex_dpath"></a><a  href="ex.v.html#ex_ex_dpath"><IMG alt="[Up: ex ex_dpath]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>ex_dpath</span><a  href="hierarchy-m.html#ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#127">carry_in_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#128">adder2_carry_in</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#129">imdr_data_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#130">pc_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#132">pc_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#131">pc_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#133">vars_out</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#134">ru_rs1_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#135">ru_rs2_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#136">scache_miss_addr_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#137">ucode_porta_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#138">ucode_portc_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#139">iu_alu_a</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#140">iu_alu_b</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#141">u_m_adder_porta_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#142">u_m_adder_portb_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#143">reg_data_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#144">opcode_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#150">dcu_diag_data_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#151">fpu_data_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#152">fpu_hold</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#153">icu_diag_data_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#154">dcu_data_c</a>,
+
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#156">rs1_bypass_mux_out</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#157">rs2_bypass_mux_out</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#159">iu_data_in</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#158">ucode_porta_mux_out</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#161">adder_out_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#162">carry_out_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#163">cmp_gt_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#164">cmp_eq_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#165">cmp_lt_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#166">null_objref_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#169">iu_addr_e</a>,
+  		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#170">iu_addr_e_2</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#171">iu_addr_e_31</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#172">iu_br_pc_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#173">iu_data_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#174">wr_optop_data_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#175">iu_addr_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#176">alu_out_w</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#177">dcu_data_w</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#178">load_buffer_mux_out_0</a>,
+
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#182">shift_dir_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#183">shift_count_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#184">sign_e</a>,
+	<span class=C>/******************** monitor caching change *****************/</span>
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#188">monitorenter_e</a>,
+			
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#192">iu_data_vld</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#193">sc_data_vld</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#194">hold_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#195">hold_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#198">dcu_data_reg_we</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#167">iu_rs1_e_0_l</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#168">iu_rs2_e_0_l</a>,
+
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#181">ucode_active</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#204">rs1_mux_sel_din</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#205">forward_c_sel_din</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#207">ex_adder2_src1_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#209">rs1_bypass_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#215">rs2_bypass_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#221">cmp_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#224">adder_src1_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#227">adder_src2_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#231">shifter_src1_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#237">shifter_src2_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#241">shifter_word_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#244">bit_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#251">cvt_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#257">bit_cvt_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#260">constant_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#264">alu_out_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#273">offset_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#280">adder2_src2_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#285">iu_br_pc_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#289">iu_data_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#292">wr_optop_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#295">load_data_c_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#300">fpu_mux_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#303">forward_w_sel_din</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#307">load_buffer_mux_sel</a>,
+
+<span class=C>// All of the following signals are added to prevent RS1 and RS2 from
+</span><span class=C>// going from EX -&gt; UCODE -&gt; EX; Timing Improvement 
+</span>
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#311">iu_optop_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#312">ucode_reg_data</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#314">ucode_alu_a_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#316">ucode_porta_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#317">ucode_busy_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#318">sc_dcache_req</a>,
+		
+
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#321">reset_l</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#323">sm</a>,
+		<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#324">sin</a>,
+		<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#325">so</a>);
+
+   <span class=C>// Data buses
+</span><a name="127"></a>   <span class=K>input</span>	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#751">carry_in_e</a><a  href="hierarchy-s.p3.html#carry_in_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Carry input to the main adder
+</span><a name="128"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#752">adder2_carry_in</a><a  href="hierarchy-s.html#adder2_carry_in___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Carry input to the address adder
+</span><a name="129"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#753">imdr_data_e</a><a  href="hierarchy-s.p9.html#imdr_data_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Result of IMDR unit
+</span><a name="130"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#754">pc_r</a><a  href="hierarchy-s.p14.html#pc_r___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// R stage PC value
+</span><a name="131"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#755">pc_e</a><a  href="hierarchy-s.p14.html#pc_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// E stage PC value
+</span><a name="132"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#756">pc_c</a><a  href="hierarchy-s.p14.html#pc_c___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// C stage PC value
+</span><a name="133"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#757">vars_out</a><a  href="hierarchy-s.p19.html#vars_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// C stage VARS value from ex_regs
+</span><a name="134"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#758">ru_rs1_e</a><a  href="hierarchy-s.p15.html#ru_rs1_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Operand 1 value from R unit
+</span><a name="135"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#759">ru_rs2_e</a><a  href="hierarchy-s.p15.html#ru_rs2_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Operand 2 value from R unit
+</span><a name="136"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#760">scache_miss_addr_e</a><a  href="hierarchy-s.p16.html#scache_miss_addr_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// S$ miss address to adder2
+</span><a name="137"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#761">ucode_porta_e</a><a  href="hierarchy-s.p18.html#ucode_porta_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Operand 1 value from ucode
+</span><a name="138"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#762">ucode_portc_e</a><a  href="hierarchy-s.p18.html#ucode_portc_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Result of ucode computation
+</span><a name="139"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#763">iu_alu_a</a><a  href="hierarchy-s.p9.html#iu_alu_a___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode input to alu adder
+</span><a name="140"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#764">iu_alu_b</a><a  href="hierarchy-s.p9.html#iu_alu_b___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode input to alu adder
+</span><a name="141"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#765">u_m_adder_porta_e</a><a  href="hierarchy-s.p18.html#u_m_adder_porta_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// ucode address 1 to adder2
+</span><a name="142"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#766">u_m_adder_portb_e</a><a  href="hierarchy-s.p18.html#u_m_adder_portb_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// ucode address 2 to adder2
+</span><a name="143"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#767">reg_data_e</a><a  href="hierarchy-s.p15.html#reg_data_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Output of register mux
+</span><a name="144"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#768">opcode_r</a><a  href="hierarchy-s.p13.html#opcode_r___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>/* Coming from IFU
+					 * 31:24 - opcode_2_op_r
+					 * 23:16 - opcode_3_op_r
+					 * 15: 8 - opcode_4_op_r
+					 *  7: 0 - opcode_5_op_r
+					 */</span>
+<a name="150"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#790">dcu_diag_data_c</a><a  href="hierarchy-s.p4.html#dcu_diag_data_c___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// DCU diagnostic read data
+</span><a name="151"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#791">fpu_data_e</a><a  href="hierarchy-s.p6.html#fpu_data_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// FPU result
+</span><a name="152"></a>   <span class=K>input</span>  	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#792">fpu_hold</a><a  href="hierarchy-s.p6.html#fpu_hold___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Hold the fpu data
+</span><a name="153"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#793">icu_diag_data_c</a><a  href="hierarchy-s.p9.html#icu_diag_data_c___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// ICU diagnostic read data
+</span><a name="154"></a>   <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="ex.v.html#794">dcu_data_c</a><a  href="hierarchy-s.p4.html#dcu_data_c___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Input to dcu_hold_reg
+</span>
+<a name="156"></a>   <span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a><a  href="hierarchy-s.p15.html#rs1_bypass_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of rs1_bypass_mux
+</span><a name="157"></a>   <span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#518">rs2_bypass_mux_out</a><a  href="hierarchy-s.p15.html#rs2_bypass_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of rs2_bypass_mux
+</span><a name="158"></a>   <span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#627">ucode_porta_mux_out</a><a  href="hierarchy-s.p18.html#ucode_porta_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of ucode_porta_mux
+</span><a name="159"></a>   <span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#655">iu_data_in</a><a  href="hierarchy-s.p9.html#iu_data_in___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data to be written onto SMU's version
+</span>                                        <span class=C>// of sbase in case of wr_sbase opcodes
+</span><a name="161"></a>   <span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#695">adder_out_e</a><a  href="hierarchy-s.html#adder_out_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Output of main adder
+</span><a name="162"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#694">carry_out_e</a><a  href="hierarchy-s.p3.html#carry_out_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Carry output of main adder
+</span><a name="163"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#674">cmp_gt_e</a><a  href="hierarchy-s.p3.html#cmp_gt_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Operand 1 &gt;  operand 2
+</span><a name="164"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#675">cmp_eq_e</a><a  href="hierarchy-s.p3.html#cmp_eq_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Operand 1 == operand 2
+</span><a name="165"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#676">cmp_lt_e</a><a  href="hierarchy-s.p3.html#cmp_lt_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Operand 1 &lt;  operand 2
+</span><a name="166"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#658">null_objref_e</a><a  href="hierarchy-s.p12.html#null_objref_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_porta_mux_out == zero
+</span><a name="167"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#491">iu_rs1_e_0_l</a><a  href="hierarchy-s.p9.html#iu_rs1_e_0_l___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// fast signal for ucode. rs1_bypass[0]
+</span><a name="168"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#533">iu_rs2_e_0_l</a><a  href="hierarchy-s.p9.html#iu_rs2_e_0_l___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// fast signal for ucode. rs2_bypass[0]
+</span><a name="169"></a>   <span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#887">iu_addr_e</a><a  href="hierarchy-s.p9.html#iu_addr_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Address adder output, E stage
+</span><a name="170"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#892">iu_addr_e_2</a><a  href="hierarchy-s.p9.html#iu_addr_e_2___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="171"></a>   <span class=K>output</span>	 <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#893">iu_addr_e_31</a><a  href="hierarchy-s.p9.html#iu_addr_e_31___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="172"></a>   <span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#906">iu_br_pc_e</a><a  href="hierarchy-s.p9.html#iu_br_pc_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Branch target PC to ICU
+</span><a name="173"></a>   <span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#912">iu_data_e</a><a  href="hierarchy-s.p9.html#iu_data_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data corresponding to iu_addr_e
+</span><a name="174"></a>   <span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#917">wr_optop_data_e</a><a  href="hierarchy-s.p20.html#wr_optop_data_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Data for write optop operation
+</span><a name="175"></a>   <span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#900">iu_addr_c</a><a  href="hierarchy-s.p9.html#iu_addr_c___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Address adder output, C stage
+</span><a name="176"></a>   <span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.p2.html#1021">alu_out_w</a><a  href="hierarchy-s.html#alu_out_w___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Main alu output, W stage
+</span><a name="177"></a>   <span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#991">dcu_data_w</a><a  href="hierarchy-s.p4.html#dcu_data_w___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Output of dcu_hold_reg
+</span><a name="178"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#999">load_buffer_mux_out_0</a><a  href="hierarchy-s.p10.html#load_buffer_mux_out_0___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// lockbit used in monitorenter	
+</span>
+   <span class=C>// E stage control signals
+</span><a name="181"></a>   <span class=K>input</span>	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#808">ucode_active</a><a  href="hierarchy-s.p18.html#ucode_active___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="182"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#799">shift_dir_e</a><a  href="hierarchy-s.p16.html#shift_dir_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Shifter: 0: left, 1: right
+</span><a name="183"></a>   <span class=K>input</span> [5:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#800">shift_count_e</a><a  href="hierarchy-s.p16.html#shift_count_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Shifter: # of bits to shift
+</span><a name="184"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#801">sign_e</a><a  href="hierarchy-s.p16.html#sign_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>/* Sign extension for shifter
+					 * and converter
+					 */</span>
+   <span class=C>/******************** monitor caching change  *****************/</span>
+<a name="188"></a>   <span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#802">monitorenter_e</a><a  href="hierarchy-s.p11.html#monitorenter_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+   
+
+   <span class=C>// C stage control signals
+</span><a name="192"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#803">iu_data_vld</a><a  href="hierarchy-s.p9.html#iu_data_vld___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// From IU input
+</span><a name="193"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#804">sc_data_vld</a><a  href="hierarchy-s.p16.html#sc_data_vld___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicate dcu_data_c is from S$ miss
+</span><a name="194"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#805">hold_e</a><a  href="hierarchy-s.p8.html#hold_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Hold signal from pipe control
+</span><a name="195"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#806">hold_c</a><a  href="hierarchy-s.p8.html#hold_c___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Hold signal from pipe control
+</span>
+   <span class=C>// W stage control signal
+</span><a name="198"></a>   <span class=K>input</span>  [1:0]	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#832">dcu_data_reg_we</a><a  href="hierarchy-s.p4.html#dcu_data_reg_we___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* Eanbled if:
+					 * 1. IDLE and valid
+					 * 2. ST1 and ~hold and valid
+					 * 3. ST2 and ~hold
+					 */</span>
+   <span class=C>// Mux select signals.  0 is the default selection.
+</span><a name="204"></a>   <span class=K>input</span>  	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#809">rs1_mux_sel_din</a><a  href="hierarchy-s.p15.html#rs1_mux_sel_din___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 1: scache_miss_data_e */</span>
+<a name="205"></a>   <span class=K>input</span>  	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#810">forward_c_sel_din</a><a  href="hierarchy-s.p6.html#forward_c_sel_din___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 1: scache_miss_data_e
+					 */</span>
+<a name="207"></a>   <span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#825">ex_adder2_src1_mux_sel</a><a  href="hierarchy-s.p5.html#ex_adder2_src1_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+
+<a name="209"></a>   <span class=K>input</span> [4:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#811">rs1_bypass_mux_sel</a><a  href="hierarchy-s.p15.html#rs1_bypass_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 16: rs1_hold_reg
+					   8: forward_data_w1
+					 * 4: forward_data_w
+					 * 2: forward_data_c
+					 * 1: rs1_mux_out
+					 */</span>
+<a name="215"></a>   <span class=K>input</span> [4:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#812">rs2_bypass_mux_sel</a><a  href="hierarchy-s.p15.html#rs2_bypass_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 16:rs2_hold_reg
+					   8: forward_data_w1
+					 * 4: forward_data_w
+					 * 2: forward_data_c
+					 * 1: ru_rs2_e
+					 */</span>
+<a name="221"></a>   <span class=K>input</span> [2:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#813">cmp_mux_sel</a><a  href="hierarchy-s.p3.html#cmp_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>/* 2: Rs1, zero
+					 * 1: Rs2, Rs1
+					 */</span>
+<a name="224"></a>   <span class=K>input</span> [1:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#814">adder_src1_mux_sel</a><a  href="hierarchy-s.html#adder_src1_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 2: ~Rs1
+					 * 1: Rs1
+					 */</span>
+<a name="227"></a>   <span class=K>input</span> [2:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#815">adder_src2_mux_sel</a><a  href="hierarchy-s.html#adder_src2_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 4: zero
+					 * 2: ~Rs2
+					 * 1: Rs2
+					 */</span>
+<a name="231"></a>   <span class=K>input</span> [4:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#816">shifter_src1_mux_sel</a><a  href="hierarchy-s.p16.html#shifter_src1_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 16: rs2_bypass_mux_out_d1
+					 *  8: {32{rs2_bypass_mux_out[31]}}
+					 *  4: rs2_bypass_mux_out
+					 *  2: rs1_bypass_mux_out
+					 *  1: zero
+					 */</span>
+<a name="237"></a>   <span class=K>input</span> [2:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#817">shifter_src2_mux_sel</a><a  href="hierarchy-s.p16.html#shifter_src2_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 4: rs2_bypass_mux_out_d1
+					 * 2: rs2_bypass_mux_out
+					 * 1: zero
+					 */</span>
+<a name="241"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#818">shifter_word_sel</a><a  href="hierarchy-s.p16.html#shifter_word_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 1: MSW
+					 * 0: LSW
+					 */</span>
+<a name="244"></a>   <span class=K>input</span> [4:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#819">bit_mux_sel</a><a  href="hierarchy-s.p2.html#bit_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>/* 16: rs1_bypass_mux_out with bit 31
+					 *     flipped for fneg and dneg
+					 *  8: pc_r
+					 *  4: xor
+					 *  2: and
+					 *  1: or
+					 */</span>
+<a name="251"></a>   <span class=K>input</span> [4:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#820">cvt_mux_sel</a><a  href="hierarchy-s.p3.html#cvt_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>/* 16: i2s
+					 *  8: i2c
+					 *  4: i2b
+					 *  2: i2l
+					 *  1: sethi
+					 */</span>
+<a name="257"></a>   <span class=K>input</span> [1:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#821">bit_cvt_mux_sel</a><a  href="hierarchy-s.p2.html#bit_cvt_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 2: bit operator output
+					 * 1: converter output
+					 */</span>
+<a name="260"></a>   <span class=K>input</span> [2:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#833">constant_mux_sel</a><a  href="hierarchy-s.p3.html#constant_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 4:  1 -- gt
+					 * 2:  0 -- eq
+					 * 1: -1 -- lt
+					 */</span>
+<a name="264"></a>   <span class=K>input</span> [7:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#822">alu_out_mux_sel</a><a  href="hierarchy-s.html#alu_out_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 128: constant_mux_out
+					 *  64: imdr_data_e
+					 *  32: reg_mux_out
+					 *  16: bit_cvt_mux_out
+					 *   8: shifter output
+					 *   4: adder output
+					 *   2: ucode_portc_e
+					 *   1: bypass
+					 */</span>
+<a name="273"></a>   <span class=K>input</span> [4:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#823">offset_mux_sel</a><a  href="hierarchy-s.p13.html#offset_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 16: 32-bit offset for ld/st index
+					 *  8: 16-bit offset for ld/st index
+					 *  4: 8-bit offset for ld/st index
+					 *  2: opcode_e (32-bit offset)
+					 *  1: offset16 (16-bit offset)
+					 */</span>
+
+<a name="280"></a>   <span class=K>input</span> [3:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#826">adder2_src2_mux_sel</a><a  href="hierarchy-s.html#adder2_src2_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 8: zero
+					 * 4: offset_e
+					 * 2: u_m_adder_portb_e
+					 * 1: ~u_m_adder_portb_e
+					 */</span>
+<a name="285"></a>   <span class=K>input</span> [2:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#834">iu_br_pc_mux_sel</a><a  href="hierarchy-s.p9.html#iu_br_pc_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 4: ucode_porta_e
+					 * 2: pc_c
+					 * 1: adder2 output
+					 */</span>
+<a name="289"></a>   <span class=K>input</span> [1:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#827">iu_data_mux_sel</a><a  href="hierarchy-s.p9.html#iu_data_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 2: ucode_portc_e
+					 * 1: rs2_bypass_mux_out
+					 */</span>
+<a name="292"></a>   <span class=K>input</span> [1:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#824">wr_optop_mux_sel</a><a  href="hierarchy-s.p20.html#wr_optop_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 2: vars_out
+					 * 1: ucode_porta_mux_out
+					 */</span>
+<a name="295"></a>   <span class=K>input</span> [2:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#828">load_data_c_mux_sel</a><a  href="hierarchy-s.p10.html#load_data_c_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 4: icu_diag_data_c
+					 * 2: dcu_diag_data_c
+					 * 1: dcu_data_c 
+					 */</span>
+
+<a name="300"></a>   <span class=K>input</span> [1:0]	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#829">fpu_mux_sel</a><a  href="hierarchy-s.p6.html#fpu_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 2: fpu_data
+</span>					<span class=C>// 1: alu data
+</span>
+<a name="303"></a>   <span class=K>input</span> [1:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#830">forward_w_sel_din</a><a  href="hierarchy-s.p6.html#forward_w_sel_din___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>/* 2: output of dcu_hold register
+					 * 1: output of W stage alu_out
+					 *    register
+					 */</span>
+<a name="307"></a>   <span class=K>input</span> [1:0] 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#831">load_buffer_mux_sel</a><a  href="hierarchy-s.p10.html#load_buffer_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* 2: load_buffer_reg_out (in state 2)
+					 * 1: dcu_data_c (otherwise)
+					 */</span>
+
+<a name="311"></a>   <span class=K>input</span> [31:0] <a  onClick="return qs(event,this)" class=SI href="ex.v.html#838">iu_optop_e</a><a  href="hierarchy-s.p9.html#iu_optop_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// optop
+</span><a name="312"></a>   <span class=K>input</span> [31:0] <a  onClick="return qs(event,this)" class=SI href="ex.v.html#839">ucode_reg_data</a><a  href="hierarchy-s.p18.html#ucode_reg_data___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode arch reg data
+</span><a name="313"></a>   <span class=K>input</span> [3:0]	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#840">ucode_madder_sel2</a><a  href="hierarchy-s.p18.html#ucode_madder_sel2___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// u_f19[3] and u_f19[1:0] frpom ucode
+</span><a name="314"></a>   <span class=K>input</span> [1:0]	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#841">ucode_alu_a_sel</a><a  href="hierarchy-s.p18.html#ucode_alu_a_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// u_f23[1:0] from ucode
+</span><a name="315"></a>   <span class=K>input</span> [2:0]	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#842">ucode_alu_b_sel</a><a  href="hierarchy-s.p18.html#ucode_alu_b_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// u_f07[2:0] from ucode
+</span><a name="316"></a>   <span class=K>input</span> [1:0]	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#843">ucode_porta_sel</a><a  href="hierarchy-s.p18.html#ucode_porta_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// u_f00[1:0] from ucode
+</span><a name="317"></a>   <span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#844">ucode_busy_e</a><a  href="hierarchy-s.p18.html#ucode_busy_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Ucode is busy
+</span><a name="318"></a>   <span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="ex.v.html#845">sc_dcache_req</a><a  href="hierarchy-s.p16.html#sc_dcache_req___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// dcache req on a smiss
+</span>
+   <span class=C>// Miscellaneous global signals
+</span><a name="321"></a>   <span class=K>input</span>	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#847">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Global Reset signal
+</span><a name="322"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex.v.html#848">clk</a><a  href="hierarchy-s.p3.html#clk___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Global clock signal
+</span><a name="323"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#323">sm</a><a  href="hierarchy-s.p16.html#sm___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Scan enable
+</span><a name="324"></a>   <span class=K>input</span> 	 <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#324">sin</a><a  href="hierarchy-s.p16.html#sin___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Scan input of this module
+</span><a name="325"></a>   <span class=K>output</span> 	 <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#325">so</a><a  href="hierarchy-s.p16.html#so___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Scan output of this module
+</span>
+   
+   <span class=C>// Internal buses
+</span><a name="329"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#411">scache_miss_data_e</a><a  href="hierarchy-s.p16.html#scache_miss_data_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Operand 1 value when S$ miss
+</span><a name="330"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#416">rs1_bypass_hold</a><a  href="hierarchy-s.p15.html#rs1_bypass_hold___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* Latched rs1_bypass_mux_out for the
+					 * &quot;bubbled&quot; forward case
+					 */</span>
+<a name="333"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#420">rs2_bypass_hold</a><a  href="hierarchy-s.p15.html#rs2_bypass_hold___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>/* Latched rs2_bypass_mux_out for the
+					 * &quot;bubbled&quot; forward case
+					 */</span>
+<a name="336"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#424">rs1_mux_out</a><a  href="hierarchy-s.p15.html#rs1_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Output of rs1_mux
+</span><a name="337"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#544">ucode_alu_a_mux_out</a><a  href="hierarchy-s.p18.html#ucode_alu_a_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of ucode_alu_a_mux
+</span><a name="338"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#576">ucode_alu_b_mux_out</a><a  href="hierarchy-s.p18.html#ucode_alu_b_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of ucode_alu_b_mux
+</span><a name="339"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#662">cmp_src1_mux_out</a><a  href="hierarchy-s.p3.html#cmp_src1_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of cmp_src1_mux
+</span><a name="340"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#668">cmp_src2_mux_out</a><a  href="hierarchy-s.p3.html#cmp_src2_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of cmp_src2_mux
+</span><a name="341"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#683">adder_src1_mux_out</a><a  href="hierarchy-s.html#adder_src1_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of adder_src1_mux
+</span><a name="342"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#688">adder_src2_mux_out</a><a  href="hierarchy-s.html#adder_src2_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of adder_src2_mux
+</span><a name="343"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#706">rs2_bypass_mux_out_d1</a><a  href="hierarchy-s.p15.html#rs2_bypass_mux_out_d1___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Latched version of rs2_bypass_mux_out
+</span><a name="344"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#711">shifter_src1_mux_out</a><a  href="hierarchy-s.p16.html#shifter_src1_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of shifter_msb_mux
+</span><a name="345"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#719">shifter_src2_mux_out</a><a  href="hierarchy-s.p16.html#shifter_src2_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of shifter_lsb_mux
+</span><a name="346"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#725">shifter_out</a><a  href="hierarchy-s.p16.html#shifter_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Output of 64-bit shifter
+</span><a name="347"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#735">bit_mux_out</a><a  href="hierarchy-s.p2.html#bit_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Output of bit_mux
+</span><a name="348"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#746">cvt_src0</a><a  href="hierarchy-s.p3.html#cvt_src0___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Input to converter
+</span><a name="349"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#748">cvt_src1</a><a  href="hierarchy-s.p3.html#cvt_src1___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Input to converter
+</span><a name="350"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#750">cvt_src2</a><a  href="hierarchy-s.p3.html#cvt_src2___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Input to converter
+</span><a name="351"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#752">cvt_src3</a><a  href="hierarchy-s.p3.html#cvt_src3___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Input to converter
+</span><a name="352"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#754">cvt_src4</a><a  href="hierarchy-s.p3.html#cvt_src4___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Input to converter
+</span><a name="353"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#755">cvt_mux_out</a><a  href="hierarchy-s.p3.html#cvt_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Output of cvt_mux
+</span><a name="354"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#763">bit_cvt_mux_out</a><a  href="hierarchy-s.p2.html#bit_cvt_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of bit_cvt_mux
+</span><a name="355"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#768">constant_mux_out</a><a  href="hierarchy-s.p3.html#constant_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of constant_mux
+</span><a name="356"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#774">alu_out_e</a><a  href="hierarchy-s.html#alu_out_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Output of alu_out_mux
+</span><a name="357"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#929">alu_out_c</a><a  href="hierarchy-s.html#alu_out_c___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Latched version of alu_out_e 
+</span><a name="358"></a>   <span class=K>wire</span> [31:0]  <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#965">load_data_c</a><a  href="hierarchy-s.p10.html#load_data_c___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Input to the load buffer
+</span><a name="359"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#959">alu_out_c_d1</a><a  href="hierarchy-s.html#alu_out_c_d1___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Latched version of alu_out_c 
+</span>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#176">alu_out_w</a>;		<span class=C>// Mux output in W stage
+</span><a name="361"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#944">forward_data_c</a><a  href="hierarchy-s.p6.html#forward_data_c___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// forward_data_c_mux_out
+</span><a name="362"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#981">load_buffer_reg_out</a><a  href="hierarchy-s.p10.html#load_buffer_reg_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of the (1st) load_buffer_reg
+</span><a name="363"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#986">load_buffer_mux_out</a><a  href="hierarchy-s.p10.html#load_buffer_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Outptu of the load_buffer_mux
+</span><a name="364"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.p2.html#1016">forward_data_w</a><a  href="hierarchy-s.p6.html#forward_data_w___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>/* forward_data_w_mux_out
+					 * Equivalent to iu_data_w
+					 */</span>
+<a name="367"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.p2.html#1022">forward_data_w1</a><a  href="hierarchy-s.p6.html#forward_data_w1___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of W1 stage register
+</span><a name="368"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#785">opcode_e</a><a  href="hierarchy-s.p13.html#opcode_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Latched version of opcode_r
+</span><a name="369"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#790">offset16</a><a  href="hierarchy-s.p13.html#offset16___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>/* Signed extended offset for 16-bit
+					 * branch offset
+					 */</span>
+<a name="372"></a>   <span class=K>wire</span>	[31:0]	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#507">rs2_bypass_mux_out_gen</a><a  href="hierarchy-s.p15.html#rs2_bypass_mux_out_gen___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="373"></a>   <span class=K>wire</span>	[31:0]	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#519">rs2_bypass_mux_out_v1</a><a  href="hierarchy-s.p15.html#rs2_bypass_mux_out_v1___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="375"></a>   <span class=K>wire</span>	[31:0]	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#453">rs1_bypass_mux_out_gen</a><a  href="hierarchy-s.p15.html#rs1_bypass_mux_out_gen___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="376"></a>   <span class=K>wire</span>	[31:0]	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#467">rs1_bypass_mux_out_inv</a><a  href="hierarchy-s.p15.html#rs1_bypass_mux_out_inv___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="377"></a>   <span class=K>wire</span>	[31:0]	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#468">rs1_bypass_mux_out_v1</a><a  href="hierarchy-s.p15.html#rs1_bypass_mux_out_v1___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="378"></a>   <span class=K>wire</span>	[31:0]	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#469">rs1_bypass_mux_out_v2</a><a  href="hierarchy-s.p15.html#rs1_bypass_mux_out_v2___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="380"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#923">alu_out_e_new</a><a  href="hierarchy-s.html#alu_out_e_new___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// including fpu data. timing fix
+</span><a name="381"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#791">offset_e</a><a  href="hierarchy-s.p13.html#offset_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Branch offset to adder2
+</span><a name="382"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#813">adder2_src1_mux_out</a><a  href="hierarchy-s.html#adder2_src1_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of adder2_src1_mux
+</span><a name="383"></a>   <span class=K>wire</span> [31:0] 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#873">adder2_src2_mux_out</a><a  href="hierarchy-s.html#adder2_src2_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Output of adder2_src2_mux
+</span><a name="384"></a>   <span class=K>wire</span> 	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#886">adder2_carry_out</a><a  href="hierarchy-s.html#adder2_carry_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Carry output of dpath_adder2
+</span>
+<span class=C>// All of the following signals are added to improve timing 
+</span>
+<a name="388"></a>   <span class=K>wire</span> [4:0]	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#441">rs1_bypass_mux_sel_e</a><a  href="hierarchy-s.p15.html#rs1_bypass_mux_sel_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="389"></a>   <span class=K>wire</span> [4:0]	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#496">rs2_bypass_mux_sel_e</a><a  href="hierarchy-s.p15.html#rs2_bypass_mux_sel_e___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="390"></a>   <span class=K>wire</span> [1:0]	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#438">rs1_mux_sel</a><a  href="hierarchy-s.p15.html#rs1_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="391"></a>   <span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#476">rs1_0_mux_out</a><a  href="hierarchy-s.p15.html#rs1_0_mux_out___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="392"></a>   <span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#482">rs1_0</a><a  href="hierarchy-s.p15.html#rs1_0___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="393"></a>   <span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#524">rs2_0</a><a  href="hierarchy-s.p15.html#rs2_0___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="394"></a>   <span class=K>wire</span> [31:0] <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#633">cmp_porta</a><a  href="hierarchy-s.p3.html#cmp_porta___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="395"></a>   <span class=K>wire</span> [1:0]  <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#955">forward_data_c_mux_sel</a><a  href="hierarchy-s.p6.html#forward_data_c_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="396"></a>   <span class=K>wire</span> [1:0]  <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.p2.html#1010">forward_data_w_mux_sel</a><a  href="hierarchy-s.p6.html#forward_data_w_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<a name="399"></a>   <span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#825">adder2_src1_mux_sel</a><a  href="hierarchy-s.html#adder2_src1_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="400"></a>   <span class=K>wire</span> [3:0]	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#553">ucode_alu_a_mux_sel</a><a  href="hierarchy-s.p18.html#ucode_alu_a_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="401"></a>   <span class=K>wire</span> [7:0]	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#589">ucode_alu_b_mux_sel</a><a  href="hierarchy-s.p18.html#ucode_alu_b_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="402"></a>   <span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#640">ucode_porta_mux_sel</a><a  href="hierarchy-s.p18.html#ucode_porta_mux_sel___ex_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+	
+
+   <span class=C>/*****************************
+    *				*
+    *		E stage		*
+    *				*
+    *****************************/</span>
+
+<a name="ex_dpath_scache_miss_data_e_reg"></a><a name="411"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a> scache_miss_data_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>	   (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#329">scache_miss_data_e</a>[31:0]),
+				   <span class=SI>.din</span>	   (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#154">dcu_data_c</a>[31:0]),
+				   <span class=SI>.enable</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#192">iu_data_vld</a> &amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#193">sc_data_vld</a>),
+				   <span class=SI>.clk</span>	   (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>)
+				   );
+<a name="ex_dpath_rs1_bypass_reg"></a><a name="416"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s_32">ff_s_32</a> rs1_bypass_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2960">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#330">rs1_bypass_hold</a>[31:0]),
+			  <span class=SI>.din</span> (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[31:0]),
+			  <span class=SI>.clk</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>)
+			  );
+<a name="ex_dpath_rs2_bypass_reg"></a><a name="420"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s_32">ff_s_32</a> rs2_bypass_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2960">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#333">rs2_bypass_hold</a>[31:0]),
+			  <span class=SI>.din</span> (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#518">rs2_bypass_mux_out</a>[31:0]),
+			  <span class=SI>.clk</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>)
+			  );
+<a name="ex_dpath_rs1_mux"></a><a name="424"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> rs1_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#336">rs1_mux_out</a>[31:0]),
+		   <span class=SI>.in1</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#411">scache_miss_data_e</a>[31:0]),
+		   <span class=SI>.in0</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#134">ru_rs1_e</a>[31:0]),
+		   <span class=SI>.sel</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#438">rs1_mux_sel</a>[1:0])
+		   );
+
+<span class=C>// Because of timing reasons, we have moved the mux selects for 
+</span><span class=C>// Rs1 and Rs2 into data path only 
+</span>
+<a name="ex_dpath_flop_rs1_mux"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	flop_rs1_mux(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#390">rs1_mux_sel</a>[1]),
+                    	<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#204">rs1_mux_sel_din</a>),
+                       	<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>),
+                       	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#321">reset_l</a>));
+
+<a name="438"></a>   <span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#390">rs1_mux_sel</a>[0] = !<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#438">rs1_mux_sel</a>[1];
+
+
+<a name="ex_dpath_flop_rs1_bypass_sel"></a><a name="441"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_4">ff_sre_4</a>	flop_rs1_bypass_sel(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4704">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#388">rs1_bypass_mux_sel_e</a>[3:0]),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#209">rs1_bypass_mux_sel</a>[3:0]),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#194">hold_e</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#181">ucode_active</a>)),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#321">reset_l</a>));
+
+<a name="ex_dpath_flop_rs1_bypass_sel_4"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	flop_rs1_bypass_sel_4(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#388">rs1_bypass_mux_sel_e</a>[4]),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#209">rs1_bypass_mux_sel</a>[4]),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#321">reset_l</a>));
+
+
+<a name="ex_dpath_rs1_bypass_mux"></a><a name="453"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux5_32">mux5_32</a> rs1_bypass_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6259">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#375">rs1_bypass_mux_out_gen</a>[31:0]),
+			   <span class=SI>.in4</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#416">rs1_bypass_hold</a>[31:0]),
+			   <span class=SI>.in3</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#944">forward_data_c</a>[31:0]),
+			   <span class=SI>.in2</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.p2.html#1016">forward_data_w</a>[31:0]),
+			   <span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.p2.html#1022">forward_data_w1</a>[31:0]),
+			   <span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#424">rs1_mux_out</a>[31:0]),
+			   <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#441">rs1_bypass_mux_sel_e</a>[4:0])
+			   );
+
+<span class=C>// Constructing a buffer tree so as to aid timing 
+</span><span class=C>// rs1_bypass_mux_out is used in non-critical places, while
+</span><span class=C>// rs1_bypass_mux_out_v1 and v2 will be used in timing critical places
+</span>
+<a name="ex_dpath_buf_rs1"></a><a name="466"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#buf10_drv_32">buf10_drv_32</a>	buf_rs1 (<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6317">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#156">rs1_bypass_mux_out</a>), <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#453">rs1_bypass_mux_out_gen</a>) );
+<a name="ex_dpath_inv_rs1_1"></a><a name="467"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#inv10_drv_32">inv10_drv_32</a>	inv_rs1_1 (<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6331">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#376">rs1_bypass_mux_out_inv</a>), <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#453">rs1_bypass_mux_out_gen</a>) );
+<a name="ex_dpath_inv_rs1_2"></a><a name="468"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#inv10_drv_32">inv10_drv_32</a>	inv_rs1_2 (<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6331">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#377">rs1_bypass_mux_out_v1</a>), <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#467">rs1_bypass_mux_out_inv</a>) );
+<a name="ex_dpath_inv_rs1_3"></a><a name="469"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#inv10_drv_32">inv10_drv_32</a>	inv_rs1_3 (<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6331">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#378">rs1_bypass_mux_out_v2</a>), <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#467">rs1_bypass_mux_out_inv</a>) );
+
+
+<span class=C>// The following two muxes are replicated to generate a dedicated
+</span><span class=C>// rs1 bit 0 to be used in ucode. This will help some
+</span><span class=C>// critical paths
+</span>
+<a name="ex_dpath_rs1_0_mux"></a><a name="476"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux2">mux2</a> rs1_0_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4203">.out</a>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#391">rs1_0_mux_out</a>),
+		   <span class=SI>.in1</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#411">scache_miss_data_e</a>[0]),
+		   <span class=SI>.in0</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#134">ru_rs1_e</a>[0]),
+		   <span class=SI>.sel</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#438">rs1_mux_sel</a>[1:0])
+		   );
+
+<a name="ex_dpath_rs1_0_bypass_mux"></a><a name="482"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux5">mux5</a> rs1_0_bypass_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4300">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#392">rs1_0</a>),
+			   <span class=SI>.in4</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#416">rs1_bypass_hold</a>[0]),
+			   <span class=SI>.in3</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#944">forward_data_c</a>[0]),
+			   <span class=SI>.in2</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.p2.html#1016">forward_data_w</a>[0]),
+			   <span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.p2.html#1022">forward_data_w1</a>[0]),
+			   <span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#476">rs1_0_mux_out</a>),
+			   <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#441">rs1_bypass_mux_sel_e</a>[4:0])
+			   );
+
+<a name="491"></a>   <span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#167">iu_rs1_e_0_l</a>	= ~<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#482">rs1_0</a> ;
+
+<span class=C>// Because of timing reasons, we have moved the mux selects for 
+</span><span class=C>// Rs1 and Rs2 into data path only 
+</span>
+<a name="ex_dpath_flop_rs2_bypass_sel"></a><a name="496"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_4">ff_sre_4</a>	flop_rs2_bypass_sel(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4704">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#389">rs2_bypass_mux_sel_e</a>[3:0]),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#215">rs2_bypass_mux_sel</a>[3:0]),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>),
+			<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#194">hold_e</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#321">reset_l</a>));
+
+<a name="ex_dpath_flop_rs2_bypass_sel_4"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	flop_rs2_bypass_sel_4(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#389">rs2_bypass_mux_sel_e</a>[4]),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#215">rs2_bypass_mux_sel</a>[4]),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#321">reset_l</a>));
+
+<a name="ex_dpath_rs2_bypass_mux"></a><a name="507"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux5_32">mux5_32</a> rs2_bypass_mux (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6259">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#372">rs2_bypass_mux_out_gen</a>[31:0]),
+			   <span class=SI>.in4</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#420">rs2_bypass_hold</a>[31:0]),
+			   <span class=SI>.in3</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#944">forward_data_c</a>[31:0]),
+			   <span class=SI>.in2</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.p2.html#1016">forward_data_w</a>[31:0]),
+			   <span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.p2.html#1022">forward_data_w1</a>[31:0]),
+			   <span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#135">ru_rs2_e</a>[31:0]),
+			   <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#496">rs2_bypass_mux_sel_e</a>[4:0])
+			   );
+
+<span class=C>// Inserting a buffer tree for improving timing on RS2 
+</span>
+<a name="ex_dpath_buf_rs2_1"></a><a name="518"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#buf10_drv_32">buf10_drv_32</a>	buf_rs2_1(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6317">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#157">rs2_bypass_mux_out</a>), <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#507">rs2_bypass_mux_out_gen</a>) );
+<a name="ex_dpath_buf_rs2_2"></a><a name="519"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#buf10_drv_32">buf10_drv_32</a>	buf_rs2_2(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6317">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#373">rs2_bypass_mux_out_v1</a>), <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#507">rs2_bypass_mux_out_gen</a>) );
+
+<span class=C>// The following mux is replicated to give a dedicated rs2[0] to 
+</span><span class=C>// ucode to help timing 
+</span>
+<a name="ex_dpath_rs2_0_bypass_mux"></a><a name="524"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux5">mux5</a> rs2_0_bypass_mux (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4300">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#393">rs2_0</a>),
+			   <span class=SI>.in4</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#420">rs2_bypass_hold</a>[0]),
+			   <span class=SI>.in3</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#944">forward_data_c</a>[0]),
+			   <span class=SI>.in2</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.p2.html#1016">forward_data_w</a>[0]),
+			   <span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.p2.html#1022">forward_data_w1</a>[0]),
+			   <span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#135">ru_rs2_e</a>[0]),
+			   <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#496">rs2_bypass_mux_sel_e</a>[4:0])
+			   );
+
+<a name="533"></a>   <span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#168">iu_rs2_e_0_l</a>	= ~<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#524">rs2_0</a> ;
+
+<span class=C>/***********       iu_alu_a path improvement  ********************/</span>
+<span class=C>/****				BEGIN		    	*****/</span>
+
+<span class=C>//   mux2_32 ucode_alu_a_mux(.out	(ucode_alu_a_mux_out[31:0]),
+</span><span class=C>//			   .in1	(iu_alu_a[31:0]),
+</span><span class=C>//			   .in0	(rs1_bypass_mux_out[31:0]),
+</span><span class=C>//			   .sel	(ucode_mux_sel[1:0])
+</span><span class=C>//			   );
+</span>
+<a name="ex_dpath_ucode_alu_a_mux"></a><a name="544"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux4_32">mux4_32</a> ucode_alu_a_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6208">.out</a>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#337">ucode_alu_a_mux_out</a>[31:0]),
+			   <span class=SI>.in3</span>	({<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#468">rs1_bypass_mux_out_v1</a>[28:0],3'b0}),
+			   <span class=SI>.in2</span>	({<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#468">rs1_bypass_mux_out_v1</a>[29:0],2'b0}),
+			   <span class=SI>.in1</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#139">iu_alu_a</a>[31:0]),
+			   <span class=SI>.in0</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#468">rs1_bypass_mux_out_v1</a>[31:0]),
+			   <span class=SI>.sel</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#553">ucode_alu_a_mux_sel</a>[3:0])
+			   );
+
+<span class=C>// If u_f23[1:0] == 11, select RS1[28:0],3'b0
+</span><a name="553"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#400">ucode_alu_a_mux_sel</a>[3] = <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#314">ucode_alu_a_sel</a>[1] &amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#314">ucode_alu_a_sel</a>[0];
+
+<span class=C>// If u_f23[1:0] == 10, select RS1[29:0],2'b0
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#400">ucode_alu_a_mux_sel</a>[2] = <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#314">ucode_alu_a_sel</a>[1] &amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#314">ucode_alu_a_sel</a>[0];
+
+<span class=C>// If u_f23[1:0] == 01, select iu_alu_a
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#400">ucode_alu_a_mux_sel</a>[1] = !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#314">ucode_alu_a_sel</a>[1] &amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#314">ucode_alu_a_sel</a>[0];
+
+<span class=C>// If u_f23[1:0] == 00, select RS1
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#400">ucode_alu_a_mux_sel</a>[0] = !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#314">ucode_alu_a_sel</a>[1] &amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#314">ucode_alu_a_sel</a>[0];
+
+<span class=C>/****				  END				    	*****/</span>
+<span class=C>/***********       iu_alu_a path improvement   ********************/</span>
+
+<span class=C>/************    iu_alu_b path improvement      *******************/</span>
+<span class=C>/****				BEGIN				    	*****/</span>
+
+<span class=C>//   mux2_32 ucode_alu_b_mux(.out(ucode_alu_b_mux_out[31:0]),
+</span><span class=C>//			   .in1	(iu_alu_b[31:0]),
+</span><span class=C>//			   .in0	(rs2_bypass_mux_out[31:0]),
+</span><span class=C>//			   .sel	(ucode_mux_sel[1:0])
+</span><span class=C>//			   );
+</span>
+<a name="ex_dpath_ucode_alu_b_mux"></a><a name="576"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux8_32">mux8_32</a> ucode_alu_b_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6416">.out</a>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#338">ucode_alu_b_mux_out</a>[31:0]),
+			   <span class=SI>.in7</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#140">iu_alu_b</a>[31:0]),
+			   <span class=SI>.in6</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#468">rs1_bypass_mux_out_v1</a>[31:0]),
+			   <span class=SI>.in5</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#312">ucode_reg_data</a>[31:0]),
+			   <span class=SI>.in4</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#311">iu_optop_e</a>[31:0]),
+			   <span class=SI>.in3</span>	({<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#468">rs1_bypass_mux_out_v1</a>[31:2],2'b0}),
+			   <span class=SI>.in2</span>	({<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#312">ucode_reg_data</a>[31:2],2'b0}),
+			   <span class=SI>.in1</span>	(32'b0),
+			   <span class=SI>.in0</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#519">rs2_bypass_mux_out_v1</a>[31:0]),
+			   <span class=SI>.sel</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#589">ucode_alu_b_mux_sel</a>[7:0])
+			   );
+
+<span class=C>// if u_f07[2:0] == 001, select iu_alu_b
+</span><a name="589"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#401">ucode_alu_b_mux_sel</a>[7] 	=  !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[1] 
+					&amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[0];
+
+<span class=C>// if u_f07[2:0] == 010, select RS1
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#401">ucode_alu_b_mux_sel</a>[6] 	=  !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[2] &amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[1] 
+					&amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[0];
+
+<span class=C>// if u_f07[2:0] == 011, select ucode_reg_data
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#401">ucode_alu_b_mux_sel</a>[5] 	=  !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[2] &amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[1] 
+					&amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[0];
+
+<span class=C>// if u_f07[2:0] == 100, select iu_optop_e
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#401">ucode_alu_b_mux_sel</a>[4] 	=  <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[1] 
+					&amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[0];
+
+<span class=C>// if u_f07[2:0] == 101, select RS1[31:2],2'b0
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#401">ucode_alu_b_mux_sel</a>[3] 	=  <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[1] 
+					&amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[0];
+
+<span class=C>// if u_f07[2:0] == 110, select ucode_reg_data[31:2],2'b0
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#401">ucode_alu_b_mux_sel</a>[2] 	=  <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[2] &amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[1] 
+					&amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[0];
+
+<span class=C>// if u_f07[2:0] == 111, select 32'b0
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#401">ucode_alu_b_mux_sel</a>[1] 	=  <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[2] &amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[1] 
+					&amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[0];
+
+<span class=C>// if u_f07[2:0] == 000, select RS2
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#401">ucode_alu_b_mux_sel</a>[0] 	=  !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[1] 
+					&amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#315">ucode_alu_b_sel</a>[0];
+
+<span class=C>/****				 END				    	*****/</span>
+<span class=C>/*******       iu_alu_b path improvement        *******************/</span>
+
+
+<span class=C>/*******  ucode_porta_mux_out path improvement  *******************/</span>
+<span class=C>/****				BEGIN				    	*****/</span>
+
+<a name="ex_dpath_ucode_porta_mux"></a><a name="627"></a>    <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> ucode_porta_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>	(<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#158">ucode_porta_mux_out</a>[31:0]),
+ 			   <span class=SI>.in1</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#137">ucode_porta_e</a>[31:0]),
+ 			   <span class=SI>.in0</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#468">rs1_bypass_mux_out_v1</a>[31:0]),
+ 			   <span class=SI>.sel</span>	({<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#317">ucode_busy_e</a>,~<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#317">ucode_busy_e</a>})
+ 			   );
+
+<a name="ex_dpath_cmp_porta_mux"></a><a name="633"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux3_32">mux3_32</a> cmp_porta_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6160">.out</a>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#394">cmp_porta</a>[31:0]),
+			   <span class=SI>.in2</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#519">rs2_bypass_mux_out_v1</a>[31:0]),
+			   <span class=SI>.in1</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#137">ucode_porta_e</a>[31:0]),
+			   <span class=SI>.in0</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#469">rs1_bypass_mux_out_v2</a>[31:0]),
+			   <span class=SI>.sel</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#640">ucode_porta_mux_sel</a>[2:0]));
+
+<span class=C>// Select RS2 whenever u_f00[1:0] is 11
+</span><a name="640"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#402">ucode_porta_mux_sel</a>[2] 	=  <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#316">ucode_porta_sel</a>[1] &amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#316">ucode_porta_sel</a>[0];
+
+<span class=C>// Select ucode_porta_e whenever u_f00[1:0] is 10
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#402">ucode_porta_mux_sel</a>[1] 	=  <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#316">ucode_porta_sel</a>[1] &amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#316">ucode_porta_sel</a>[0];
+
+<span class=C>// Select RS1 otherwise
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#402">ucode_porta_mux_sel</a>[0] 	=  !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#316">ucode_porta_sel</a>[1];
+
+<span class=C>/****				 END				    	*****/</span>
+<span class=C>/*******  ucode_porta_mux_out path improvement  *******************/</span>
+
+<span class=C>// Data to be written onto SMU's version of sbase in case 
+</span><span class=C>// of wr_sbase opcodes. This is done to improve timing on 
+</span><span class=C>// smu_stall signal 
+</span>
+<a name="655"></a><span class=K>assign</span> 	<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#159">iu_data_in</a> = <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#627">ucode_porta_mux_out</a>;
+
+<a name="ex_dpath_objref_cmp"></a>   <a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#compare_zero_32">compare_zero_32</a> objref_cmp(<span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#633">cmp_porta</a>[31:0]),
+<a name="658"></a>			<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6078">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#166">null_objref_e</a>)
+			 );
+
+   <span class=C>// The signed/unsigned 32-bit comparator
+</span><a name="ex_dpath_cmp_src1_mux"></a><a name="662"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux3_32">mux3_32</a> cmp_src1_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6160">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#339">cmp_src1_mux_out</a>[31:0]),
+			<span class=SI>.in2</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#469">rs1_bypass_mux_out_v2</a>[31:0]),
+			<span class=SI>.in1</span> ({2'b0,<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#519">rs2_bypass_mux_out_v1</a>[29:2],2'b0}),
+			<span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#519">rs2_bypass_mux_out_v1</a>[31:0]),
+			<span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#221">cmp_mux_sel</a>[2:0])
+			);
+<a name="ex_dpath_cmp_src2_mux"></a><a name="668"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux3_32">mux3_32</a> cmp_src2_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6160">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#340">cmp_src2_mux_out</a>[31:0]),
+			<span class=SI>.in2</span> (32'h0),
+			<span class=SI>.in1</span> ({2'b0,<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#469">rs1_bypass_mux_out_v2</a>[29:2],2'b0}),
+			<span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#469">rs1_bypass_mux_out_v2</a>[31:0]),
+			<span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#221">cmp_mux_sel</a>[2:0])
+			);
+<a name="ex_dpath_dpath_cmp"></a><a name="674"></a>   <a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p6.html#cmp_32">cmp_32</a> dpath_cmp(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p6.html#5765">.gt</a>	  (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#163">cmp_gt_e</a>),
+<a name="675"></a>		    <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p6.html#5766">.eq</a>	  (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#164">cmp_eq_e</a>),
+<a name="676"></a>		    <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p6.html#5767">.lt</a>	  (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#165">cmp_lt_e</a>),
+		    <span class=SI>.in1</span>  (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#662">cmp_src1_mux_out</a>[31:0]),
+		    <span class=SI>.in2</span>  (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#668">cmp_src2_mux_out</a>[31:0]),
+		    <span class=SI>.sign</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#184">sign_e</a>)
+		    );
+
+   <span class=C>// The 32-bit adder
+</span><a name="ex_dpath_adder_src1_mux"></a><a name="683"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> adder_src1_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#341">adder_src1_mux_out</a>[31:0]),
+			  <span class=SI>.in1</span>	(~<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#544">ucode_alu_a_mux_out</a>[31:0]),
+			  <span class=SI>.in0</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#544">ucode_alu_a_mux_out</a>[31:0]),
+			  <span class=SI>.sel</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#224">adder_src1_mux_sel</a>[1:0])
+			  );
+<a name="ex_dpath_adder_src2_mux"></a><a name="688"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux3_32">mux3_32</a> adder_src2_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6160">.out</a>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#342">adder_src2_mux_out</a>[31:0]),
+			  <span class=SI>.in2</span>	(32'h0),
+			  <span class=SI>.in1</span>	(~<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#576">ucode_alu_b_mux_out</a>[31:0]),
+			  <span class=SI>.in0</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#576">ucode_alu_b_mux_out</a>[31:0]),
+			  <span class=SI>.sel</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#227">adder_src2_mux_sel</a>[2:0])
+			  );
+<a name="ex_dpath_dpath_adder"></a><a name="694"></a>   <a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p6.html#cla_adder_32">cla_adder_32</a> dpath_adder(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p6.html#5187">.cout</a> (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#162">carry_out_e</a>),
+<a name="695"></a>			    <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p6.html#5186">.sum</a>  (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#161">adder_out_e</a>[31:0]),
+			    <span class=SI>.in1</span>  (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#683">adder_src1_mux_out</a>[31:0]),
+			    <span class=SI>.in2</span>  (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#688">adder_src2_mux_out</a>[31:0]),
+			    <span class=SI>.cin</span>  (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#127">carry_in_e</a>)
+			    );
+
+   <span class=C>// The 64-bit shifter
+</span>   <span class=C>/* 
+    * We need to latch rs2_bypass_mux_out for long shift so the second cycle
+    * can use the correct operand (LSW for lshl and MSW for lshr and lushr).
+    */</span>
+<a name="ex_dpath_rs2_bypass_mux_out_reg"></a><a name="706"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a> rs2_bypass_mux_out_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>    (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#343">rs2_bypass_mux_out_d1</a>[31:0]),
+				   <span class=SI>.din</span>    (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#518">rs2_bypass_mux_out</a>[31:0]),
+				   <span class=SI>.enable</span> (~<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#194">hold_e</a>),
+				   <span class=SI>.clk</span>    (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>)
+				   );
+<a name="ex_dpath_shifter_src1_mux"></a><a name="711"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux5_32">mux5_32</a> shifter_src1_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6259">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#344">shifter_src1_mux_out</a>[31:0]),
+			    <span class=SI>.in4</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#706">rs2_bypass_mux_out_d1</a>[31:0]),
+			    <span class=SI>.in3</span> ({32{<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#518">rs2_bypass_mux_out</a>[31]}}),
+			    <span class=SI>.in2</span> (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#518">rs2_bypass_mux_out</a>[31:0]),
+			    <span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[31:0]),
+			    <span class=SI>.in0</span> (32'h0),
+			    <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#231">shifter_src1_mux_sel</a>[4:0])
+			    );
+<a name="ex_dpath_shifter_src2_mux"></a><a name="719"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux3_32">mux3_32</a> shifter_src2_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6160">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#345">shifter_src2_mux_out</a>[31:0]),
+			    <span class=SI>.in2</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#706">rs2_bypass_mux_out_d1</a>[31:0]),
+			    <span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#518">rs2_bypass_mux_out</a>[31:0]),
+			    <span class=SI>.in0</span> (32'h0),
+			    <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#237">shifter_src2_mux_sel</a>[2:0])
+			    );
+<a name="ex_dpath_dpath_shifter"></a><a name="725"></a>   <a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p4.html#shift_64">shift_64</a> dpath_shifter(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p4.html#3285">.out</a>	    (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#346">shifter_out</a>[31:0]),
+<a name="726"></a>			  <span class=SI>.msw_in</span>   (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#711">shifter_src1_mux_out</a>[31:0]),
+<a name="727"></a>			  <span class=SI>.lsw_in</span>   (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#719">shifter_src2_mux_out</a>[31:0]),
+<a name="728"></a>			  <span class=SI>.count</span>    (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#183">shift_count_e</a>[5:0]),
+<a name="729"></a>			  <span class=SI>.dir</span>	    (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#182">shift_dir_e</a>),
+<a name="730"></a>			  <span class=SI>.arith</span>    (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#184">sign_e</a>),
+<a name="731"></a>			  <span class=SI>.word_sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#241">shifter_word_sel</a>)
+			  );
+
+   <span class=C>// AND, OR, XOR
+</span><a name="ex_dpath_bit_mux"></a><a name="735"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux5_32">mux5_32</a> bit_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6259">.out</a>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#347">bit_mux_out</a>[31:0]),
+		   <span class=SI>.in4</span> ({~<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[31], <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[30:0]}),
+		   <span class=SI>.in3</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#130">pc_r</a>[31:0]),
+		   <span class=SI>.in2</span>	(<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[31:0] ^ <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#518">rs2_bypass_mux_out</a>[31:0]),
+		   <span class=SI>.in1</span>	(<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[31:0] &amp; <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#518">rs2_bypass_mux_out</a>[31:0]),
+		   <span class=SI>.in0</span>	(<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[31:0] | <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#518">rs2_bypass_mux_out</a>[31:0]),
+		   <span class=SI>.sel</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#244">bit_mux_sel</a>[4:0])
+		   );
+
+   <span class=C>// Converter
+</span>   <span class=C>// sethi
+</span><a name="746"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#348">cvt_src0</a> = {<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#791">offset_e</a>[15:0], <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[15:0]};
+   <span class=C>// i2l
+</span><a name="748"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#349">cvt_src1</a> = {32{<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[31]}};
+   <span class=C>// i2b
+</span><a name="750"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#350">cvt_src2</a> = {{24{<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[7]}}, <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[7:0]};
+   <span class=C>// i2c
+</span><a name="752"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#351">cvt_src3</a> = {16'h0, <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[15:0]};
+   <span class=C>// i2s
+</span><a name="754"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#352">cvt_src4</a> = {{16{<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[15]}}, <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[15:0]};
+<a name="ex_dpath_cvt_mux"></a><a name="755"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux5_32">mux5_32</a> cvt_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6259">.out</a>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#353">cvt_mux_out</a>[31:0]),
+		   <span class=SI>.in4</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#754">cvt_src4</a>[31:0]),
+		   <span class=SI>.in3</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#752">cvt_src3</a>[31:0]),
+		   <span class=SI>.in2</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#750">cvt_src2</a>[31:0]),
+		   <span class=SI>.in1</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#748">cvt_src1</a>[31:0]),
+		   <span class=SI>.in0</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#746">cvt_src0</a>[31:0]),
+		   <span class=SI>.sel</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#251">cvt_mux_sel</a>[4:0])
+		   );
+<a name="ex_dpath_bit_cvt_mux"></a><a name="763"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> bit_cvt_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#354">bit_cvt_mux_out</a>[31:0]),
+		       <span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#735">bit_mux_out</a>[31:0]),
+		       <span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#755">cvt_mux_out</a>[31:0]),
+		       <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#257">bit_cvt_mux_sel</a>[1:0])
+		       );
+<a name="ex_dpath_constant_mux"></a><a name="768"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux3_32">mux3_32</a> constant_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6160">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#355">constant_mux_out</a>[31:0]),
+			<span class=SI>.in2</span> (32'h1),
+			<span class=SI>.in1</span> (32'h0),
+			<span class=SI>.in0</span> (32'hffffffff),
+			<span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#260">constant_mux_sel</a>[2:0])
+			);
+<a name="ex_dpath_alu_out_mux"></a><a name="774"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux8_32">mux8_32</a> alu_out_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6416">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#356">alu_out_e</a>[31:0]),
+		       <span class=SI>.in7</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#768">constant_mux_out</a>[31:0]),
+		       <span class=SI>.in6</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#129">imdr_data_e</a>[31:0]),
+		       <span class=SI>.in5</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#143">reg_data_e</a>[31:0]),
+		       <span class=SI>.in4</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#763">bit_cvt_mux_out</a>[31:0]),
+		       <span class=SI>.in3</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#725">shifter_out</a>[31:0]),
+		       <span class=SI>.in2</span> (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#695">adder_out_e</a>[31:0]),
+		       <span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#138">ucode_portc_e</a>[31:0]),
+		       <span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[31:0]),
+		       <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#264">alu_out_mux_sel</a>[7:0])
+		       );
+<a name="ex_dpath_opcode_r_reg"></a><a name="785"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a> opcode_r_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>	 (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#368">opcode_e</a>[31:0]),
+			 <span class=SI>.din</span>	 (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#144">opcode_r</a>[31:0]),
+			 <span class=SI>.enable</span> (~<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#194">hold_e</a>),
+			 <span class=SI>.clk</span>	 (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>)
+			 );
+<a name="790"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#369">offset16</a> = {{16{<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#785">opcode_e</a>[31]}}, <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#785">opcode_e</a>[31:16]};
+<a name="ex_dpath_offset_mux"></a><a name="791"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux5_32">mux5_32</a> offset_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6259">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#381">offset_e</a>[31:0]),
+		      <span class=SI>.in4</span> ({{22{<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#785">opcode_e</a>[23]}}, <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#785">opcode_e</a>[23:16], 2'b00}),
+		      <span class=SI>.in3</span> ({{23{<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#785">opcode_e</a>[23]}}, <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#785">opcode_e</a>[23:16], 1'b0}),
+		      <span class=SI>.in2</span> ({{24{<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#785">opcode_e</a>[23]}}, <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#785">opcode_e</a>[23:16]}),
+		      <span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#785">opcode_e</a>[31:0]),
+		      <span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#790">offset16</a>[31:0]),
+		      <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#273">offset_mux_sel</a>[4:0])
+		      );
+<span class=C>/*********** m_adder_port_a path improvement   ********************/</span>
+<span class=C>/****				BEGIN				    	*****/</span>
+
+<span class=C>// Replacing the following mux to improve timing 
+</span>
+<span class=C>//    mux4_32 adder2_src1_mux(.out	(adder2_src1_mux_out[31:0]),
+</span><span class=C>// 			   .in3	(u_m_adder_porta_e[31:0]),
+</span><span class=C>// 			   .in2	(rs1_bypass_mux_out[31:0]),
+</span><span class=C>// 			   .in1	(scache_miss_addr_e[31:0]),
+</span><span class=C>// 			   .in0	(pc_e[31:0]),
+</span><span class=C>// 			   .sel	(adder2_src1_mux_sel[3:0])
+</span><span class=C>// 			   );
+</span>
+
+<a name="ex_dpath_adder2_src1_mux"></a><a name="813"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux8_32">mux8_32</a> adder2_src1_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6416">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#382">adder2_src1_mux_out</a>[31:0]),
+                        <span class=SI>.in7</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#136">scache_miss_addr_e</a>[31:0]),
+                        <span class=SI>.in6</span>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#469">rs1_bypass_mux_out_v2</a>[31:0]),
+                        <span class=SI>.in5</span>({<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#469">rs1_bypass_mux_out_v2</a>[31:2],2'b0}),
+                        <span class=SI>.in4</span>({<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#519">rs2_bypass_mux_out_v1</a>[31:2],2'b0}),
+                        <span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#312">ucode_reg_data</a>[31:0]),
+                        <span class=SI>.in2</span>({<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#312">ucode_reg_data</a>[31:6],2'b10,<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#312">ucode_reg_data</a>[3:0]}),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#141">u_m_adder_porta_e</a>[31:0]),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#131">pc_e</a>),
+                        <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#825">adder2_src1_mux_sel</a>[7:0]) );
+ 
+
+<a name="825"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#399">adder2_src1_mux_sel</a>[7]  = <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#318">sc_dcache_req</a>;
+ 
+<span class=C>// Whenever f21[1] is set and f19[3:0] are 1001 or whenever
+</span><span class=C>// ex_adder2_src1_mux_sel is  high pick RS1
+</span> 
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#399">adder2_src1_mux_sel</a>[6]  = ( (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[3] &amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[2] &amp;
+                                    !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[1] &amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[0]) |
+                                    (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#207">ex_adder2_src1_mux_sel</a> &amp;! <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#317">ucode_busy_e</a>) );
+ 
+<span class=C>// Whenever f21[1] is set and f19[3:0] are 1010, pick RS1[31:2],2'b0
+</span>
+<span class=C>/******************** monitor caching change  *****************/</span>
+<span class=C>// pick RS1[31:2],2'b0 when checking lockbit in monitorenter
+</span> 
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#399">adder2_src1_mux_sel</a>[5]  = (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[3] &amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[2] &amp;
+                                        <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[1] &amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[0])
+                                  | <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#188">monitorenter_e</a>;
+ 
+<span class=C>// Whenever f19[3:0] are 1011, pick RS2[31:2],2'b0
+</span> 
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#399">adder2_src1_mux_sel</a>[4]  = <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[3] &amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[2] &amp;
+                                        <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[1] &amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[0];
+ 
+<span class=C>// Whenever f19[3:0] are 0110, pick ucode_reg_data
+</span> 
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#399">adder2_src1_mux_sel</a>[3]  = !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[3] &amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[2] &amp;
+                                        <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[1] &amp; !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[0];
+ 
+<span class=C>// Whenever f19[3:0] are 0111, pick ucode_reg_data[31:6],2'b10,[3:0]
+</span> 
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#399">adder2_src1_mux_sel</a>[2]  = !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[3] &amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[2] &amp;
+                                        <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[1] &amp; <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#313">ucode_madder_sel2</a>[0];
+ 
+<span class=C>// Whenever ucode_busy_e is set, pick u_m_adder_porta_e
+</span> 
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#399">adder2_src1_mux_sel</a>[1]  = <a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#317">ucode_busy_e</a> ;
+
+<span class=C>// Else pick pc_e
+</span> 
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#399">adder2_src1_mux_sel</a>[0]  = !<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#317">ucode_busy_e</a> ;
+ 
+
+<span class=C>/****				  END				    	*****/</span>
+<span class=C>/*********** m_adder_port_a path improvement 8  ********************/</span>
+
+
+
+
+<a name="ex_dpath_adder2_src2_mux"></a><a name="873"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux4_32">mux4_32</a> adder2_src2_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6208">.out</a>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#383">adder2_src2_mux_out</a>[31:0]),
+			   <span class=SI>.in3</span>	(32'h0),
+			   <span class=SI>.in2</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#791">offset_e</a>[31:0]),
+			   <span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#142">u_m_adder_portb_e</a>[31:0]),
+                           <span class=SI>.in0</span> (~<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#142">u_m_adder_portb_e</a>[31:0]),
+			   <span class=SI>.sel</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#280">adder2_src2_mux_sel</a>[3:0])
+			   );
+
+   <span class=C>/*
+    * For extended ld/st, bit 31 is used for GC and bit 30 is used for LE.
+    * But for diagnostis rd/wr, bit 31 is used to select which way of the
+    * cache to access.  Need to select the right bit to go into DCU.
+    */</span>
+<a name="ex_dpath_dpath_adder2"></a><a name="886"></a>   <a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p6.html#cla_adder_32">cla_adder_32</a> dpath_adder2(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p6.html#5187">.cout</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#384">adder2_carry_out</a>),
+<a name="887"></a>			     <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p6.html#5186">.sum</a>  (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#169">iu_addr_e</a>[31:0]),
+			     <span class=SI>.in1</span>  (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#813">adder2_src1_mux_out</a>[31:0]),
+			     <span class=SI>.in2</span>  (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#873">adder2_src2_mux_out</a>[31:0]),
+			     <span class=SI>.cin</span>  (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#128">adder2_carry_in</a>)
+			     );
+<a name="892"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#170">iu_addr_e_2</a> =  <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[2] ;
+<a name="893"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#171">iu_addr_e_31</a> = <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#466">rs1_bypass_mux_out</a>[31] ;
+
+   <span class=C>/*
+    * iu_addr_c is used to check mem_protection_error and data breakpoints.
+    * Bit 31 (GC) and bit 30 (LE) should be masked off so they don't get
+    * compared.
+    */</span>
+<a name="900"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#175">iu_addr_c</a>[31:30] = 2'b00;
+<a name="ex_dpath_iu_addr_e_reg"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_30">ff_se_30</a> iu_addr_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3716">.out</a>	  (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#175">iu_addr_c</a>[29:0]),
+			  <span class=SI>.din</span>	  (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#887">iu_addr_e</a>[29:0]),
+			  <span class=SI>.enable</span> (~<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#195">hold_c</a>),
+			  <span class=SI>.clk</span>	  (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>)
+			  );
+<a name="ex_dpath_iu_br_pc_mux"></a><a name="906"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux3_32">mux3_32</a> iu_br_pc_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6160">.out</a> (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#172">iu_br_pc_e</a>[31:0]),
+			<span class=SI>.in2</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#137">ucode_porta_e</a>[31:0]),
+			<span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#132">pc_c</a>[31:0]),
+			<span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#887">iu_addr_e</a>[31:0]),
+			<span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#285">iu_br_pc_mux_sel</a>[2:0])
+			);
+<a name="ex_dpath_iu_data_mux"></a><a name="912"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> iu_data_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a> (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#173">iu_data_e</a>[31:0]),
+		       <span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#138">ucode_portc_e</a>[31:0]),
+		       <span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#519">rs2_bypass_mux_out_v1</a>[31:0]),
+		       <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#289">iu_data_mux_sel</a>[1:0])
+		       );
+<a name="ex_dpath_wr_optop_mux"></a><a name="917"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> wr_optop_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a> (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#174">wr_optop_data_e</a>[31:0]),
+			<span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#133">vars_out</a>[31:0]),
+			<span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#627">ucode_porta_mux_out</a>[31:0]),
+			<span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#292">wr_optop_mux_sel</a>[1:0])
+			);
+
+<a name="ex_dpath_fpu_data_mux"></a><a name="923"></a>    <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> fpu_data_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#380">alu_out_e_new</a>[31:0]),
+                        <span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#151">fpu_data_e</a>[31:0]),
+                        <span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#774">alu_out_e</a>[31:0]),
+                        <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#300">fpu_mux_sel</a>[1:0])
+                        );
+
+<a name="ex_dpath_alu_out_c_reg"></a><a name="929"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a> alu_out_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>	  (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#357">alu_out_c</a>[31:0]),
+			  <span class=SI>.din</span>	  (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#923">alu_out_e_new</a>[31:0]),
+			  <span class=SI>.enable</span> (~<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#195">hold_c</a> | ~<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#152">fpu_hold</a>&amp;<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#300">fpu_mux_sel</a>[1]),
+			  <span class=SI>.clk</span>	  (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>)
+			  );
+
+   <span class=C>/*****************************
+    *				*
+    *		C stage		*
+    *				*
+    *****************************/</span>
+
+<span class=C>// Because of timing reasons, we have moved the mux selects for 
+</span><span class=C>// Rs1 and Rs2 into data path only 
+</span>
+<a name="ex_dpath_forward_data_c_mux"></a><a name="944"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> forward_data_c_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#361">forward_data_c</a>[31:0]),
+			      <span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#991">dcu_data_w</a>[31:0]),
+			      <span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#929">alu_out_c</a>[31:0]),
+			      <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#955">forward_data_c_mux_sel</a>[1:0])
+			      );
+
+<a name="ex_dpath_for_c_flop"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>        for_c_flop( <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#395">forward_data_c_mux_sel</a>[1]),
+                                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#205">forward_c_sel_din</a>),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>),
+                                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#321">reset_l</a>));
+
+<a name="955"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#395">forward_data_c_mux_sel</a>[0] = !<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#955">forward_data_c_mux_sel</a>[1];
+
+
+
+<a name="ex_dpath_alu_out_c_d1_reg"></a><a name="959"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a> alu_out_c_d1_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a> (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#359">alu_out_c_d1</a>[31:0]),
+			  <span class=SI>.din</span>	  (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#929">alu_out_c</a>[31:0]),
+			  <span class=SI>.enable</span> (~<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#195">hold_c</a>),
+			  <span class=SI>.clk</span>	  (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>)
+			  );
+
+<a name="ex_dpath_load_data_c_mux"></a><a name="965"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux3_32">mux3_32</a>  load_data_c_mux (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6160">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#358">load_data_c</a>[31:0]),
+                             <span class=SI>.in2</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#153">icu_diag_data_c</a>[31:0]),
+                             <span class=SI>.in1</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#150">dcu_diag_data_c</a>[31:0]),
+                             <span class=SI>.in0</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#154">dcu_data_c</a>[31:0]),
+                             <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#295">load_data_c_mux_sel</a>[2:0]));
+
+   <span class=C>/*
+    * The following logic handles this problem:
+    *
+    * E stage | C stage | W stage
+    *  ucode  |   LD1   |   LD2
+    *
+    * ucode in E wants to use the result of LD2 (through forwarding), but LD1
+    * will overwrite the register with its result.
+    */</span>
+
+<a name="ex_dpath_load_buffer_reg"></a><a name="981"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a> load_buffer_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>    (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#362">load_buffer_reg_out</a>[31:0]),
+			    <span class=SI>.din</span>    (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#965">load_data_c</a>[31:0]),
+			    <span class=SI>.enable</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#198">dcu_data_reg_we</a>[1]),
+			    <span class=SI>.clk</span>    (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>)
+			    );
+<a name="ex_dpath_load_buffer_mux"></a><a name="986"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> load_buffer_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#363">load_buffer_mux_out</a>[31:0]),
+			   <span class=SI>.in1</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#981">load_buffer_reg_out</a>[31:0]),
+			   <span class=SI>.in0</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#965">load_data_c</a>[31:0]),
+			   <span class=SI>.sel</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#307">load_buffer_mux_sel</a>[1:0])
+			   );
+<a name="ex_dpath_dcu_data_reg"></a><a name="991"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a> dcu_data_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>	 (<a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#177">dcu_data_w</a>[31:0]),
+			 <span class=SI>.din</span>	 (<a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#986">load_buffer_mux_out</a>[31:0]),
+			 <span class=SI>.enable</span> (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#198">dcu_data_reg_we</a>[0]),
+			 <span class=SI>.clk</span>	 (<a  onClick="return qs(event,this)" class=SI href="ex_dpath.v.html#322">clk</a>)
+			 );
+			 
+<span class=C>// output to ex_ctl as the lockbit used in monitorenter
+</span>
+<a name="999"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="ex_dpath.v.html#178">load_buffer_mux_out_0</a> = <a  onClick="return qs(event,this)" class=SW href="ex_dpath.v.html#986">load_buffer_mux_out</a>[0];	
+	
+</pre>
+<center><table class=NB cols=3 nosave><tr><td align="center"><a  href="ex_dpath.v.p2.html">Next</a></td><td align="center"><font color="#808080">1</font></td><td align="center"><a  href="ex_dpath.v.p2.html">2</a></td></tr></table></center>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return "ex_dpath.v.p2.html"; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:11 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ex/rtl/ex_dpath.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

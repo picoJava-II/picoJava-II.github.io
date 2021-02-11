@@ -1,0 +1,1092 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/smu/rtl/smu_ctl.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "smu_ctl.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+<a name="smu_ctl"></a><a  href="smu.v.html#smu_smu_ctl"><IMG alt="[Up: smu smu_ctl]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>smu_ctl</span><a  href="hierarchy-m.p4.html#smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+<a  onClick="return qs(event,this)" class=SI href="#67">num_entries</a>,
+<a  onClick="return qs(event,this)" class=SI href="#68">und_flw_bit</a>,
+<a  onClick="return qs(event,this)" class=SI href="#69">iu_sbase_we</a>,
+<a  onClick="return qs(event,this)" class=SI href="#70">iu_psr_dre</a>,
+<a  onClick="return qs(event,this)" class=SI href="#71">iu_int</a>,
+<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>,
+<a  onClick="return qs(event,this)" class=SI href="#75">low_mark</a>,
+<a  onClick="return qs(event,this)" class=SI href="#76">high_mark</a>,
+<a  onClick="return qs(event,this)" class=SI href="#78">sm</a>,
+<a  onClick="return qs(event,this)" class=SI href="#80">sin</a>,
+<a  onClick="return qs(event,this)" class=SO href="#79">so</a>,
+<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>,
+<a  onClick="return qs(event,this)" class=SO href="#83">iu_sbase_int_we</a>,
+<a  onClick="return qs(event,this)" class=SO href="#82">iu_sbase_int_sel</a>,
+<a  onClick="return qs(event,this)" class=SO href="#84">nxt_sb_sel</a>,
+<a  onClick="return qs(event,this)" class=SO href="#85">dcache_sb_sel</a>,
+<a  onClick="return qs(event,this)" class=SO href="#86">sbase_sel</a>,
+<a  onClick="return qs(event,this)" class=SO href="#87">scache_addr_sel</a>,
+<a  onClick="return qs(event,this)" class=SI href="#89">ret_optop_update</a>,
+<a  onClick="return qs(event,this)" class=SI href="#91">smu_data_vld</a>,
+<a  onClick="return qs(event,this)" class=SO href="#93">spill</a>,
+<a  onClick="return qs(event,this)" class=SO href="#92">fill</a>,
+<a  onClick="return qs(event,this)" class=SI href="#94">smu_st_c</a>,
+<a  onClick="return qs(event,this)" class=SO href="#95">dribble_stall</a>,
+<a  onClick="return qs(event,this)" class=SO href="#96">smu_we</a>,
+<a  onClick="return qs(event,this)" class=SI href="#97">iu_flush</a>,
+<a  onClick="return qs(event,this)" class=SO href="#109">smu_ld</a>,
+<a  onClick="return qs(event,this)" class=SO href="#110">smu_st</a>,
+<a  onClick="return qs(event,this)" class=SI href="#111">zero_entries_fl</a>,
+<a  onClick="return qs(event,this)" class=SO href="#112">smu_sbase_we</a>,
+<a  onClick="return qs(event,this)" class=SO href="#113">optop_en</a>,
+<a  onClick="return qs(event,this)" class=SO href="#114">sbase_hold</a>,
+<a  onClick="return qs(event,this)" class=SO href="#115">smu_prty</a>,
+
+<a  onClick="return qs(event,this)" class=SI href="#103">iu_smiss</a>,
+<a  onClick="return qs(event,this)" class=SO href="#106">smu_data_sel</a>,
+<a  onClick="return qs(event,this)" class=SI href="#104">dcu_smu_stall</a>,
+<a  onClick="return qs(event,this)" class=SO href="#107">smu_na_st</a>,
+<a  onClick="return qs(event,this)" class=SI href="#105">smu_addr</a>
+);
+
+<a name="67"></a><span class=K>input</span>	[29:0]	<a  onClick="return qs(event,this)" class=SI href="smu.v.html#129">num_entries</a><a  href="hierarchy-s.p12.html#num_entries___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Comes from data path
+</span><a name="68"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="smu.v.html#132">und_flw_bit</a><a  href="hierarchy-s.p18.html#und_flw_bit___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// indicates that num_entries is -ve
+</span><a name="69"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="smu.v.html#128">iu_sbase_we</a><a  href="hierarchy-s.p9.html#iu_sbase_we___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Write enable signal from IU for sbase
+</span><a name="70"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="smu.v.html#147">iu_psr_dre</a><a  href="hierarchy-s.p9.html#iu_psr_dre___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// dribbler enable bit from IU
+</span><a name="71"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="smu.v.html#149">iu_int</a><a  href="hierarchy-s.p9.html#iu_int___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Input from IU which tells that
+</span>				<span class=C>// interrupt has come while handling
+</span>				<span class=C>// Overflows/Underflows and the dribble
+</span>				<span class=C>// stall has to be squashed.
+</span><a name="75"></a><span class=K>input</span>	[5:0]	<a  onClick="return qs(event,this)" class=SI href="smu.v.html#133">low_mark</a><a  href="hierarchy-s.p10.html#low_mark___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="76"></a><span class=K>input</span>	[5:0]	<a  onClick="return qs(event,this)" class=SI href="smu.v.html#134">high_mark</a><a  href="hierarchy-s.p8.html#high_mark___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="77"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="smu.v.html#135">clk</a><a  href="hierarchy-s.p3.html#clk___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="78"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#78">sm</a><a  href="hierarchy-s.p16.html#sm___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="79"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#79">so</a><a  href="hierarchy-s.p16.html#so___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="80"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#80">sin</a><a  href="hierarchy-s.p16.html#sin___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="81"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="smu.v.html#140">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="82"></a><span class=K>output</span>	[2:0]	<a  onClick="return qs(event,this)" class=SO href="#470">iu_sbase_int_sel</a><a  href="hierarchy-s.p9.html#iu_sbase_int_sel___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="83"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#463">iu_sbase_int_we</a><a  href="hierarchy-s.p9.html#iu_sbase_int_we___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="84"></a><span class=K>output</span>	[1:0]	<a  onClick="return qs(event,this)" class=SO href="#339">nxt_sb_sel</a><a  href="hierarchy-s.p12.html#nxt_sb_sel___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="85"></a><span class=K>output</span>	[1:0]	<a  onClick="return qs(event,this)" class=SO href="#346">dcache_sb_sel</a><a  href="hierarchy-s.p4.html#dcache_sb_sel___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="86"></a><span class=K>output</span>	[1:0]	<a  onClick="return qs(event,this)" class=SO href="#357">sbase_sel</a><a  href="hierarchy-s.p16.html#sbase_sel___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="87"></a><span class=K>output</span>	[1:0]	<a  onClick="return qs(event,this)" class=SO href="#366">scache_addr_sel</a><a  href="hierarchy-s.p16.html#scache_addr_sel___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="89"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="smu.v.html#139">ret_optop_update</a><a  href="hierarchy-s.p15.html#ret_optop_update___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; <span class=C>// This signal tells that the return is not due to 
+</span>				  <span class=C>// c_switch
+</span><a name="91"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="smu.v.html#148">smu_data_vld</a><a  href="hierarchy-s.p16.html#smu_data_vld___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="92"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#294">fill</a><a  href="hierarchy-s.p6.html#fill___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="93"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#228">spill</a><a  href="hierarchy-s.p16.html#spill___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="94"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="smu.v.html#152">smu_st_c</a><a  href="hierarchy-s.p16.html#smu_st_c___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="95"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#555">dribble_stall</a><a  href="hierarchy-s.p4.html#dribble_stall___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="96"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#474">smu_we</a><a  href="hierarchy-s.p16.html#smu_we___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="97"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="smu.v.html#130">iu_flush</a><a  href="hierarchy-s.p9.html#iu_flush___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  	<span class=C>// Signal from IU which is generated as a  result of 
+</span>				<span class=C>// IU wanting to write d$ in locations between sb-4 
+</span>				<span class=C>// and sb+4. 
+</span>				<span class=C>// This will create a WAW hazard as dribbler is busy 
+</span>				<span class=C>// fetching data to these locations in scache
+</span>
+<a name="103"></a><span class=K>input</span> 		<a  onClick="return qs(event,this)" class=SI href="smu.v.html#161">iu_smiss</a><a  href="hierarchy-s.p9.html#iu_smiss___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="104"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="smu.v.html#163">dcu_smu_stall</a><a  href="hierarchy-s.p4.html#dcu_smu_stall___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="105"></a><span class=K>input</span>	[3:2]	<a  onClick="return qs(event,this)" class=SI href="smu.v.html#165">smu_addr</a><a  href="hierarchy-s.p16.html#smu_addr___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="106"></a><span class=K>output</span>	[1:0]	<a  onClick="return qs(event,this)" class=SO href="#351">smu_data_sel</a><a  href="hierarchy-s.p16.html#smu_data_sel___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="107"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#480">smu_na_st</a><a  href="hierarchy-s.p16.html#smu_na_st___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Tell DCU it is non-allocate 
+</span>
+<a name="109"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#475">smu_ld</a><a  href="hierarchy-s.p16.html#smu_ld___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="110"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#477">smu_st</a><a  href="hierarchy-s.p16.html#smu_st___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="111"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="smu.v.html#131">zero_entries_fl</a><a  href="hierarchy-s.p21.html#zero_entries_fl___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="112"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#453">smu_sbase_we</a><a  href="hierarchy-s.p16.html#smu_sbase_we___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="113"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#492">optop_en</a><a  href="hierarchy-s.p13.html#optop_en___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="114"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#376">sbase_hold</a><a  href="hierarchy-s.p16.html#sbase_hold___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="115"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#565">smu_prty</a><a  href="hierarchy-s.p16.html#smu_prty___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="117"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#418">squash_store</a><a  href="hierarchy-s.p16.html#squash_store___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="118"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#191">spill_d</a><a  href="hierarchy-s.p16.html#spill_d___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="119"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#608">stall_six</a><a  href="hierarchy-s.p16.html#stall_six___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="120"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#607">idle_six</a><a  href="hierarchy-s.p9.html#idle_six___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="121"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#384">iu_int_c</a><a  href="hierarchy-s.p9.html#iu_int_c___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="122"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#539">idle_e</a><a  href="hierarchy-s.p9.html#idle_e___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="123"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#184">spill_raw</a><a  href="hierarchy-s.p16.html#spill_raw___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="124"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#269">spill_cs</a><a  href="hierarchy-s.p16.html#spill_cs___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="125"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#394">squash_hold_ld_st</a><a  href="hierarchy-s.p16.html#squash_hold_ld_st___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="126"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#271">fill_raw</a><a  href="hierarchy-s.p6.html#fill_raw___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="127"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#278">fill_d</a><a  href="hierarchy-s.p6.html#fill_d___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="128"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#207">spill_e</a><a  href="hierarchy-s.p16.html#spill_e___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="129"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#286">fill_e</a><a  href="hierarchy-s.p6.html#fill_e___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="130"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#310">ovr_flw</a><a  href="hierarchy-s.p13.html#ovr_flw___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="131"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#321">und_flw</a><a  href="hierarchy-s.p18.html#und_flw___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="132"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#319">und_flw_d</a><a  href="hierarchy-s.p18.html#und_flw_d___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="133"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#308">ovr_flw_d</a><a  href="hierarchy-s.p13.html#ovr_flw_d___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="134"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#234">cs_undflw_d</a><a  href="hierarchy-s.p3.html#cs_undflw_d___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="135"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#396">load_c</a><a  href="hierarchy-s.p10.html#load_c___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="136"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#403">load_w</a><a  href="hierarchy-s.p10.html#load_w___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="137"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#420">store_c</a><a  href="hierarchy-s.p16.html#store_c___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="138"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#427">store_w</a><a  href="hierarchy-s.p16.html#store_w___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="139"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#547">stall_ovr_flw</a><a  href="hierarchy-s.p16.html#stall_ovr_flw___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="140"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#200">iu_smu_flush</a><a  href="hierarchy-s.p9.html#iu_smu_flush___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="141"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#379">iu_smu_flush_c</a><a  href="hierarchy-s.p9.html#iu_smu_flush_c___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="142"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#548">stall_und_flw</a><a  href="hierarchy-s.p16.html#stall_und_flw___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="143"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#301">ovr_flw_bit</a><a  href="hierarchy-s.p13.html#ovr_flw_bit___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="144"></a><span class=K>wire</span>	[4:0]	<a  onClick="return qs(event,this)" class=SW href="#596">dribb_state</a><a  href="hierarchy-s.p4.html#dribb_state___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="145"></a><span class=K>wire</span>	[4:0]	<a  onClick="return qs(event,this)" class=SW href="#585">nxt_dribb_state</a><a  href="hierarchy-s.p12.html#nxt_dribb_state___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="146"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="#610">nxt_six_state</a><a  href="hierarchy-s.p12.html#nxt_six_state___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="147"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="#614">six_state</a><a  href="hierarchy-s.p16.html#six_state___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="148"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#252">nxt_cs_spill_st</a><a  href="hierarchy-s.p12.html#nxt_cs_spill_st___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="149"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#259">cs_spill_st</a><a  href="hierarchy-s.p3.html#cs_spill_st___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="150"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#497">squash_fill</a><a  href="hierarchy-s.p16.html#squash_fill___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="151"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#502">squash_hold_w</a><a  href="hierarchy-s.p16.html#squash_hold_w___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="152"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#509">squash_hold_c</a><a  href="hierarchy-s.p16.html#squash_hold_c___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="153"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#529">squash_hold</a><a  href="hierarchy-s.p16.html#squash_hold___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="154"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#241">zero_entries</a><a  href="hierarchy-s.p21.html#zero_entries___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="155"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#514">zero_entries_c</a><a  href="hierarchy-s.p21.html#zero_entries_c___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="156"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#437">smu_st_w</a><a  href="hierarchy-s.p16.html#smu_st_w___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="157"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#575">squash_state</a><a  href="hierarchy-s.p16.html#squash_state___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="158"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#579">squash_state_e</a><a  href="hierarchy-s.p16.html#squash_state_e___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="159"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#546">stall_ovr2</a><a  href="hierarchy-s.p16.html#stall_ovr2___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="160"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#545">stall_ovr1</a><a  href="hierarchy-s.p16.html#stall_ovr1___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="161"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#523">squash_fill_cs</a><a  href="hierarchy-s.p16.html#squash_fill_cs___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="162"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#442">smu_data_vld_w</a><a  href="hierarchy-s.p16.html#smu_data_vld_w___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="163"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#537">idle</a><a  href="hierarchy-s.p9.html#idle___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="164"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#577">flush_pipe</a><a  href="hierarchy-s.p6.html#flush_pipe___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="165"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#182">less_than_6</a><a  href="hierarchy-s.p10.html#less_than_6___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="166"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#177">less_than_6_raw</a><a  href="hierarchy-s.p10.html#less_than_6_raw___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="168"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#171">smu_stall</a><a  href="hierarchy-s.p16.html#smu_stall___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="169"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#485">iu_smiss_l</a><a  href="hierarchy-s.p9.html#iu_smiss_l___smu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// latch iu_smiss if smu_stall is 1
+</span>
+<a name="171"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#168">smu_stall</a> = <a  onClick="return qs(event,this)" class=SI href="#104">dcu_smu_stall</a> | <a  onClick="return qs(event,this)" class=SI href="#103">iu_smiss</a> | <a  onClick="return qs(event,this)" class=SW href="#485">iu_smiss_l</a>;
+
+
+<span class=C>// The following comparator will determine if there are less than 6 entries
+</span><span class=C>// in the stack cache
+</span>
+<a name="smu_ctl_six_entr_comp"></a><a name="177"></a><a  onClick="return qs(event,this)" class=MM href="#comp3_30">comp3_30</a>	six_entr_comp(<a  onClick="return qs(event,this)" class=SO href="#953">.result</a>(<a  onClick="return qs(event,this)" class=SW href="#166">less_than_6_raw</a>),
+				<span class=SI>.operand1</span>(3'b110),
+<a name="179"></a>				<span class=SI>.operand2</span>(<a  onClick="return qs(event,this)" class=SI href="#67">num_entries</a>),
+<a name="180"></a>				<span class=SI>.signbit</span>(<a  onClick="return qs(event,this)" class=SI href="#68">und_flw_bit</a>) );
+
+<a name="182"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#165">less_than_6</a> = <a  onClick="return qs(event,this)" class=SW href="#177">less_than_6_raw</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#70">iu_psr_dre</a>;
+
+<a name="smu_ctl_spill_comp"></a><a name="184"></a><a  onClick="return qs(event,this)" class=MM href="#comp6_30">comp6_30</a>	spill_comp(<a  onClick="return qs(event,this)" class=SO href="#906">.result</a>(<a  onClick="return qs(event,this)" class=SW href="#123">spill_raw</a>),
+			<span class=SI>.operand1</span>(<a  onClick="return qs(event,this)" class=SI href="#76">high_mark</a>),
+			<span class=SI>.operand2</span>(<a  onClick="return qs(event,this)" class=SI href="#67">num_entries</a>),
+			<span class=SI>.signbit</span>(<a  onClick="return qs(event,this)" class=SI href="#68">und_flw_bit</a>));
+
+<span class=C>// If dribbler is off don't generate any fills, spills, overflows
+</span>
+<a name="191"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#118">spill_d</a> = (<a  onClick="return qs(event,this)" class=SW href="#184">spill_raw</a> | <a  onClick="return qs(event,this)" class=SW href="#269">spill_cs</a>) &amp; <a  onClick="return qs(event,this)" class=SI href="#70">iu_psr_dre</a>;
+
+<span class=C>// Look for the definition of squash_store
+</span>
+<span class=C>// If there's iu_smu_flush and smu_hold(dribble_stall) at the same time
+</span><span class=C>// it will cause deadlock
+</span><span class=C>// Also donot qualify squash_store with !dribble_stall; That would defeat
+</span><span class=C>// the purpose of having squash_store
+</span>
+<a name="200"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#140">iu_smu_flush</a> = (<a  onClick="return qs(event,this)" class=SI href="#97">iu_flush</a> &amp;!<a  onClick="return qs(event,this)" class=SO href="#555">dribble_stall</a> | <a  onClick="return qs(event,this)" class=SW href="#418">squash_store</a>); 
+
+<span class=C>// We'll have to squash fill and spill whenever there's iu_smu_flush
+</span><span class=C>// This is to ensure that sbase_c will be equal to sbase
+</span>
+<span class=C>// Whenver there's an Interrupt squash spill
+</span>
+<a name="smu_ctl_spill_flop"></a><a name="207"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	spill_flop (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#128">spill_e</a>),
+		<span class=SI>.din</span>( <a  onClick="return qs(event,this)" class=SW href="#191">spill_d</a> &amp; !(<a  onClick="return qs(event,this)" class=SW href="#577">flush_pipe</a> | <a  onClick="return qs(event,this)" class=SW href="#497">squash_fill</a> 
+		   		| <a  onClick="return qs(event,this)" class=SW href="#200">iu_smu_flush</a> | <a  onClick="return qs(event,this)" class=SI href="#71">iu_int</a>)),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>));
+
+<span class=C>// load_c is added for the following reason:
+</span><span class=C>// Low water mark condition is violated so dribbler issues a fill
+</span><span class=C>// request to loc. x+4. DCU accepts this request and asserts smu_stall
+</span><span class=C>// Meanwhile lots of data gets pushed into stack cache and now High water
+</span><span class=C>// mark condition is violated. So, when dcu returns the first load val and
+</span><span class=C>// deasserts the smu_stall, dribbler gives it a spill request. But since
+</span><span class=C>// sbase_c points to the fill address (x+4 and it is not updated to x because
+</span><span class=C>// of smu_satll),Dribbler issues a store request to address x+4 instead of x 
+</span><span class=C>// thereby writing a wrong value to DCU
+</span>
+<span class=C>// load_w is added to help in the above scenario, when spill is asserted
+</span><span class=C>// (load_c has become zero in the prev cycle) there is still load_w high and 
+</span><span class=C>// this causes problem since it selects  wrong addr. to read from scache 
+</span><span class=C>// (as it selects sbase_w ) instead of sbase_e for spill operation
+</span>
+<a name="228"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#93">spill</a>  = <a  onClick="return qs(event,this)" class=SW href="#207">spill_e</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#396">load_c</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#403">load_w</a> &amp; !(<a  onClick="return qs(event,this)" class=SI href="#103">iu_smiss</a> | <a  onClick="return qs(event,this)" class=SW href="#485">iu_smiss_l</a>);
+
+
+<span class=C>// Whenever there's an underflow while changing the threads, we need to
+</span><span class=C>// flush out the valid entries just as in case of normal overflows
+</span>
+<a name="234"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#134">cs_undflw_d</a>   = <a  onClick="return qs(event,this)" class=SW href="#319">und_flw_d</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#89">ret_optop_update</a>;
+
+<span class=C>// Whenever the address sent to DCU is equal to optop_old and 
+</span><span class=C>// if there's a store request to DCU, that means we have zero_entries
+</span><span class=C>// to be flushed out; This is done so that there are no extra entries
+</span><span class=C>// flushed out on an overflow or context switch underflow
+</span>
+<a name="241"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#154">zero_entries</a> = <a  onClick="return qs(event,this)" class=SI href="#111">zero_entries_fl</a> &amp; <a  onClick="return qs(event,this)" class=SO href="#228">spill</a>;
+
+<span class=C>// Whenever there's an underflow during a context switch generate spills
+</span><span class=C>// so as to flush valid entries from the current thread before switching 
+</span><span class=C>// to the next one
+</span><span class=C>// Also, when we update stack bottom after flushing out all the valid
+</span><span class=C>// entries to new optop, make sure there are no spills generated;
+</span><span class=C>// otherwise we'll see both spill and fill getting activated at the
+</span><span class=C>// same time
+</span><span class=C>// Also, whenever there's an Interrupt squash spill_cs
+</span>
+<a name="252"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#148">nxt_cs_spill_st</a>	= <a  onClick="return qs(event,this)" class=F href="#smu_ctl_cs_spill_state">cs_spill_state</a>(<a  onClick="return qs(event,this)" class=SW href="#259">cs_spill_st</a>,
+				<a  onClick="return qs(event,this)" class=SW href="#234">cs_undflw_d</a>,
+				<a  onClick="return qs(event,this)" class=SW href="#241">zero_entries</a>,
+				<a  onClick="return qs(event,this)" class=SO href="#555">dribble_stall</a>,
+				<a  onClick="return qs(event,this)" class=SI href="#71">iu_int</a>,
+				<a  onClick="return qs(event,this)" class=SW href="#319">und_flw_d</a> );
+
+<a name="smu_ctl_cs_spill_reg"></a><a name="259"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_3">ff_sr_3</a>		cs_spill_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3851">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#149">cs_spill_st</a>[3:1]),
+			  	<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#252">nxt_cs_spill_st</a>[3:1]),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>)
+				);
+<a name="smu_ctl_cs_spill_reg0"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s">ff_s</a>		cs_spill_reg0 (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2137">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#149">cs_spill_st</a>[0]),
+				<span class=SI>.din</span> (<a  onClick="return qs(event,this)" class=SW href="#252">nxt_cs_spill_st</a>[0] | ~<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>)
+				);
+
+<a name="269"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#124">spill_cs</a> = <a  onClick="return qs(event,this)" class=SW href="#259">cs_spill_st</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SI href="#71">iu_int</a>;
+	
+<a name="smu_ctl_fill_comp"></a><a name="271"></a><a  onClick="return qs(event,this)" class=MM href="#comp30_6">comp30_6</a>	fill_comp(<a  onClick="return qs(event,this)" class=SO href="#929">.result</a>(<a  onClick="return qs(event,this)" class=SW href="#126">fill_raw</a>),
+<a name="272"></a>			<span class=SI>.operand1</span>(<a  onClick="return qs(event,this)" class=SI href="#67">num_entries</a>),
+<a name="273"></a>			<span class=SI>.operand2</span>(<a  onClick="return qs(event,this)" class=SI href="#75">low_mark</a>),
+<a name="274"></a>			<span class=SI>.signbit</span>(<a  onClick="return qs(event,this)" class=SI href="#68">und_flw_bit</a>));
+
+<span class=C>// If dribbler is off don't generate any fills, spills, overflows
+</span>
+<a name="278"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#127">fill_d</a> = <a  onClick="return qs(event,this)" class=SW href="#271">fill_raw</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#70">iu_psr_dre</a>;
+
+
+<span class=C>// squash_fill is necessary since when und_flw is 1, we need not
+</span><span class=C>// have to generate any fill signals as it will prevent sbase_c from
+</span><span class=C>// getting updated to iu_optop
+</span><span class=C>// Also whenever ther's an Interrupt from IU, squash any fills
+</span>
+<a name="smu_ctl_fill_flop"></a><a name="286"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	fill_flop (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#129">fill_e</a>),
+		<span class=SI>.din</span>( (<a  onClick="return qs(event,this)" class=SW href="#278">fill_d</a> &amp; !(<a  onClick="return qs(event,this)" class=SW href="#577">flush_pipe</a> | <a  onClick="return qs(event,this)" class=SW href="#497">squash_fill</a> | <a  onClick="return qs(event,this)" class=SW href="#523">squash_fill_cs</a> | 
+		       <a  onClick="return qs(event,this)" class=SW href="#200">iu_smu_flush</a> | <a  onClick="return qs(event,this)" class=SI href="#71">iu_int</a>))),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>));
+
+<span class=C>// See the defintion on spill as to why we have added store_c in this eqn
+</span>
+<a name="294"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#92">fill</a>	= <a  onClick="return qs(event,this)" class=SW href="#286">fill_e</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#420">store_c</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#427">store_w</a> &amp; !(<a  onClick="return qs(event,this)" class=SI href="#103">iu_smiss</a> | <a  onClick="return qs(event,this)" class=SW href="#485">iu_smiss_l</a>);
+
+
+<span class=C>// Whenever there are 60 entries or more generate over flow.
+</span><span class=C>// This is to ensure that at least 4 empty locations are always there
+</span><span class=C>// on the stack
+</span>
+<a name="smu_ctl_ovr_fl_cmp"></a><a name="301"></a><a  onClick="return qs(event,this)" class=MM href="#comp6_30">comp6_30</a>	ovr_fl_cmp(<a  onClick="return qs(event,this)" class=SO href="#906">.result</a>(<a  onClick="return qs(event,this)" class=SW href="#143">ovr_flw_bit</a>),
+			<span class=SI>.operand1</span>(6'b111011),
+			<span class=SI>.operand2</span>(<a  onClick="return qs(event,this)" class=SI href="#67">num_entries</a>),
+			<span class=SI>.signbit</span>(<a  onClick="return qs(event,this)" class=SI href="#68">und_flw_bit</a>));
+
+<span class=C>// If dribbler is off don't generate any fills, spills, overflows
+</span>
+<a name="308"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#133">ovr_flw_d</a> = <a  onClick="return qs(event,this)" class=SW href="#301">ovr_flw_bit</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#70">iu_psr_dre</a> ;
+
+<a name="smu_ctl_ovr_flw_flop"></a><a name="310"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		ovr_flw_flop(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#130">ovr_flw</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#308">ovr_flw_d</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>)
+			);
+
+
+<span class=C>// If dribbler is off don't generate any fills, spills, overflows
+</span>
+<a name="319"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#132">und_flw_d</a>	= <a  onClick="return qs(event,this)" class=SI href="#68">und_flw_bit</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#70">iu_psr_dre</a>;
+
+<a name="smu_ctl_und_flw_flop"></a><a name="321"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		und_flw_flop(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#131">und_flw</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#319">und_flw_d</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>)
+			);
+
+<span class=C>// Generate nxt_sb_sel
+</span>
+<span class=C>// Previously there were only spill and fill in this equation. But load_c, etc .. 
+</span><span class=C>// are added for the following reason:
+</span><span class=C>// There are two fills, say to locations, x+4, x+8. Both of these fills are in
+</span><span class=C>// pipeline. So the sbase value is still x. Now for one cycle due to change in
+</span><span class=C>// optop, there is no fill. So sbase_c is set to x. and in the next cycle, there's
+</span><span class=C>// a fill due to change in optop. So we'll reisuue load from location x_4. Now
+</span><span class=C>// we have three loads in the pipeline, x+4,x+8,x+4 in that order. Lets say optop
+</span><span class=C>// jumps to  sbase, when sbase equals x+8. In the next clock cycle, sbase will be
+</span><span class=C>// x+4 and optop is x+8, whihc causes smu to dribble out all of the memory.... 
+</span>
+<a name="339"></a><span class=K>assign</span> 	<a  onClick="return qs(event,this)" class=SO href="#84">nxt_sb_sel</a>[0]	=	(<a  onClick="return qs(event,this)" class=SO href="#294">fill</a> | <a  onClick="return qs(event,this)" class=SO href="#228">spill</a> | <a  onClick="return qs(event,this)" class=SW href="#396">load_c</a> | <a  onClick="return qs(event,this)" class=SW href="#403">load_w</a> | <a  onClick="return qs(event,this)" class=SW href="#420">store_c</a> | <a  onClick="return qs(event,this)" class=SW href="#427">store_w</a>);
+
+<span class=K>assign</span> 	<a  onClick="return qs(event,this)" class=SO href="#84">nxt_sb_sel</a>[1]	=	!<a  onClick="return qs(event,this)" class=SO href="#339">nxt_sb_sel</a>[0];
+
+
+<span class=C>// Generate dcache_sb_sel
+</span>
+<a name="346"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#85">dcache_sb_sel</a>[0] = 	!<a  onClick="return qs(event,this)" class=SO href="#228">spill</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#85">dcache_sb_sel</a>[1] = 	<a  onClick="return qs(event,this)" class=SO href="#228">spill</a>;
+
+<span class=C>// Generate smu_data_sel to select iu_data and iu_address
+</span>
+<a name="351"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#106">smu_data_sel</a>[0] = !(<a  onClick="return qs(event,this)" class=SI href="#103">iu_smiss</a> | <a  onClick="return qs(event,this)" class=SW href="#485">iu_smiss_l</a>);
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#106">smu_data_sel</a>[1] = <a  onClick="return qs(event,this)" class=SI href="#103">iu_smiss</a> | <a  onClick="return qs(event,this)" class=SW href="#485">iu_smiss_l</a>;
+
+<span class=C>// sbase_sel will determine whether the optop from iu or sbase from w stage is the 
+</span><span class=C>// new sbase
+</span>
+<a name="357"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#86">sbase_sel</a>[0] =	!<a  onClick="return qs(event,this)" class=SO href="#357">sbase_sel</a>[1];
+
+<span class=C>// select optop_e for sbase whenever there's an underflow or
+</span><span class=C>// during squash_state -&gt; see the defn. of squash state
+</span>
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#86">sbase_sel</a>[1] = <a  onClick="return qs(event,this)" class=SW href="#497">squash_fill</a>;
+
+<span class=C>// scache_addr_sel will determine what address has to be sent to access s cache
+</span>
+<a name="366"></a><span class=K>assign</span> 	<a  onClick="return qs(event,this)" class=SO href="#87">scache_addr_sel</a>[1] =	<a  onClick="return qs(event,this)" class=SW href="#403">load_w</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#87">scache_addr_sel</a>[0] =    !<a  onClick="return qs(event,this)" class=SO href="#366">scache_addr_sel</a>[1];
+
+<span class=C>// sbase_hold will hold the value of sbase_c when there's a hold from dcache
+</span><span class=C>// see the defn. of sbase_hold
+</span>
+<span class=C>// iu_smu_flush_c is needed coz we'll have to let sbase_c equal sbase even in the
+</span><span class=C>// presence of smu_stall
+</span><span class=C>// For the same reason we need iu_int_c
+</span>
+<a name="376"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#114">sbase_hold</a> = <a  onClick="return qs(event,this)" class=SW href="#171">smu_stall</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#529">squash_hold</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#200">iu_smu_flush</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#379">iu_smu_flush_c</a> 
+				&amp; !<a  onClick="return qs(event,this)" class=SW href="#384">iu_int_c</a>;
+
+<a name="smu_ctl_flush_flop"></a><a name="379"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	flush_flop(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#141">iu_smu_flush_c</a>),
+		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#200">iu_smu_flush</a>),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>));
+
+<a name="smu_ctl_int_flop"></a><a name="384"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	int_flop(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#121">iu_int_c</a>),
+		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#71">iu_int</a>),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>));
+
+<span class=C>// load signals in pipeline
+</span>
+<span class=C>// Squash load_c and store_c signals whenever there's flush_pipe, iu_smu_flush
+</span><span class=C>// and iu_int signals even in the presence of sbase_hold signal
+</span>
+<a name="394"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#125">squash_hold_ld_st</a> = !(<a  onClick="return qs(event,this)" class=SW href="#577">flush_pipe</a> | <a  onClick="return qs(event,this)" class=SW href="#200">iu_smu_flush</a> | <a  onClick="return qs(event,this)" class=SI href="#71">iu_int</a>);
+
+<a name="smu_ctl_load_c_flop"></a><a name="396"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	load_c_flop(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#135">load_c</a>),
+		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SO href="#294">fill</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#394">squash_hold_ld_st</a>),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>),
+		<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SO href="#376">sbase_hold</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#394">squash_hold_ld_st</a>))
+		);
+
+<a name="smu_ctl_load_w_flop"></a><a name="403"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	load_w_flop(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#136">load_w</a>),
+		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#396">load_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#394">squash_hold_ld_st</a>),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>)
+		);
+
+<span class=C>// store signals in pipeline
+</span><span class=C>// squash_store  is also added to avoid deadlock situation when
+</span><span class=C>// we are dribbling out data and there's an optop jmp such that for
+</span><span class=C>// sc_bottom = new_optop,new_optop-1 or new_optop-2 and the in the 
+</span><span class=C>// next clock cycle (or there // after) sc_bottom is lower than new_optop 
+</span><span class=C>// due to pending stores and it might result in an under flow condition
+</span><span class=C>// This may be treated as cs_underflow since ret_optop_update might not
+</span><span class=C>// be still active
+</span>
+<a name="418"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#117">squash_store</a> = <a  onClick="return qs(event,this)" class=SI href="#89">ret_optop_update</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#182">less_than_6</a>;
+
+<a name="smu_ctl_store_c_flop"></a><a name="420"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	store_c_flop( <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#137">store_c</a>),
+		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SO href="#228">spill</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#394">squash_hold_ld_st</a>),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>),
+		<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SO href="#376">sbase_hold</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#394">squash_hold_ld_st</a>))
+		);
+
+<a name="smu_ctl_store_w_flop"></a><a name="427"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	store_w_flop( <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#138">store_w</a>),
+		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#420">store_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#394">squash_hold_ld_st</a>),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>)
+		);
+
+
+
+<span class=C>// Generate various write and read enable signals
+</span>
+<a name="smu_ctl_delay_flop1"></a><a name="437"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	delay_flop1(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#156">smu_st_w</a>),
+		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#94">smu_st_c</a>),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>));
+
+<a name="smu_ctl_delay_flop2"></a><a name="442"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	delay_flop2 (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#162">smu_data_vld_w</a>),
+		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#91">smu_data_vld</a>),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>));
+
+<span class=C>// write sbase only if loads/stores finish in dcache or when there is over_flw and
+</span><span class=C>// zero entries . Also don't update sbase in case if there's a flush req from IU.
+</span><span class=C>// If this becaomes a timing problem send sbase_we to IU w.o flush and let IU and
+</span><span class=C>// it with !flush there
+</span><span class=C>// squash_store is added
+</span>
+<a name="453"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#112">smu_sbase_we</a> =  ((<a  onClick="return qs(event,this)" class=SW href="#403">load_w</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#442">smu_data_vld_w</a>)  |  (<a  onClick="return qs(event,this)" class=SW href="#427">store_w</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#437">smu_st_w</a> ) | <a  onClick="return qs(event,this)" class=SW href="#497">squash_fill</a>) &amp; !<a  onClick="return qs(event,this)" class=SW href="#200">iu_smu_flush</a>;
+
+<span class=C>// Since smu_stall is appearing lots of timing critical paths, we have
+</span><span class=C>// decided to replicate the flops for iu_sbase in SMU itself 
+</span><span class=C>// This internal sbase signal is called iu_sbase_int and all the signal related
+</span><span class=C>// to it are named accordingly
+</span>
+<span class=C>// Whenever, there's reset or there's an update signal from IU or whenever
+</span><span class=C>// there's an update to sbase internally, generate iu_sbase_int_we
+</span>
+<a name="463"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#83">iu_sbase_int_we</a> = ( <a  onClick="return qs(event,this)" class=SO href="#453">smu_sbase_we</a>	| <a  onClick="return qs(event,this)" class=SI href="#69">iu_sbase_we</a> | ~<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>);
+
+<span class=C>// Select
+</span><span class=C>// . SC_BOTTOM_POR_VALUE when there's reset
+</span><span class=C>// . smu_sbase if smu_sbase_we is high
+</span><span class=C>// . iu_data_in, otherwise 
+</span>
+<a name="470"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#82">iu_sbase_int_sel</a>[2] = ~<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#82">iu_sbase_int_sel</a>[1] = <a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a> &amp; <a  onClick="return qs(event,this)" class=SO href="#453">smu_sbase_we</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#82">iu_sbase_int_sel</a>[0] = <a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a> &amp; ~<a  onClick="return qs(event,this)" class=SO href="#453">smu_sbase_we</a>;
+
+<a name="474"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#96">smu_we</a>	    = (<a  onClick="return qs(event,this)" class=SW href="#403">load_w</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#442">smu_data_vld_w</a>);
+<a name="475"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#109">smu_ld</a>	    = <a  onClick="return qs(event,this)" class=SO href="#294">fill</a>;
+
+<a name="477"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#110">smu_st</a>	    = <a  onClick="return qs(event,this)" class=SO href="#228">spill</a> | <a  onClick="return qs(event,this)" class=SI href="#103">iu_smiss</a> | <a  onClick="return qs(event,this)" class=SW href="#485">iu_smiss_l</a>;
+
+<span class=C>// Generate Non-allocate store only for spills. store misses are always write allocate
+</span><a name="480"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#107">smu_na_st</a> = <a  onClick="return qs(event,this)" class=SO href="#477">smu_st</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#103">iu_smiss</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="#485">iu_smiss_l</a>&amp; <a  onClick="return qs(event,this)" class=SI href="#105">smu_addr</a>[3] &amp; <a  onClick="return qs(event,this)" class=SI href="#105">smu_addr</a>[2];
+
+
+<span class=C>// Latch iu_smiss if smu_stall is 1
+</span>
+<a name="smu_ctl_iu_smiss_flop"></a><a name="485"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>   iu_smiss_flop (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#169">iu_smiss_l</a>),
+                      <span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SI href="#103">iu_smiss</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#104">dcu_smu_stall</a>) | (<a  onClick="return qs(event,this)" class=SW href="#485">iu_smiss_l</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#104">dcu_smu_stall</a>)),
+                      <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+                      <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>));
+
+<span class=C>// This signal is used to store the old value  of optop in case of overflows
+</span>
+<a name="492"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#113">optop_en</a>  = !(<a  onClick="return qs(event,this)" class=SW href="#547">stall_ovr_flw</a> | <a  onClick="return qs(event,this)" class=SW href="#308">ovr_flw_d</a> | <a  onClick="return qs(event,this)" class=SW href="#234">cs_undflw_d</a>);
+
+<span class=C>// The following signals are used to flush fill, smu_stall etc ...
+</span>
+
+<a name="smu_ctl_squash_flop1"></a><a name="497"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		squash_flop1(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#150">squash_fill</a>), 
+			<span class=SI>.din</span>( ( (<a  onClick="return qs(event,this)" class=SW href="#319">und_flw_d</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#537">idle</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#89">ret_optop_update</a>) | <a  onClick="return qs(event,this)" class=SW href="#575">squash_state</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>));
+
+<a name="smu_ctl_squash_flop2"></a><a name="502"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		squash_flop2(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#151">squash_hold_w</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#497">squash_fill</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>));
+
+<span class=C>// Added &quot;und_flw_d&quot; term for generation of squash_hold_c. #Bug: 4193519
+</span>
+<a name="smu_ctl_squash_flop3"></a><a name="509"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		squash_flop3(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#152">squash_hold_c</a>),
+			<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="#308">ovr_flw_d</a> | <a  onClick="return qs(event,this)" class=SW href="#319">und_flw_d</a>) &amp; <a  onClick="return qs(event,this)" class=SW href="#537">idle</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>));
+
+<a name="smu_ctl_zero_flop"></a><a name="514"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		zero_flop(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#155">zero_entries_c</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#241">zero_entries</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>));
+
+<span class=C>// sqush fill also whenever there's an underflow and it's due to context switch
+</span><span class=C>// as long as it is being handled. since we are already using fl_pipe to flush
+</span><span class=C>// fill, just use stall_ovr1 and stall_ovr2 to flush fill
+</span>
+<a name="523"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#161">squash_fill_cs</a>	= <a  onClick="return qs(event,this)" class=SW href="#545">stall_ovr1</a> | <a  onClick="return qs(event,this)" class=SW href="#546">stall_ovr2</a>;
+
+<span class=C>// squash hold will ignore smu_stall while stalling the contents of sbase_c, etc ...
+</span><span class=C>// This is done so as to update sbase_c inspite of the presence of smu_stalls when
+</span><span class=C>// handling under and over flows
+</span>
+<a name="529"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#153">squash_hold</a> = <a  onClick="return qs(event,this)" class=SW href="#509">squash_hold_c</a> | <a  onClick="return qs(event,this)" class=SW href="#502">squash_hold_w</a>;
+
+
+
+
+
+<span class=C>//  DRIBBLER STATE MACHINE
+</span>
+<a name="537"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#163">idle</a>		= <a  onClick="return qs(event,this)" class=SW href="#596">dribb_state</a>[0] ;
+
+<a name="smu_ctl_idle_flop"></a><a name="539"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		idle_flop(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#122">idle_e</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#537">idle</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>)
+			);
+
+<a name="545"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#160">stall_ovr1</a>	= <a  onClick="return qs(event,this)" class=SW href="#596">dribb_state</a>[1];
+<a name="546"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#159">stall_ovr2</a>	= <a  onClick="return qs(event,this)" class=SW href="#596">dribb_state</a>[2];
+<a name="547"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#139">stall_ovr_flw</a>	= (<a  onClick="return qs(event,this)" class=SW href="#596">dribb_state</a>[1] | <a  onClick="return qs(event,this)" class=SW href="#596">dribb_state</a>[2]);
+<a name="548"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#142">stall_und_flw</a>	= (<a  onClick="return qs(event,this)" class=SW href="#596">dribb_state</a>[3] | <a  onClick="return qs(event,this)" class=SW href="#596">dribb_state</a>[4]);
+
+<span class=C>// Previously und_flw_d and ovr_flw_d weren't there in this equation.
+</span><span class=C>// Latter it is added coz, when there's an overflow and there's a push happening
+</span><span class=C>// optop gets updated and we are missing one datum
+</span>
+
+<a name="555"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#95">dribble_stall</a>  	= <a  onClick="return qs(event,this)" class=SW href="#547">stall_ovr_flw</a> | <a  onClick="return qs(event,this)" class=SW href="#548">stall_und_flw</a> | <a  onClick="return qs(event,this)" class=SW href="#308">ovr_flw_d</a> | <a  onClick="return qs(event,this)" class=SW href="#319">und_flw_d</a> | <a  onClick="return qs(event,this)" class=SW href="#607">idle_six</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="#182">less_than_6</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#319">und_flw_d</a>) | <a  onClick="return qs(event,this)" class=SW href="#608">stall_six</a> | <a  onClick="return qs(event,this)" class=SW href="#485">iu_smiss_l</a> | <a  onClick="return qs(event,this)" class=SI href="#103">iu_smiss</a>;
+
+<span class=C>// significance of smu_prty signal.
+</span><span class=C>// This signal goes to DCU and tells it that SMU ld/st's should be given
+</span><span class=C>// priority over IU ones so as to avoid deadlock condition, where by
+</span><span class=C>// IU requests a ld from DCU, in the next clock optop changes causing
+</span><span class=C>// smu_hold. DCU sends smu_stall signal to SMU since it is servicing
+</span><span class=C>// IU request and IU cannot accept DCU data since smu_hold is asserted
+</span><span class=C>// Also, whenever there's an smu_flush, smu_prty should be low
+</span>
+<a name="smu_ctl_smu_prty_flop"></a><a name="565"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	smu_prty_flop (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#115">smu_prty</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SO href="#555">dribble_stall</a> &amp;!<a  onClick="return qs(event,this)" class=SW href="#200">iu_smu_flush</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>)
+			);
+
+<span class=C>// squash state just functions like an und_flw signal and it is generated when
+</span><span class=C>// there's an overflow happening and sbase equals old value of optop
+</span>
+
+<a name="575"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#157">squash_state</a>  = <a  onClick="return qs(event,this)" class=SW href="#241">zero_entries</a> &amp;  <a  onClick="return qs(event,this)" class=SW href="#546">stall_ovr2</a>;
+
+<a name="577"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#164">flush_pipe</a> =  <a  onClick="return qs(event,this)" class=SW href="#537">idle</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="#319">und_flw_d</a> | <a  onClick="return qs(event,this)" class=SW href="#308">ovr_flw_d</a>) | <a  onClick="return qs(event,this)" class=SW href="#575">squash_state</a> ;
+
+<a name="smu_ctl_squash_flop"></a><a name="579"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		squash_flop (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#158">squash_state_e</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#575">squash_state</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>)
+			);
+
+<a name="585"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#145">nxt_dribb_state</a>	= <a  onClick="return qs(event,this)" class=F href="#smu_ctl_dribble_state">dribble_state</a>(<a  onClick="return qs(event,this)" class=SW href="#596">dribb_state</a>,
+				<a  onClick="return qs(event,this)" class=SW href="#182">less_than_6</a>,
+				<a  onClick="return qs(event,this)" class=SW href="#191">spill_d</a>,
+				<a  onClick="return qs(event,this)" class=SW href="#308">ovr_flw_d</a>,
+				<a  onClick="return qs(event,this)" class=SW href="#319">und_flw_d</a>,
+				<a  onClick="return qs(event,this)" class=SW href="#234">cs_undflw_d</a>,
+				<a  onClick="return qs(event,this)" class=SI href="#89">ret_optop_update</a>,
+				<a  onClick="return qs(event,this)" class=SW href="#241">zero_entries</a>,
+				<a  onClick="return qs(event,this)" class=SW href="#514">zero_entries_c</a>,
+				<a  onClick="return qs(event,this)" class=SI href="#71">iu_int</a>);
+
+<a name="smu_ctl_dribb_state_reg"></a><a name="596"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_4">ff_sr_4</a>		dribb_state_reg ( <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3864">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#144">dribb_state</a>[4:1]),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#585">nxt_dribb_state</a>[4:1]),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>)
+				);
+
+<a name="smu_ctl_dribb_state_reg_0"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s">ff_s</a>		dribb_state_reg_0 (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2137">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#144">dribb_state</a>[0]),
+			  	<span class=SI>.din</span>(~<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a> | <a  onClick="return qs(event,this)" class=SW href="#585">nxt_dribb_state</a>[0]),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>)
+				);
+
+<a name="607"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#120">idle_six</a>	= <a  onClick="return qs(event,this)" class=SW href="#614">six_state</a>[0];
+<a name="608"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#119">stall_six</a>	= <a  onClick="return qs(event,this)" class=SW href="#614">six_state</a>[1];
+
+<a name="610"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#146">nxt_six_state</a> = <a  onClick="return qs(event,this)" class=F href="#smu_ctl_six_entr_state">six_entr_state</a>(<a  onClick="return qs(event,this)" class=SW href="#614">six_state</a>,
+					<a  onClick="return qs(event,this)" class=SW href="#182">less_than_6</a>,
+					<a  onClick="return qs(event,this)" class=SW href="#319">und_flw_d</a>);
+
+<a name="smu_ctl_six_state_reg"></a><a name="614"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		six_state_reg (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#147">six_state</a>[1]),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#610">nxt_six_state</a>[1]),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>)
+				);
+
+<a name="smu_ctl_six_state_reg_0"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s">ff_s</a>		six_state_reg_0 (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2137">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#147">six_state</a>[0]),
+				<span class=SI>.din</span>( ~<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a> | <a  onClick="return qs(event,this)" class=SW href="#610">nxt_six_state</a>[0]),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>)
+				);
+					
+				
+				
+
+<span class=C>// triquest fsm_begin		
+</span><a name="smu_ctl_six_entr_state"></a><span class=K>function</span> [1:0]	<a  onClick="return qs(event,this)" class=F href="#smu_ctl_six_entr_state">six_entr_state</a>;
+
+<span class=C>// triquest state_vector {curr_state[1:0]} CURR_STATE enum SIX_ENTR_STATE_ENUM
+</span>
+<a name="633"></a><span class=K>input</span>	[1:0]	<a  onClick="return qs(event,this)" class=SI href="#633">curr_state</a>;
+<a name="634"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#634">less_than_6</a>;
+<a name="635"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#635">und_flw_d</a>;
+
+<a name="637"></a><span class=K>reg</span>	[1:0]	<a  onClick="return qs(event,this)" class=SR href="#652">nxt_state</a>;
+
+<span class=K>parameter</span> <span class=C>// triquest enum SIX_ENTR_STATE_ENUM
+</span>
+<a name="641"></a>	<a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>		= 2'b01,
+<a name="642"></a>	<a  onClick="return qs(event,this)" class=PA href="#642">STALL_SIX</a> 	= 2'b10;
+
+<span class=K>begin</span>
+
+	<span class=K>case</span> (<a  onClick="return qs(event,this)" class=SI href="#633">curr_state</a>)
+
+		<a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>: <span class=K>begin</span>
+
+			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#634">less_than_6</a> &amp; ! <a  onClick="return qs(event,this)" class=SI href="#635">und_flw_d</a>) <span class=K>begin</span>
+
+<a name="652"></a>				<a  onClick="return qs(event,this)" class=SR href="#637">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#642">STALL_SIX</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> 	<a  onClick="return qs(event,this)" class=SR href="#637">nxt_state</a> = <a  onClick="return qs(event,this)" class=SI href="#633">curr_state</a>;
+
+		<span class=K>end</span>
+
+		<a  onClick="return qs(event,this)" class=PA href="#642">STALL_SIX</a>:  <span class=K>begin</span>
+
+			<span class=K>if</span> (!<a  onClick="return qs(event,this)" class=SI href="#634">less_than_6</a>) <span class=K>begin</span>
+
+				<a  onClick="return qs(event,this)" class=SR href="#637">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>;
+			<span class=K>end</span>
+
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#637">nxt_state</a> = <a  onClick="return qs(event,this)" class=SI href="#633">curr_state</a>;
+		<span class=K>end</span>
+
+		<span class=K>default</span> : <a  onClick="return qs(event,this)" class=SR href="#637">nxt_state</a> = 2'bx;
+
+	<span class=K>endcase</span>
+
+<a  onClick="return qs(event,this)" class=F href="#smu_ctl_six_entr_state">six_entr_state</a> = <a  onClick="return qs(event,this)" class=SR href="#652">nxt_state</a>;
+
+<span class=K>end</span>
+
+<span class=K>endfunction</span>
+<span class=C>// triquest fsm_end
+</span>
+
+<span class=C>// End of the change
+</span>
+<span class=C>// triquest fsm_begin
+</span><a name="smu_ctl_dribble_state"></a><span class=K>function</span> [4:0]	<a  onClick="return qs(event,this)" class=F href="#smu_ctl_dribble_state">dribble_state</a>;
+
+<span class=C>// triquest state_vector {curr_state[4:0]} CURR_STATE enum DRIBBLE_STATE_ENUM
+</span><a name="686"></a><span class=K>input</span>	[4:0]	<a  onClick="return qs(event,this)" class=SI href="#686">curr_state</a>;
+<a name="687"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#687">less_than_6</a>;
+<a name="688"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#688">spill_d</a>;
+<a name="689"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#689">ovr_flw_d</a>;
+<a name="690"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#690">und_flw_d</a>;
+<a name="691"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#691">cs_undflw_d</a>;
+<a name="692"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#692">ret_optop_update</a>;
+<a name="693"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#693">zero_entries</a>;
+<a name="694"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#694">zero_entries_c</a>;
+<a name="695"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#695">iu_int</a>;
+
+<a name="697"></a><span class=K>reg</span>	[4:0]	<a  onClick="return qs(event,this)" class=SR href="#715">nxt_state</a>;
+
+<span class=K>parameter</span> <span class=C>// triquest enum DRIBBLE_STATE_ENUM
+</span>
+<a name="701"></a>	<a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>		= 5'b00001,
+<a name="702"></a>	<a  onClick="return qs(event,this)" class=PA href="#702">STALL_OVR1</a> 	= 5'b00010,
+<a name="703"></a>	<a  onClick="return qs(event,this)" class=PA href="#703">STALL_OVR2</a> 	= 5'b00100,
+<a name="704"></a>	<a  onClick="return qs(event,this)" class=PA href="#704">STALL_UND1</a>	= 5'b01000,
+<a name="705"></a>	<a  onClick="return qs(event,this)" class=PA href="#705">STALL_UND2</a>	= 5'b10000;
+
+<span class=K>begin</span>
+
+	<span class=K>case</span> (<a  onClick="return qs(event,this)" class=SI href="#686">curr_state</a>)
+
+		<a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>:	<span class=K>begin</span>
+
+			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#690">und_flw_d</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#692">ret_optop_update</a>) <span class=K>begin</span>
+				
+<a name="715"></a>				<a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#704">STALL_UND1</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#689">ovr_flw_d</a> |<a  onClick="return qs(event,this)" class=SI href="#691">cs_undflw_d</a>) <span class=K>begin</span>
+
+				<a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#702">STALL_OVR1</a>;
+			<span class=K>end</span> 
+
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = <a  onClick="return qs(event,this)" class=SI href="#686">curr_state</a>;
+		<span class=K>end</span>
+
+		<a  onClick="return qs(event,this)" class=PA href="#704">STALL_UND1</a>:	<span class=K>begin</span>
+
+			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#695">iu_int</a>) <span class=K>begin</span>
+
+				<a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>;
+			<span class=K>end</span>
+
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#705">STALL_UND2</a>;
+		<span class=K>end</span>
+
+		<a  onClick="return qs(event,this)" class=PA href="#705">STALL_UND2</a>:	<span class=K>begin</span>
+
+			<span class=K>if</span> (!<a  onClick="return qs(event,this)" class=SI href="#687">less_than_6</a> | <a  onClick="return qs(event,this)" class=SI href="#695">iu_int</a>) <span class=K>begin</span>
+
+				<a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>;
+			<span class=K>end</span>
+
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = <a  onClick="return qs(event,this)" class=SI href="#686">curr_state</a>;
+		<span class=K>end</span>
+
+		<a  onClick="return qs(event,this)" class=PA href="#702">STALL_OVR1</a>:	<span class=K>begin</span>
+
+			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#695">iu_int</a>) <span class=K>begin</span>
+				
+				<a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>;
+			<span class=K>end</span>
+			
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#703">STALL_OVR2</a>;
+
+		<span class=K>end</span>
+
+		<a  onClick="return qs(event,this)" class=PA href="#703">STALL_OVR2</a>:	<span class=K>begin</span>
+
+			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#695">iu_int</a>) <span class=K>begin</span>
+
+				<a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>;
+			<span class=K>end</span>
+
+			<span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#694">zero_entries_c</a>) <span class=K>begin</span> 
+				
+				<a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#705">STALL_UND2</a>;
+			<span class=K>end</span>
+
+<span class=C>// When there's an overflow, we flush out all the dirty entries.
+</span><span class=C>// When we flush out all the dirty entries, if at this  point
+</span><span class=C>// (SBASE - NEW_OPTOP)/4 == (HIGH_WM_MARK), spill_d = 0
+</span><span class=C>// and at this same time SMU_ADDR = OLD_OPTOP, then  
+</span><span class=C>// zero_entries is 1;
+</span><span class=C>// Since zero_entries_c is used in the statemachine because of the 
+</span><span class=C>// timing reasons and since spill_d is low, we go to IDLE state and 
+</span><span class=C>// release the hold.
+</span><span class=C>// But in next state we have sbase updated to new optop value and
+</span><span class=C>// we hold the pipe since the number of entries on stack are zero.
+</span><span class=C>// So, there's one cycle where smu hold goes low which causes problems
+</span><span class=C>// TO fix this we have added the following line. Whereby we'll ignore
+</span><span class=C>// spill_d being zero if zerOentries is asserted and do what zero_entries_c
+</span><span class=C>// does except delayed by one cycle.
+</span>
+			<span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#693">zero_entries</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#688">spill_d</a>) <span class=K>begin</span>
+
+				<a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#704">STALL_UND1</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span> (!<a  onClick="return qs(event,this)" class=SI href="#688">spill_d</a>) <span class=K>begin</span>
+
+			 	<a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>;
+			<span class=K>end</span>
+
+			<span class=K>else</span>	<a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = <a  onClick="return qs(event,this)" class=SI href="#686">curr_state</a>;
+		<span class=K>end</span>
+
+		<span class=K>default</span>:	<a  onClick="return qs(event,this)" class=SR href="#697">nxt_state</a> = 5'bx;
+	<span class=K>endcase</span>
+
+
+<a  onClick="return qs(event,this)" class=F href="#smu_ctl_dribble_state">dribble_state</a> = <a  onClick="return qs(event,this)" class=SR href="#715">nxt_state</a>;
+<span class=K>end</span>
+
+<span class=K>endfunction</span>
+
+<span class=C>// triquest fsm_end
+</span>	
+			
+<span class=C>// A New state called IGN_CS_UND is added. This is because when there's an underflow
+</span><span class=C>// and it's not context switch (ret_optop_update is 1) und_flw_d signal will remain
+</span><span class=C>// high for 2 clock cycles because sbase is updated in thh 2nd clock cyle after und_flw_d
+</span><span class=C>// has occured, while ret_optop_update will be high only for one clock cycle. This may be
+</span><span class=C>// interpreted as a cs_und_flw_d. We need to squash this.
+</span>
+<span class=C>// triquest fsm_begin
+</span><a name="smu_ctl_cs_spill_state"></a><span class=K>function</span> [3:0] <a  onClick="return qs(event,this)" class=F href="#smu_ctl_cs_spill_state">cs_spill_state</a>;
+
+<span class=C>// triquest state_vector {curr_state[3:0]} CURR_STATE enum CS_SPILL_STATE_ENUM
+</span><a name="817"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="#817">curr_state</a>;
+<a name="818"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#818">cs_undflw_d</a>;
+<a name="819"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#819">zero_entries</a>;
+<a name="820"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#820">dribble_stall</a>;
+<a name="821"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#821">iu_int</a>;
+<a name="822"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#822">und_flw_d</a>;
+
+<a name="824"></a><span class=K>reg</span>	[3:0]	<a  onClick="return qs(event,this)" class=SR href="#839">nxt_state</a>;
+
+<span class=K>parameter</span> <span class=C>// triquest enum CS_SPILL_STATE_ENUM
+</span><a name="827"></a>	<a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>		= 4'b0001,
+<a name="828"></a>	<a  onClick="return qs(event,this)" class=PA href="#828">IGN_CS_UND</a>	= 4'b0010,
+<a name="829"></a>	<a  onClick="return qs(event,this)" class=PA href="#829">SPILL</a>		= 4'b0100,
+<a name="830"></a>	<a  onClick="return qs(event,this)" class=PA href="#830">WAIT</a> 		= 4'b1000;
+
+<span class=K>begin</span>
+	<span class=K>case</span> (<a  onClick="return qs(event,this)" class=SI href="#817">curr_state</a>)
+
+		<a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>: 	<span class=K>begin</span>
+
+			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#818">cs_undflw_d</a>) <span class=K>begin</span>
+				
+<a name="839"></a>				<a  onClick="return qs(event,this)" class=SR href="#824">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#829">SPILL</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#822">und_flw_d</a>) <span class=K>begin</span>
+				
+				<a  onClick="return qs(event,this)" class=SR href="#824">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#828">IGN_CS_UND</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> 	<a  onClick="return qs(event,this)" class=SR href="#824">nxt_state</a> = <a  onClick="return qs(event,this)" class=SI href="#817">curr_state</a>;
+		<span class=K>end</span>
+
+		<a  onClick="return qs(event,this)" class=PA href="#828">IGN_CS_UND</a>:  <span class=K>begin</span>
+
+			<a  onClick="return qs(event,this)" class=SR href="#824">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>;
+		<span class=K>end</span>
+
+		<a  onClick="return qs(event,this)" class=PA href="#829">SPILL</a>:	<span class=K>begin</span>
+
+			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#821">iu_int</a>) <span class=K>begin</span>
+				<a  onClick="return qs(event,this)" class=SR href="#824">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#819">zero_entries</a>) <span class=K>begin</span>
+				
+				<a  onClick="return qs(event,this)" class=SR href="#824">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#830">WAIT</a>;
+			<span class=K>end</span>
+			<span class=K>else</span>	<a  onClick="return qs(event,this)" class=SR href="#824">nxt_state</a> = <a  onClick="return qs(event,this)" class=SI href="#817">curr_state</a>;
+		<span class=K>end</span>
+
+		<a  onClick="return qs(event,this)" class=PA href="#830">WAIT</a>:	<span class=K>begin</span>				
+
+			<span class=K>if</span> (!<a  onClick="return qs(event,this)" class=SI href="#820">dribble_stall</a> | <a  onClick="return qs(event,this)" class=SI href="#821">iu_int</a>) <span class=K>begin</span>
+		
+				<a  onClick="return qs(event,this)" class=SR href="#824">nxt_state</a> = <a  onClick="return qs(event,this)" class=PA href="#827">IDLE</a>;
+			<span class=K>end</span>
+			<span class=K>else</span>	<a  onClick="return qs(event,this)" class=SR href="#824">nxt_state</a> = <a  onClick="return qs(event,this)" class=SI href="#817">curr_state</a>;
+		<span class=K>end</span>
+		<span class=K>default</span>:	<a  onClick="return qs(event,this)" class=SR href="#824">nxt_state</a> = <a  onClick="return qs(event,this)" class=SI href="#817">curr_state</a>;	
+	<span class=K>endcase</span>
+	<a  onClick="return qs(event,this)" class=F href="#smu_ctl_cs_spill_state">cs_spill_state</a> = <a  onClick="return qs(event,this)" class=SR href="#839">nxt_state</a>;
+
+<span class=K>end</span>
+
+<span class=K>endfunction</span>
+<span class=C>// triquest fsm_end
+</span>
+<span class=K>endmodule</span>
+
+<a name="comp6_30"></a><a  href="smu_ctl.v.html#smu_ctl_spill_comp"><IMG alt="[Up: smu_ctl spill_comp]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="smu_ctl.v.html#smu_ctl_ovr_fl_cmp"><IMG alt="[Up: smu_ctl ovr_fl_cmp]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span>	<span class=MM>comp6_30</span><a  href="hierarchy-m.html#comp6_30"><IMG align=top border=0 SRC="v2html-i.gif"></a>(
+
+	<a  onClick="return qs(event,this)" class=SI href="#892">operand1</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#893">operand2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#895">result</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#894">signbit</a>
+);
+
+<a name="892"></a><span class=K>input</span>	[5:0]	<a  onClick="return qs(event,this)" class=SI href="#892">operand1</a><a  href="hierarchy-s.p13.html#operand1___comp6_30"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="893"></a><span class=K>input</span>	[29:0]	<a  onClick="return qs(event,this)" class=SI href="#893">operand2</a><a  href="hierarchy-s.p13.html#operand2___comp6_30"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="894"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#894">signbit</a><a  href="hierarchy-s.p16.html#signbit___comp6_30"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="895"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#906">result</a><a  href="hierarchy-s.p15.html#result___comp6_30"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="897"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#899">gr</a><a  href="hierarchy-s.p7.html#gr___comp6_30"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="comp6_30_comparator"></a><a name="899"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p6.html#comp_gr_6">comp_gr_6</a>	comparator(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p6.html#5616">.gr</a>(<a  onClick="return qs(event,this)" class=SW href="#897">gr</a>),
+		<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#893">operand2</a>[5:0]),
+		<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#892">operand1</a>) );
+
+<span class=C>// whenever operand2 is +ve and if any of bits [29:6] is 1 or
+</span><span class=C>// if it's lower 6 bits are greater than operand1, output is 1
+</span>
+<a name="906"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#895">result</a> = ( !(<a  onClick="return qs(event,this)" class=SI href="#894">signbit</a>) &amp;&amp;  ((|<a  onClick="return qs(event,this)" class=SI href="#893">operand2</a>[29:6]) || <a  onClick="return qs(event,this)" class=SW href="#899">gr</a>) );
+
+<span class=K>endmodule</span>
+
+<a name="comp30_6"></a><a  href="smu_ctl.v.html#smu_ctl_fill_comp"><IMG alt="[Up: smu_ctl fill_comp]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span>	<span class=MM>comp30_6</span><a  href="hierarchy-m.html#comp30_6"><IMG align=top border=0 SRC="v2html-i.gif"></a>(
+
+	<a  onClick="return qs(event,this)" class=SI href="#918">operand1</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#919">operand2</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#920">signbit</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#921">result</a>
+);
+
+<a name="918"></a><span class=K>input</span>	[29:0]	<a  onClick="return qs(event,this)" class=SI href="#272">operand1</a><a  href="hierarchy-s.p13.html#operand1___comp30_6"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="919"></a><span class=K>input</span>	[5:0]	<a  onClick="return qs(event,this)" class=SI href="#273">operand2</a><a  href="hierarchy-s.p13.html#operand2___comp30_6"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="920"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#274">signbit</a><a  href="hierarchy-s.p16.html#signbit___comp30_6"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="921"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#929">result</a><a  href="hierarchy-s.p15.html#result___comp30_6"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="923"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#925">gr</a><a  href="hierarchy-s.p7.html#gr___comp30_6"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="comp30_6_comparator"></a><a name="925"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p6.html#comp_gr_6">comp_gr_6</a> 	comparator(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p6.html#5616">.gr</a>(<a  onClick="return qs(event,this)" class=SW href="#923">gr</a>),
+		<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#919">operand2</a>),
+		<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#918">operand1</a>[5:0]) );
+
+<a name="929"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#921">result</a>  = ( <a  onClick="return qs(event,this)" class=SI href="#920">signbit</a> || ( (~|(<a  onClick="return qs(event,this)" class=SI href="#918">operand1</a>[29:6])) &amp;&amp; <a  onClick="return qs(event,this)" class=SW href="#925">gr</a>) ); 
+
+<span class=K>endmodule</span>
+
+<a name="comp3_30"></a><a  href="smu_ctl.v.html#smu_ctl_six_entr_comp"><IMG alt="[Up: smu_ctl six_entr_comp]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>comp3_30</span><a  href="hierarchy-m.html#comp3_30"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+	<a  onClick="return qs(event,this)" class=SI href="#942">operand1</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#943">operand2</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#944">signbit</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#945">result</a>
+
+);
+
+<a name="942"></a><span class=K>input</span>	[2:0]	<a  onClick="return qs(event,this)" class=SI href="#942">operand1</a><a  href="hierarchy-s.p13.html#operand1___comp3_30"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="943"></a><span class=K>input</span>	[29:0]	<a  onClick="return qs(event,this)" class=SI href="#179">operand2</a><a  href="hierarchy-s.p13.html#operand2___comp3_30"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="944"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#180">signbit</a><a  href="hierarchy-s.p16.html#signbit___comp3_30"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="945"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#953">result</a><a  href="hierarchy-s.p15.html#result___comp3_30"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="947"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#949">less</a><a  href="hierarchy-s.p10.html#less___comp3_30"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="comp3_30_comparator"></a><a name="949"></a><a  onClick="return qs(event,this)" class=MM href="#less_comp3">less_comp3</a>	comparator(<a  onClick="return qs(event,this)" class=SO href="#968">.less</a>(<a  onClick="return qs(event,this)" class=SW href="#947">less</a>),
+<a name="950"></a>		<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#943">operand2</a>[2:0]),
+<a name="951"></a>		<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#942">operand1</a>) );
+
+<a name="953"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#945">result</a> = ( <a  onClick="return qs(event,this)" class=SI href="#944">signbit</a> || ( (~|<a  onClick="return qs(event,this)" class=SI href="#943">operand2</a>[29:3]) &amp;&amp; <a  onClick="return qs(event,this)" class=SW href="#949">less</a>) );
+
+<span class=K>endmodule</span>
+
+<a name="less_comp3"></a><a  href="smu_ctl.v.html#comp3_30_comparator"><IMG alt="[Up: comp3_30 comparator]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>less_comp3</span><a  href="hierarchy-m.p3.html#less_comp3"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+	<a  onClick="return qs(event,this)" class=SI href="#963">in1</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#964">in2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#965">less</a>
+);
+
+<a name="963"></a><span class=K>input</span>	[2:0]	<a  onClick="return qs(event,this)" class=SI href="#950">in1</a><a  href="hierarchy-s.p9.html#in1___less_comp3"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="964"></a><span class=K>input</span>	[2:0]	<a  onClick="return qs(event,this)" class=SI href="#951">in2</a><a  href="hierarchy-s.p9.html#in2___less_comp3"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="965"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#968">less</a><a  href="hierarchy-s.p10.html#less___less_comp3"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<a name="968"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#965">less</a> = (<a  onClick="return qs(event,this)" class=SI href="#963">in1</a> &lt; <a  onClick="return qs(event,this)" class=SI href="#964">in2</a>);
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:46:00 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/smu/rtl/smu_ctl.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

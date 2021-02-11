@@ -1,0 +1,371 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ucode/rtl/ucode_lib.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "ucode_lib.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+<a name="del1_1"></a><span class=K>module</span> <span class=MM>del1_1</span><a  href="hierarchy-m.html#del1_1"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#25">inp</a>, <a  onClick="return qs(event,this)" class=SO href="#26">out</a>);
+
+<a name="25"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="#25">inp</a><a  href="hierarchy-s.p9.html#inp___del1_1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="26"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#28">out</a><a  href="hierarchy-s.p13.html#out___del1_1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="28"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#26">out</a> = <a  onClick="return qs(event,this)" class=SI href="#25">inp</a>;
+
+<span class=K>endmodule</span>
+
+<a name="del1_16"></a><a  href="ucode_reg.v.html#ucode_reg_del1_16_2"><IMG alt="[Up: ucode_reg del1_16_2]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>del1_16</span><a  href="hierarchy-m.html#del1_16"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#34">inp</a>, <a  onClick="return qs(event,this)" class=SO href="#35">out</a>);
+
+<a name="34"></a><span class=K>input</span>  [15:0] <a  onClick="return qs(event,this)" class=SI href="ucode_reg.v.html#149">inp</a><a  href="hierarchy-s.p9.html#inp___del1_16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="35"></a><span class=K>output</span> [15:0] <a  onClick="return qs(event,this)" class=SO href="#39">out</a><a  href="hierarchy-s.p13.html#out___del1_16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>wire</span>   [15:0] <a  onClick="return qs(event,this)" class=SO href="#35">out</a>;
+
+<a name="39"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#35">out</a> = <a  onClick="return qs(event,this)" class=SI href="#34">inp</a>[15:0];
+
+<span class=K>endmodule</span>
+
+<a name="del1_32"></a><a  href="ucode_dat.v.html#ucode_dat_del1_32_areg0"><IMG alt="[Up: ucode_dat del1_32_areg0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_dat.v.html#ucode_dat_del1_32_reg0"><IMG alt="[Up: ucode_dat del1_32_reg0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_dat.v.html#ucode_dat_del1_32_reg1"><IMG alt="[Up: ucode_dat del1_32_reg1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_dat.v.html#ucode_dat_del1_32_reg2"><IMG alt="[Up: ucode_dat del1_32_reg2]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_dat.v.html#ucode_dat_del1_32_reg3"><IMG alt="[Up: ucode_dat del1_32_reg3]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_dat.v.html#ucode_dat_del1_32_reg5"><IMG alt="[Up: ucode_dat del1_32_reg5]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_dat.v.html#ucode_dat_del1_32_reg6"><IMG alt="[Up: ucode_dat del1_32_reg6]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_reg.v.html#ucode_reg_del1_32_0"><IMG alt="[Up: ucode_reg del1_32_0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_reg.v.html#ucode_reg_del1_32_1"><IMG alt="[Up: ucode_reg del1_32_1]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>del1_32</span><a  href="hierarchy-m.html#del1_32"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#45">inp</a>, <a  onClick="return qs(event,this)" class=SO href="#46">out</a>);
+
+<a name="45"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="#45">inp</a><a  href="hierarchy-s.p9.html#inp___del1_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="46"></a><span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="#50">out</a><a  href="hierarchy-s.p13.html#out___del1_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>wire</span>   [31:0] <a  onClick="return qs(event,this)" class=SO href="#46">out</a>;
+
+<a name="50"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#46">out</a> = <a  onClick="return qs(event,this)" class=SI href="#45">inp</a>[31:0];
+
+<span class=K>endmodule</span>
+
+<span class=C>// --------- invertor         1 bit  wide --------------------------
+</span><a name="inv_b_1"></a><a  href="ucode.v.html#ucode_inv_b_1_0"><IMG alt="[Up: ucode inv_b_1_0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode.v.html#ucode_inv_b_1_1"><IMG alt="[Up: ucode inv_b_1_1]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>inv_b_1</span><a  href="hierarchy-m.p3.html#inv_b_1"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#57">inp</a>, <a  onClick="return qs(event,this)" class=SO href="#58">out_l</a>);
+ 
+<a name="57"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="#57">inp</a><a  href="hierarchy-s.p9.html#inp___inv_b_1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           
+<a name="58"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#60">out_l</a><a  href="hierarchy-s.p13.html#out_l___inv_b_1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<a name="60"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#58">out_l</a> = ~<a  onClick="return qs(event,this)" class=SI href="#57">inp</a>;
+ 
+<span class=K>endmodule</span>  
+
+<span class=C>// --------- invertor       1 bit  wide --------------------------
+</span><a name="inv_d_1"></a><a  href="ucode_dat.v.html#buf_a_oprd_inv_d_1_0"><IMG alt="[Up: buf_a_oprd inv_d_1_0]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>inv_d_1</span><a  href="hierarchy-m.p3.html#inv_d_1"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#67">inp</a>, <a  onClick="return qs(event,this)" class=SO href="#68">out_l</a>);
+ 
+<a name="67"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="ucode_dat.v.html#46">inp</a><a  href="hierarchy-s.p9.html#inp___inv_d_1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           
+<a name="68"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#70">out_l</a><a  href="hierarchy-s.p13.html#out_l___inv_d_1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<a name="70"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#68">out_l</a> = ~<a  onClick="return qs(event,this)" class=SI href="#67">inp</a>;
+ 
+<span class=K>endmodule</span>  
+
+<span class=C>// --------- invertor       1 bit  wide --------------------------
+</span><a name="inv_e_1"></a><a  href="ucode.v.html#ucode_inv_e_1_0"><IMG alt="[Up: ucode inv_e_1_0]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>inv_e_1</span><a  href="hierarchy-m.p3.html#inv_e_1"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#77">inp</a>, <a  onClick="return qs(event,this)" class=SO href="#78">out_l</a>);
+
+<a name="77"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="ucode.v.html#187">inp</a><a  href="hierarchy-s.p9.html#inp___inv_e_1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="78"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#80">out_l</a><a  href="hierarchy-s.p13.html#out_l___inv_e_1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="80"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#78">out_l</a> = ~<a  onClick="return qs(event,this)" class=SI href="#77">inp</a>;
+
+<span class=K>endmodule</span>
+
+<span class=C>// --------- invertor       32 bits wide --------------------------
+</span><a name="inv_a_32"></a><a  href="ucode.v.html#ucode_inv_a_32_0"><IMG alt="[Up: ucode inv_a_32_0]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>inv_a_32</span><a  href="hierarchy-m.p3.html#inv_a_32"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#87">inp</a>, <a  onClick="return qs(event,this)" class=SO href="#88">out_l</a>);
+
+<a name="87"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="ucode.v.html#184">inp</a><a  href="hierarchy-s.p9.html#inp___inv_a_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="88"></a><span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="#92">out_l</a><a  href="hierarchy-s.p13.html#out_l___inv_a_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>wire</span>   [31:0] <a  onClick="return qs(event,this)" class=SO href="#88">out_l</a>;
+
+<a name="92"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#88">out_l</a> = ~<a  onClick="return qs(event,this)" class=SI href="#87">inp</a>[31:0];
+
+<span class=K>endmodule</span>
+
+<span class=C>// --------- invertor     32 bits wide --------------------------
+</span><a name="inv_b_32"></a><span class=K>module</span> <span class=MM>inv_b_32</span><a  href="hierarchy-m.p3.html#inv_b_32"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#99">inp</a>, <a  onClick="return qs(event,this)" class=SO href="#100">out_l</a>);
+
+<a name="99"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="#99">inp</a><a  href="hierarchy-s.p9.html#inp___inv_b_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="100"></a><span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="#104">out_l</a><a  href="hierarchy-s.p13.html#out_l___inv_b_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>wire</span>   [31:0] <a  onClick="return qs(event,this)" class=SO href="#100">out_l</a>;
+
+<a name="104"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#100">out_l</a> = ~<a  onClick="return qs(event,this)" class=SI href="#99">inp</a>[31:0];
+
+<span class=K>endmodule</span>
+
+<span class=C>// --------- invertor       32 bits wide --------------------------
+</span><a name="inv_c_32"></a><a  href="ucode.v.html#ucode_inv_c_32_0"><IMG alt="[Up: ucode inv_c_32_0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_dat.v.html#buf_a_oprd_inv_c_32_0"><IMG alt="[Up: buf_a_oprd inv_c_32_0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_dat.v.html#buf_a_oprd_inv_c_32_1"><IMG alt="[Up: buf_a_oprd inv_c_32_1]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>inv_c_32</span><a  href="hierarchy-m.p3.html#inv_c_32"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#111">inp</a>, <a  onClick="return qs(event,this)" class=SO href="#112">out_l</a>);
+ 
+<a name="111"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="#111">inp</a><a  href="hierarchy-s.p9.html#inp___inv_c_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="112"></a><span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="#116">out_l</a><a  href="hierarchy-s.p13.html#out_l___inv_c_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<span class=K>wire</span>   [31:0] <a  onClick="return qs(event,this)" class=SO href="#112">out_l</a>;
+ 
+<a name="116"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#112">out_l</a> = ~<a  onClick="return qs(event,this)" class=SI href="#111">inp</a>[31:0];
+ 
+<span class=K>endmodule</span>
+
+<span class=C>// --------- invertor     32 bits wide --------------------------
+</span><a name="inv_d_32"></a><span class=K>module</span> <span class=MM>inv_d_32</span><a  href="hierarchy-m.p3.html#inv_d_32"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#123">inp</a>, <a  onClick="return qs(event,this)" class=SO href="#124">out_l</a>);
+ 
+<a name="123"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="#123">inp</a><a  href="hierarchy-s.p9.html#inp___inv_d_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="124"></a><span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="#128">out_l</a><a  href="hierarchy-s.p13.html#out_l___inv_d_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<span class=K>wire</span>   [31:0] <a  onClick="return qs(event,this)" class=SO href="#124">out_l</a>;
+ 
+<a name="128"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#124">out_l</a> = ~<a  onClick="return qs(event,this)" class=SI href="#123">inp</a>[31:0];
+ 
+<span class=K>endmodule</span>
+
+<span class=C>// --------- invertor   32 bits wide --------------------------
+</span><a name="inv_e_32"></a><a  href="ucode_dat.v.html#buf_a_oprd_inv_e_32_1"><IMG alt="[Up: buf_a_oprd inv_e_32_1]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>inv_e_32</span><a  href="hierarchy-m.p3.html#inv_e_32"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#135">inp</a>, <a  onClick="return qs(event,this)" class=SO href="#136">out_l</a>);
+ 
+<a name="135"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="ucode_dat.v.html#43">inp</a><a  href="hierarchy-s.p9.html#inp___inv_e_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="136"></a><span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="#140">out_l</a><a  href="hierarchy-s.p13.html#out_l___inv_e_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<span class=K>wire</span>   [31:0] <a  onClick="return qs(event,this)" class=SO href="#136">out_l</a>;
+ 
+<a name="140"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#136">out_l</a> = ~<a  onClick="return qs(event,this)" class=SI href="#135">inp</a>[31:0];
+ 
+<span class=K>endmodule</span>
+
+<span class=C>// --------- invertor       32 bits wide --------------------------
+</span><a name="inv_f_32"></a><a  href="ucode_dat.v.html#buf_a_oprd_inv_f_32_0"><IMG alt="[Up: buf_a_oprd inv_f_32_0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_dat.v.html#buf_a_oprd_inv_f_32_2"><IMG alt="[Up: buf_a_oprd inv_f_32_2]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>inv_f_32</span><a  href="hierarchy-m.p3.html#inv_f_32"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#147">inp</a>, <a  onClick="return qs(event,this)" class=SO href="#148">out_l</a>);
+ 
+<a name="147"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="#147">inp</a><a  href="hierarchy-s.p9.html#inp___inv_f_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="148"></a><span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="#152">out_l</a><a  href="hierarchy-s.p13.html#out_l___inv_f_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<span class=K>wire</span>   [31:0] <a  onClick="return qs(event,this)" class=SO href="#148">out_l</a>;
+ 
+<a name="152"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#148">out_l</a> = ~<a  onClick="return qs(event,this)" class=SI href="#147">inp</a>[31:0];
+ 
+<span class=K>endmodule</span>
+
+<span class=C>// --------- buffer   32 bits wide --------------------------
+</span><a name="buf_cf_32"></a><a  href="ucode_dat.v.html#ucode_dat_buf_cf_32_u_ptb"><IMG alt="[Up: ucode_dat buf_cf_32_u_ptb]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_dat.v.html#ucode_dat_buf_cf_32_u_ptc"><IMG alt="[Up: ucode_dat buf_cf_32_u_ptc]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_dat.v.html#ucode_dat_buf_cf_32_u_ar0"><IMG alt="[Up: ucode_dat buf_cf_32_u_ar0]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>buf_cf_32</span><a  href="hierarchy-m.html#buf_cf_32"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#159">inp</a>, <a  onClick="return qs(event,this)" class=SO href="#160">out</a>);   
+ 
+<a name="159"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="#159">inp</a><a  href="hierarchy-s.p9.html#inp___buf_cf_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="160"></a><span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="#164">out</a><a  href="hierarchy-s.p13.html#out___buf_cf_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<span class=K>wire</span>   [31:0] <a  onClick="return qs(event,this)" class=SO href="#160">out</a>; 
+ 
+<a name="164"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#160">out</a> = <a  onClick="return qs(event,this)" class=SI href="#159">inp</a>[31:0];
+ 
+<span class=K>endmodule</span>
+
+<span class=C>// --------- mux3,                    1 bit  wide --------------------------
+</span><a name="mx3_1"></a><a  href="ucode_lib.v.html#mx3_9_U00"><IMG alt="[Up: mx3_9 U00]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_lib.v.html#mx3_9_U01"><IMG alt="[Up: mx3_9 U01]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_lib.v.html#mx3_9_U02"><IMG alt="[Up: mx3_9 U02]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_lib.v.html#mx3_9_U03"><IMG alt="[Up: mx3_9 U03]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_lib.v.html#mx3_9_U04"><IMG alt="[Up: mx3_9 U04]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_lib.v.html#mx3_9_U05"><IMG alt="[Up: mx3_9 U05]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_lib.v.html#mx3_9_U06"><IMG alt="[Up: mx3_9 U06]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_lib.v.html#mx3_9_U07"><IMG alt="[Up: mx3_9 U07]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ucode_lib.v.html#mx3_9_U08"><IMG alt="[Up: mx3_9 U08]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>mx3_1</span><a  href="hierarchy-m.p3.html#mx3_1"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#171">inp</a>, <a  onClick="return qs(event,this)" class=SI href="#172">sel</a>, <a  onClick="return qs(event,this)" class=SOR href="#173">out</a>);
+
+<a name="171"></a><span class=K>input</span>   [2:0]  <a  onClick="return qs(event,this)" class=SI href="#171">inp</a><a  href="hierarchy-s.p9.html#inp___mx3_1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="172"></a><span class=K>input</span>   [1:0]  <a  onClick="return qs(event,this)" class=SI href="#172">sel</a><a  href="hierarchy-s.p16.html#sel___mx3_1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="173"></a><span class=K>output</span>         <a  onClick="return qs(event,this)" class=SOR href="#179">out</a><a  href="hierarchy-s.p13.html#out___mx3_1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>reg</span>            <a  onClick="return qs(event,this)" class=SOR href="#173">out</a>;
+
+  <span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="#171">inp</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#172">sel</a>)
+    <span class=K>case</span> (<a  onClick="return qs(event,this)" class=SI href="#172">sel</a>)
+<a name="179"></a>      2'b00: <a  onClick="return qs(event,this)" class=SOR href="#173">out</a> = <a  onClick="return qs(event,this)" class=SI href="#171">inp</a>[0];
+      2'b01: <a  onClick="return qs(event,this)" class=SOR href="#173">out</a> = <a  onClick="return qs(event,this)" class=SI href="#171">inp</a>[0];
+      2'b10: <a  onClick="return qs(event,this)" class=SOR href="#173">out</a> = <a  onClick="return qs(event,this)" class=SI href="#171">inp</a>[1];
+      2'b11: <a  onClick="return qs(event,this)" class=SOR href="#173">out</a> = <a  onClick="return qs(event,this)" class=SI href="#171">inp</a>[2];
+<span class=C>// remove for coverage:      default: out = inp[0];
+</span>    <span class=K>endcase</span>
+
+<span class=K>endmodule</span>
+
+<span class=C>// --------- mux3,                    9 bit  wide --------------------------
+</span><a name="mx3_9"></a><a  href="ucode_dec.v.html#ucode_add_mx3_next_addr"><IMG alt="[Up: ucode_add mx3_next_addr]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>mx3_9</span><a  href="hierarchy-m.p3.html#mx3_9"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#191">inp1</a>, <a  onClick="return qs(event,this)" class=SI href="#192">inp2</a>, <a  onClick="return qs(event,this)" class=SI href="#193">inp3</a>, <a  onClick="return qs(event,this)" class=SI href="#194">sel</a>, <a  onClick="return qs(event,this)" class=SO href="#195">out</a>);
+ 
+<a name="191"></a><span class=K>input</span>   [8:0]  <a  onClick="return qs(event,this)" class=SI href="ucode_dec.v.html#237">inp1</a><a  href="hierarchy-s.p9.html#inp1___mx3_9"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="192"></a><span class=K>input</span>   [8:0]  <a  onClick="return qs(event,this)" class=SI href="ucode_dec.v.html#238">inp2</a><a  href="hierarchy-s.p9.html#inp2___mx3_9"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="193"></a><span class=K>input</span>   [8:0]  <a  onClick="return qs(event,this)" class=SI href="ucode_dec.v.html#239">inp3</a><a  href="hierarchy-s.p9.html#inp3___mx3_9"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="194"></a><span class=K>input</span>   [1:0]  <a  onClick="return qs(event,this)" class=SI href="ucode_dec.v.html#240">sel</a><a  href="hierarchy-s.p16.html#sel___mx3_9"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="195"></a><span class=K>output</span>  [8:0]  <a  onClick="return qs(event,this)" class=SO href="#199">out</a><a  href="hierarchy-s.p13.html#out___mx3_9"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<span class=K>wire</span>    [8:0]  <a  onClick="return qs(event,this)" class=SO href="#195">out</a>;
+ 
+<a name="mx3_9_U00"></a><a name="199"></a><a  onClick="return qs(event,this)" class=MM href="#mx3_1">mx3_1</a> U00 (<span class=SI>.inp</span>({<a  onClick="return qs(event,this)" class=SI href="#193">inp3</a>[0], <a  onClick="return qs(event,this)" class=SI href="#192">inp2</a>[0], <a  onClick="return qs(event,this)" class=SI href="#191">inp1</a>[0] }),<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#194">sel</a>),<a  onClick="return qs(event,this)" class=SO href="#179">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#195">out</a>[0]));
+<a name="mx3_9_U01"></a><a  onClick="return qs(event,this)" class=MM href="#mx3_1">mx3_1</a> U01 (<span class=SI>.inp</span>({<a  onClick="return qs(event,this)" class=SI href="#193">inp3</a>[1], <a  onClick="return qs(event,this)" class=SI href="#192">inp2</a>[1], <a  onClick="return qs(event,this)" class=SI href="#191">inp1</a>[1] }),<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#194">sel</a>),<a  onClick="return qs(event,this)" class=SO href="#179">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#195">out</a>[1]));
+<a name="mx3_9_U02"></a><a  onClick="return qs(event,this)" class=MM href="#mx3_1">mx3_1</a> U02 (<span class=SI>.inp</span>({<a  onClick="return qs(event,this)" class=SI href="#193">inp3</a>[2], <a  onClick="return qs(event,this)" class=SI href="#192">inp2</a>[2], <a  onClick="return qs(event,this)" class=SI href="#191">inp1</a>[2] }),<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#194">sel</a>),<a  onClick="return qs(event,this)" class=SO href="#179">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#195">out</a>[2]));
+<a name="mx3_9_U03"></a><a  onClick="return qs(event,this)" class=MM href="#mx3_1">mx3_1</a> U03 (<span class=SI>.inp</span>({<a  onClick="return qs(event,this)" class=SI href="#193">inp3</a>[3], <a  onClick="return qs(event,this)" class=SI href="#192">inp2</a>[3], <a  onClick="return qs(event,this)" class=SI href="#191">inp1</a>[3] }),<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#194">sel</a>),<a  onClick="return qs(event,this)" class=SO href="#179">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#195">out</a>[3]));
+<a name="mx3_9_U04"></a><a  onClick="return qs(event,this)" class=MM href="#mx3_1">mx3_1</a> U04 (<span class=SI>.inp</span>({<a  onClick="return qs(event,this)" class=SI href="#193">inp3</a>[4], <a  onClick="return qs(event,this)" class=SI href="#192">inp2</a>[4], <a  onClick="return qs(event,this)" class=SI href="#191">inp1</a>[4] }),<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#194">sel</a>),<a  onClick="return qs(event,this)" class=SO href="#179">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#195">out</a>[4]));
+<a name="mx3_9_U05"></a><a  onClick="return qs(event,this)" class=MM href="#mx3_1">mx3_1</a> U05 (<span class=SI>.inp</span>({<a  onClick="return qs(event,this)" class=SI href="#193">inp3</a>[5], <a  onClick="return qs(event,this)" class=SI href="#192">inp2</a>[5], <a  onClick="return qs(event,this)" class=SI href="#191">inp1</a>[5] }),<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#194">sel</a>),<a  onClick="return qs(event,this)" class=SO href="#179">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#195">out</a>[5]));
+<a name="mx3_9_U06"></a><a  onClick="return qs(event,this)" class=MM href="#mx3_1">mx3_1</a> U06 (<span class=SI>.inp</span>({<a  onClick="return qs(event,this)" class=SI href="#193">inp3</a>[6], <a  onClick="return qs(event,this)" class=SI href="#192">inp2</a>[6], <a  onClick="return qs(event,this)" class=SI href="#191">inp1</a>[6] }),<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#194">sel</a>),<a  onClick="return qs(event,this)" class=SO href="#179">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#195">out</a>[6]));
+<a name="mx3_9_U07"></a><a  onClick="return qs(event,this)" class=MM href="#mx3_1">mx3_1</a> U07 (<span class=SI>.inp</span>({<a  onClick="return qs(event,this)" class=SI href="#193">inp3</a>[7], <a  onClick="return qs(event,this)" class=SI href="#192">inp2</a>[7], <a  onClick="return qs(event,this)" class=SI href="#191">inp1</a>[7] }),<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#194">sel</a>),<a  onClick="return qs(event,this)" class=SO href="#179">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#195">out</a>[7]));
+<a name="mx3_9_U08"></a><a  onClick="return qs(event,this)" class=MM href="#mx3_1">mx3_1</a> U08 (<span class=SI>.inp</span>({<a  onClick="return qs(event,this)" class=SI href="#193">inp3</a>[8], <a  onClick="return qs(event,this)" class=SI href="#192">inp2</a>[8], <a  onClick="return qs(event,this)" class=SI href="#191">inp1</a>[8] }),<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#194">sel</a>),<a  onClick="return qs(event,this)" class=SO href="#179">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#195">out</a>[8]));
+ 
+<span class=K>endmodule</span>
+
+<span class=C>// --------- branch_bit for branch select --------------ucode_dec.v --------
+</span><a name="branch_bit"></a><a  href="ucode_dec.v.html#ucode_add_branch_bit_0"><IMG alt="[Up: ucode_add branch_bit_0]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>branch_bit</span><a  href="hierarchy-m.html#branch_bit"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="#215">u_f18_6</a>, <a  onClick="return qs(event,this)" class=SI href="#216">u_f18_5</a>, <a  onClick="return qs(event,this)" class=SI href="#217">u_f08_rd_rs1_a</a>, <a  onClick="return qs(event,this)" class=SI href="#218">rs1_0_l</a>, <a  onClick="return qs(event,this)" class=SI href="#219">rs2_0_l</a>,
+                   <a  onClick="return qs(event,this)" class=SO href="#220">bit1</a>, <a  onClick="return qs(event,this)" class=SO href="#221">bit0</a>);
+ 
+<a name="215"></a><span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="ucode_dec.v.html#218">u_f18_6</a><a  href="hierarchy-s.p18.html#u_f18_6___branch_bit"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="216"></a><span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="ucode_dec.v.html#219">u_f18_5</a><a  href="hierarchy-s.p18.html#u_f18_5___branch_bit"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="217"></a><span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="ucode_dec.v.html#220">u_f08_rd_rs1_a</a><a  href="hierarchy-s.p18.html#u_f08_rd_rs1_a___branch_bit"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// Field_08: Read_port_A of RS1
+</span><a name="218"></a><span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="ucode_dec.v.html#221">rs1_0_l</a><a  href="hierarchy-s.p15.html#rs1_0_l___branch_bit"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// rs1[0], active low, from IU
+</span><a name="219"></a><span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="ucode_dec.v.html#222">rs2_0_l</a><a  href="hierarchy-s.p15.html#rs2_0_l___branch_bit"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// rs2[0], active low, from IU
+</span><a name="220"></a><span class=K>output</span>         <a  onClick="return qs(event,this)" class=SO href="#232">bit1</a><a  href="hierarchy-s.p2.html#bit1___branch_bit"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="221"></a><span class=K>output</span>         <a  onClick="return qs(event,this)" class=SO href="#236">bit0</a><a  href="hierarchy-s.p2.html#bit0___branch_bit"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<a name="223"></a><span class=K>wire</span>           <a  onClick="return qs(event,this)" class=SW href="#226">a_oprd_0</a><a  href="hierarchy-s.html#a_oprd_0___branch_bit"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="224"></a><span class=K>wire</span>           <a  onClick="return qs(event,this)" class=SW href="#228">check_handle2</a><a  href="hierarchy-s.p3.html#check_handle2___branch_bit"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#229">check_handle</a><a  href="hierarchy-s.p3.html#check_handle___branch_bit"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#230">check_handle_p</a><a  href="hierarchy-s.p3.html#check_handle_p___branch_bit"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<a name="226"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#223">a_oprd_0</a>        = !(<a  onClick="return qs(event,this)" class=SI href="#217">u_f08_rd_rs1_a</a> ? <a  onClick="return qs(event,this)" class=SI href="#218">rs1_0_l</a> : <a  onClick="return qs(event,this)" class=SI href="#219">rs2_0_l</a>);
+ 
+<a name="228"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#224">check_handle2</a>   = (!<a  onClick="return qs(event,this)" class=SI href="#215">u_f18_6</a>   &amp;&amp;  <a  onClick="return qs(event,this)" class=SI href="#216">u_f18_5</a> );  <span class=C>// jump_2
+</span><a name="229"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#224">check_handle</a>    = ( <a  onClick="return qs(event,this)" class=SI href="#215">u_f18_6</a>   &amp;&amp; !<a  onClick="return qs(event,this)" class=SI href="#216">u_f18_5</a> );  <span class=C>// jump_3, [0]=0
+</span><a name="230"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#224">check_handle_p</a>  = ( <a  onClick="return qs(event,this)" class=SI href="#215">u_f18_6</a>   &amp;&amp;  <a  onClick="return qs(event,this)" class=SI href="#216">u_f18_5</a> );  <span class=C>// jump_3, [0]=1
+</span> 
+<a name="232"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#220">bit1</a> = (<a  onClick="return qs(event,this)" class=SW href="#229">check_handle</a>   &amp;&amp; !<a  onClick="return qs(event,this)" class=SW href="#226">a_oprd_0</a>) ||
+                (<a  onClick="return qs(event,this)" class=SW href="#230">check_handle_p</a> &amp;&amp;  <a  onClick="return qs(event,this)" class=SW href="#226">a_oprd_0</a>) ||
+                (<a  onClick="return qs(event,this)" class=SW href="#228">check_handle2</a>  &amp;&amp;  <a  onClick="return qs(event,this)" class=SW href="#226">a_oprd_0</a>);
+ 
+<a name="236"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#221">bit0</a> = (<a  onClick="return qs(event,this)" class=SW href="#229">check_handle</a>   &amp;&amp; !<a  onClick="return qs(event,this)" class=SW href="#226">a_oprd_0</a>) ||
+                (<a  onClick="return qs(event,this)" class=SW href="#230">check_handle_p</a> &amp;&amp;  <a  onClick="return qs(event,this)" class=SW href="#226">a_oprd_0</a>) ||
+               !(<a  onClick="return qs(event,this)" class=SW href="#228">check_handle2</a>  &amp;&amp;  <a  onClick="return qs(event,this)" class=SW href="#226">a_oprd_0</a>);
+
+<span class=K>endmodule</span>
+
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:28 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ucode/rtl/ucode_lib.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

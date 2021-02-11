@@ -1,0 +1,661 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>./instr_enable.h</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "instr_enable.h.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+
+ <span class=C>// use this file to tell whether instructions are enabled (set to 1)
+</span><span class=C>// or disabled (set to 0)
+</span>
+<span class=M>`include</span> <a  onClick="return qs(event,this)" class=S href="instr_def.h.html">&quot;instr_def.h&quot;</a>
+
+<span class=K>initial</span> <span class=K>begin</span>
+
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#27">INST_nop</a>] = 			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#28">INST_aconst_null</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#29">INST_iconst_m1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#30">INST_iconst_0</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#31">INST_iconst_1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#32">INST_iconst_2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#33">INST_iconst_3</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#34">INST_iconst_4</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#35">INST_iconst_5</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#36">INST_lconst_0</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#37">INST_lconst_1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#38">INST_fconst_0</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#39">INST_fconst_1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#40">INST_fconst_2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#41">INST_dconst_0</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#42">INST_dconst_1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#43">INST_bipush</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#44">INST_sipush</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#45">INST_ldc</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#46">INST_ldc_w</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#47">INST_ldc2_w</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#48">INST_iload</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#49">INST_lload</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#50">INST_fload</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#51">INST_dload</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#52">INST_aload</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#53">INST_iload_0</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#54">INST_iload_1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#55">INST_iload_2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#56">INST_iload_3</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#57">INST_lload_0</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#58">INST_lload_1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#59">INST_lload_2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#60">INST_lload_3</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#61">INST_fload_0</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#62">INST_fload_1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#63">INST_fload_2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#64">INST_fload_3</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#65">INST_dload_0</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#66">INST_dload_1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#67">INST_dload_2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#68">INST_dload_3</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#69">INST_aload_0</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#70">INST_aload_1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#71">INST_aload_2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#72">INST_aload_3</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#73">INST_iaload</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#74">INST_laload</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#75">INST_faload</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#76">INST_daload</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#77">INST_aaload</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#78">INST_baload</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#79">INST_caload</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#80">INST_saload</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#81">INST_istore</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#82">INST_lstore</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#83">INST_fstore</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#84">INST_dstore</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#85">INST_astore</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#86">INST_istore_0</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#87">INST_istore_1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#88">INST_istore_2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#89">INST_istore_3</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#90">INST_lstore_0</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#91">INST_lstore_1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#92">INST_lstore_2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#93">INST_lstore_3</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#94">INST_fstore_0</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#95">INST_fstore_1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#96">INST_fstore_2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#97">INST_fstore_3</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#98">INST_dstore_0</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#99">INST_dstore_1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#100">INST_dstore_2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#101">INST_dstore_3</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#102">INST_astore_0</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#103">INST_astore_1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#104">INST_astore_2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#105">INST_astore_3</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#106">INST_iastore</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#107">INST_lastore</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#108">INST_fastore</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#109">INST_dastore</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#110">INST_aastore</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#111">INST_bastore</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#112">INST_castore</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#113">INST_sastore</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#114">INST_pop</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#115">INST_pop2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#116">INST_dup</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#117">INST_dup_x1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#118">INST_dup_x2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#119">INST_dup2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#120">INST_dup2_x1</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#121">INST_dup2_x2</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#122">INST_swap</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#123">INST_iadd</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#124">INST_ladd</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#125">INST_fadd</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#126">INST_dadd</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#127">INST_isub</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#128">INST_lsub</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#129">INST_fsub</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#130">INST_dsub</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#131">INST_imul</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#132">INST_lmul</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#133">INST_fmul</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#134">INST_dmul</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#135">INST_idiv</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#136">INST_ldiv</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#137">INST_fdiv</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#138">INST_ddiv</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#139">INST_irem</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#140">INST_lrem</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#141">INST_frem</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#142">INST_drem</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#143">INST_ineg</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#144">INST_lneg</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#145">INST_fneg</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#146">INST_dneg</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#147">INST_ishl</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#148">INST_lshl</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#149">INST_ishr</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#150">INST_lshr</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#151">INST_iushr</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#152">INST_lushr</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#153">INST_iand</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#154">INST_land</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#155">INST_ior</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#156">INST_lor</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#157">INST_ixor</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#158">INST_lxor</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#159">INST_iinc</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#160">INST_i2l</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#161">INST_i2f</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#162">INST_i2d</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#163">INST_l2i</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#164">INST_l2f</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#165">INST_l2d</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#166">INST_f2i</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#167">INST_f2l</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#168">INST_f2d</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#169">INST_d2i</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#170">INST_d2l</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#171">INST_d2f</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#172">INST_i2b</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#173">INST_i2c</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#174">INST_i2s</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#175">INST_lcmp</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#176">INST_fcmpl</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#177">INST_fcmpg</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#178">INST_dcmpl</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#179">INST_dcmpg</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#180">INST_ifeq</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#181">INST_ifne</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#182">INST_iflt</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#183">INST_ifge</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#184">INST_ifgt</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#185">INST_ifle</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#186">INST_if_icmpeq</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#187">INST_if_icmpne</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#188">INST_if_icmplt</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#189">INST_if_icmpge</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#190">INST_if_icmpgt</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#191">INST_if_icmple</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#192">INST_if_acmpeq</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#193">INST_if_acmpne</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#194">INST_goto</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#195">INST_jsr</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#196">INST_ret</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#197">INST_tableswitch</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#198">INST_lookupswitch</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#199">INST_ireturn</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#200">INST_lreturn</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#201">INST_freturn</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#202">INST_dreturn</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#203">INST_areturn</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#204">INST_return</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#205">INST_getstatic</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#206">INST_putstatic</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#207">INST_getfield</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#208">INST_putfield</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#209">INST_invokevirtual</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#210">INST_invokespecial</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#211">INST_invokestatic</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#212">INST_invokeinterface</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#213">INST_opcode_0xba</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#214">INST_new</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#215">INST_newarray</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#216">INST_anewarray</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#217">INST_arraylength</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#218">INST_athrow</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#219">INST_checkcast</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#220">INST_instanceof</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#221">INST_monitorenter</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#222">INST_monitorexit</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#223">INST_wide</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#224">INST_multianewarray</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#225">INST_ifnull</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#226">INST_ifnonnull</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#227">INST_goto_w</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#228">INST_jsr_w</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#229">INST_breakpoint</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#230">INST_ldc_quick</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#231">INST_ldc_w_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#232">INST_ldc2_w_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#233">INST_getfield_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#234">INST_putfield_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#235">INST_getfield2_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#236">INST_putfield2_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#237">INST_getstatic_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#238">INST_putstatic_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#239">INST_getstatic2_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#240">INST_putstatic2_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#241">INST_invokevirtual_quick</a>] =	1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#242">INST_invokenonvirtual_quick</a>] =	1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#243">INST_invokesuper_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#244">INST_invokestatic_quick</a>] =	1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#245">INST_invokeinterface_quick</a>] =	1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#246">INST_invokevirtualobj_quick</a>] =	1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#247">INST_opcode_0xdc</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#248">INST_new_quick</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#249">INST_anewarray_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#250">INST_multianewarray_quick</a>] =	1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#251">INST_checkcast_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#252">INST_instanceof_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#253">INST_invokevirtual_quick_w</a>] =	1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#254">INST_getfield_quick_w</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#255">INST_putfield_quick_w</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#256">INST_nonnull_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#257">INST_agetfield_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#258">INST_aputfield_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#259">INST_agetstatic_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#260">INST_aputstatic_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#261">INST_aldc_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#262">INST_aldc_w_quick</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#263">INST_exit_sync_method</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#264">INST_sethi</a>] =			1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#265">INST_opcode_0xee</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#266">INST_opcode_0xef</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#267">INST_opcode_0xf0</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#268">INST_opcode_0xf1</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#269">INST_opcode_0xf2</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#270">INST_opcode_0xf3</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#271">INST_opcode_0xf4</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#272">INST_opcode_0xf5</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#273">INST_opcode_0xf6</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#274">INST_opcode_0xf7</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#275">INST_opcode_0xf8</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#276">INST_opcode_0xf9</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#277">INST_opcode_0xfa</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#278">INST_opcode_0xfb</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#279">INST_opcode_0xfc</a>] =		1'b1;
+inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#280">INST_opcode_0xfe</a>] =		1'b1;
+
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#282">INST_load_ubyte</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#283">INST_load_byte</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#284">INST_load_char</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#285">INST_load_short</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#286">INST_load_word</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#287">INST_priv_ret_from_trap</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#288">INST_priv_read_dcache_tag</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#289">INST_priv_read_dcache_data</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#290">INST_opcode_0xff08</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#291">INST_opcode_0xff09</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#292">INST_load_char_oe</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#293">INST_load_short_oe</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#294">INST_load_word_oe</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#295">INST_return0</a>] =			1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#296">INST_priv_read_icache_tag</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#297">INST_priv_read_icache_data</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#298">INST_ncload_ubyte</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#299">INST_ncload_byte</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#300">INST_ncload_char</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#301">INST_ncload_short</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#302">INST_ncload_word</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#303">INST_iu_cmp</a>] =			1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#304">INST_priv_powerdown</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#305">INST_cache_invalidate</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#306">INST_opcode_0xff18</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#307">INST_opcode_0xff19</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#308">INST_ncload_char_oe</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#309">INST_ncload_short_oe</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#310">INST_ncload_word_oe</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#311">INST_return1</a>] =			1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#312">INST_cache_flush</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#313">INST_cache_index_flush</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#314">INST_store_byte</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#315">INST_opcode_0xff21</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#316">INST_store_short</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#317">INST_opcode_0xff23</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#318">INST_store_word</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#319">INST_soft_trap</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#320">INST_priv_write_dcache_tag</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#321">INST_priv_write_dcache_data</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#322">INST_opcode_0xff28</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#323">INST_opcode_0xff29</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#324">INST_store_short_oe</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#325">INST_opcode_0xff2b</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#326">INST_store_word_oe</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#327">INST_return2</a>] =			1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#328">INST_priv_write_icache_tag</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#329">INST_priv_write_icache_data</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#330">INST_ncstore_byte</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#331">INST_opcode_0xff31</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#332">INST_ncstore_short</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#333">INST_opcode_0xff33</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#334">INST_ncstore_word</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#335">INST_opcode_0xff35</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#336">INST_priv_reset</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#337">INST_get_current_class</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#338">INST_opcode_0xff38</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#339">INST_opcode_0xff39</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#340">INST_ncstore_short_oe</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#341">INST_opcode_0xff3b</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#342">INST_ncstore_word_oe</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#343">INST_call</a>] =			1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#344">INST_zero_line</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#345">INST_priv_update_optop</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#346">INST_read_pc</a>] =			1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#347">INST_read_vars</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#348">INST_read_frame</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#349">INST_read_optop</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#350">INST_priv_read_oplim</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#351">INST_read_const_pool</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#352">INST_priv_read_psr</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#353">INST_priv_read_trapbase</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#354">INST_priv_read_lockcount0</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#355">INST_priv_read_lockcount1</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#356">INST_opcode_0xff4a</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#357">INST_opcode_0xff4b</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#358">INST_priv_read_lockaddr0</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#359">INST_priv_read_lockaddr1</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#360">INST_opcode_0xff4e</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#361">INST_opcode_0xff4f</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#362">INST_priv_read_userrange1</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#363">INST_priv_read_gc_config</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#364">INST_priv_read_brk1a</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#365">INST_priv_read_brk2a</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#366">INST_priv_read_brk12c</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#367">INST_priv_read_userrange2</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#368">INST_opcode_0xff56</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#369">INST_priv_read_versionid</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#370">INST_priv_read_hcr</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#371">INST_priv_read_sc_bottom</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#372">INST_read_global0</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#373">INST_read_global1</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#374">INST_read_global2</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#375">INST_read_global3</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#376">INST_opcode_0xff5e</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#377">INST_opcode_0xff5f</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#378">INST_ret_from_sub</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#379">INST_write_vars</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#380">INST_write_frame</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#381">INST_write_optop</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#382">INST_priv_write_oplim</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#383">INST_write_const_pool</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#384">INST_priv_write_psr</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#385">INST_priv_write_trapbase</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#386">INST_priv_write_lockcount0</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#387">INST_priv_write_lockcount1</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#388">INST_opcode_0xff6a</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#389">INST_opcode_0xff6b</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#390">INST_priv_write_lockaddr0</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#391">INST_priv_write_lockaddr1</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#392">INST_opcode_0xff6e</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#393">INST_opcode_0xff6f</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#394">INST_priv_write_userrange1</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#395">INST_priv_write_gc_config</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#396">INST_priv_write_brk1a</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#397">INST_priv_write_brk2a</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#398">INST_priv_write_brk12c</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#399">INST_priv_write_userrange2</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#400">INST_opcode_0xff76</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#401">INST_opcode_0xff77</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#402">INST_opcode_0xff78</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#403">INST_priv_write_sc_bottom</a>] =	1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#404">INST_write_global0</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#405">INST_write_global1</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#406">INST_write_global2</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#407">INST_write_global3</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#408">INST_opcode_0xff7e</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#409">INST_opcode_0xff7f</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#410">INST_opcode_0xff80</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#411">INST_opcode_0xff81</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#412">INST_opcode_0xff82</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#413">INST_opcode_0xff83</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#414">INST_opcode_0xff84</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#415">INST_opcode_0xff85</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#416">INST_opcode_0xff86</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#417">INST_opcode_0xff87</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#418">INST_opcode_0xff88</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#419">INST_opcode_0xff89</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#420">INST_opcode_0xff8a</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#421">INST_opcode_0xff8b</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#422">INST_opcode_0xff8c</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#423">INST_opcode_0xff8d</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#424">INST_opcode_0xff8e</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#425">INST_opcode_0xff8f</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#426">INST_opcode_0xff90</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#427">INST_opcode_0xff91</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#428">INST_opcode_0xff92</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#429">INST_opcode_0xff93</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#430">INST_opcode_0xff94</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#431">INST_opcode_0xff95</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#432">INST_opcode_0xff96</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#433">INST_opcode_0xff97</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#434">INST_opcode_0xff98</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#435">INST_opcode_0xff99</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#436">INST_opcode_0xff9a</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#437">INST_opcode_0xff9b</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#438">INST_opcode_0xff9c</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#439">INST_opcode_0xff9d</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#440">INST_opcode_0xff9e</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#441">INST_opcode_0xff9f</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#442">INST_opcode_0xffa0</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#443">INST_opcode_0xffa1</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#444">INST_opcode_0xffa2</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#445">INST_opcode_0xffa3</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#446">INST_opcode_0xffa4</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#447">INST_opcode_0xffa5</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#448">INST_opcode_0xffa6</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#449">INST_opcode_0xffa7</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#450">INST_opcode_0xffa8</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#451">INST_opcode_0xffa9</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#452">INST_opcode_0xffaa</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#453">INST_opcode_0xffab</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#454">INST_opcode_0xffac</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#455">INST_opcode_0xffad</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#456">INST_opcode_0xffae</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#457">INST_opcode_0xffaf</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#458">INST_opcode_0xffb0</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#459">INST_opcode_0xffb1</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#460">INST_opcode_0xffb2</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#461">INST_opcode_0xffb3</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#462">INST_opcode_0xffb4</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#463">INST_opcode_0xffb5</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#464">INST_opcode_0xffb6</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#465">INST_opcode_0xffb7</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#466">INST_opcode_0xffb8</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#467">INST_opcode_0xffb9</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#468">INST_opcode_0xffba</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#469">INST_opcode_0xffbb</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#470">INST_opcode_0xffbc</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#471">INST_opcode_0xffbd</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#472">INST_opcode_0xffbe</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#473">INST_opcode_0xffbf</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#474">INST_opcode_0xffc0</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#475">INST_opcode_0xffc1</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#476">INST_opcode_0xffc2</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#477">INST_opcode_0xffc3</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#478">INST_opcode_0xffc4</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#479">INST_opcode_0xffc5</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#480">INST_opcode_0xffc6</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#481">INST_opcode_0xffc7</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#482">INST_opcode_0xffc8</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#483">INST_opcode_0xffc9</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#484">INST_opcode_0xffca</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#485">INST_opcode_0xffcb</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#486">INST_opcode_0xffcc</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#487">INST_opcode_0xffcd</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#488">INST_opcode_0xffce</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#489">INST_opcode_0xffcf</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#490">INST_opcode_0xffd0</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#491">INST_opcode_0xffd1</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#492">INST_opcode_0xffd2</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#493">INST_opcode_0xffd3</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#494">INST_opcode_0xffd4</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#495">INST_opcode_0xffd5</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#496">INST_opcode_0xffd6</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#497">INST_opcode_0xffd7</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#498">INST_opcode_0xffd8</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#499">INST_opcode_0xffd9</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#500">INST_opcode_0xffda</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#501">INST_opcode_0xffdb</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#502">INST_opcode_0xffdc</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#503">INST_opcode_0xffdd</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#504">INST_opcode_0xffde</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#505">INST_opcode_0xffdf</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#506">INST_opcode_0xffe0</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#507">INST_opcode_0xffe1</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#508">INST_opcode_0xffe2</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#509">INST_opcode_0xffe3</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#510">INST_opcode_0xffe4</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#511">INST_opcode_0xffe5</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#512">INST_opcode_0xffe6</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#513">INST_opcode_0xffe7</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#514">INST_opcode_0xffe8</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#515">INST_opcode_0xffe9</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#516">INST_opcode_0xffea</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#517">INST_opcode_0xffeb</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#518">INST_opcode_0xffec</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#519">INST_opcode_0xffed</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#520">INST_opcode_0xffee</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#521">INST_opcode_0xffef</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#522">INST_opcode_0xfff0</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#523">INST_opcode_0xfff1</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#524">INST_opcode_0xfff2</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#525">INST_opcode_0xfff3</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#526">INST_opcode_0xfff4</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#527">INST_opcode_0xfff5</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#528">INST_opcode_0xfff6</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#529">INST_opcode_0xfff7</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#530">INST_opcode_0xfff8</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#531">INST_opcode_0xfff9</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#532">INST_opcode_0xfffa</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#533">INST_opcode_0xfffb</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#534">INST_opcode_0xfffc</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#535">INST_opcode_0xfffd</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#536">INST_opcode_0xfffe</a>] =		1'b1;
+extended_inst_enabled[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="instr_def.h.html#537">INST_opcode_0xffff</a>] =		1'b1;
+
+<span class=K>end</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:20 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+./instr_enable.h</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

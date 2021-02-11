@@ -1,0 +1,269 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>picoJava(TM) Technology FAQ</TITLE>
+<META NAME="sccs" CONTENT="index.html, 1.32, 08/01/97">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=EUC-KR">
+<META NAME="AUTHOR" CONTENT="Chang-woo,YANG">
+<META NAME="DESCRIPTION" CONTENT="We develop, design and distributeSPARC and Java processor technologies and products worldwide.  Our portfolio includes microprocessors, chipsets, modules,   boards, technology licenses, silicon and system design kits and consulting services.">
+<META NAME="KEYWORDS" CONTENT="Press, Analyst, SPARC, embedded, microprocessor, silicon, RISC, Java, processor, semiconductor, circuit board, microelectronic, Sun Microelectronics">
+<META NAME="GENERATOR" CONTENT="Namo WebEditor v2.1">
+</HEAD>
+<BODY BGCOLOR="white" TEXT="black" LINK="#666699" VLINK="#666699" ALINK="white">
+
+<DIV ALIGN="CENTER"><TABLE BORDER="0" WIDTH="70%" BGCOLOR="#004080">
+<TR>
+<TD><P ALIGN="CENTER"><FONT SIZE="2" COLOR="white"><I>picoJava</I></FONT><FONT SIZE="2" COLOR="white"><I><SUP>(TM)</SUP></I></FONT><FONT SIZE="2" COLOR="white"><I> Technology FAQ...<BR>
+<BR>
+아래의 문서는 원래문서를 제임의대로 수정해서 제공합니다...</I></FONT></TD>
+</TR></TABLE></DIV>
+<P ALIGN="CENTER">&nbsp;&nbsp;<!--<LINK rel="Stylesheet" type="text/css" title="Sunstyle" href="/template/sunstyle.css">--></P>
+<H1 ALIGN="CENTER">picoJava<SUP>TM</SUP> Technology</H1>
+<H2><FONT FACE="Arial" SIZE="3">Frequently Asked Technical Questions</FONT></H2>
+<P><FONT FACE="Arial" SIZE="3">For general questions regarding picoJava</FONT><FONT FACE="Arial" SIZE="2"><SUP>TM</SUP></FONT><FONT FACE="Arial" SIZE="3"> technology, see the </FONT><A HREF="http://www.sun.com/microelectronics/communitysource/faq.html"><FONT FACE="Arial" SIZE="3">Frequently Asked Questions</FONT></A><FONT FACE="Arial" SIZE="3">.</FONT> </P>
+<P><FONT FACE="Arial" SIZE="3">The community source code we provide is the same source code that Sun engineers used to build real 
+products. While we do not include instructions on how to modify the code, we do provide information to help 
+you perform a build and work with the source, which you will find in a </FONT><A HREF="README.html"><FONT FACE="Arial" SIZE="3">README</FONT></A><FONT FACE="Arial" SIZE="3"> file in your download bundle.&nbsp;</FONT> </P>
+<P><FONT FACE="Arial" SIZE="3">Below are answers to some technical frequently asked questions.&nbsp;</FONT> </P>
+<H3><FONT FACE="Arial" SIZE="3">Contents</FONT></H3>
+<P><A HREF="#overview"><FONT FACE="Arial" SIZE="4">Overview of the picoJava-II Core</FONT></A> 
+<OL>
+<LI><A HREF="#core"><FONT FACE="Arial" SIZE="3">What is the picoJava-II core?</FONT></A> 
+<LI><A HREF="#appli"><FONT FACE="Arial" SIZE="3">What applications is the picoJava-II core targeted for?</FONT></A> 
+<LI><A HREF="#instru"><FONT FACE="Arial" SIZE="3">What instructions does the picoJava-II core support?</FONT></A> 
+<LI><A HREF="#perf"><FONT FACE="Arial" SIZE="3">What is the Java performance of the picoJava-II core?</FONT></A> 
+<LI><A HREF="#mem"><FONT FACE="Arial" SIZE="3">Does the picoJava-II core include a memory and I/O interface?</FONT></A> 
+</OL>
+<P><A HREF="#archi"><FONT FACE="Arial" SIZE="4">More About the picoJava-II Microarchitecture</FONT></A> 
+<OL START="6">
+<LI><A HREF="#units"><FONT FACE="Arial" SIZE="3">What are the main functional units in the picoJava-II core?</FONT></A> 
+<LI><A HREF="#config"><FONT FACE="Arial" SIZE="3">What standard configurations of the design does the core support?</FONT></A> 
+<LI><A HREF="#jvm"><FONT FACE="Arial" SIZE="3">Does the picoJava-II core implement the entire Java virtual machine?</FONT></A> 
+<LI><A HREF="#blocks"><FONT FACE="Arial" SIZE="3">Does the picoJava-II core use any custom blocks that licensees have to design? If so, what are they?</FONT></A> 
+<LI><A HREF="#dissip"><FONT FACE="Arial" SIZE="3">What is the size and power dissipation for the picoJava-II core?</FONT></A> 
+<LI><A HREF="#frequency"><FONT FACE="Arial" SIZE="3">What is the frequency at which the picoJava-II core can run?</FONT></A> 
+</OL>
+<P><A HREF="#designs"><FONT FACE="Arial" SIZE="4">Designs with the picoJava-II Core</FONT></A> 
+<OL START="12">
+<LI><A HREF="#deliver"><FONT FACE="Arial" SIZE="3">What are the deliverables for the picoJava-II core?</FONT></A> 
+<LI><A HREF="#format"><FONT FACE="Arial" SIZE="3">What is the format in which the picoJava-II design is available?</FONT></A> 
+<LI><A HREF="#process"><FONT FACE="Arial" SIZE="3">Is the picoJava-II core designed for a particular process?&nbsp;</FONT></A> 
+<LI><A HREF="#cad"><FONT FACE="Arial" SIZE="3">What CAD design tools are used in the picoJava-II design?</FONT></A> 
+<LI><A HREF="#platforms"><FONT FACE="Arial" SIZE="3">What platforms is the picoJava-II design environment based on?</FONT></A> 
+<LI><A HREF="#define"><FONT FACE="Arial" SIZE="3">Can licensees define their own instructions?</FONT></A> 
+<LI><A HREF="#enhance"><FONT FACE="Arial" SIZE="3">Can licensees make microarchitectural enhancements to the picoJava-II core?</FONT></A> 
+<LI><A HREF="#vts"><FONT FACE="Arial" SIZE="3">What is the picoJava-II Validation Test Suite? What does it test?</FONT></A> 
+<LI><A HREF="#access"><FONT FACE="Arial" SIZE="3">How do licensees access the picoJava-II VTS?</FONT></A> 
+<LI><A HREF="#chips"><FONT FACE="Arial" SIZE="3">Are chips that are based on the picoJava-II core available today?</FONT></A> 
+<LI><A HREF="#demos"><FONT FACE="Arial" SIZE="3">Has Sun designed any demo boards based on the picoJava-II core?</FONT></A> 
+</OL>
+<P><A HREF="#tools"><FONT FACE="Arial" SIZE="4">Software and Development Tools for the picoJava-II Core</FONT></A> 
+<OL START="23">
+<LI><A HREF="#vm"><FONT FACE="Arial" SIZE="3">Is there a Java virtual machine for the picoJava-II core?</FONT></A> 
+<LI><A HREF="#dev-tools"><FONT FACE="Arial" SIZE="3">What development tools are available for the picoJava-II core?</FONT></A> 
+<LI><A HREF="#access-tools"><FONT FACE="Arial" SIZE="3">How can licensees access picoJava-II development tools?</FONT></A> 
+</OL>
+<P ALIGN="CENTER"><HR WIDTH="200" NOSHADE></P>
+<P><FONT FACE="Arial" SIZE="3"><B>See also</B></FONT><FONT FACE="Arial" SIZE="3">: </FONT><A HREF="http://www.sun.com/microelectronics/communitysource/picojava/licensing.html"><FONT FACE="Arial" SIZE="3">Licensing Overview</FONT></A> </P>
+<P ALIGN="CENTER"><HR WIDTH="200" NOSHADE></P>
+<H3><A NAME="overview"><FONT FACE="Arial" SIZE="3">Overview of the picoJava-II Core</FONT></A></H3>
+<OL>
+<LI><A NAME="core"><FONT FACE="Arial" SIZE="3"><B>Q: What is the picoJava-II core?</B></FONT></A><A NAME="core"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="core"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The picoJava-II core is a low-cost hardware engine, optimized to execute Java bytecodes in hardware. 
+By accelerating the execution of these bytecodes in hardware, this core offers high performance 
+without the need for Just-In-Time (JIT) compilers. The picoJava-II core has been designed specifically 
+for cost-sensitive embedded applications, where performance cannot be compromised and JIT 
+compilers, which require a larger memory footprint, are not a feasible solution.&nbsp;</FONT> 
+<LI><A NAME="appli"><FONT FACE="Arial" SIZE="3"><B>Q: What applications is the picoJava-II core targeted for?</B></FONT></A><A NAME="appli"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="appli"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The picoJava-II core is targeted for &quot;System-On-a-Chip&quot; embedded applications, where Java 
+performance is important and the use of JIT compilers, which require a lot of memory, is not feasible. 
+Such applications (for example, set-top boxes, smart phones, and PDAs) usually are cost sensitive 
+and use less memory.&nbsp;</FONT> 
+<LI><A NAME="instru"><FONT FACE="Arial" SIZE="3"><B>Q: What instructions does the picoJava-II core support?</B></FONT></A><A NAME="instru"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="instru"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The core implements most of the Java virtual machine instructions directly while supporting a 
+general-purpose instruction set capable of handling operating systems and code compiled from 
+languages other than the Java language (such as C and C++).&nbsp;</FONT> 
+<LI><A NAME="perf"><FONT FACE="Arial" SIZE="3"><B>Q: What is the Java performance of the picoJava-II core?</B></FONT></A><A NAME="perf"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="perf"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The picoJava-II core is optimized for Java performance, one measure of which is the SPECjvm98 
+benchmarks suite. In a system with 32 Mbytes of memory, we estimate the SPEC JVM98 best-run 
+result for the picoJava-II core to be 4.2 at 120 MHz. See </FONT><A HREF="http://www.spec.org/osg/jvm98/results"><FONT FACE="Arial" SIZE="3">http://www.spec.org/osg/jvm98/results</FONT></A><FONT FACE="Arial" SIZE="3"> for 
+SPEC JVM98 results on other processors.&nbsp;</FONT> 
+<LI><A NAME="mem"><FONT FACE="Arial" SIZE="3"><B>Q: Does the picoJava-II core include a memory and I/O interface?</B></FONT></A><A NAME="mem"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="mem"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The picoJava-II technology, designed as a core rather than a complete microprocessor, does not 
+include any memory or I/O interface logic. Instead, users can add their own logic for the memory or 
+interface that they prefer. However, the core includes a Bus Interface Unit (BIU) with well-defined 
+interface protocol to interface to the external world. Through a simple memory model, the BIU serves as 
+a reference design for simulation of the core.&nbsp;</FONT> </P>
+<P ALIGN="CENTER"><HR SIZE="1" WIDTH="200" NOSHADE></P>
+<H3><A NAME="archi"><FONT FACE="Arial" SIZE="3">More About the picoJava-II Microarchitecture</FONT></A></H3>
+<LI><A NAME="units"><FONT FACE="Arial" SIZE="3"><B>Q: What are the main functional units in the picoJava-II core?</B></FONT></A><A NAME="units"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="units"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The picoJava-II core consists of seven major units:&nbsp;</FONT> 
+<UL TYPE="SQUARE">
+<LI><FONT FACE="Arial" SIZE="3">Integer Unit (IU)</FONT> 
+<LI><FONT FACE="Arial" SIZE="3">Floating Point Unit (FPU)</FONT> 
+<LI><FONT FACE="Arial" SIZE="3">Instruction Cache Unit (ICU)</FONT> 
+<LI><FONT FACE="Arial" SIZE="3">Data Cache Unit (DCU)</FONT> 
+<LI><FONT FACE="Arial" SIZE="3">Stack Management Unit (SMU)</FONT> 
+<LI><FONT FACE="Arial" SIZE="3">Bus Interface Unit (BIU)</FONT> 
+<LI><FONT FACE="Arial" SIZE="3">Powerdown, Clock, Reset, and Scan Unit (PCSU)</FONT> 
+</UL>
+<LI><A NAME="config"><FONT FACE="Arial" SIZE="3"><B>Q: What standard configurations of the design does the core support?</B></FONT></A><A NAME="config"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="config"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">You can configure the size of the instruction and data caches in the Verilog from 0 (no cache) to 16 
+Kbytes (that is, 0 Kbyte, 1 Kbytes, 2 Kbytes, 4 Kbytes, 8 Kbytes, or 16 Kbytes).&nbsp;</FONT> </P>
+<P><FONT FACE="Arial" SIZE="3">Also, you can remove the Floating Point Unit (FPU) to save area in applications that do not require 
+floating-point arithmetic. You must, however, provide floating-point emulation trap routines in software.&nbsp;</FONT> 
+<LI><A NAME="jvm"><FONT FACE="Arial" SIZE="3"><B>Q: Does the picoJava-II core implement the entire Java virtual machine?</B></FONT></A><A NAME="jvm"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="jvm"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The core is </FONT><FONT FACE="Arial" SIZE="3"><I>not</I></FONT><FONT FACE="Arial" SIZE="3"> the entire Java virtual machine in silicon. Rather, it is a microprocessor design 
+optimized to run a small Java virtual machine implementation. As one step to achieve this goal, the 
+core decodes all of the bytecodes defined by the Java virtual machine. Furthermore, it implements 
+most of them directly in hardware.&nbsp;</FONT> </P>
+<P><FONT FACE="Arial" SIZE="3">The core can accelerate other aspects (for example, garbage collection) of a Java virtual machine with 
+hardware. Bear in mind, however, that you must develop a significant amount of software to produce a 
+compliant Java virtual machine that runs on the core.&nbsp;</FONT> 
+<LI><A NAME="blocks"><FONT FACE="Arial" SIZE="3"><B>Q: Does the picoJava-II core use any custom blocks that licensees have to design? If so, 
+what are they?</B></FONT></A><A NAME="blocks"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="blocks"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The picoJava-II core uses a number of megacells that are to be designed as custom blocks. Examples 
+are: the stack cache (a 64-entry register file with three read ports and two write ports); instruction 
+cache data and tag RAMs; data cache data and tag RAMs; and the ROMs for microcode. These 
+megacells are described as high-level behavioral models in the picoJava-II core Verilog design.&nbsp;</FONT> 
+<LI><A NAME="dissip"><FONT FACE="Arial" SIZE="3"><B>Q: What is the size and power dissipation for the picoJava-II core?</B></FONT></A><A NAME="dissip"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="dissip"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The picoJava-II core size depends on the following parameters:&nbsp;</FONT> 
+<UL TYPE="SQUARE">
+<LI><FONT FACE="Arial" SIZE="3">The size of the instruction and data caches</FONT> 
+<LI><FONT FACE="Arial" SIZE="3">The process geometry and the number of metal layers used</FONT> 
+<LI><FONT FACE="Arial" SIZE="3">The design methodology (ASIC versus the custom design approach)</FONT> 
+</UL>
+<P><FONT FACE="Arial" SIZE="3">Licensees should synthesize the design with with their own library and compute the accurate gate 
+count from the results. They can then estimate the size and power based on the gate count, frequency, 
+megacell design data, and their process or design methodology.&nbsp;</FONT> 
+<LI><A NAME="frequency"><FONT FACE="Arial" SIZE="3"><B>Q: What is the frequency at which the picoJava-II core can run?</B></FONT></A><A NAME="frequency"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="frequency"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The picoJava-II core is a RTL design and can be targeted to any process and library. The frequency at 
+which this core can run depends on the process and the library in which it is designed.&nbsp;</FONT> </P>
+<P ALIGN="CENTER"><HR SIZE="1" WIDTH="200" NOSHADE></P>
+<H3><A NAME="designs"><FONT FACE="Arial" SIZE="3">Designs with the picoJava-II Core</FONT></A></H3>
+<LI><A NAME="deliver"><FONT FACE="Arial" SIZE="3"><B>Q: What are the deliverables for the picoJava-II core?</B></FONT></A><A NAME="deliver"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="deliver"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The picoJava-II design database includes the following:&nbsp;</FONT> 
+<UL TYPE="SQUARE">
+<LI><FONT FACE="Arial" SIZE="3">The Verilog RTL source for the core</FONT> 
+<LI><FONT FACE="Arial" SIZE="3">The instruction simulator for the core</FONT> 
+<LI><FONT FACE="Arial" SIZE="3">The simulation environment for the core</FONT> 
+<LI><FONT FACE="Arial" SIZE="3">The source for the test suites that are used to verify the design</FONT> 
+<LI><FONT FACE="Arial" SIZE="3">Documentation:&nbsp;</FONT> 
+<UL TYPE="DISC">
+<LI><FONT FACE="Arial" SIZE="3"><I>picoJava-II Programmer's Reference Manual</I></FONT> 
+<LI><FONT FACE="Arial" SIZE="3"><I>picoJava-II Microarchitecture Guide</I></FONT> 
+<LI><FONT FACE="Arial" SIZE="3"><I>picoJava-II Verification Guide</I></FONT> 
+<LI><FONT FACE="Arial" SIZE="3">Other documentation on the simulation and verification environment</FONT> 
+</UL>
+</UL>
+<LI><A NAME="format"><FONT FACE="Arial" SIZE="3"><B>Q: What is the format in which the picoJava-II design is available?</B></FONT></A><A NAME="format"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="format"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The picoJava-II core, designed in Verilog's RTL language, consists of high-level behavioral megacell 
+models and fully synthesizable logic for the rest of the core. You can synthesize the core with a cell 
+library that you prefer. Synthesis results and the clock frequency that you achieve depend on your 
+synthesis approach and cell library.&nbsp;</FONT> 
+<LI><A NAME="process"><FONT FACE="Arial" SIZE="3"><B>Q: Is the picoJava-II core designed for a particular process?</B></FONT></A><A NAME="process"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="process"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">No. The Verilog model of the picoJava-II core contains no process-specific data, hence the core can 
+be retargeted to any process. We recommend, however, that you choose a 0.25-micron or better 
+process to achieve the expected clock frequency with minimum customization.&nbsp;</FONT> 
+<LI><A NAME="cad"><FONT FACE="Arial" SIZE="3"><B>Q: What CAD design tools are used in the picoJava-II design?</B></FONT></A><A NAME="cad"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="cad"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">Two major CAD tools are used in the design:&nbsp;</FONT> 
+<UL TYPE="SQUARE">
+<LI><FONT FACE="Arial" SIZE="3">Verilog: for RTL description</FONT> <BR>
+<FONT FACE="Arial" SIZE="3">The RTL is simulated or verified using Cadence Verilog-XL or Synopsys VCS.</FONT> 
+<LI><FONT FACE="Arial" SIZE="3">Synthesis: the RTL is synthesized using the Synopsys Design Compiler</FONT> 
+</UL>
+<LI><A NAME="platforms"><FONT FACE="Arial" SIZE="3"><B>Q: What platforms is the picoJava-II design environment based on?</B></FONT></A><A NAME="platforms"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="platforms"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The platform that is fully supported for the picoJava-II design environment is the SPARC</FONT><FONT FACE="Arial" SIZE="2"><SUP>TM</SUP></FONT><FONT FACE="Arial" SIZE="3">/Solaris</FONT><FONT FACE="Arial" SIZE="2"><SUP>TM</SUP></FONT><FONT FACE="Arial" SIZE="3"> 
+platform. Although you can port the simulation environment and tools to other platforms, they have not 
+been tested or verified for those platforms.&nbsp;</FONT> 
+<LI><A NAME="define"><FONT FACE="Arial" SIZE="3"><B>Q: Can licensees define their own instructions?</B></FONT></A><A NAME="define"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="define"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">One key factor in the compliance with the picoJava-II architecture is its Instruction Set Architecture 
+(ISA). For tools and applications to function on all implementations of the picoJava-II technology, the 
+ISA must be the same across all designs. Sun is considering provisions for reserving some picoJava-II 
+bytecodes as &quot;user-defined&quot; bytecodes for specific applications and will provide details to licensees 
+when they are available. Of course, you need comply with the ISA only if you intend to use the final 
+design in commercial products that carry the appropriate picoJava-II technology logo.&nbsp;</FONT> 
+<LI><A NAME="enhance"><FONT FACE="Arial" SIZE="3"><B>Q: Can licensees make microarchitectural enhancements to the picoJava II core?</B></FONT></A><A NAME="enhance"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="enhance"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The picoJava-II core is an implementation of the ISA that is defined for this core. You can use this 
+design as a reference to optimize, enhance, and reduce the costs of their implementations, or modify it 
+for use in different applications. The final designs must, however, pass the compliance test suite if they 
+are intended for use in commercial products that carry the appropriate logo.&nbsp;</FONT> 
+<LI><A NAME="vts"><FONT FACE="Arial" SIZE="3"><B>Q: What is the picoJava-II Validation Test Suite? What does it test?</B></FONT></A><A NAME="vts"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="vts"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The picoJava-II Validation Test Suite (picoJava-II VTS), a suite of tests written mostly in the picoJava-II 
+assembly language, is used to verify the functionality of the core. This test suite consists of many tests 
+that are targeted at testing different units within the picoJava-II core and verifying the entire instruction 
+set and corner cases for different instruction sequences.&nbsp;</FONT> 
+<LI><A NAME="access"><FONT FACE="Arial" SIZE="3"><B>Q: How do licensees access the picoJava-II VTS?</B></FONT></A><A NAME="access"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="access"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">Licensees can access the picoJava-II VTS as part of the design database available on the Web. They 
+can contact the Sun picoJava-II support group for technical support and assistance.&nbsp;</FONT> 
+<LI><A NAME="chips"><FONT FACE="Arial" SIZE="3"><B>Q: Are chips that are based on the picoJava-II core available today?</B></FONT></A><A NAME="chips"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="chips"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">The picoJava-II core is currently used in the Sun microJava</FONT><FONT FACE="Arial" SIZE="2"><SUP>TM</SUP></FONT><FONT FACE="Arial" SIZE="3"> (MJ-701) test chip for software 
+development, porting the JavaOS</FONT><FONT FACE="Arial" SIZE="2"><SUP>TM</SUP></FONT><FONT FACE="Arial" SIZE="3"> to the picoJava-II core, and demonstrating the performance of 
+picoJava-II core against competitive architectures.&nbsp;</FONT> </P>
+<P><FONT FACE="Arial" SIZE="3">Some licensees will also have available test chips based on the picoJava-II core in the future.&nbsp;</FONT> 
+<LI><A NAME="demos"><FONT FACE="Arial" SIZE="3"><B>Q: Has Sun designed any demo boards based on the picoJava-II core?</B></FONT></A><A NAME="demos"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="demos"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">Sun has designed a demo board based on the microJava (MJ-701) chip, which is used for software 
+development, porting the JavaOS to picoJava-II core, and performance evaluation of the picoJava-II 
+core against competitive architectures.&nbsp;</FONT> </P>
+<P ALIGN="CENTER"><HR SIZE="1" WIDTH="200" NOSHADE></P>
+<H3><A NAME="tools"><FONT FACE="Arial" SIZE="3">Software and Development Tools for the picoJava-II Core</FONT></A></H3>
+<LI><A NAME="vm"><FONT FACE="Arial" SIZE="3"><B>Q: Is there a Java virtual machine for the picoJava-II core?</B></FONT></A><A NAME="vm"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="vm"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">Sun is developing a Java virtual machine optimized for the picoJava-II core and may make it available 
+to licensees in the future.&nbsp;</FONT> 
+<LI><A NAME="dev-tools"><FONT FACE="Arial" SIZE="3"><B>Q: What development tools are available for the picoJava-II core?</B></FONT></A><A NAME="dev-tools"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="dev-tools"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">Sun is working closely with Metaware on the development of C and C++ compiler and other 
+development tools for the picoJava-II core. Alpha versions of these tools are available to licensees and 
+are being used for software programming.&nbsp;</FONT> 
+<LI><A NAME="access-tools"><FONT FACE="Arial" SIZE="3"><B>Q: How can licensees access picoJava-II development tools?</B></FONT></A><A NAME="access-tools"><FONT FACE="Arial" SIZE="3">&nbsp;</FONT></A><A NAME="access-tools"> </A>
+<P><BR>
+<FONT FACE="Arial" SIZE="3">Licensees can contact Metaware at </FONT><A HREF="http://www.metaware.com/spb_java.html"><FONT FACE="Arial" SIZE="3">http://www.metaware.com/spb_java.html</FONT></A><FONT FACE="Arial" SIZE="3"> for access to the 
+development tools for the picoJava-II core.&nbsp;</FONT></P>
+</OL>
+<P ALIGN="CENTER"><IMG SRC="purplepix.gif" WIDTH="100" HEIGHT="2" BORDER="0" ALT="*"></P>
+<P ALIGN="CENTER"><FONT FACE="Arial" SIZE="2"><B>| </B></FONT><A HREF="http://www.sun.com/microelectronics/communitysource/"><FONT FACE="Arial" SIZE="2"><B>Return to Sun Community Source Licensing Program for Microelectronics</B></FONT></A><FONT FACE="Arial" SIZE="2"><B> |&nbsp;</B></FONT></P>
+<P><FONT FACE="Arial" SIZE="2">The technology disclosed herein may be covered by patents or patents pending. To send comments about this site, please email 
+</FONT><A HREF="mailto:scsl-cores@sun.com"><FONT FACE="Arial" SIZE="2">scsl-cores@sun.com</FONT></A><FONT FACE="Arial" SIZE="2">.</FONT></P>
+<P>&nbsp;</P>
+<P ALIGN="CENTER"><FONT FACE="Arial" SIZE="2">[ </FONT><A HREF="http://www.sun.com/"><FONT FACE="Arial" SIZE="2">Home</FONT></A><FONT FACE="Arial" SIZE="2"> ] [ </FONT><A HREF="http://www.sun.com/sales/"><FONT FACE="Arial" SIZE="2">Buy</FONT></A><FONT FACE="Arial" SIZE="2"> ] [ </FONT><A HREF="http://www.sun.com/java/"><FONT FACE="Arial" SIZE="2">Java Technologies</FONT></A><FONT FACE="Arial" SIZE="2"> ] [ </FONT><A HREF="http://www.sun.com/products-n-solutions/"><FONT FACE="Arial" SIZE="2">Products &amp; Solutions</FONT></A><FONT FACE="Arial" SIZE="2"> ]</FONT> <BR>
+<FONT FACE="Arial" SIZE="2">[ </FONT><A HREF="http://www.sun.com/service/"><FONT FACE="Arial" SIZE="2">Support, Education &amp; Consulting</FONT></A><FONT FACE="Arial" SIZE="2"> ] [ </FONT><A HREF="http://www.sun.com/tech/"><FONT FACE="Arial" SIZE="2">Technology &amp; Research</FONT></A><FONT FACE="Arial" SIZE="2"> ] [ </FONT><A HREF="http://www.sun.com/developers/developers.html"><FONT FACE="Arial" SIZE="2">For Developers</FONT></A><FONT FACE="Arial" SIZE="2"> ] [ </FONT><A HREF="http://www.sun.com/corporateoverview/"><FONT FACE="Arial" SIZE="2">Corporate Information</FONT></A><FONT FACE="Arial" SIZE="2"> ]</FONT></P>
+<P ALIGN="CENTER"><FONT FACE="Arial" SIZE="2" COLOR="#999999">Questions or comments? </FONT><A HREF="http://www.sun.com/cgi-bin/comment-form.pl"><FONT FACE="Arial" SIZE="2">webmaster@sun.com</FONT></A> <BR>
+<FONT FACE="Arial" SIZE="2" COLOR="#999999">Copyright 1994-1999 Sun Microsystems, Inc., 901 San Antonio Road, Palo Alto, CA 94303 USA.</FONT> <BR>
+<FONT FACE="Arial" SIZE="2" COLOR="#999999">All rights reserved. </FONT><A HREF="http://www.sun.com/share/text/SMICopyright.html"><FONT FACE="Arial" SIZE="2">Legal Terms</FONT></A><FONT FACE="Arial" SIZE="2" COLOR="#999999">. </FONT><A HREF="http://www.sun.com/privacy/"><FONT FACE="Arial" SIZE="2">Privacy Policy</FONT></A><FONT FACE="Arial" SIZE="2" COLOR="#999999">.</FONT></P>
+<P ALIGN="CENTER"><FONT SIZE="1">&nbsp;</FONT></P>
+<P ALIGN="CENTER"><FONT SIZE="1">&nbsp;</FONT></P>
+<P ALIGN="CENTER"><FONT SIZE="2"><B><I><U><HR WIDTH="70%"></U></I></B></FONT><SCRIPT LANGUAGE="JavaScript">
+<!--
+/*By George Chiang (WA's JavaScript tutorial) http://www.geocities.com/SiliconValley/Vista/9892
+Credit MUST stay intact for use*/
+document.write("<center><font size='-1'>Last Modified: "+document.lastModified+"</font></center>")
+//-->
+</SCRIPT>
+ 
+<HR WIDTH="70%"></P>
+<P ALIGN="CENTER"><FONT SIZE="2"><B><I><U>Copyleft </U></I></B></FONT><FONT SIZE="2" COLOR="#3366FF"><B><I><U>Chang-woo,YANG</U></I></B></FONT></P>
+</body>
+</HTML>

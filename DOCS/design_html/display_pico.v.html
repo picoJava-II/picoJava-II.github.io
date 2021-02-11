@@ -1,0 +1,431 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/sim/env/display_pico.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "display_pico.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+
+<a name="display_picoJavaII"></a> <span class=K>module</span> <span class=MM>display_picoJavaII</span><a  href="hierarchy-m.html#display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="27"></a>   <span class=K>parameter</span> <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a> = <span class=S>&quot; &quot;</span>;
+<a name="28"></a>   <span class=K>parameter</span> <a  onClick="return qs(event,this)" class=PA href="#28">EOS</a> = 32'b0;
+<a name="29"></a>   <span class=K>reg</span> [8*512:1] <a  onClick="return qs(event,this)" class=SR href="#29">picoJava_status</a><a  href="hierarchy-s.p14.html#picoJava_status___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="30"></a>   <span class=K>reg</span> [63:0] <a  onClick="return qs(event,this)" class=SR href="#30">optop</a><a  href="hierarchy-s.p13.html#optop___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#30">vars</a><a  href="hierarchy-s.p19.html#vars___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#30">pc</a><a  href="hierarchy-s.p14.html#pc___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#30">psr</a><a  href="hierarchy-s.p14.html#psr___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#30">oplim</a><a  href="hierarchy-s.p13.html#oplim___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#30">trapbase</a><a  href="hierarchy-s.p17.html#trapbase___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#30">frame</a><a  href="hierarchy-s.p6.html#frame___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#30">cp</a><a  href="hierarchy-s.p3.html#cp___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#30">numInst</a><a  href="hierarchy-s.p12.html#numInst___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="31"></a>   <span class=K>reg</span> [63:0] <a  onClick="return qs(event,this)" class=SR href="#31">stack_top1</a><a  href="hierarchy-s.p16.html#stack_top1___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#31">stack_top2</a><a  href="hierarchy-s.p16.html#stack_top2___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#31">stack_top3</a><a  href="hierarchy-s.p16.html#stack_top3___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#31">stack_top4</a><a  href="hierarchy-s.p16.html#stack_top4___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#31">stack_top5</a><a  href="hierarchy-s.p16.html#stack_top5___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="32"></a>   <span class=K>reg</span> [63:0] <a  onClick="return qs(event,this)" class=SR href="#32">lockaddr0</a><a  href="hierarchy-s.p10.html#lockaddr0___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">lockaddr1</a><a  href="hierarchy-s.p10.html#lockaddr1___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">lockcount0</a><a  href="hierarchy-s.p10.html#lockcount0___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">lockcount1</a><a  href="hierarchy-s.p10.html#lockcount1___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">gcconfig</a><a  href="hierarchy-s.p7.html#gcconfig___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">global0</a><a  href="hierarchy-s.p7.html#global0___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">global1</a><a  href="hierarchy-s.p7.html#global1___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">global2</a><a  href="hierarchy-s.p7.html#global2___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">global3</a><a  href="hierarchy-s.p7.html#global3___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">brk1a</a><a  href="hierarchy-s.p2.html#brk1a___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">brk2a</a><a  href="hierarchy-s.p2.html#brk2a___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">brk12c</a><a  href="hierarchy-s.p2.html#brk12c___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">userrange1</a><a  href="hierarchy-s.p18.html#userrange1___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">userrange2</a><a  href="hierarchy-s.p18.html#userrange2___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">versionid</a><a  href="hierarchy-s.p19.html#versionid___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#32">hcr</a><a  href="hierarchy-s.p8.html#hcr___display_picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+    
+<a name="display_picoJavaII_int2ascii"></a>   <span class=K>task</span> <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>;
+<a name="35"></a>      <span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>;
+<a name="36"></a>      <span class=K>output</span> [63:0] <a  onClick="return qs(event,this)" class=SO href="#40">ascii_val</a>;
+      
+      <span class=K>begin</span>
+	<span class=K>if</span> ((<a  onClick="return qs(event,this)" class=SI href="#35">int_val</a> &amp;&amp; 32'b1) === 1'bx) <span class=K>begin</span>
+<a name="40"></a>	 <a  onClick="return qs(event,this)" class=SO href="#36">ascii_val</a> = <span class=S>&quot;xxxxxxxx&quot;</span>;
+	<span class=K>end</span>
+	<span class=K>else</span>
+	 <span class=K>begin</span>
+         <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[3:0] &lt;= 9)                 <span class=C>// 1st hex digit
+</span>            <a  onClick="return qs(event,this)" class=SO href="#40">ascii_val</a>[7:0] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[3:0] + 48; <span class=C>//  0 -&gt; '0' ...
+</span>         <span class=K>else</span>
+            <a  onClick="return qs(event,this)" class=SO href="#36">ascii_val</a>[7:0] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[3:0] + 87; <span class=C>// 10 -&gt; 'a' ...
+</span>
+         <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[7:4] &lt;= 9)                  <span class=C>// 2nd hex digit
+</span>            <a  onClick="return qs(event,this)" class=SO href="#40">ascii_val</a>[15:8] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[7:4] + 48; <span class=C>//  0 -&gt; '0' ...
+</span>         <span class=K>else</span>
+            <a  onClick="return qs(event,this)" class=SO href="#36">ascii_val</a>[15:8] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[7:4] + 87; <span class=C>// 10 -&gt; 'a' ...
+</span>         
+         <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[11:8] &lt;= 9)                   <span class=C>// 3rd hex digit
+</span>            <a  onClick="return qs(event,this)" class=SO href="#40">ascii_val</a>[23:16] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[11:8] + 48; <span class=C>//  0 -&gt; '0' ...
+</span>         <span class=K>else</span>
+            <a  onClick="return qs(event,this)" class=SO href="#36">ascii_val</a>[23:16] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[11:8] + 87; <span class=C>// 10 -&gt; 'a' ...
+</span>
+         <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[15:12] &lt;= 9)                   <span class=C>// 4th hex digit
+</span>            <a  onClick="return qs(event,this)" class=SO href="#40">ascii_val</a>[31:24] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[15:12] + 48; <span class=C>//  0 -&gt; '0' ...
+</span>         <span class=K>else</span>
+            <a  onClick="return qs(event,this)" class=SO href="#36">ascii_val</a>[31:24] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[15:12] + 87; <span class=C>// 10 -&gt; 'a' ...
+</span>
+         <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[19:16] &lt;= 9)                   <span class=C>// 5th hex digit
+</span>            <a  onClick="return qs(event,this)" class=SO href="#40">ascii_val</a>[39:32] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[19:16] + 48; <span class=C>//  0 -&gt; '0' ...
+</span>         <span class=K>else</span>
+            <a  onClick="return qs(event,this)" class=SO href="#36">ascii_val</a>[39:32] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[19:16] + 87; <span class=C>// 10 -&gt; 'a' ...
+</span>
+         <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[23:20] &lt;= 9)                   <span class=C>// 6th hex digit
+</span>            <a  onClick="return qs(event,this)" class=SO href="#40">ascii_val</a>[47:40] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[23:20] + 48; <span class=C>//  0 -&gt; '0' ...
+</span>         <span class=K>else</span>
+            <a  onClick="return qs(event,this)" class=SO href="#36">ascii_val</a>[47:40] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[23:20] + 87; <span class=C>// 10 -&gt; 'a' ...
+</span>
+         <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[27:24] &lt;= 9)                   <span class=C>// 7th hex digit
+</span>            <a  onClick="return qs(event,this)" class=SO href="#40">ascii_val</a>[55:48] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[27:24] + 48; <span class=C>//  0 -&gt; '0' ...
+</span>         <span class=K>else</span>
+            <a  onClick="return qs(event,this)" class=SO href="#36">ascii_val</a>[55:48] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[27:24] + 87; <span class=C>// 10 -&gt; 'a' ...
+</span>
+         <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[31:28] &lt;= 9)                   <span class=C>// 8th hex digit
+</span>            <a  onClick="return qs(event,this)" class=SO href="#40">ascii_val</a>[63:56] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[31:28] + 48; <span class=C>//  0 -&gt; '0' ...
+</span>         <span class=K>else</span>
+            <a  onClick="return qs(event,this)" class=SO href="#36">ascii_val</a>[63:56] = <a  onClick="return qs(event,this)" class=SI href="#35">int_val</a>[31:28] + 87; <span class=C>// 10 -&gt; 'a' ...
+</span>	 <span class=K>end</span>
+      <span class=K>end</span>
+   <span class=K>endtask</span>
+         
+        
+<a name="display_picoJavaII_get_status"></a>   <span class=K>task</span> <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_get_status">get_status</a>;
+<a name="89"></a>      <span class=K>reg</span> [31:0] <a  onClick="return qs(event,this)" class=SR href="#99">register</a>;
+<a name="90"></a>      <span class=K>reg</span> [31:0] <a  onClick="return qs(event,this)" class=SR href="#90">int_val</a>;
+<a name="91"></a>      <span class=K>reg</span> [63:0] <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+      <span class=K>begin</span>
+         
+         <span class=C>// all subsequent register assignments in this task.
+</span>         <span class=C>// register = 'h12345678;
+</span>
+	 <span class=C>// OPTOP Register
+</span><a name="99"></a>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.pipe.pipe_dpath.shadow_optop[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#30">optop</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+         
+	 <span class=C>// VARS Register
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.vars_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#30">vars</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+         <span class=C>// PC Register
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> =  <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.pipe.pipe_dpath.pc_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#30">pc</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	 <span class=C>// PSR Register
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.psr_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#30">psr</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	 <span class=C>// OPLIM Register
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.oplim_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#30">oplim</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+         
+	 <span class=C>// TRAPBASE Register
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.trapbase_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#30">trapbase</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	 <span class=C>// FRAME Register
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.frame_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#30">frame</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+         <span class=C>// CP Register
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.const_pool_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#30">cp</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+<span class=C>// remaining regs (16) except sc_bottom introduced for comparison 
+</span>	     <span class=C>// lockaddr0 
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.lockaddr0_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">lockaddr0</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	     <span class=C>// lockaddr1
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.lockaddr1_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">lockaddr1</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	     <span class=C>// lockcount0 
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.lockcount0_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">lockcount0</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	     <span class=C>// lockcount1
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.lockcount1_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">lockcount1</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+         <span class=C>// globals are to be got from RCU, not ex_regs
+</span>	     <span class=C>// global0 
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.rcu.rcu_dpath.gl_reg0[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">global0</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	     <span class=C>// global1
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.rcu.rcu_dpath.gl_reg1[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">global1</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	     <span class=C>// global2
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.rcu.rcu_dpath.gl_reg2[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">global2</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	     <span class=C>// global3 
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.rcu.rcu_dpath.gl_reg3[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">global3</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	     <span class=C>// userrange1
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.userrange1_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">userrange1</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	     <span class=C>// userrange2
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.userrange2_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">userrange2</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	     <span class=C>// brk1a 
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.brk1a_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">brk1a</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	     <span class=C>// brk2a
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.brk2a_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">brk2a</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	     <span class=C>// brk12c 
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.brk12c_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">brk12c</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	     <span class=C>// gcconfig
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.gc_config_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">gcconfig</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	     <span class=C>// versionid
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.versionid_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">versionid</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+	     <span class=C>// hcr
+</span>         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.hcr_w[31:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#32">hcr</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+         <span class=C>// Top of stack cache
+</span>         
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<span class=D>`PICOJAVAII</span>.top1, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#31">stack_top1</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<span class=D>`PICOJAVAII</span>.top2, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#31">stack_top2</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<span class=D>`PICOJAVAII</span>.top3, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#31">stack_top3</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<span class=D>`PICOJAVAII</span>.top4, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#31">stack_top4</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<span class=D>`PICOJAVAII</span>.top5, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#31">stack_top5</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+         <a  onClick="return qs(event,this)" class=SR href="#89">register</a> = <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ifu.instrs_folded_w[2:0];
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_int2ascii">int2ascii</a>(<a  onClick="return qs(event,this)" class=SR href="#89">register</a>, <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>);
+         <a  onClick="return qs(event,this)" class=SR href="#30">numInst</a> = <a  onClick="return qs(event,this)" class=SR href="#91">ascii_val</a>;
+
+         <span class=C>// COMPILE STATUS STRING FOR COSIMULATION:
+</span>         <a  onClick="return qs(event,this)" class=SR href="#29">picoJava_status</a> = 0;
+         <span class=C>// Add command for string comparision during cosimulation
+</span>         <a  onClick="return qs(event,this)" class=SR href="#29">picoJava_status</a> = {<a  onClick="return qs(event,this)" class=SR href="#29">picoJava_status</a>, <span class=S>&quot;compareResults {&quot;</span>};  
+         
+	 <span class=C>// Add registers, stack cache ... etc. separated by spaces
+</span>         <a  onClick="return qs(event,this)" class=SR href="#29">picoJava_status</a>= {<a  onClick="return qs(event,this)" class=SR href="#29">picoJava_status</a>, 
+     <a  onClick="return qs(event,this)" class=SR href="#30">optop</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#30">vars</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#30">pc</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#30">psr</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, 
+     <a  onClick="return qs(event,this)" class=SR href="#30">oplim</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#30">trapbase</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#30">frame</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#30">cp</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, 
+     <a  onClick="return qs(event,this)" class=SR href="#32">lockaddr0</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#32">lockaddr1</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#32">lockcount0</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#32">lockcount1</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>,
+     <a  onClick="return qs(event,this)" class=SR href="#32">global0</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#32">global1</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#32">global2</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#32">global3</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>,
+     <a  onClick="return qs(event,this)" class=SR href="#32">userrange1</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#32">userrange2</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#32">brk1a</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#32">brk2a</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>,
+     <a  onClick="return qs(event,this)" class=SR href="#32">brk12c</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#32">gcconfig</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#32">versionid</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#32">hcr</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>,
+     <a  onClick="return qs(event,this)" class=SR href="#31">stack_top1</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#31">stack_top2</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#31">stack_top3</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#31">stack_top4</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>,
+     <a  onClick="return qs(event,this)" class=SR href="#31">stack_top5</a>, <a  onClick="return qs(event,this)" class=PA href="#27">SPACE</a>, <a  onClick="return qs(event,this)" class=SR href="#30">numInst</a>};
+
+         <span class=C>// Add end delimiters
+</span>         <a  onClick="return qs(event,this)" class=SR href="#29">picoJava_status</a> = {<a  onClick="return qs(event,this)" class=SR href="#29">picoJava_status</a>, <span class=S>&quot;}&quot;</span>, <a  onClick="return qs(event,this)" class=PA href="#28">EOS</a>};      
+         <span class=C>// $display (&quot;\nPICOJAVA STATUS is = %s, %s, %s\n&quot;, picoJava_status, stack_top0, stack_top1);
+</span>      <span class=K>end</span>
+   <span class=K>endtask</span>
+
+<a name="display_picoJavaII_dumpReg"></a>   <span class=K>task</span> <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_dumpReg">dumpReg</a>;
+
+      <span class=K>begin</span>
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_get_status">get_status</a>;
+         <span class=ST>$display</span> (<span class=S>&quot;\n&quot;</span>);
+         <span class=ST>$display</span> (<span class=S>&quot;Optop = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#30">optop</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Vars = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#30">vars</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;PC = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#30">pc</a>);
+  	     <span class=ST>$display</span> (<span class=S>&quot;PSR = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#30">psr</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Oplim = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#30">oplim</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Trapbase = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#30">trapbase</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Frame = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#30">frame</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;CP = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#30">cp</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Lockaddr0 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">lockaddr0</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Lockaddr1 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">lockaddr1</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Lockcount0 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">lockcount0</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Lockcount1 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">lockcount1</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Global0 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">global0</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Global1 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">global1</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Global2 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">global2</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Global3 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">global3</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Userrange1 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">userrange1</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Userrange2 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">userrange2</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Brk1a = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">brk1a</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Brk2a = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">brk2a</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;Brk12c = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">brk12c</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;GCconfig = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">gcconfig</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;VersionId = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">versionid</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;HCR = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#32">hcr</a>);
+         <span class=ST>$display</span> (<span class=S>&quot;\n&quot;</span>);
+      <span class=K>end</span>   
+
+   <span class=K>endtask</span>
+
+
+<a name="display_picoJavaII_dumpStack"></a>   <span class=K>task</span> <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_dumpStack">dumpStack</a>;
+
+      <span class=K>begin</span>
+         <a  onClick="return qs(event,this)" class=T href="#display_picoJavaII_get_status">get_status</a>;
+         <span class=ST>$display</span> (<span class=S>&quot;Top1 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#31">stack_top1</a>);     
+         <span class=ST>$display</span> (<span class=S>&quot;Top2 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#31">stack_top2</a>);     
+         <span class=ST>$display</span> (<span class=S>&quot;Top3 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#31">stack_top3</a>);     
+         <span class=ST>$display</span> (<span class=S>&quot;Top4 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#31">stack_top4</a>);     
+         <span class=ST>$display</span> (<span class=S>&quot;Top5 = %s\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#31">stack_top5</a>);     
+      <span class=K>end</span>
+
+   <span class=K>endtask</span>
+         
+<span class=K>endmodule</span>
+
+
+
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:17 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/sim/env/display_pico.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

@@ -1,0 +1,1118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/sim/env/sys.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "sys.v.p2.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<center><table class=NB cols=2 nosave><tr><td align="center"><font color="#808080">1</font></td><td align="center"><a  href="sys.v.p2.html">2</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+
+ 
+<span class=C>// This is the top level netlist for picoJava-II simulation
+</span><span class=C>// It contains:
+</span><span class=C>//
+</span><span class=C>//   1. picoJava-II RTL core
+</span><span class=C>//   2. memory controller
+</span><span class=C>//   3. clock generator
+</span><span class=C>//   4. support circuit to the RTL core
+</span><span class=C>//   5. command line arguments handler
+</span><span class=C>//   6. Top level debugger
+</span><span class=C>//   7. run-stop-continue control circuit
+</span><span class=C>//   8. co-simulation with instruction simulator
+</span><span class=C>//   9. display monitor
+</span><span class=C>//  10. real address disassembler
+</span>
+<span class=M>`include</span> <a  onClick="return qs(event,this)" class=S href="sys.h.html">&quot;sys.h&quot;</a>
+<span class=M>`include</span> <a  onClick="return qs(event,this)" class=S href="returncode.h.html">&quot;returncode.h&quot;</a>
+
+<span class=C>// The top level module
+</span>
+<a name="picoJavaII"></a><span class=K>module</span> <span class=MM>picoJavaII</span><a  href="hierarchy-m.p4.html#picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;   
+
+<span class=M>`include</span> <a  onClick="return qs(event,this)" class=S href="report.h.html">&quot;report.h&quot;</a>
+<span class=M>`include</span> <a  onClick="return qs(event,this)" class=S href="init_icache.h.html">&quot;init_icache.h&quot;</a>
+<span class=M>`include</span> <a  onClick="return qs(event,this)" class=S href="defines.h.html">&quot;defines.h&quot;</a>
+
+<span class=C>// verification flags definition
+</span><a name="52"></a><span class=K>reg</span>[63:0]   <a  onClick="return qs(event,this)" class=SR href="sys.v.html#487">clk_count</a><a  href="hierarchy-s.p3.html#clk_count___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="53"></a><span class=K>reg</span>         <a  onClick="return qs(event,this)" class=SR href="sys.v.html#647">have_trap</a><a  href="hierarchy-s.p8.html#have_trap___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="54"></a><span class=K>reg</span>        	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#654">end_of_simulation</a><a  href="hierarchy-s.p5.html#end_of_simulation___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="55"></a><span class=K>wire</span>        	<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1109">monitor_end_sim</a><a  href="hierarchy-s.p11.html#monitor_end_sim___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="56"></a><span class=K>reg</span>        	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#655">end_of_address_touched</a><a  href="hierarchy-s.p5.html#end_of_address_touched___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="57"></a><span class=K>reg</span>        [8*256:0]<a  onClick="return qs(event,this)" class=SR href="sys.v.html#469">string</a><a  href="hierarchy-s.p16.html#string___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="58"></a><span class=K>integer</span>        	<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#404">need_resolution</a><a  href="hierarchy-s.p12.html#need_resolution___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="59"></a><span class=K>reg</span>        [31:0]	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#484">return_code</a><a  href="hierarchy-s.p15.html#return_code___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="60"></a><span class=K>reg</span>        	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#422">cosim</a><a  href="hierarchy-s.p3.html#cosim___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="61"></a><span class=K>reg</span>        	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#410">pipeline</a><a  href="hierarchy-s.p14.html#pipeline___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="62"></a><span class=K>reg</span>        	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#416">stack</a><a  href="hierarchy-s.p16.html#stack___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="63"></a><span class=K>integer</span>        	<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#783">opt</a><a  href="hierarchy-s.p13.html#opt___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="64"></a><span class=K>integer</span>         <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#64">i</a><a  href="hierarchy-s.p9.html#i___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="65"></a><span class=K>reg</span> [31:0]        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#643">oldpc</a><a  href="hierarchy-s.p13.html#oldpc___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="66"></a><span class=K>integer</span>         <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#644">hang_count</a><a  href="hierarchy-s.p8.html#hang_count___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="67"></a><span class=K>integer</span>         <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#67">dsv_status</a><a  href="hierarchy-s.p4.html#dsv_status___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="68"></a><span class=K>reg</span>[63:0]       <a  onClick="return qs(event,this)" class=SR href="sys.v.html#432">max_instr_count</a><a  href="hierarchy-s.p11.html#max_instr_count___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>[0:0];
+<a name="69"></a><span class=K>reg</span>[63:0]       <a  onClick="return qs(event,this)" class=SR href="sys.v.html#440">max_clk_count</a><a  href="hierarchy-s.p11.html#max_clk_count___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>[0:0];
+
+<span class=C>// no. of instr_complete_w commands recd - could correspond to more than 
+</span><span class=C>// one instr for folded groups
+</span><a name="73"></a><span class=K>integer</span>        	<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#646">instr_complete_count</a><a  href="hierarchy-s.p9.html#instr_complete_count___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  <span class=C>// this shd really be 64bit
+</span>
+<span class=C>// actual no. of instructions executed so far, counts traps and 
+</span><span class=C>// interrupts as one instruction
+</span><a name="77"></a><span class=K>reg</span>[63:0]    	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#645">total_instr_count</a><a  href="hierarchy-s.p17.html#total_instr_count___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;   
+
+<a name="79"></a><span class=K>reg</span>        	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#407">have_interrupt</a><a  href="hierarchy-s.p8.html#have_interrupt___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="80"></a><span class=K>reg</span> [63:0]        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#80">ascii</a><a  href="hierarchy-s.html#ascii___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="81"></a><span class=K>reg</span> [31:0]  <a  onClick="return qs(event,this)" class=SR href="sys.v.html#791">top1</a><a  href="hierarchy-s.p17.html#top1___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#796">top2</a><a  href="hierarchy-s.p17.html#top2___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#801">top3</a><a  href="hierarchy-s.p17.html#top3___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#807">top4</a><a  href="hierarchy-s.p17.html#top4___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#812">top5</a><a  href="hierarchy-s.p17.html#top5___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="82"></a><span class=K>integer</span>        	<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#82">isize</a><a  href="hierarchy-s.p9.html#isize___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="83"></a><span class=K>integer</span>        	<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#83">dsize</a><a  href="hierarchy-s.p4.html#dsize___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="84"></a><span class=K>reg</span> [2:0] <a  onClick="return qs(event,this)" class=SR href="sys.v.html#524">dsz</a><a  href="hierarchy-s.p4.html#dsz___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SR href="sys.v.html#525">isz</a><a  href="hierarchy-s.p9.html#isz___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="85"></a><span class=K>integer</span>         <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#782">stack_bottom</a><a  href="hierarchy-s.p16.html#stack_bottom___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="87"></a><span class=K>reg</span>        	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#406">wr_optop</a><a  href="hierarchy-s.p20.html#wr_optop___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// support recording on/off
+</span><a name="90"></a><span class=K>reg</span>[31:0] <a  onClick="return qs(event,this)" class=SR href="sys.v.html#90">recording_times</a><a  href="hierarchy-s.p15.html#recording_times___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>[0:999];   <span class=C>// this shd really be 64bit
+</span><a name="91"></a><span class=K>integer</span> <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#91">current_recording_times_index</a><a  href="hierarchy-s.p3.html#current_recording_times_index___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="92"></a><span class=K>integer</span> <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#92">recording_on</a><a  href="hierarchy-s.p15.html#recording_on___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// signal definition
+</span><span class=C>// input
+</span><a name="96"></a><span class=K>reg</span>             <a  onClick="return qs(event,this)" class=SR href="sys.v.html#663">sys_clk</a><a  href="hierarchy-s.p16.html#sys_clk___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="97"></a><span class=K>reg</span>        	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#653">pj_reset</a><a  href="hierarchy-s.p14.html#pj_reset___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="98"></a><span class=K>reg</span>        	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#491">pj_boot8</a><a  href="hierarchy-s.p14.html#pj_boot8___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="99"></a><span class=K>reg</span>        	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#511">pj_no_fpu</a><a  href="hierarchy-s.p14.html#pj_no_fpu___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="100"></a><span class=K>reg</span>        	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#515">pj_scan_mode</a><a  href="hierarchy-s.p14.html#pj_scan_mode___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="101"></a><span class=K>reg</span>        	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#516">pj_scan_in</a><a  href="hierarchy-s.p14.html#pj_scan_in___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="102"></a><span class=K>wire</span> [31:0]        <a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1088">pj_data_in</a><a  href="hierarchy-s.p14.html#pj_data_in___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="103"></a><span class=K>wire</span>                 <a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1108">pj_clk</a><a  href="hierarchy-s.p14.html#pj_clk___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// inout
+</span><a name="106"></a><span class=K>wire</span> [1:0] <a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1093">pj_ack</a><a  href="hierarchy-s.p14.html#pj_ack___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="107"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#107">pj_nc</a><a  href="hierarchy-s.p14.html#pj_nc___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="108"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#108">pj_su</a><a  href="hierarchy-s.p14.html#pj_su___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="109"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1073">pj_tv</a><a  href="hierarchy-s.p14.html#pj_tv___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="110"></a><span class=K>wire</span> [3:0] <a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1076">pj_type</a><a  href="hierarchy-s.p14.html#pj_type___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="111"></a><span class=K>wire</span> [1:0] <a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1074">pj_size</a><a  href="hierarchy-s.p14.html#pj_size___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="113"></a><span class=K>wire</span>        	<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1104">pj_nmi</a><a  href="hierarchy-s.p14.html#pj_nmi___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="114"></a><span class=K>wire</span>        [3:0]	<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1105">pj_irl</a><a  href="hierarchy-s.p14.html#pj_irl___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// out
+</span><a name="117"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#117">pj_reset_out</a><a  href="hierarchy-s.p14.html#pj_reset_out___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="118"></a><span class=K>wire</span> [31:00] <a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1071">pj_data_out</a><a  href="hierarchy-s.p14.html#pj_data_out___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="119"></a><span class=K>wire</span> [29:00] <a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1070">pj_address</a><a  href="hierarchy-s.p14.html#pj_address___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="120"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#120">pj_brk1_sync</a><a  href="hierarchy-s.p14.html#pj_brk1_sync___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="121"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#121">pj_brk2_sync</a><a  href="hierarchy-s.p14.html#pj_brk2_sync___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="122"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#122">pj_in_halt</a><a  href="hierarchy-s.p14.html#pj_in_halt___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="123"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#123">pj_inst_complete</a><a  href="hierarchy-s.p14.html#pj_inst_complete___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// Internal module connections....
+</span><a name="126"></a><span class=K>wire</span>        	<a  onClick="return qs(event,this)" class=SW href="sys.v.html#126">pj_icureq</a><a  href="hierarchy-s.p14.html#pj_icureq___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+<a name="127"></a><span class=K>wire</span>         [31:0]	<a  onClick="return qs(event,this)" class=SW href="sys.v.html#127">pj_icuaddr</a><a  href="hierarchy-s.p14.html#pj_icuaddr___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="128"></a><span class=K>wire</span>        	<a  onClick="return qs(event,this)" class=SW href="sys.v.html#128">pj_icutype</a><a  href="hierarchy-s.p14.html#pj_icutype___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+<a name="129"></a><span class=K>wire</span>         [1:0]	<a  onClick="return qs(event,this)" class=SW href="sys.v.html#129">pj_icusize</a><a  href="hierarchy-s.p14.html#pj_icusize___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="130"></a><span class=K>wire</span>         [1:0]	<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1060">pj_icuack</a><a  href="hierarchy-s.p14.html#pj_icuack___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="131"></a><span class=K>wire</span>         [31:0]	<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1061">pj_datain</a><a  href="hierarchy-s.p14.html#pj_datain___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="132"></a><span class=K>wire</span>        	<a  onClick="return qs(event,this)" class=SW href="sys.v.html#132">pj_dcureq</a><a  href="hierarchy-s.p14.html#pj_dcureq___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+<a name="133"></a><span class=K>wire</span>         [31:0]	<a  onClick="return qs(event,this)" class=SW href="sys.v.html#133">pj_dcuaddr</a><a  href="hierarchy-s.p14.html#pj_dcuaddr___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="134"></a><span class=K>wire</span>        [2:0]	<a  onClick="return qs(event,this)" class=SW href="sys.v.html#134">pj_dcutype</a><a  href="hierarchy-s.p14.html#pj_dcutype___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+<a name="135"></a><span class=K>wire</span>         [1:0]	<a  onClick="return qs(event,this)" class=SW href="sys.v.html#135">pj_dcusize</a><a  href="hierarchy-s.p14.html#pj_dcusize___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="136"></a><span class=K>wire</span>         [1:0]	<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1067">pj_dcuack</a><a  href="hierarchy-s.p14.html#pj_dcuack___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="137"></a><span class=K>wire</span>         [31:0]	<a  onClick="return qs(event,this)" class=SW href="sys.v.html#137">pj_dataout</a><a  href="hierarchy-s.p14.html#pj_dataout___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="138"></a><span class=K>wire</span>        	<a  onClick="return qs(event,this)" class=SW href="sys.v.html#138">pj_clk_out</a><a  href="hierarchy-s.p14.html#pj_clk_out___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// signals for Random SMU hold generator...
+</span>
+<a name="142"></a><span class=K>integer</span>         <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#175">sm_hold_seed</a><a  href="hierarchy-s.p16.html#sm_hold_seed___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="143"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#968">wait_time</a><a  href="hierarchy-s.p20.html#wait_time___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="144"></a><span class=K>reg</span> [31:0]      <a  onClick="return qs(event,this)" class=SR href="sys.v.html#965">rand_time</a><a  href="hierarchy-s.p15.html#rand_time___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=C>//reg             rand_smu_hold;
+</span><a name="146"></a><span class=K>reg</span>             <a  onClick="return qs(event,this)" class=SR href="sys.v.html#170">rand_smu_start</a><a  href="hierarchy-s.p15.html#rand_smu_start___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="148"></a><span class=K>reg</span>        [8*256:0]<a  onClick="return qs(event,this)" class=SR href="sys.v.html#148">filename1</a><a  href="hierarchy-s.p6.html#filename1___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="149"></a><span class=K>reg</span>        [8*256:0]<a  onClick="return qs(event,this)" class=SR href="sys.v.html#149">filename2</a><a  href="hierarchy-s.p6.html#filename2___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="150"></a><span class=K>reg</span>        [8*256:0]<a  onClick="return qs(event,this)" class=SR href="sys.v.html#150">filename3</a><a  href="hierarchy-s.p6.html#filename3___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="151"></a><span class=K>reg</span>        [8*256:0]<a  onClick="return qs(event,this)" class=SR href="sys.v.html#151">filename4</a><a  href="hierarchy-s.p6.html#filename4___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="152"></a><span class=K>reg</span>        [8*256:0]<a  onClick="return qs(event,this)" class=SR href="sys.v.html#152">filename5</a><a  href="hierarchy-s.p6.html#filename5___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="153"></a><span class=K>reg</span>        [8*256:0]<a  onClick="return qs(event,this)" class=SR href="sys.v.html#153">filename6</a><a  href="hierarchy-s.p6.html#filename6___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="154"></a><span class=K>reg</span>        [8*256:0]<a  onClick="return qs(event,this)" class=SR href="sys.v.html#154">filename7</a><a  href="hierarchy-s.p6.html#filename7___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="155"></a><span class=K>reg</span>        [8*256:0]<a  onClick="return qs(event,this)" class=SR href="sys.v.html#155">filename8</a><a  href="hierarchy-s.p6.html#filename8___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// pj_halt signals....
+</span>
+<a name="159"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1106">pj_halt</a><a  href="hierarchy-s.p14.html#pj_halt___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="160"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#999">pj_halt_in</a><a  href="hierarchy-s.p14.html#pj_halt_in___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="161"></a><span class=K>reg</span> <a  onClick="return qs(event,this)" class=SR href="sys.v.html#164">disable_halt</a><a  href="hierarchy-s.p4.html#disable_halt___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>initial</span>
+<a name="164"></a>	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#161">disable_halt</a> = 1'b0;
+
+
+<span class=C>//      Initializing for Random SMU hold...
+</span><span class=K>initial</span> <span class=K>begin</span>
+
+<a name="170"></a>  <a  onClick="return qs(event,this)" class=SR href="sys.v.html#146">rand_smu_start</a> = 1'b0;
+<span class=C>//  rand_smu_hold = 1'b0;
+</span><span class=C>//  `PICOJAVAII.`DESIGN.rand_smu_hold = 1'b0;
+</span>
+  <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;hold_seed_2&quot;</span>))
+<a name="175"></a>   <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#142">sm_hold_seed</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#80">RAND_HOLD_SEED_2</a>;
+  <span class=K>else</span> <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;hold_seed_3&quot;</span>))
+   <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#142">sm_hold_seed</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#81">RAND_HOLD_SEED_3</a>;
+  <span class=K>else</span>
+   <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#142">sm_hold_seed</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#79">RAND_HOLD_SEED</a>;
+
+
+  <span class=K>repeat</span> (50)
+        @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#103">pj_clk</a>) #1;
+
+  <a  onClick="return qs(event,this)" class=SR href="sys.v.html#146">rand_smu_start</a> = 1'b1;
+
+<span class=K>end</span>
+
+<span class=C>// Monitor for testing # resumes
+</span>
+<span class=K>always</span> <span class=K>begin</span>
+
+@(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#122">pj_in_halt</a>);
+
+<span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;num_resumes_check&quot;</span>)) <span class=K>begin</span>
+      <span class=K>if</span>(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.pc_e == <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.pc_c)
+         <span class=ST>$display</span>(<span class=S>&quot;Warning: %d: E and C Stage have same PC value for opcode %x. \n Multiple resumes may be required.&quot;</span>,<a  onClick="return qs(event,this)" class=SR href="sys.v.html#52">clk_count</a>,<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.  <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.opcode_c);
+<span class=K>end</span>
+
+<span class=K>end</span>
+
+
+<span class=C>// command line argument processing
+</span><span class=C>// load all the trap handlers
+</span><span class=C>// load the class file(s)
+</span>  <span class=K>initial</span>
+     <span class=K>begin</span>
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;usage&quot;</span>)) <span class=K>begin</span>
+         <span class=ST>$display</span>(<span class=S>&quot; +usage&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tprint out the usage info&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +class+&lt;classfile0&gt;+&lt;classfile1&gt;+...&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tdefine the classes to be loaded&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tdefault: no class file&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +restart&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \trestart from a checkpointed state&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +max_clk_count&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tfile max_clk_count contains maximum no. of clocks to run for&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +max_instr_count&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tfile max_instr_count contains maximum no. of instructions to run for&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +nofpu&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tno fpu present&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tdefault: fpu present&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +le&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tlittle endian mode&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tdefault: big endian&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +boot8&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tboot 8-bit mode&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tdefault: boot 32-bit mode&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +define+TPL_DBG&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tTurn on top-level debugging flag&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +define+IU_DBG&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tTurn on integer unit debugging flag&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +define+DCU_DBG&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tTurn on data cache unit debugging flag&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +define+ICU_DBG&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tTurn on instr cache unit debugging flag&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +define+FPU_DBG&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tTurn on float point unit debugging flag&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +define+PSU_DBG&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tTurn on power-on, scan, clock, reset unit debugging flag&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +define+SMU_DBG&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tTurn on stack cache dribber unit debugging flag&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +define+BIU_DBG&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tTurn on Bus interface unit debugging flag&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +cosim+&lt;path&gt;&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tRun with the instruction simulator ias&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +dcu_debug&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tEnables the DCU debug monitor, which prints out all accesses&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tmade to the DCU to the log file&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +fpu_debug&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tEmits verbose information for FPU debugging in the log file&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +sst_control&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tCreates a signalscan dump file for a set of clock-cycle ranges&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +dump_ias_stats&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tSends a dumpStats command to ias at the end of the run&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +expcount&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tFlags runtime exception handlers to increment an exception counter&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tand return instead of aborting the test&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +cacheinvalidate&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tFlags reset code to explicitly invalidate instruction and&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tdata caches before enabling them&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +flush&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tFlags reset code to flush the data caches after the test finishes&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +dcu_off&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tFlags reset code to keep the data cache disabled&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +icu_off&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tFlags reset code to keep the instruction cache disabled&quot;</span>);         <span class=ST>$display</span>(<span class=S>&quot; +maxwm&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tFlags reset code to set dribbler watermark settings to&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tthe highest legal values of 48 and 56&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +minwm&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tFlags reset code to set dribbler watermark settings to&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tthe lowest legal values of 8 and 16&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +handle&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tFlags to trap handlers that object references should use handles.&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tThis causes all object references to have the handle bit set.&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +ibuf_mon&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tEnables the instruction buffer monitor&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +statistics&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tEnables statistics monitor&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +smu_check&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tEnables SMU monitor&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +rand_ack1&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +rand_ack2&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tInitializing the memory control to return memory acks at random intervals.&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \trand_ack1 randomizes the number of clocks to the first ack.&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \trand_ack2 randomizes the number of clocks to subsequent acks.&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +smu_hold&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tInjects random SMU hold signals at the full-chip level&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +hold_seed_2&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +hold_seed_3&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \thold_seed2 and hold_seed3 use different seeds from the default smu_hold.&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \thold_seed2 and hold_seed3 must also have +smu_hold specified&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +int_cmd&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tGenerates controlled interrupts in relation to the occurrence of&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tthe event specified by INT_TRIGGER&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +int_cycle_0&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +int_cycle_1&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +int_cycle_2&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +int_cycle_3&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +int_cycle_4&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tThese signals specify how many cycles after the INT_TRIGGER&quot;</span>);      
+         <span class=ST>$display</span>(<span class=S>&quot; \tevent (0, 1, 2, 3, or 4) the interrupt is sent to the cpu&quot;</span>);        
+         <span class=ST>$display</span>(<span class=S>&quot; +int_cntl&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tCreates multiple interrupts simultaneously&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +int_random&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tEnables random interrupts to the CPU&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +scheduled_interrupts&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tReads pairs of hexadecimal numbers from the file interrupt_table&quot;</span>); 
+         <span class=ST>$display</span>(<span class=S>&quot; \tin the current directory, one number on each line. &quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tThe first number in a pair indicates the clock cycle in which to signal an interrupt.&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tThe IRL of the interrupt is the second number in the pair.&quot;</span>);       
+         <span class=ST>$display</span>(<span class=S>&quot; +no_io_pin_stats&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tsuppress printing of I/O pin statistics at the end of simulation&quot;</span>); 
+         <span class=ST>$display</span>(<span class=S>&quot; +no_ucode_mon&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tDisable microcode monitor, which is enabled by default.&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +pj_halt&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tForces the pj_halt signal to high for the duration of the test.&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +record&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tRecords the pin assertions and dump them to pico_pin.tape and pico_pout.tape&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +bmem+&lt;filename&gt;&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tLoads a .binit format file into memory&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +tmem+&lt;filename&gt;&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tLoads a .init format file into memory&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; +halt_check&quot;</span>);
+         <span class=ST>$display</span>(<span class=S>&quot; \tCheck that breakpoint halt mode was entered at least once&quot;</span>);
+
+         <span class=ST>$finish</span>;
+        <span class=K>end</span>
+
+        <span class=C>// +record will activate the recorder during simulation
+</span>        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;record&quot;</span>))
+          picoJavaII_pin_recorder.record_on = 1'b1;
+        <span class=K>else</span> 
+          picoJavaII_pin_recorder.record_on = 1'b0;
+
+<span class=M>`ifdef</span> <span class=D>SIGNALSCAN</span>
+<span class=P>
+</span><span class=P>`ifdef TPL_LOCAL_DBG
+</span><span class=P>        </span><span class=P>// $dumpfile(&quot;TPL.dump&quot;);
+</span>	<span class=P>// $dumpvars(0, `PICOJAVAII);
+</span><span class=P>        $recordfile(</span><span class=P>&quot;TPL.sst&quot;</span><span class=P>, </span><span class=P>&quot;wrapsize=50M&quot;</span><span class=P>);
+</span><span class=P>        $recordvars(</span><span class=P>&quot;primitives&quot;</span><span class=P>, </span><span class=P>&quot;drivers&quot;</span><span class=P>);
+</span><span class=P>`endif
+</span><span class=P>
+</span><span class=P>        current_recording_times_index = 0;
+</span><span class=P>
+</span><span class=P>        </span><span class=P>// changes to support recording on/off
+</span><span class=P>
+</span><span class=P>        if ($test$plusargs(</span><span class=P>&quot;sst_control&quot;</span><span class=P>)) begin
+</span><span class=P>          $display(</span><span class=P>&quot;Generating .sst file with recording control&quot;</span><span class=P>);
+</span><span class=P>          $display(</span><span class=P>&quot;reading start and end time pairs for .sst recording from file: sst_control&quot;</span><span class=P>);
+</span><span class=P>          $readmemh (</span><span class=P>&quot;sst_control&quot;</span><span class=P>, recording_times);
+</span><span class=P>          $recordoff;   </span><span class=P>// will be switched on later 
+</span><span class=P>        end
+</span><span class=P>
+</span><span class=P>        if ($test$plusargs(</span><span class=P>&quot;define+TPL_DBG&quot;</span><span class=P>)) begin
+</span><span class=P>          </span><span class=P>// $dumpfile(&quot;TPL.dump&quot;);
+</span>          <span class=P>// $dumpvars(0, `PICOJAVAII);
+</span><span class=P>            $recordfile(</span><span class=P>&quot;TPL.sst&quot;</span><span class=P>, </span><span class=P>&quot;wrapsize=50M&quot;</span><span class=P>);
+</span><span class=P>          $recordvars(</span><span class=P>&quot;primitives&quot;</span><span class=P>, </span><span class=P>&quot;drivers&quot;</span><span class=P>);
+</span><span class=P>        end
+</span><span class=P>
+</span><span class=P>        if ($test$plusargs(</span><span class=P>&quot;define+IU_DBG&quot;</span><span class=P>)) begin
+</span><span class=P>          $recordfile(</span><span class=P>&quot;IU.sst&quot;</span><span class=P>, </span><span class=P>&quot;wrapsize=50M&quot;</span><span class=P>);
+</span><span class=P>          $recordvars(`PICOJAVAII.`DESIGN.iu);
+</span><span class=P>        end
+</span><span class=P>
+</span><span class=P>        if ($test$plusargs(</span><span class=P>&quot;define+FPU_DBG&quot;</span><span class=P>)) begin
+</span><span class=P>          $recordfile(</span><span class=P>&quot;FPU.sst&quot;</span><span class=P>, </span><span class=P>&quot;wrapsize=50M&quot;</span><span class=P>);
+</span><span class=P>          $recordvars(`PICOJAVAII.`DESIGN.fpu);
+</span><span class=P>        end
+</span><span class=P>
+</span><span class=P>        if ($test$plusargs(</span><span class=P>&quot;define+PSU_DBG&quot;</span><span class=P>)) begin
+</span><span class=P>          $recordfile(</span><span class=P>&quot;PSU.sst&quot;</span><span class=P>, </span><span class=P>&quot;wrapsize=50M&quot;</span><span class=P>);
+</span><span class=P>          $recordvars(`PICOJAVAII.`DESIGN.pcsu);
+</span><span class=P>        end
+</span><span class=P>
+</span><span class=P>        if ($test$plusargs(</span><span class=P>&quot;define+ICU_DBG&quot;</span><span class=P>)) begin
+</span><span class=P>          $recordfile(</span><span class=P>&quot;ICU.sst&quot;</span><span class=P>, </span><span class=P>&quot;wrapsize=50M&quot;</span><span class=P>);
+</span><span class=P>          $recordvars(`PICOJAVAII.`DESIGN.icu);
+</span><span class=P>          $recordvars(`PICOJAVAII.`DESIGN.icram_shell.icram_top.icram);
+</span><span class=P>          $recordvars(`PICOJAVAII.`DESIGN.itag_shell.itag_top.itag);
+</span><span class=P>        end
+</span><span class=P>
+</span><span class=P>        if ($test$plusargs(</span><span class=P>&quot;define+DCU_DBG&quot;</span><span class=P>)) begin
+</span><span class=P>          $recordfile(</span><span class=P>&quot;DCU.sst&quot;</span><span class=P>, </span><span class=P>&quot;wrapsize=50M&quot;</span><span class=P>);
+</span><span class=P>          $recordvars(`PICOJAVAII.`DESIGN.dcu);
+</span><span class=P>          $recordvars(`PICOJAVAII.`DESIGN.dcram_shell.dcram_top.dcram);
+</span><span class=P>          $recordvars(`PICOJAVAII.`DESIGN.dtag_shell.dtag_top.dtag);
+</span><span class=P>        end
+</span><span class=P>
+</span><span class=P>        if ($test$plusargs(</span><span class=P>&quot;define+SMU_DBG&quot;</span><span class=P>)) begin
+</span><span class=P>          $recordfile(</span><span class=P>&quot;SMU.sst&quot;</span><span class=P>, </span><span class=P>&quot;wrapsize=50M&quot;</span><span class=P>);
+</span><span class=P>          $recordvars(`PICOJAVAII.`DESIGN.smu);
+</span><span class=P>        end
+</span><span class=P>
+</span><span class=P>        if ($test$plusargs(</span><span class=P>&quot;define+BIU_DBG&quot;</span><span class=P>)) begin
+</span><span class=P>          $recordfile(</span><span class=P>&quot;BIU.sst&quot;</span><span class=P>, </span><span class=P>&quot;wrapsize=50M&quot;</span><span class=P>);
+</span><span class=P>          $recordvars(`PICOJAVAII.biu);
+</span><span class=P>        end
+</span><span class=P>
+</span><span class=M>`endif</span> <span class=C>// SIGNALSCAN
+</span>    
+<a name="404"></a>        <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#58">need_resolution</a> = 0;
+
+<a name="406"></a>        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#87">wr_optop</a> = 1'b0;
+<a name="407"></a>        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#79">have_interrupt</a> = 1'b0;
+
+        <span class=C>// pipeline progress display ?
+</span><a name="410"></a>        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#61">pipeline</a> = 'b0;
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;pipeline&quot;</span>)) <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#61">pipeline</a> = 'b1;
+        <span class=K>end</span>
+
+        <span class=C>// stack cache progress display ?
+</span><a name="416"></a>        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#62">stack</a> = 'b0;
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;stack&quot;</span>)) <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#62">stack</a> = 'b1;
+        <span class=K>end</span>
+
+        <span class=C>// cosim ?
+</span><a name="422"></a>        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#60">cosim</a> = 'b0;
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;cosim&quot;</span>)) <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#60">cosim</a> = 'b1;
+          <span class=ST>$decaf_cosim</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a>);
+        <span class=K>end</span>
+
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;max_instr_count&quot;</span>)) <span class=K>begin</span>
+            <span class=ST>$readmemh</span> (<span class=S>&quot;max_instr_count&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#68">max_instr_count</a>);
+        <span class=K>end</span> 
+        <span class=K>else</span> <span class=K>begin</span>
+<a name="432"></a>            <a  onClick="return qs(event,this)" class=SR href="sys.v.html#68">max_instr_count</a>[0] = 64'hffffffffffffffff; <span class=C>// set to maxint
+</span>        <span class=K>end</span>
+        <span class=ST>$display</span> (<span class=S>&quot;max_instr_count = %h\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#68">max_instr_count</a>[0]);
+
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;max_clk_count&quot;</span>)) <span class=K>begin</span>
+            <span class=ST>$readmemh</span> (<span class=S>&quot;max_clk_count&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#69">max_clk_count</a>);
+        <span class=K>end</span> 
+        <span class=K>else</span> <span class=K>begin</span>
+<a name="440"></a>            <a  onClick="return qs(event,this)" class=SR href="sys.v.html#69">max_clk_count</a>[0] = 64'hffffffffffffffff;    <span class=C>// set to maxint
+</span>        <span class=K>end</span>
+
+        <span class=ST>$decaf_load_traphandlers</span>();
+
+        <a  onClick="return qs(event,this)" class=T href="init_icache.h.html#_GLOBAL__init_scache">init_scache</a>;
+        <a  onClick="return qs(event,this)" class=T href="init_icache.h.html#_GLOBAL__init_icache">init_icache</a>;
+        <a  onClick="return qs(event,this)" class=T href="init_icache.h.html#_GLOBAL__init_dcache">init_dcache</a>;
+        <span class=C>// check for restart option here.
+</span>        <span class=C>// also load any extra classes asked for, AFTER the restart
+</span>        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;restart&quot;</span>)) <span class=K>begin</span>
+<span class=M>`ifdef</span> <span class=D>NO_DCACHE</span>
+<span class=M>`else</span>
+            <span class=ST>$readmemh</span> (<span class=S>&quot;dram0&quot;</span>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.dcram_shell.dcram_top.dcram.dcache_ram0.dc_ram);
+            <span class=ST>$readmemh</span> (<span class=S>&quot;dram1&quot;</span>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.dcram_shell.dcram_top.dcram.dcache_ram1.dc_ram);
+            <span class=ST>$readmemh</span> (<span class=S>&quot;dstat&quot;</span>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.dtag_shell.dtag_top.dtag.status_ram.stram);
+            <span class=ST>$readmemh</span> (<span class=S>&quot;dtag0&quot;</span>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.dtag_shell.dtag_top.dtag.dtag_ram0.t_ram);
+            <span class=ST>$readmemh</span> (<span class=S>&quot;dtag1&quot;</span>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.dtag_shell.dtag_top.dtag.dtag_ram1.t_ram);
+<span class=M>`endif</span>
+<span class=M>`ifdef</span> <span class=D>NO_ICACHE</span>
+<span class=M>`else</span>
+            <span class=ST>$readmemh</span> (<span class=S>&quot;itag&quot;</span>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.itag_shell.itag_top.itag.itram.t_ram);
+            <span class=ST>$readmemh</span> (<span class=S>&quot;iram&quot;</span>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.icram_shell.icram_top.icram.iram.ic_ram);
+<span class=M>`endif</span>
+    <span class=ST>$display</span> (<span class=S>&quot;Restart completed&quot;</span>);
+        <span class=K>end</span>
+
+        <span class=C>// load the class file(s)
+</span>        <span class=C>// cosim ias also loads the classes
+</span><a name="469"></a>        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;class&quot;</span>;
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a>)) <span class=K>begin</span>
+          <span class=ST>$display</span> (<span class=S>&quot;loading extra classes:&quot;</span>);
+          <span class=ST>$display</span> (<span class=S>&quot;%s&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a>);
+          <span class=ST>$decaf_cm_load</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a>, <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#58">need_resolution</a>);
+          <span class=ST>$display</span> (<span class=S>&quot;Finished loading extra classes&quot;</span>);
+        <span class=K>end</span>
+
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;bmem&quot;</span>)) 
+            <span class=ST>$decaf_load_bmem_file</span>;
+
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;tmem&quot;</span>)) 
+            <span class=ST>$decaf_load_tmem_file</span>;
+
+        <span class=C>// deal with return_code
+</span><a name="484"></a>        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="returncode.h.html#37">INITIAL_VALUE</a>;
+        <span class=ST>$decaf_cm_write</span>(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#35">END_LOCATION</a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a>, 2,<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#67">dsv_status</a>);
+
+<a name="487"></a>        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#52">clk_count</a> = 0;
+
+        <span class=C>// support circuit
+</span>        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;boot8&quot;</span>))
+<a name="491"></a>          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#98">pj_boot8</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#61">BOOT8ON</a>;
+        <span class=K>else</span> 
+          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#98">pj_boot8</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#62">BOOT8OFF</a>;
+
+ <span class=C>/*****
+       if ($test$plusargs(&quot;nofpu&quot;))
+          pj_no_fpu = `NOFPU;
+		else
+		  pj_no_fpu = `FPU;
+*****/</span>
+
+<span class=C>/************************************************************************
+When NOT using the fpu in simulations: 
+`define NO_FPU
+
+Set this variable in the defines.h file in picoJava-II/design/rtl 
+**************************************************************************/</span>
+<span class=M>`ifdef</span> <span class=D>NO_FPU</span>
+<span class=P>		  pj_no_fpu = 1;
+</span><span class=M>`else</span>
+<a name="511"></a>		  <a  onClick="return qs(event,this)" class=SR href="sys.v.html#99">pj_no_fpu</a> = 0;
+<span class=M>`endif</span>
+
+
+<a name="515"></a>		<a  onClick="return qs(event,this)" class=SR href="sys.v.html#100">pj_scan_mode</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#57">SCANOFF</a>;
+<a name="516"></a>		<a  onClick="return qs(event,this)" class=SR href="sys.v.html#101">pj_scan_in</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#59">SCAN_IN</a>;
+
+	<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#60">cosim</a> == 'b1) <span class=K>begin</span>
+		  <span class=C>// ias initialization
+</span>		  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#98">pj_boot8</a> == <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#61">BOOT8ON</a>) <span class=K>begin</span>
+		    <span class=ST>$decaf_cosim_cntl</span>(<span class=S>&quot;boot8&quot;</span>);
+		  <span class=K>end</span>
+
+<a name="524"></a>          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#84">dsz</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#64">HCR_DCS_POR_VALUE</a>;
+<a name="525"></a>      <a  onClick="return qs(event,this)" class=SR href="sys.v.html#84">isz</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#138">HCR_ICS_POR_VALUE</a>;
+
+<span class=C>// getting the string to pass to the IAS, for configuring cache size...
+</span>
+        <span class=K>case</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#84">isz</a>)
+
+        {3'h1}:
+                <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;configure icache 1&quot;</span>;
+        {3'h2}:
+                <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;configure icache 2&quot;</span>;
+        {3'h3}:
+                <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;configure icache 4&quot;</span>;
+        {3'h4}:
+                <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;configure icache 8&quot;</span>;
+        {3'h5}:
+                <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;configure icache 16&quot;</span>;
+        <span class=K>default</span>:
+                <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;configure icache 0&quot;</span>;
+        <span class=K>endcase</span>
+ 
+        <span class=K>if</span> (! <span class=ST>$test$plusargs</span>(<span class=S>&quot;restart&quot;</span>))
+            <span class=ST>$decaf_cosim_cntl</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a>);
+
+        <span class=K>case</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#84">dsz</a>)
+ 
+        {3'h1}:
+                <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;configure dcache 1&quot;</span>;
+        {3'h2}:
+                <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;configure dcache 2&quot;</span>;
+        {3'h3}:
+                <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;configure dcache 4&quot;</span>;
+        {3'h4}:
+                <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;configure dcache 8&quot;</span>;
+        {3'h5}:
+                <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;configure dcache 16&quot;</span>;
+        <span class=K>default</span>:
+                <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;configure dcache 0&quot;</span>;
+        <span class=K>endcase</span>
+ 
+        <span class=K>if</span> (! <span class=ST>$test$plusargs</span>(<span class=S>&quot;restart&quot;</span>))
+            <span class=ST>$decaf_cosim_cntl</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a>);
+ 
+<span class=C>// now configure FPU here - send out a string &quot;configure fpu absent&quot; or &quot;configure fpu present&quot;
+</span>
+        <span class=K>end</span> <span class=C>// of ias initialisation
+</span>
+        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> = 0;
+        <span class=C>// get the value, loader change it if there is &lt;clinit&gt;
+</span>        <span class=ST>$decaf_cm_read</span>(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#34">FLUSH_LOCATION</a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a>, 2,<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#67">dsv_status</a>);
+        <span class=C>// for cache flush
+</span>        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;flush&quot;</span>)) <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> = 'hf | <a  onClick="return qs(event,this)" class=SR href="sys.v.html#484">return_code</a>;
+        <span class=K>end</span>
+
+        <span class=C>// for different exception behaviors
+</span>        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;expcount&quot;</span>)) <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> = 'hf0 | <a  onClick="return qs(event,this)" class=SR href="sys.v.html#484">return_code</a>;
+        <span class=K>end</span>
+
+        <span class=C>// for cache invalidate
+</span>        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;cacheinvalidate&quot;</span>)) <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> = 'hf000 | <a  onClick="return qs(event,this)" class=SR href="sys.v.html#484">return_code</a>;
+        <span class=K>end</span>
+
+        <span class=ST>$decaf_cm_write</span>(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#34">FLUSH_LOCATION</a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a>, 2,<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#67">dsv_status</a>);
+        display_picoJavaII.int2ascii(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#80">ascii</a>);
+        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = {<span class=S>&quot;memPoke 0xfff0 0x&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#80">ascii</a>};
+        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#60">cosim</a> == 'b1) 
+            <span class=ST>$decaf_cosim_cntl</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a>);
+
+        <span class=C>// by default, we do small comparison
+</span>        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> = 0;
+        <span class=ST>$decaf_cm_write</span>(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#30">COSIM_LOCATION</a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a>, 2,<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#67">dsv_status</a>);
+        display_picoJavaII.int2ascii(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#80">ascii</a>);
+        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = {<span class=S>&quot;memPoke 0xffe0 0x&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#80">ascii</a>};
+        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#60">cosim</a> == 'b1) 
+            <span class=ST>$decaf_cosim_cntl</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a>);
+
+        <span class=C>// For handles
+</span>        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> = 0;
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;handle&quot;</span>)) 
+            <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> = 'hffffffff;
+
+        <span class=ST>$decaf_cm_write</span>(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#33">TRAP_USE_LOCATION</a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a>, 2,<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#67">dsv_status</a>);
+        display_picoJavaII.int2ascii(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#80">ascii</a>);
+        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = {<span class=S>&quot;memPoke 0xffec 0x&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#80">ascii</a>};
+        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#60">cosim</a> == 'b1) 
+            <span class=ST>$decaf_cosim_cntl</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a>);
+
+        <span class=C>// For water mark
+</span>        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> = 0;
+        <span class=C>// low = 16, high = 48 - default
+</span>        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;minwm&quot;</span>)) <span class=K>begin</span>
+          <span class=C>// low = 8, high = 16
+</span>          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> = 32'h1;
+        <span class=K>end</span>
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;maxwm&quot;</span>)) <span class=K>begin</span>
+          <span class=C>// low = 48, high = 56
+</span>          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> = 32'h10;
+        <span class=K>end</span>
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;dcu_off&quot;</span>)) <span class=K>begin</span>                    <span class=C>// DCU Off
+</span>          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> = <a  onClick="return qs(event,this)" class=SR href="sys.v.html#484">return_code</a> | 32'h100;
+        <span class=K>end</span>
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;icu_off&quot;</span>)) <span class=K>begin</span>                    <span class=C>// ICU Off
+</span>          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> = <a  onClick="return qs(event,this)" class=SR href="sys.v.html#484">return_code</a> | 32'h1000;
+        <span class=K>end</span>
+	<span class=ST>$display</span>(<span class=S>&quot;return_code=%x&quot;</span>,<a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a>);
+        <span class=ST>$decaf_cm_write</span>(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#31">WATERMARK_LOCATION</a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a>, 2,<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#67">dsv_status</a>);
+        display_picoJavaII.int2ascii(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#80">ascii</a>);
+        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = {<span class=S>&quot;memPoke 0xffe4 0x&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#80">ascii</a>};
+        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#60">cosim</a> == 'b1) <span class=ST>$decaf_cosim_cntl</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a>);
+        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> == 0)
+          <span class=ST>$display</span>(<span class=S>&quot;Water mark low is 16, high is 48&quot;</span>);
+        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> == 'h1)
+          <span class=ST>$display</span>(<span class=S>&quot;Water mark low is 8, high is 16&quot;</span>);
+        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a> == 'h10)
+          <span class=ST>$display</span>(<span class=S>&quot;Water mark low is 48, high is 56&quot;</span>);
+
+<a name="643"></a>        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#65">oldpc</a> = 32'b0;
+<a name="644"></a>        <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#66">hang_count</a> = 0;
+<a name="645"></a>        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#77">total_instr_count</a> = 0;
+<a name="646"></a>        <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#73">instr_complete_count</a> = 0;
+<a name="647"></a>        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#53">have_trap</a> &lt;= 0;
+        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#79">have_interrupt</a> = 0;
+     <span class=K>end</span>
+
+<span class=C>// reset circuit
+</span>  <span class=K>initial</span> <span class=K>begin</span>
+<a name="653"></a>    <a  onClick="return qs(event,this)" class=SR href="sys.v.html#97">pj_reset</a> = 'b0;
+<a name="654"></a>    <a  onClick="return qs(event,this)" class=SR href="sys.v.html#54">end_of_simulation</a> = 'b0;
+<a name="655"></a>    <a  onClick="return qs(event,this)" class=SR href="sys.v.html#56">end_of_address_touched</a> = 'b0;
+    #<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#67">RESET_START</a> <a  onClick="return qs(event,this)" class=SR href="sys.v.html#97">pj_reset</a> = 'b1;
+    #<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#69">RESET_END</a> <a  onClick="return qs(event,this)" class=SR href="sys.v.html#97">pj_reset</a> = 'b0;
+  <span class=K>end</span>
+
+<span class=C>// clock circuit
+</span>
+  <span class=K>initial</span>
+<a name="663"></a>    <a  onClick="return qs(event,this)" class=SR href="sys.v.html#96">sys_clk</a> = 'b0;
+
+  <span class=K>always</span> <span class=K>begin</span>
+    #<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#66">CLK_HALF_PERIOD</a> <a  onClick="return qs(event,this)" class=SR href="sys.v.html#96">sys_clk</a> = ~<a  onClick="return qs(event,this)" class=SR href="sys.v.html#663">sys_clk</a>;
+  <span class=K>end</span>
+
+<span class=C>// clock counter
+</span>  <span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#103">pj_clk</a>) <span class=K>begin</span>
+    <a  onClick="return qs(event,this)" class=SR href="sys.v.html#52">clk_count</a> = <a  onClick="return qs(event,this)" class=SR href="sys.v.html#487">clk_count</a> + 1;
+    <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#52">clk_count</a> &gt;= <a  onClick="return qs(event,this)" class=SR href="sys.v.html#440">max_clk_count</a>[0]) <span class=K>begin</span>
+        <span class=ST>$display</span> (<span class=S>&quot;Aborting simulation because clock count now exceeds maximum clock count for this simulation (0x%h)...\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#440">max_clk_count</a>[0]);
+   
+        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#54">end_of_simulation</a> = 1;
+     <span class=K>end</span>
+  <span class=K>end</span>
+
+<span class=C>// changes to support recording on/off
+</span>
+<span class=M>`ifdef</span> <span class=D>SIGNALSCAN</span>
+<span class=P>
+</span><span class=P>  initial
+</span><span class=P>    recording_on = 0;
+</span><span class=P>  always @(posedge pj_clk) begin
+</span><span class=P>    if (recording_on == 0) begin
+</span><span class=P>      if (recording_times[current_recording_times_index] == clk_count) begin
+</span><span class=P>        recording_on = 1;
+</span><span class=P>            $recordon;
+</span><span class=P>            current_recording_times_index = current_recording_times_index+1;
+</span><span class=P>        $display (</span><span class=P>&quot;Switching on .sst file recording at clk %d, will record till clk %d\n&quot;</span><span class=P>, clk_count, recording_times[current_recording_times_index]);
+</span><span class=P>      end
+</span><span class=P>    end
+</span><span class=P>    else begin </span><span class=P>// recording_on = 1
+</span><span class=P>      if (recording_times[current_recording_times_index] == clk_count) begin
+</span><span class=P>        recording_on = 0;
+</span><span class=P>        $recordoff;
+</span><span class=P>        $display (</span><span class=P>&quot;Switching off .sst file recording on at clk %d&quot;</span><span class=P>, clk_count);
+</span><span class=P>        current_recording_times_index = current_recording_times_index+1;
+</span><span class=P>      end
+</span><span class=P>    end
+</span><span class=P>  end
+</span><span class=P>
+</span><span class=M>`endif</span> <span class=C>// SIGNALSCAN
+</span>
+<span class=C>/****** COSIM RULES:
+
+cosim calls ias with a step command at the -ve edge of a cycle where it
+sees inst_complete_w (aka &quot;Done!&quot;) is active. at this time,
+ifu.instrs_folded_w[2:0] contains the number of insn's folded corresponding
+to this &quot;done&quot;. the pc_w used during the comparison is the start pc of
+this folded group of instructions (all other register values compared are
+the values after execution of that group of instructions).
+ 
+inst_complete_w is also asserted whenever a trap frame setup is completed,
+(either due to an interrupt or due to any other source of traps), with
+ifu.instrs_folded_w[2:0] = 0 or 1.
+ 
+we compare state between RTL and ias after the end of every instruction,
+and do not skip the comparison at the end of a trap frame setup (like pico).
+the PC used for comparison for the done corresponding to a trap frame setup
+is the PC of the instruction which would have been executed had the interrupt
+not occurred, and for an emulation trap is the PC of the trapping instruction.
+ 
+when cosim detects the done signal, it gathers register values from RTL,
+and sends them across to a function in sim.tcl.
+sim.tcl steps ias as many times as ifu.instrs_folded_w[2:0] indicates. if
+instrs_folded_w is 0 (as for a &quot;done&quot; corresponding to trap frame
+set up) compareResults still steps ias at least once. this is because
+the semantics of ias' &quot;step&quot; command has been changed to include the action
+of setting up of one trap frame as a step (equivalent to an instruction).
+
+********/</span>
+
+<span class=C>// disasm and cosim
+</span>  <span class=K>always</span> @(<span class=K>negedge</span> <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.clk)
+  #2
+  <span class=K>begin</span>
+      <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.wr_optop_e == 1'b1)
+          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#87">wr_optop</a> = 1;
+
+      <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#61">pipeline</a> == 'b1)
+      <span class=K>begin</span>
+	  <span class=ST>$display</span>(<span class=S>&quot;D:&quot;</span>);
+	  <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.icu.icu_vld_d[0] == 1'b1)
+              <span class=ST>$decaf_disasm</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#52">clk_count</a>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.icu_pc_d, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#53">have_trap</a>);
+	  <span class=ST>$display</span>(<span class=S>&quot;E:&quot;</span>);
+	  <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.inst_valid[0] == 1'b1)
+	      <span class=ST>$decaf_disasm</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#52">clk_count</a>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.pipe.pipe_dpath.pc_e, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#53">have_trap</a>);
+	  <span class=ST>$display</span>(<span class=S>&quot;W:&quot;</span>);
+	  <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.inst_valid[2] == 1'b1)
+	      <span class=ST>$decaf_disasm</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#52">clk_count</a>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.pipe.pipe_dpath.pc_w, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#53">have_trap</a>);
+      <span class=K>end</span>
+
+      <span class=C>/* have_trap is a variable which is assigned to 1 with iu_trap_r
+         (which is exactly one cycle after iu_trap_c). it remains 1
+         till the pseudo insn inserted into the pipe for building the
+         trap frame completes and issues a done.  
+         non-blocking assign used for have_trap, since it's used later
+         to determine have_interrupt */</span>
+ 
+      <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.iu_trap_r == 1'b1)
+	  <a  onClick="return qs(event,this)" class=SR href="sys.v.html#53">have_trap</a> &lt;= 1;
+      <span class=K>else</span> <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.rcu.rcu_ctl.inst_complete_w == 1'b1)
+	  <a  onClick="return qs(event,this)" class=SR href="sys.v.html#53">have_trap</a> &lt;= 0;
+
+      <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.rcu.rcu_ctl.inst_complete_w == 1'b1) 
+      <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#73">instr_complete_count</a> = <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#646">instr_complete_count</a> + 1;
+           
+          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#77">total_instr_count</a> = <a  onClick="return qs(event,this)" class=SR href="sys.v.html#645">total_instr_count</a> 
+                              + <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.ifu.instrs_folded_w;
+
+          <span class=C>// if the instrs_folded_w is 0, still count 1 since traps/interrupts
+</span>          <span class=C>// count as one instruction and they may have instrs_folded_w = 0
+</span>	  <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.ifu.instrs_folded_w == 2'b00)
+              <a  onClick="return qs(event,this)" class=SR href="sys.v.html#77">total_instr_count</a> = <a  onClick="return qs(event,this)" class=SR href="sys.v.html#645">total_instr_count</a> + 1;
+
+          <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.ifu.instrs_folded_w &gt; 2'b01)
+	      <span class=ST>$display</span>(<span class=S>&quot;The following %d instructions are folded&quot;</span>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.ifu.instrs_folded_w);
+
+<a name="782"></a>	  <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#85">stack_bottom</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.sc_bottom[7:2] - 2;
+<a name="783"></a>	  <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#63">opt</a> = (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.pipe.pipe_dpath.shadow_optop[7:2] + 1)%64;
+
+	  <span class=C>// 0xdeeddeed is the magic number which when seen by compareResults
+</span>	  <span class=C>// on the other side indicates that the value of top1/2/3/4/5 was
+</span>	  <span class=C>// not available in the RTL. on seeing this magic value compareResults 
+</span>	  <span class=C>// disable comparison of the respective top1..5 value 
+</span>
+	  <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.optop_c[31:0] &lt; <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.sc_bottom[31:0]) 
+<a name="791"></a>	      <a  onClick="return qs(event,this)" class=SR href="sys.v.html#81">top1</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.rcu.rcu_dpath.scache.ram[(<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#783">opt</a>)%64];
+	  <span class=K>else</span> 
+	      <a  onClick="return qs(event,this)" class=SR href="sys.v.html#81">top1</a> = 'hdeeddeed;
+
+	  <span class=K>if</span> ((<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.optop_c[31:0]+4) &lt;<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.sc_bottom[31:0]) 
+<a name="796"></a>	      <a  onClick="return qs(event,this)" class=SR href="sys.v.html#81">top2</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.rcu.rcu_dpath.scache.ram[(<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#783">opt</a>+1)%64];
+	  <span class=K>else</span> 
+	      <a  onClick="return qs(event,this)" class=SR href="sys.v.html#81">top2</a> = 'hdeeddeed;
+
+	  <span class=K>if</span> ((<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.optop_c[31:0]+8) &lt;<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.sc_bottom[31:0]) 
+<a name="801"></a>	      <a  onClick="return qs(event,this)" class=SR href="sys.v.html#81">top3</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.rcu.rcu_dpath.scache.ram[(<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#783">opt</a>+2)%64];
+	  <span class=K>else</span> 
+	      <a  onClick="return qs(event,this)" class=SR href="sys.v.html#81">top3</a> = 'hdeeddeed;
+
+
+	  <span class=K>if</span> ((<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.optop_c[31:0]+12) &lt; <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.sc_bottom[31:0])
+<a name="807"></a>	      <a  onClick="return qs(event,this)" class=SR href="sys.v.html#81">top4</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.rcu.rcu_dpath.scache.ram[(<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#783">opt</a>+3)%64];
+	  <span class=K>else</span>
+	      <a  onClick="return qs(event,this)" class=SR href="sys.v.html#81">top4</a> = 'hdeeddeed;
+
+	  <span class=K>if</span> ((<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.optop_c[31:0]+16) &lt; <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.sc_bottom[31:0])
+<a name="812"></a>	      <a  onClick="return qs(event,this)" class=SR href="sys.v.html#81">top5</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.rcu.rcu_dpath.scache.ram[(<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#783">opt</a>+4)%64];
+	  <span class=K>else</span>
+	      <a  onClick="return qs(event,this)" class=SR href="sys.v.html#81">top5</a> = 'hdeeddeed;
+
+          <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#53">have_trap</a> == 1) 
+          <span class=K>begin</span>
+              <span class=K>if</span> ((<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.ex.ex_regs.trapbase_out[10:3] &gt;= 8'h30) &amp;
+		  (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.ex.ex_regs.trapbase_out[10:3] &lt;= 8'h3f)) 
+	      <span class=K>begin</span>
+	          <a  onClick="return qs(event,this)" class=SR href="sys.v.html#407">have_interrupt</a> = 1'b1;
+	      <span class=K>end</span>
+	  <span class=K>end</span>
+
+	  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#79">have_interrupt</a> == 1'b1)
+	      <span class=ST>$display</span> (<span class=S>&quot;%d: RTL completed building trap frame due to interrupt\n&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#52">clk_count</a>);
+	  <span class=K>else</span>
+	      <span class=ST>$decaf_disasm</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#52">clk_count</a>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.pipe.pipe_dpath.pc_w, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#53">have_trap</a>);
+
+     	  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#60">cosim</a> == 'b1) 
+	  <span class=K>begin</span>
+	      <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#79">have_interrupt</a> == 1'b1)
+	      <span class=K>begin</span>
+		  <span class=K>case</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.ex.ex_regs.trapbase_out[10:3])
+		    8'h30: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 0&quot;</span>;
+		    8'h31: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 1&quot;</span>;
+		    8'h32: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 2&quot;</span>;
+		    8'h33: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 3&quot;</span>;
+		    8'h34: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 4&quot;</span>;
+		    8'h35: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 5&quot;</span>;
+		    8'h36: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 6&quot;</span>;
+		    8'h37: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 7&quot;</span>;
+		    8'h38: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 8&quot;</span>;
+		    8'h39: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 9&quot;</span>;
+		    8'h3a: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 10&quot;</span>;
+		    8'h3b: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 11&quot;</span>;
+		    8'h3c: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 12&quot;</span>;
+		    8'h3d: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 13&quot;</span>;
+		    8'h3e: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 14&quot;</span>;
+		    8'h3f: <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;intr 0 15&quot;</span>;
+		  <span class=K>endcase</span>
+  	      <span class=K>end</span>
+
+
+              display_picoJavaII.get_status;
+
+	      <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#79">have_interrupt</a> == 1'b1) 
+		  <span class=ST>$decaf_cosim_cntl</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a>);
+
+              <span class=ST>$decaf_cosim_cntl</span>(display_picoJavaII.picoJava_status);
+              
+  	  <span class=K>end</span>
+
+	  <span class=C>// reset have_interrupt
+</span>          <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#79">have_interrupt</a> == 1'b1) 
+	  <span class=K>begin</span>
+	      <a  onClick="return qs(event,this)" class=SR href="sys.v.html#79">have_interrupt</a> = 1'b0;  
+	  <span class=K>end</span>
+
+    	  <span class=C>// monitoring optop and vars relationship
+</span>	  <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.lvars[31:0] &lt; <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.optop_c[31:0]) 
+	  <span class=K>begin</span>
+	      <span class=ST>$display</span>(<span class=S>&quot;Warning : var registers %x is less than optop %x!\n&quot;</span>,
+		    <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.lvars[31:0], <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.optop_c[31:0]);
+	  <span class=K>end</span>
+
+          <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#77">total_instr_count</a> &gt;= <a  onClick="return qs(event,this)" class=SR href="sys.v.html#432">max_instr_count</a>[0]) <span class=K>begin</span>
+              <span class=ST>$display</span> (<span class=S>&quot;Aborting simulation because instruction count now exceeds maximum instruction count for this simulation (0x%h)...&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#432">max_instr_count</a>[0]);
+              <a  onClick="return qs(event,this)" class=SR href="sys.v.html#54">end_of_simulation</a> = 1;
+          <span class=K>end</span>
+      <span class=K>end</span> <span class=C>// end of if (inst_complete_w)
+</span>  <span class=K>end</span>    <span class=C>// end of always (@negedge clk)
+</span>
+<span class=C>// end of simulation control
+</span>
+  <span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#55">monitor_end_sim</a> === 1'b1) 
+  <span class=K>begin</span>
+    <a  onClick="return qs(event,this)" class=SR href="sys.v.html#54">end_of_simulation</a> = 'b1;
+  <span class=K>end</span>
+
+  <span class=K>always</span> @<a  onClick="return qs(event,this)" class=SR href="sys.v.html#54">end_of_simulation</a> <span class=K>begin</span>
+    @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#103">pj_clk</a>);
+    <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#54">end_of_simulation</a> == 'b1) <span class=K>begin</span>
+      <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#60">cosim</a> == 'b1) <span class=K>begin</span>
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;dump_ias_stats&quot;</span>)) <span class=K>begin</span>
+            <span class=ST>$display</span> (<span class=S>&quot;asking ias to dump stats&quot;</span>);
+            <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;dumpStats ias.stats&quot;</span>;
+            <span class=ST>$decaf_cosim_cntl</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a>);
+        <span class=K>end</span>
+        <span class=ST>$decaf_cosim_compare_memory_at_end</span>();
+        <a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a> = <span class=S>&quot;exit&quot;</span>;
+        <span class=ST>$decaf_cosim_cntl</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#57">string</a>);
+      <span class=K>end</span>
+      <span class=C>// check the end location
+</span>      <span class=ST>$decaf_cm_read</span>(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#35">END_LOCATION</a>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a>, 2,<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#67">dsv_status</a>);
+      <a  onClick="return qs(event,this)" class=T href="report.h.html#_GLOBAL__genreport">genreport</a>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#59">return_code</a>); 
+      <span class=ST>$display</span>(<span class=S>&quot;CYCLE COUNT %d&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#52">clk_count</a>);
+      <span class=ST>$display</span>(<span class=S>&quot;INSTRUCTION COUNT %d&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#77">total_instr_count</a>);
+      <span class=ST>$display</span>(<span class=S>&quot;INSTRUCTIONS FOLDED AWAY %d&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="sys.v.html#77">total_instr_count</a> - <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#73">instr_complete_count</a>);
+      <span class=ST>$finish</span>;
+    <span class=K>end</span>
+  <span class=K>end</span>
+
+<span class=C>// end of simulation for now
+</span><span class=C>//  always @(posedge `PICOJAVAII.`DESIGN.iu.control.decode_ew.goto_0_w) begin
+</span><span class=C>//    #`END_OF_SIMULATION_DELAY
+</span><span class=C>//    if (end_of_address_touched != 'b1)
+</span><span class=C>//     $decaf_cm_write(`END_LOCATION, `DETECTED_LAST_INST, 2,dsv_status);
+</span><span class=C>//    end_of_simulation = 'b1;
+</span><span class=C>//  end
+</span>
+<span class=C>// check for the end of simulation
+</span>   <span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#103">pj_clk</a>) <span class=K>begin</span>
+     <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#119">pj_address</a> == <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#35">END_LOCATION</a>) <span class=K>begin</span>
+	<a  onClick="return qs(event,this)" class=SR href="sys.v.html#161">disable_halt</a> = 1'b1;
+       #<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#70">END_OF_SIMULATION_DELAY</a>
+       <a  onClick="return qs(event,this)" class=SR href="sys.v.html#54">end_of_simulation</a> = 'b1;
+       <span class=C>// end_of_address_touched = 1'b1;
+</span>     <span class=K>end</span>
+   <span class=K>end</span>
+
+   <span class=C>/*
+    * Hanging test detection
+    * ckchen, 10/08/97
+    */</span>
+   <span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#103">pj_clk</a>) <span class=K>begin</span> : hang_detection
+      <span class=C>// monitoring hang condition
+</span>      <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.pipe.pipe_dpath.pc_w[31:0] == <a  onClick="return qs(event,this)" class=SR href="sys.v.html#65">oldpc</a>) <span class=K>begin</span>
+	 <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#66">hang_count</a> = <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#644">hang_count</a> + 1;
+	 <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#66">hang_count</a> &gt;= 10000) <span class=K>begin</span>
+	    <span class=ST>$decaf_cm_write</span>(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#35">END_LOCATION</a>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="returncode.h.html#39">LOOP_FOREVER</a>, 2,<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#67">dsv_status</a>);
+	    <a  onClick="return qs(event,this)" class=SR href="sys.v.html#54">end_of_simulation</a> = 'b1;
+	    <span class=ST>$display</span>(<span class=S>&quot;Simulation hangs (pc does not move).&quot;</span>);
+	 <span class=K>end</span> <span class=C>// if (hang_count &gt;= 10000)
+</span>      <span class=K>end</span> <span class=C>// if (`PICOJAVAII.`DESIGN.iu.pipe.pipe_dpath.pc_w[31:0] == oldpc)
+</span>      <span class=K>else</span> <span class=K>begin</span>
+	 <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#66">hang_count</a> = 0;
+      <span class=K>end</span> <span class=C>// else: !if(`PICOJAVAII.`DESIGN.iu.pipe.pipe_dpath.pc_w[31:0] == oldpc)
+</span>      <a  onClick="return qs(event,this)" class=SR href="sys.v.html#65">oldpc</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.pipe.pipe_dpath.pc_w[31:0];
+   <span class=K>end</span> <span class=C>// block: hang_detection
+</span>
+<span class=C>// Random SMU Hold logic...
+</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#103">pj_clk</a>)
+<span class=K>begin</span>
+
+        #1;
+
+        <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;smu_hold&quot;</span>))
+        <span class=K>begin</span>
+
+          <span class=K>while</span> (!<a  onClick="return qs(event,this)" class=SR href="sys.v.html#146">rand_smu_start</a>)
+                #1;
+
+<a name="965"></a>             <a  onClick="return qs(event,this)" class=SR href="sys.v.html#144">rand_time</a> = <span class=ST>$random</span>(<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#175">sm_hold_seed</a>);
+
+	     <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#144">rand_time</a>[31:25] &gt;= <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#83">MIN_HOLD_GAP</a>)
+<a name="968"></a>	        <a  onClick="return qs(event,this)" class=SIT href="sys.v.html#968">wait_time</a> = <a  onClick="return qs(event,this)" class=SR href="sys.v.html#965">rand_time</a>[31:25];
+	     <span class=K>else</span>
+		<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#143">wait_time</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#83">MIN_HOLD_GAP</a>;
+
+             <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#144">rand_time</a>[31:26] != 4'h0)
+             <span class=K>begin</span>
+                <span class=ST>$display</span>(<span class=S>&quot;Asserting SMU Hold at clk:%d&quot;</span>,<a  onClick="return qs(event,this)" class=SR href="sys.v.html#52">clk_count</a>);
+                <span class=K>force</span> <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.smu_hold = 1'b1;
+                <span class=K>repeat</span> (<a  onClick="return qs(event,this)" class=SR href="sys.v.html#144">rand_time</a>[31:26])
+                        @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#103">pj_clk</a>) #1;
+
+                <span class=ST>$display</span>(<span class=S>&quot;Deasserting SMU Hold at clk:%d&quot;</span>,<a  onClick="return qs(event,this)" class=SR href="sys.v.html#52">clk_count</a>);
+                <span class=K>release</span> <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.smu_hold;
+                <span class=K>repeat</span> (<a  onClick="return qs(event,this)" class=SIT href="sys.v.html#143">wait_time</a>)
+                        @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#103">pj_clk</a>) #1;
+             <span class=K>end</span>
+
+        <span class=K>end</span>
+<span class=K>end</span>
+
+<span class=C>/***************************************************************************************/</span>
+
+
+<span class=C>// testing the top level only
+</span><span class=M>`ifdef</span> <span class=D>TEST_BENCH_TEST</span>
+<span class=P>   initial
+</span><span class=P>     $monitor($time, </span><span class=P>&quot; - %b%b%b%b&quot;</span><span class=P>, pj_clk, pj_reset,
+</span><span class=P>                        end_of_simulation, `PICOJAVAII.memc.mem_tv);
+</span><span class=M>`endif</span>
+
+
+<a name="999"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="sys.v.html#160">pj_halt_in</a> = <a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1106">pj_halt</a> &amp; ~<a  onClick="return qs(event,this)" class=SR href="sys.v.html#164">disable_halt</a>;
+
+</pre>
+<center><table class=NB cols=3 nosave><tr><td align="center"><a  href="sys.v.p2.html">Next</a></td><td align="center"><font color="#808080">1</font></td><td align="center"><a  href="sys.v.p2.html">2</a></td></tr></table></center>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return "sys.v.p2.html"; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:07 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/sim/env/sys.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

@@ -1,0 +1,821 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/pipe/rtl/pipe_cntl.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "pipe_cntl.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<span class=C>// triquest fsm_begin
+</span>
+<a name="pipe_cntl"></a><a  href="pipe.v.html#pipe_pipe_cntl"><IMG alt="[Up: pipe pipe_cntl]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span>	<span class=MM>pipe_cntl</span><a  href="hierarchy-m.p4.html#pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>(
+
+		<span class=C>//OUTPUTS
+</span>		<a  onClick="return qs(event,this)" class=SO href="#94">inst_vld</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#95">inst_vld_e_v1</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#100">sc_dcache_req</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#101">iu_optop_int_we</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#103">sc_data_vld</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#104">icu_data_vld</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#106">sc_rd_miss_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#105">squash_fold</a>,	
+		<a  onClick="return qs(event,this)" class=SO href="#109">lduse_bypass</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#125">scache_miss</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#124">lduse_hold</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#107">rs1_bypass_hold</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#108">rs2_bypass_hold</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#115">kill_inst_d</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#119">kill_inst_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#120">kill_inst_e_int</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#116">reissue_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#118">fold_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#117">fold_sc_miss_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#96">optop_sel_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#97">optop_sel_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#98">optop_enable</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#99">pc_enable</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#110">hold_ucode</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#111">hold_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#112">hold_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#113">hold_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#114">hold_c_int</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#121">iu_perf_sgnl</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#122">rs1_mux_sel_din</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#123">forward_c_sel_din</a>,
+
+		<span class=C>//INPUTS
+</span>		<a  onClick="return qs(event,this)" class=SI href="#127">iu_brtaken_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#128">iu_trap_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#129">async_error</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#130">iu_trap_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#131">trap_vld_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#132">trap_vld_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#133">trap_in_progress</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#134">inst_vld_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#135">fold_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#136">icu_hold</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#138">first_cyc_r</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#139">load_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#141">ucode_stk_rd</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#140">ucode_done</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#142">ucode_last</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#143">ru_byp_rs1_e_hit</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#144">ru_byp_rs2_e_hit</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#147">scache_rd_miss_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#145">rs2_bypass_vld</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#146">rs1_bypass_vld</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#149">wr_optop_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#137">icu_diag_ld_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#148">iu_data_vld</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#150">powerdown_op_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#152">sm</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#154">sin</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#155">so</a> );
+
+
+
+
+
+<a name="94"></a><span class=K>output</span>	[2:0]		<a  onClick="return qs(event,this)" class=SO href="#226">inst_vld</a><a  href="hierarchy-s.p9.html#inst_vld___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Valid bit pipeline 2:0 = W,C,E 
+</span><a name="95"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#192">inst_vld_e_v1</a><a  href="hierarchy-s.p9.html#inst_vld_e_v1___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// quick version for EX
+</span><a name="96"></a><span class=K>output</span>	[3:0]		<a  onClick="return qs(event,this)" class=SO href="#515">optop_sel_e</a><a  href="hierarchy-s.p13.html#optop_sel_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// select correct optop
+</span><a name="97"></a><span class=K>output</span>	[3:0]		<a  onClick="return qs(event,this)" class=SO href="#521">optop_sel_c</a><a  href="hierarchy-s.p13.html#optop_sel_c___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// select correct optop
+</span><a name="98"></a><span class=K>output</span>	[2:0]		<a  onClick="return qs(event,this)" class=SO href="#538">optop_enable</a><a  href="hierarchy-s.p13.html#optop_enable___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// enable bits for optop pipe
+</span><a name="99"></a><span class=K>output</span>	[2:0]		<a  onClick="return qs(event,this)" class=SO href="#552">pc_enable</a><a  href="hierarchy-s.p14.html#pc_enable___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// enable signals for pc pipe
+</span><a name="100"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#387">sc_dcache_req</a><a  href="hierarchy-s.p16.html#sc_dcache_req___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// dcache req on stackcache read miss
+</span><a name="101"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#547">iu_optop_int_we</a><a  href="hierarchy-s.p9.html#iu_optop_int_we___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Write enable to the flop in SMU which
+</span>						<span class=C>// generates it's own version of optop
+</span><a name="103"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#388">sc_data_vld</a><a  href="hierarchy-s.p16.html#sc_data_vld___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// dcache data is due to stackcache read
+</span><a name="104"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#423">icu_data_vld</a><a  href="hierarchy-s.p9.html#icu_data_vld___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// diagnostic I$ data valid
+</span><a name="105"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#632">squash_fold</a><a  href="hierarchy-s.p16.html#squash_fold___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// disable folding to det trapping instruction
+</span><a name="106"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#389">sc_rd_miss_sel</a><a  href="hierarchy-s.p16.html#sc_rd_miss_sel___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// used for selecting D$ data from S$ miss
+</span><a name="107"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#250">rs1_bypass_hold</a><a  href="hierarchy-s.p15.html#rs1_bypass_hold___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// hold rs1 data
+</span><a name="108"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#261">rs2_bypass_hold</a><a  href="hierarchy-s.p15.html#rs2_bypass_hold___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// hold rs2 data
+</span><a name="109"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#408">lduse_bypass</a><a  href="hierarchy-s.p10.html#lduse_bypass___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// bypass data from D$ on load-use case
+</span><a name="110"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#230">hold_ucode</a><a  href="hierarchy-s.p8.html#hold_ucode___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// hold the microcode
+</span><a name="111"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#226">hold_r</a><a  href="hierarchy-s.p8.html#hold_r___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Hold R stage flop
+</span><a name="112"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#227">hold_e</a><a  href="hierarchy-s.p8.html#hold_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Hold E stage flop
+</span><a name="113"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#228">hold_c</a><a  href="hierarchy-s.p8.html#hold_c___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Hold C stage flop
+</span><a name="114"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#229">hold_c_int</a><a  href="hierarchy-s.p8.html#hold_c_int___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Hold C stage flop
+</span><a name="115"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#215">kill_inst_d</a><a  href="hierarchy-s.p10.html#kill_inst_d___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// kill instruction in D stage
+</span><a name="116"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#605">reissue_c</a><a  href="hierarchy-s.p15.html#reissue_c___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// reissue the instruction in C stage
+</span><a name="117"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#594">fold_sc_miss_e</a><a  href="hierarchy-s.p6.html#fold_sc_miss_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Folded group misses S$
+</span><a name="118"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#573">fold_c</a><a  href="hierarchy-s.p6.html#fold_c___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// folding group in C stage
+</span><a name="119"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#220">kill_inst_e</a><a  href="hierarchy-s.p10.html#kill_inst_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// kill instruction in E. lduse case/S$ read miss
+</span><a name="120"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#224">kill_inst_e_int</a><a  href="hierarchy-s.p10.html#kill_inst_e_int___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// kill instruction in E. lduse case/S$ read miss
+</span><a name="121"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#507">iu_perf_sgnl</a><a  href="hierarchy-s.p9.html#iu_perf_sgnl___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// performance monitor signals
+</span><a name="122"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#304">rs1_mux_sel_din</a><a  href="hierarchy-s.p15.html#rs1_mux_sel_din___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Selects scache data for RS1 in case of S$ misses
+</span><a name="123"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#303">forward_c_sel_din</a><a  href="hierarchy-s.p6.html#forward_c_sel_din___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Selects DCU data for forward data_c
+</span><a name="124"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#409">lduse_hold</a><a  href="hierarchy-s.p10.html#lduse_hold___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="125"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#386">scache_miss</a><a  href="hierarchy-s.p16.html#scache_miss___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="127"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#234">iu_brtaken_e</a><a  href="hierarchy-s.p9.html#iu_brtaken_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// branch taken in E
+</span><a name="128"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#235">iu_trap_c</a><a  href="hierarchy-s.p9.html#iu_trap_c___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Trap taken in C
+</span><a name="129"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#236">async_error</a><a  href="hierarchy-s.html#async_error___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// asynchronous error
+</span><a name="130"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#237">iu_trap_r</a><a  href="hierarchy-s.p9.html#iu_trap_r___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Trap in R stage.build frame
+</span><a name="131"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#238">trap_vld_r</a><a  href="hierarchy-s.p17.html#trap_vld_r___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Possible trap in R
+</span><a name="132"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#239">trap_vld_e</a><a  href="hierarchy-s.p17.html#trap_vld_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Possible trap in E
+</span><a name="133"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#240">trap_in_progress</a><a  href="hierarchy-s.p17.html#trap_in_progress___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>//  trap frame building in progress
+</span><a name="134"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#260">inst_vld_r</a><a  href="hierarchy-s.p9.html#inst_vld_r___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Valid instruction in R stage
+</span><a name="135"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#258">fold_r</a><a  href="hierarchy-s.p6.html#fold_r___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// there is a folded group in R
+</span><a name="136"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#241">icu_hold</a><a  href="hierarchy-s.p9.html#icu_hold___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// hold for diagnostic i$ load
+</span><a name="137"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#255">icu_diag_ld_c</a><a  href="hierarchy-s.p9.html#icu_diag_ld_c___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Diagnostic ICU load in C stage
+</span><a name="138"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#242">first_cyc_r</a><a  href="hierarchy-s.p6.html#first_cyc_r___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// multicycle R stage. longs/doubles
+</span><a name="139"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#243">load_c</a><a  href="hierarchy-s.p10.html#load_c___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// IU load in E stage
+</span><a name="140"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#244">ucode_done</a><a  href="hierarchy-s.p18.html#ucode_done___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Microcode is not busy.
+</span><a name="141"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#245">ucode_stk_rd</a><a  href="hierarchy-s.p18.html#ucode_stk_rd___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// read stack cache.
+</span><a name="142"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#246">ucode_last</a><a  href="hierarchy-s.p18.html#ucode_last___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Microcode's last cycle in E stage
+</span><a name="143"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#247">ru_byp_rs1_e_hit</a><a  href="hierarchy-s.p15.html#ru_byp_rs1_e_hit___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// RS1 bypass hit for E stage. used for lduse case
+</span><a name="144"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#248">ru_byp_rs2_e_hit</a><a  href="hierarchy-s.p15.html#ru_byp_rs2_e_hit___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// RS2 bypass hit for E stage. used for lduse case
+</span><a name="145"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#250">rs2_bypass_vld</a><a  href="hierarchy-s.p15.html#rs2_bypass_vld___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// whether an instruction uses RS2 bypass or not.
+</span><a name="146"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#249">rs1_bypass_vld</a><a  href="hierarchy-s.p15.html#rs1_bypass_vld___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// whether an instruction uses RS1 bypass or not.
+</span><a name="147"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#251">scache_rd_miss_e</a><a  href="hierarchy-s.p16.html#scache_rd_miss_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// stack cache read miss in E 
+</span><a name="148"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#256">iu_data_vld</a><a  href="hierarchy-s.p9.html#iu_data_vld___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// data valid from dcache
+</span><a name="149"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#259">wr_optop_e</a><a  href="hierarchy-s.p20.html#wr_optop_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// write to optop register
+</span><a name="150"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#257">powerdown_op_e</a><a  href="hierarchy-s.p14.html#powerdown_op_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// powerdown instruction in E
+</span><a name="151"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#261">clk</a><a  href="hierarchy-s.p3.html#clk___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			
+<a name="152"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#152">sm</a><a  href="hierarchy-s.p16.html#sm___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="153"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="pipe.v.html#263">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="154"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#154">sin</a><a  href="hierarchy-s.p16.html#sin___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="155"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#155">so</a><a  href="hierarchy-s.p16.html#so___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="157"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#202">ucode_busy_e</a><a  href="hierarchy-s.p18.html#ucode_busy_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#530">ucode_done_c</a><a  href="hierarchy-s.p18.html#ucode_done_c___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="158"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#189">inst_vld_e</a><a  href="hierarchy-s.p9.html#inst_vld_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#204">inst_vld_c</a><a  href="hierarchy-s.p9.html#inst_vld_c___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#208">inst_vld_w</a><a  href="hierarchy-s.p9.html#inst_vld_w___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="159"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#187">valid_r</a><a  href="hierarchy-s.p19.html#valid_r___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#203">valid_e</a><a  href="hierarchy-s.p19.html#valid_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#207">valid_c</a><a  href="hierarchy-s.p19.html#valid_c___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="160"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="#294">smiss_state</a><a  href="hierarchy-s.p16.html#smiss_state___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#287">next_smiss_state</a><a  href="hierarchy-s.p12.html#next_smiss_state___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="161"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="#433">lduse_state</a><a  href="hierarchy-s.p10.html#lduse_state___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#426">next_lduse_state</a><a  href="hierarchy-s.p12.html#next_lduse_state___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="162"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#375">scmiss_req</a><a  href="hierarchy-s.p16.html#scmiss_req___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#374">scmiss_req_wait</a><a  href="hierarchy-s.p16.html#scmiss_req_wait___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#376">scmiss_wait</a><a  href="hierarchy-s.p16.html#scmiss_wait___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="163"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#373">scmiss_idle</a><a  href="hierarchy-s.p16.html#scmiss_idle___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="164"></a><span class=K>wire</span>	[4:0]	<a  onClick="return qs(event,this)" class=SW href="#624">fold_state</a><a  href="hierarchy-s.p6.html#fold_state___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#619">next_fold_state</a><a  href="hierarchy-s.p12.html#next_fold_state___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="165"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#560">fold_r_out</a><a  href="hierarchy-s.p6.html#fold_r_out___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#571">fold_e</a><a  href="hierarchy-s.p6.html#fold_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#562">fold_e_raw</a><a  href="hierarchy-s.p6.html#fold_e_raw___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SO href="#118">fold_c</a>,<a  onClick="return qs(event,this)" class=SW href="#617">fold_c_trapped</a><a  href="hierarchy-s.p6.html#fold_c_trapped___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="166"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#618">new_inst_r</a><a  href="hierarchy-s.p12.html#new_inst_r___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SO href="#117">fold_sc_miss_e</a>,<a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a><a  href="hierarchy-s.p6.html#fold_sc_miss_c___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#385">sc_rd_miss_e</a><a  href="hierarchy-s.p16.html#sc_rd_miss_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="167"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#405">load_use</a><a  href="hierarchy-s.p10.html#load_use___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="168"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="#168">iu_perf_mon</a><a  href="hierarchy-s.p9.html#iu_perf_mon___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="169"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#400">hold_e_d1</a><a  href="hierarchy-s.p8.html#hold_e_d1___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#404">new_inst_e</a><a  href="hierarchy-s.p12.html#new_inst_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="170"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#588">sc_miss_sticky_set</a><a  href="hierarchy-s.p16.html#sc_miss_sticky_set___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#589">sc_miss_sticky</a><a  href="hierarchy-s.p16.html#sc_miss_sticky___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="171"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#574">fold_c_out</a><a  href="hierarchy-s.p6.html#fold_c_out___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SI href="#114">hold_c_int</a>;
+<a name="173"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#418">kill_data_vld</a><a  href="hierarchy-s.p10.html#kill_data_vld___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#417">set_kill_data_vld</a><a  href="hierarchy-s.p16.html#set_kill_data_vld___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#416">data_vld</a><a  href="hierarchy-s.p4.html#data_vld___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="174"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#607">fold_trapped</a><a  href="hierarchy-s.p6.html#fold_trapped___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<span class=C>// Instruction Valid Pipeline 
+</span><span class=C>// Squash R stage valid bit on a branch ,trap ,reissue or a possible trap in R or E.
+</span><span class=C>// squash E stage valid bit on a trap or reissue.
+</span><span class=C>// squash C stage valid bit on a trap or reissue. the instruction is retired when
+</span><span class=C>// microcode finishes building trap frame.
+</span><span class=C>// If there is a hold and a valid instruction is in C, it moves
+</span><span class=C>// into the W stage only after the hold_c is inactive.
+</span><span class=C>// Thus, in the W stage any instruction will be there only for one cycle.
+</span><span class=C>// iu_trap_r is treated just like a new instruction in R stage.
+</span>
+<a name="187"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#159">valid_r</a>	=	(<a  onClick="return qs(event,this)" class=SI href="#130">iu_trap_r</a>|<a  onClick="return qs(event,this)" class=SI href="#134">inst_vld_r</a>)&amp;~<a  onClick="return qs(event,this)" class=SI href="#128">iu_trap_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#127">iu_brtaken_e</a>&amp;~<a  onClick="return qs(event,this)" class=SO href="#594">fold_sc_miss_e</a>&amp;
+			~<a  onClick="return qs(event,this)" class=SI href="#131">trap_vld_r</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#132">trap_vld_e</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#150">powerdown_op_e</a>&amp;(~<a  onClick="return qs(event,this)" class=SI href="#111">hold_r</a>|<a  onClick="return qs(event,this)" class=SI href="#138">first_cyc_r</a>);
+<a name="pipe_cntl_vld_e_reg"></a><a name="189"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>		vld_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#158">inst_vld_e</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#187">valid_r</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#112">hold_e</a>|<a  onClick="return qs(event,this)" class=SI href="#128">iu_trap_c</a>|<a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a>));
+
+<a name="pipe_cntl_vld_e_v1_reg"></a><a name="192"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>          vld_e_v1_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#95">inst_vld_e_v1</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#187">valid_r</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#112">hold_e</a>|<a  onClick="return qs(event,this)" class=SI href="#128">iu_trap_c</a>|<a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a>));
+ 
+
+
+<span class=C>// if ucode is in E stage, the valid bit is still propagated down the pipe.
+</span><span class=C>// bcos, ucode takes over the ECW part of the pipe.(stores to S$,D$ accesses)
+</span><span class=C>// need to use ucode_last also,bcos ucode_done is not high for last cycle of ucode.
+</span><span class=C>// But dont propagate valid bits if ucode is held up. this generates unnecessary
+</span><span class=C>// valid bits causing cosim to go beserk.
+</span><a name="202"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#157">ucode_busy_e</a> = (~<a  onClick="return qs(event,this)" class=SI href="#140">ucode_done</a> | <a  onClick="return qs(event,this)" class=SI href="#142">ucode_last</a>)&amp;~<a  onClick="return qs(event,this)" class=SI href="#110">hold_ucode</a>;
+<a name="203"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#159">valid_e</a> =	<a  onClick="return qs(event,this)" class=SW href="#189">inst_vld_e</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#128">iu_trap_c</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a>&amp;(~<a  onClick="return qs(event,this)" class=SI href="#112">hold_e</a>| <a  onClick="return qs(event,this)" class=SW href="#202">ucode_busy_e</a>);
+<a name="pipe_cntl_vld_c_reg"></a><a name="204"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>          vld_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#158">inst_vld_c</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#203">valid_e</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#113">hold_c</a> |<a  onClick="return qs(event,this)" class=SI href="#128">iu_trap_c</a>|<a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a>));
+
+<a name="207"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#159">valid_c</a> =	<a  onClick="return qs(event,this)" class=SW href="#204">inst_vld_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#113">hold_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#128">iu_trap_c</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a> ;
+<a name="pipe_cntl_vld_w_reg"></a><a name="208"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>          vld_w_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#158">inst_vld_w</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#207">valid_c</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>));
+ 
+
+<span class=C>// We do not use trap_vld_r to kill instruction in D bcos,it is
+</span><span class=C>// possible for an instruction(emul_op_r) to kill itself and no trap would be
+</span><span class=C>// taken (especially when there is hold_e)
+</span><a name="215"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#115">kill_inst_d</a> =	<a  onClick="return qs(event,this)" class=SI href="#127">iu_brtaken_e</a> | <a  onClick="return qs(event,this)" class=SO href="#594">fold_sc_miss_e</a>| <a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a> 
+			| <a  onClick="return qs(event,this)" class=SI href="#132">trap_vld_e</a> | <a  onClick="return qs(event,this)" class=SI href="#133">trap_in_progress</a> | <a  onClick="return qs(event,this)" class=SI href="#150">powerdown_op_e</a>;
+
+<span class=C>// kill any dcu requests when there is a lduse hold 
+</span><span class=C>// or scache read miss 
+</span><a name="220"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#119">kill_inst_e</a>     =   <a  onClick="return qs(event,this)" class=SO href="#409">lduse_hold</a>|<a  onClick="return qs(event,this)" class=SW href="#375">scmiss_req</a>;
+
+<span class=C>// kill prive writes&amp;imdr when there is a lduse hold or 
+</span><span class=C>//scache read miss 
+</span><a name="224"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#120">kill_inst_e_int</a> =   <a  onClick="return qs(event,this)" class=SO href="#409">lduse_hold</a>|<a  onClick="return qs(event,this)" class=SO href="#386">scache_miss</a>;
+
+<a name="226"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#94">inst_vld</a>[2]=	<a  onClick="return qs(event,this)" class=SW href="#208">inst_vld_w</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#94">inst_vld</a>[1]=	<a  onClick="return qs(event,this)" class=SW href="#204">inst_vld_c</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#94">inst_vld</a>[0]=	<a  onClick="return qs(event,this)" class=SW href="#189">inst_vld_e</a>;
+
+
+<span class=C>// Bypass Hold signal for Ex block.
+</span><span class=C>// Hold rs1 data if e stage is held except when a lduse case or
+</span><span class=C>// scache miss or ucode stkread occurs.
+</span>
+<span class=C>// Hold rs2 data if e stage is held except for lduse case.
+</span><a name="236"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#236">lduse_byp_vld</a><a  href="hierarchy-s.p10.html#lduse_byp_vld___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> =  <a  onClick="return qs(event,this)" class=SW href="#405">load_use</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#148">iu_data_vld</a>|<a  onClick="return qs(event,this)" class=SW href="#433">lduse_state</a>[0] | <a  onClick="return qs(event,this)" class=SW href="#433">lduse_state</a>[1] ;
+
+<span class=C>// moved bypass signals from RCU ro ex_dpath and latched those signals
+</span><span class=C>// in ex_dpath, so we need to latch them in pipe too 
+</span>
+<a name="pipe_cntl_flop_bypass_rs1_hit"></a><a name="241"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>       flop_bypass_rs1_hit(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#241">ru_byp_rs1_e_hit_e</a><a  href="hierarchy-s.p15.html#ru_byp_rs1_e_hit_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>),
+                             <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#143">ru_byp_rs1_e_hit</a>),
+                             <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+                             <span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="#112">hold_e</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#141">ucode_stk_rd</a>)),
+                             <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>));
+
+<span class=C>// assign	rs1_bypass_hld = hold_e&amp;~(ucode_stk_rd&amp;~hold_c)&amp;~scmiss_req&amp;
+</span><span class=C>//			  ~(lduse_byp_vld&amp;ru_byp_rs1_e_hit);
+</span>
+<a name="250"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#107">rs1_bypass_hold</a> = <a  onClick="return qs(event,this)" class=SI href="#112">hold_e</a>&amp;~(<a  onClick="return qs(event,this)" class=SI href="#141">ucode_stk_rd</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#113">hold_c</a>)&amp;~<a  onClick="return qs(event,this)" class=SW href="#375">scmiss_req</a>&amp;
+			  ~(<a  onClick="return qs(event,this)" class=SW href="#236">lduse_byp_vld</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#241">ru_byp_rs1_e_hit_e</a>);
+
+<a name="pipe_cntl_flop_bypass_rs2_hit"></a><a name="253"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>       flop_bypass_rs2_hit(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#253">ru_byp_rs2_e_hit_e</a><a  href="hierarchy-s.p15.html#ru_byp_rs2_e_hit_e___pipe_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>),
+                             <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#144">ru_byp_rs2_e_hit</a>),
+                             <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+                             <span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="#112">hold_e</a>),
+                             <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>));
+
+<span class=C>// assign	rs2_bypass_hld = hold_e&amp;~(lduse_byp_vld&amp;ru_byp_rs2_e_hit_e);
+</span>
+<a name="261"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#108">rs2_bypass_hold</a> = <a  onClick="return qs(event,this)" class=SI href="#112">hold_e</a>&amp;~(<a  onClick="return qs(event,this)" class=SW href="#236">lduse_byp_vld</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#253">ru_byp_rs2_e_hit_e</a>);
+
+
+		      
+
+<span class=C>// The above two lines and the following flop is commented out so as to
+</span><span class=C>// let ex_dpath latch these select signals in ex_dpath itself. This is done
+</span><span class=C>// to improve timing on RS1 and RS2 signals 
+</span>
+<span class=C>// ff_sr_2	 bypass_hold_reg (.out({rs1_bypass_hold,rs2_bypass_hold}),
+</span><span class=C>// 			.din({rs1_bypass_hld,rs2_bypass_hld}),
+</span><span class=C>// 			.clk(clk),
+</span><span class=C>// 			.reset_l(reset_l));
+</span>	
+
+
+<span class=C>// Stack cache read miss logic
+</span><span class=C>// the DRE stage is held till the read miss data is fetched from
+</span><span class=C>// Dcache and put into the RS1 register.
+</span><span class=C>// go into the scmiss_req state if there is a scache_rd_miss_e &amp; there is no hold.
+</span><span class=C>// get out of req state once data_vld is available. but,wait in the wait state
+</span><span class=C>// till hold_c is not there. this avoids deadlock case.hold_e-&gt;sc_miss_rd-&gt;hold_e
+</span><span class=C>// If a trap occurs during a read from D$, reset the state m/c.
+</span><span class=C>// Also, since hold_c has the scache_miss term during ucode, we need
+</span><span class=C>// to ignore that part of hold for this state m/c to prevent deadlock.
+</span>
+<a name="287"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#160">next_smiss_state</a>[2:0]    =       <a  onClick="return qs(event,this)" class=F href="#pipe_cntl_smiss_state_fn">smiss_state_fn</a>(<a  onClick="return qs(event,this)" class=SW href="#294">smiss_state</a>[2:0],
+                                        <a  onClick="return qs(event,this)" class=SW href="#385">sc_rd_miss_e</a>,
+                                        <a  onClick="return qs(event,this)" class=SI href="#114">hold_c_int</a>,
+					(<a  onClick="return qs(event,this)" class=SI href="#128">iu_trap_c</a>|<a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a>),
+                                        <a  onClick="return qs(event,this)" class=SI href="#148">iu_data_vld</a>);
+ 
+<span class=C>// triquest state_vector smiss_state[2:0] SMISS_STATE enum SMISS_STATE_ENUM
+</span><a name="pipe_cntl_smiss_state_reg"></a><a name="294"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_3">ff_sr_3</a>        smiss_state_reg( <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3851">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#160">smiss_state</a>[2:0]),
+                                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#287">next_smiss_state</a>[2:0]),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+                                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>));
+
+<span class=C>// The following signals are added to improve timing on RS1 signal.
+</span><span class=C>// Idea is to latch all the select signals with in ex_dpath itself
+</span><span class=C>// This way we can eleiminated routing delay from pipe 
+</span>
+<a name="303"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#123">forward_c_sel_din</a> = 	<a  onClick="return qs(event,this)" class=SW href="#426">next_lduse_state</a>[2];
+<a name="304"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#122">rs1_mux_sel_din</a> = 	<a  onClick="return qs(event,this)" class=SW href="#287">next_smiss_state</a>[2];
+
+ 
+
+<a name="pipe_cntl_smiss_state_fn"></a><span class=K>function</span> [2:0]	 <a  onClick="return qs(event,this)" class=F href="#pipe_cntl_smiss_state_fn">smiss_state_fn</a>;
+<a name="309"></a><span class=K>input</span>	[2:0]	 <a  onClick="return qs(event,this)" class=SI href="#309">cur_state</a>;
+<a name="310"></a><span class=K>input</span>		 <a  onClick="return qs(event,this)" class=SI href="#310">sc_rd_miss_e</a>;
+<a name="311"></a><span class=K>input</span>		 <a  onClick="return qs(event,this)" class=SI href="#311">hold_c</a>;
+<a name="312"></a><span class=K>input</span>		 <a  onClick="return qs(event,this)" class=SI href="#312">iu_trap_c</a>;
+<a name="313"></a><span class=K>input</span>		 <a  onClick="return qs(event,this)" class=SI href="#313">iu_data_vld</a>;
+
+<a name="315"></a><span class=K>reg</span>	[2:0]	<a  onClick="return qs(event,this)" class=SR href="#328">next_state</a>;
+
+<span class=K>parameter</span> <span class=C>// triquest  enum SMISS_STATE_ENUM
+</span><a name="318"></a>	<a  onClick="return qs(event,this)" class=PA href="#644">IDLE</a>		= 3'b000,
+<a name="319"></a>	<a  onClick="return qs(event,this)" class=PA href="#319">SMISS_REQ_WAIT</a>	= 3'b001,
+<a name="320"></a>	<a  onClick="return qs(event,this)" class=PA href="#320">SMISS_REQ</a>  	= 3'b010,
+<a name="321"></a>	<a  onClick="return qs(event,this)" class=PA href="#321">SMISS_WAIT</a> 	= 3'b100;
+
+<span class=K>begin</span>
+
+<span class=K>case</span>	(<a  onClick="return qs(event,this)" class=SI href="#309">cur_state</a>)	<span class=C>// synopsys full_case parallel_case
+</span>	<a  onClick="return qs(event,this)" class=PA href="#644">IDLE</a>:	<span class=K>begin</span>
+		<span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#310">sc_rd_miss_e</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#312">iu_trap_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#311">hold_c</a>) <span class=K>begin</span>
+<a name="328"></a>		<a  onClick="return qs(event,this)" class=SR href="#315">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#320">SMISS_REQ</a>;
+		<span class=K>end</span>
+		<span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#310">sc_rd_miss_e</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#312">iu_trap_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#311">hold_c</a>) <span class=K>begin</span>
+		<a  onClick="return qs(event,this)" class=SR href="#315">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#319">SMISS_REQ_WAIT</a>;
+		<span class=K>end</span>
+		<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#315">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#309">cur_state</a> ;
+        <span class=K>end</span>
+
+	<a  onClick="return qs(event,this)" class=PA href="#319">SMISS_REQ_WAIT</a>:<span class=K>begin</span>
+		<span class=K>if</span>(~<a  onClick="return qs(event,this)" class=SI href="#311">hold_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#312">iu_trap_c</a>) <span class=K>begin</span>
+		<a  onClick="return qs(event,this)" class=SR href="#315">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#320">SMISS_REQ</a>;
+		<span class=K>end</span>
+		<span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#312">iu_trap_c</a>) <span class=K>begin</span>
+		<a  onClick="return qs(event,this)" class=SR href="#315">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#644">IDLE</a>;
+		<span class=K>end</span>
+		<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#315">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#309">cur_state</a>;
+	<span class=K>end</span>
+
+	<a  onClick="return qs(event,this)" class=PA href="#320">SMISS_REQ</a>: <span class=K>begin</span>
+		<span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#313">iu_data_vld</a>) <span class=K>begin</span>
+		<a  onClick="return qs(event,this)" class=SR href="#315">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#321">SMISS_WAIT</a>;
+		<span class=K>end</span>
+		<span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#312">iu_trap_c</a>) <span class=K>begin</span>
+		<a  onClick="return qs(event,this)" class=SR href="#315">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#644">IDLE</a>;
+		<span class=K>end</span>
+		<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#315">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#309">cur_state</a> ;
+        <span class=K>end</span>
+
+
+	<a  onClick="return qs(event,this)" class=PA href="#321">SMISS_WAIT</a>: <span class=K>begin</span>
+                <span class=K>if</span>(~<a  onClick="return qs(event,this)" class=SI href="#311">hold_c</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#315">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#644">IDLE</a>;
+                <span class=K>end</span>
+		<span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#312">iu_trap_c</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#315">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#644">IDLE</a>;
+                <span class=K>end</span>
+                 <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#315">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#309">cur_state</a> ;
+        <span class=K>end</span>
+
+ 	<span class=K>default</span>:        <a  onClick="return qs(event,this)" class=SR href="#315">next_state</a> = 3'bx;
+<span class=K>endcase</span>
+<a  onClick="return qs(event,this)" class=F href="#pipe_cntl_smiss_state_fn">smiss_state_fn</a> = <a  onClick="return qs(event,this)" class=SR href="#328">next_state</a> ;
+<span class=K>end</span>
+<span class=K>endfunction</span>
+
+<a name="373"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#163">scmiss_idle</a>	=	~(|<a  onClick="return qs(event,this)" class=SW href="#294">smiss_state</a>[2:0]);
+<a name="374"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#162">scmiss_req_wait</a> =	<a  onClick="return qs(event,this)" class=SW href="#294">smiss_state</a>[0];
+<a name="375"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#162">scmiss_req</a> 	=	<a  onClick="return qs(event,this)" class=SW href="#294">smiss_state</a>[1];
+<a name="376"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#162">scmiss_wait</a> 	=	<a  onClick="return qs(event,this)" class=SW href="#294">smiss_state</a>[2];
+
+
+
+<span class=C>// Usually scache_rd_miss_e is high only for 1 cycle, but if
+</span><span class=C>// there is hold and scache_rd_miss_e in the same cycle,we get
+</span><span class=C>// into a deadlock. To avoid it, need to qualify scache_rd_miss_e
+</span><span class=C>// with scache state m/c not idle. 
+</span>
+<a name="385"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#166">sc_rd_miss_e</a>	=   <a  onClick="return qs(event,this)" class=SI href="#147">scache_rd_miss_e</a>&amp;<a  onClick="return qs(event,this)" class=SO href="#226">inst_vld</a>[0]&amp;~<a  onClick="return qs(event,this)" class=SW href="#571">fold_e</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#373">scmiss_idle</a>;
+<a name="386"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#125">scache_miss</a>	=   <a  onClick="return qs(event,this)" class=SW href="#385">sc_rd_miss_e</a> | <a  onClick="return qs(event,this)" class=SW href="#374">scmiss_req_wait</a> |<a  onClick="return qs(event,this)" class=SW href="#375">scmiss_req</a>;
+<a name="387"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#100">sc_dcache_req</a>	=   <a  onClick="return qs(event,this)" class=SI href="#147">scache_rd_miss_e</a> | <a  onClick="return qs(event,this)" class=SW href="#374">scmiss_req_wait</a>;
+<a name="388"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#103">sc_data_vld</a>	=   <a  onClick="return qs(event,this)" class=SW href="#375">scmiss_req</a>;
+<a name="389"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#106">sc_rd_miss_sel</a>  =   <a  onClick="return qs(event,this)" class=SW href="#376">scmiss_wait</a>;
+
+
+<span class=C>// Load - Use Hold generation.
+</span><span class=C>// When there is a load in C and use in E, a load-use condition is triggered.
+</span><span class=C>// the data is bypassed to E stage when the load data is available in W stage.
+</span><span class=C>// This state machine needs to be in sync with the load buffer. Thus, if
+</span><span class=C>// there is a hold_c, we still need to keep track of loaduse even after
+</span><span class=C>// data_valid has been recieved. Thus,only when the load goes into W stage,
+</span><span class=C>// data is bypassed to E stage.
+</span>
+<a name="pipe_cntl_hold_e_reg"></a><a name="400"></a> <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a> hold_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>    (<a  onClick="return qs(event,this)" class=SW href="#169">hold_e_d1</a>),
+                  <span class=SI>.din</span>    (<a  onClick="return qs(event,this)" class=SI href="#112">hold_e</a>),
+                  <span class=SI>.reset_l</span> (<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>),
+                  <span class=SI>.clk</span>    (<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>));
+<a name="404"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#169">new_inst_e</a> = ~<a  onClick="return qs(event,this)" class=SW href="#400">hold_e_d1</a> &amp; <a  onClick="return qs(event,this)" class=SO href="#226">inst_vld</a>[0];
+<a name="405"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#167">load_use</a>	=   (<a  onClick="return qs(event,this)" class=SW href="#241">ru_byp_rs1_e_hit_e</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#146">rs1_bypass_vld</a> |<a  onClick="return qs(event,this)" class=SW href="#253">ru_byp_rs2_e_hit_e</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#145">rs2_bypass_vld</a>)&amp;
+			     <a  onClick="return qs(event,this)" class=SI href="#139">load_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#204">inst_vld_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#404">new_inst_e</a>;
+
+<a name="408"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#109">lduse_bypass</a>	=  <a  onClick="return qs(event,this)" class=SW href="#433">lduse_state</a>[2];
+<a name="409"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#124">lduse_hold</a>	=  <a  onClick="return qs(event,this)" class=SW href="#405">load_use</a> | <a  onClick="return qs(event,this)" class=SW href="#433">lduse_state</a>[0] | <a  onClick="return qs(event,this)" class=SW href="#433">lduse_state</a>[1] ;
+
+<span class=C>// For latching Diagnostic ICU data, we generate a icu_data_vld. this
+</span><span class=C>// is similar to iu_data_vld generated by dcu. But, because ICU has no
+</span><span class=C>// concept of smu hold, we need to generate a single cycle pulse to latch
+</span><span class=C>// icu data for diagnostic reads. Thus,even if there is hold_c,icu_data_vld
+</span><span class=C>// is one a cycle cycle pulse.
+</span><a name="416"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#173">data_vld</a>	=  <a  onClick="return qs(event,this)" class=SI href="#137">icu_diag_ld_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#136">icu_hold</a>;
+<a name="417"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#173">set_kill_data_vld</a> = <a  onClick="return qs(event,this)" class=SW href="#416">data_vld</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#113">hold_c</a> | <a  onClick="return qs(event,this)" class=SW href="#418">kill_data_vld</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#113">hold_c</a> ;
+<a name="pipe_cntl_kill_dv_reg"></a><a name="418"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	kill_dv_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#173">kill_data_vld</a>),
+		    <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#417">set_kill_data_vld</a>),
+		    <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+		    <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>));
+
+<a name="423"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#104">icu_data_vld</a>	=  <a  onClick="return qs(event,this)" class=SW href="#416">data_vld</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#418">kill_data_vld</a>;
+
+
+<a name="426"></a><span class=K>assign</span>  	<a  onClick="return qs(event,this)" class=SW href="#161">next_lduse_state</a>[2:0]    =       <a  onClick="return qs(event,this)" class=F href="#pipe_cntl_lduse_state_fn">lduse_state_fn</a>(<a  onClick="return qs(event,this)" class=SW href="#433">lduse_state</a>[2:0],
+                                        <a  onClick="return qs(event,this)" class=SW href="#405">load_use</a>,
+                                        <a  onClick="return qs(event,this)" class=SI href="#113">hold_c</a>,
+                                        (<a  onClick="return qs(event,this)" class=SI href="#128">iu_trap_c</a>|<a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a>),
+                                        (<a  onClick="return qs(event,this)" class=SO href="#423">icu_data_vld</a>|<a  onClick="return qs(event,this)" class=SI href="#148">iu_data_vld</a>) );
+ 
+<span class=C>// triquest state_vector lduse_state[2:0] LDUSE_STATE enum LDUSE_STATE_ENUM
+</span><a name="pipe_cntl_lduse_state_reg"></a><a name="433"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_3">ff_sr_3</a>        lduse_state_reg( <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3851">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#161">lduse_state</a>[2:0]),
+                                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#426">next_lduse_state</a>[2:0]),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+                                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>));
+ 
+
+<a name="pipe_cntl_lduse_state_fn"></a><span class=K>function</span> [2:0]   <a  onClick="return qs(event,this)" class=F href="#pipe_cntl_lduse_state_fn">lduse_state_fn</a>;
+<a name="440"></a><span class=K>input</span>   [2:0]    <a  onClick="return qs(event,this)" class=SI href="#440">cur_state</a>;
+<a name="441"></a><span class=K>input</span>            <a  onClick="return qs(event,this)" class=SI href="#441">load_use</a>;
+<a name="442"></a><span class=K>input</span>            <a  onClick="return qs(event,this)" class=SI href="#442">hold_c</a>;
+<a name="443"></a><span class=K>input</span>            <a  onClick="return qs(event,this)" class=SI href="#443">iu_trap_c</a>;
+<a name="444"></a><span class=K>input</span>            <a  onClick="return qs(event,this)" class=SI href="#444">iu_data_vld</a>;
+ 
+<a name="446"></a><span class=K>reg</span>     [2:0]   <a  onClick="return qs(event,this)" class=SR href="#459">next_state</a>;
+ 
+<span class=K>parameter</span>	<span class=C>// triquest enum LDUSE_STATE_ENUM
+</span><a name="449"></a>        <a  onClick="return qs(event,this)" class=PA href="#644">IDLE</a>            = 3'b000,
+<a name="450"></a>        <a  onClick="return qs(event,this)" class=PA href="#450">LDUSE_WAIT</a>  	= 3'b001,
+<a name="451"></a>        <a  onClick="return qs(event,this)" class=PA href="#451">LDUSE_HOLD</a>      = 3'b010,
+<a name="452"></a>	<a  onClick="return qs(event,this)" class=PA href="#452">LDUSE_BYP</a>	= 3'b100;
+ 
+<span class=K>begin</span>
+ 
+<span class=K>case</span>    (<a  onClick="return qs(event,this)" class=SI href="#440">cur_state</a>)     <span class=C>// synopsys full_case parallel_case
+</span>        <a  onClick="return qs(event,this)" class=PA href="#644">IDLE</a>:   	<span class=K>begin</span>
+                	<span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#441">load_use</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#444">iu_data_vld</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#443">iu_trap_c</a>) <span class=K>begin</span>
+<a name="459"></a>                	<a  onClick="return qs(event,this)" class=SR href="#446">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#450">LDUSE_WAIT</a>;
+               		<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#441">load_use</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#444">iu_data_vld</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#442">hold_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#443">iu_trap_c</a>) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#446">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#452">LDUSE_BYP</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#441">load_use</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#444">iu_data_vld</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#442">hold_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#443">iu_trap_c</a>) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#446">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#451">LDUSE_HOLD</a>;
+			<span class=K>end</span>
+                	<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#446">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#440">cur_state</a> ;
+        <span class=K>end</span>
+
+	<a  onClick="return qs(event,this)" class=PA href="#450">LDUSE_WAIT</a>: 	<span class=K>begin</span>
+			<span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#443">iu_trap_c</a>) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#446">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#644">IDLE</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#444">iu_data_vld</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#442">hold_c</a>) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#446">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#452">LDUSE_BYP</a> ;
+			<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#444">iu_data_vld</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#442">hold_c</a>) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#446">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#451">LDUSE_HOLD</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#446">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#440">cur_state</a>;
+	<span class=K>end</span>
+
+	<a  onClick="return qs(event,this)" class=PA href="#451">LDUSE_HOLD</a>:	<span class=K>begin</span>
+			<span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#443">iu_trap_c</a>) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#446">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#644">IDLE</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span>(~<a  onClick="return qs(event,this)" class=SI href="#442">hold_c</a>) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#446">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#452">LDUSE_BYP</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#446">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#440">cur_state</a>;
+	<span class=K>end</span>
+			
+	<a  onClick="return qs(event,this)" class=PA href="#452">LDUSE_BYP</a>:	<span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#446">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#644">IDLE</a>;
+			<span class=K>end</span>
+
+   	<span class=K>default</span>:        <a  onClick="return qs(event,this)" class=SR href="#446">next_state</a> = 3'bx;
+	<span class=K>endcase</span>
+ 
+<a  onClick="return qs(event,this)" class=F href="#pipe_cntl_lduse_state_fn">lduse_state_fn</a> = <a  onClick="return qs(event,this)" class=SR href="#459">next_state</a> ;
+<span class=K>end</span>
+<span class=K>endfunction</span>
+
+
+
+<span class=C>// Peformance Monitor stuff
+</span><a name="pipe_cntl_iu_perf_reg"></a><a name="507"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>  iu_perf_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#121">iu_perf_sgnl</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#127">iu_brtaken_e</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>));
+
+
+
+<span class=C>// OPTOP Selects generation
+</span><a name="515"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#96">optop_sel_e</a>[3]       =       ~<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a> ;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#96">optop_sel_e</a>[2]       =       <a  onClick="return qs(event,this)" class=SI href="#128">iu_trap_c</a>|<a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#96">optop_sel_e</a>[1]       =       <a  onClick="return qs(event,this)" class=SI href="#149">wr_optop_e</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#96">optop_sel_e</a>[0]       =       ~<a  onClick="return qs(event,this)" class=SO href="#515">optop_sel_e</a>[3]&amp;~<a  onClick="return qs(event,this)" class=SO href="#515">optop_sel_e</a>[2]&amp;~<a  onClick="return qs(event,this)" class=SO href="#515">optop_sel_e</a>[1];  
+
+<span class=C>// OPTOP Selects generation
+</span><a name="521"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#97">optop_sel_c</a>[3]       =       ~<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a> ;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#97">optop_sel_c</a>[2]       =       <a  onClick="return qs(event,this)" class=SI href="#130">iu_trap_r</a>|<a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#97">optop_sel_c</a>[1]       =       <a  onClick="return qs(event,this)" class=SI href="#149">wr_optop_e</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#97">optop_sel_c</a>[0]       =       ~<a  onClick="return qs(event,this)" class=SO href="#521">optop_sel_c</a>[3]&amp;~<a  onClick="return qs(event,this)" class=SO href="#521">optop_sel_c</a>[2]&amp;~<a  onClick="return qs(event,this)" class=SO href="#521">optop_sel_c</a>[1];
+
+
+
+
+<span class=C>// Enable for updating optop
+</span><a name="pipe_cntl_ucode_done_reg"></a><a name="530"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>          ucode_done_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#157">ucode_done_c</a>),<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#140">ucode_done</a>),<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>),<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#113">hold_c</a>));
+ 
+
+<span class=C>// Recirculate optop register. use shadow optop
+</span>
+ 
+ 
+<a name="538"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#98">optop_enable</a>[0]	=(<a  onClick="return qs(event,this)" class=SI href="#134">inst_vld_r</a>|<a  onClick="return qs(event,this)" class=SI href="#130">iu_trap_r</a>)&amp;~<a  onClick="return qs(event,this)" class=SI href="#127">iu_brtaken_e</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#112">hold_e</a> | <a  onClick="return qs(event,this)" class=SI href="#149">wr_optop_e</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#110">hold_ucode</a> | <a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a> | 
+			<a  onClick="return qs(event,this)" class=SI href="#128">iu_trap_c</a> | ~<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#98">optop_enable</a>[1]	= ~<a  onClick="return qs(event,this)" class=SI href="#110">hold_ucode</a> ;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#98">optop_enable</a>[2]	=<a  onClick="return qs(event,this)" class=SW href="#207">valid_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#530">ucode_done_c</a>	; 
+
+<span class=C>// This signal is used as an enable signal to the flop in SMU, which
+</span><span class=C>// generates it's own version of optop. This is done to improve timing on
+</span><span class=C>// smu_stall: 
+</span>
+<a name="547"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#101">iu_optop_int_we</a>	= <a  onClick="return qs(event,this)" class=SO href="#538">optop_enable</a>[1];
+
+
+<span class=C>// Enable for PC Pipe
+</span>
+<a name="552"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#99">pc_enable</a>[0]		=	~<a  onClick="return qs(event,this)" class=SI href="#111">hold_r</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#99">pc_enable</a>[1]		=	~<a  onClick="return qs(event,this)" class=SI href="#112">hold_e</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#99">pc_enable</a>[2]		=	~<a  onClick="return qs(event,this)" class=SI href="#113">hold_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#133">trap_in_progress</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a>;
+
+
+
+<span class=C>// Folding Pipe
+</span>
+<a name="560"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#165">fold_r_out</a>	=	<a  onClick="return qs(event,this)" class=SI href="#135">fold_r</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#134">inst_vld_r</a>;
+
+<a name="pipe_cntl_fold_e_reg"></a><a name="562"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	fold_e_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#165">fold_e_raw</a>),
+		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#560">fold_r_out</a>),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>),
+		<span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#112">hold_e</a>));
+
+<span class=C>// Check folding related logic only for 1st cycle of E stage.
+</span><span class=C>// for ucode. if a ucode instruction is folded but later ucode accesses
+</span><span class=C>// S$ causing S$ miss, it should not generate reissue logic. 
+</span><a name="571"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#165">fold_e</a>	=	<a  onClick="return qs(event,this)" class=SW href="#562">fold_e_raw</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#530">ucode_done_c</a>;
+
+<a name="573"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#118">fold_c</a>		=  <a  onClick="return qs(event,this)" class=SW href="#574">fold_c_out</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#204">inst_vld_c</a>;
+<a name="pipe_cntl_fold_c_reg"></a><a name="574"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  fold_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#171">fold_c_out</a>),
+                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#562">fold_e_raw</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#189">inst_vld_e</a>),
+                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>),
+                <span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#113">hold_c</a>));
+
+
+<span class=C>// Reissue instruction if a folded group traps or a folded
+</span><span class=C>// group misses stackcache.
+</span><span class=C>// In case of stackcache miss, kill ucode,kill fpu and 
+</span><span class=C>// disable valid bit C. Since scache_rd_miss_e is active
+</span><span class=C>// only for one cycle even when there is a hold, we need
+</span><span class=C>// to have a sticky bit for keeping track of sc_miss_e.
+</span>
+<a name="588"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#170">sc_miss_sticky_set</a> =   <a  onClick="return qs(event,this)" class=SI href="#147">scache_rd_miss_e</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#112">hold_e</a>&amp;<a  onClick="return qs(event,this)" class=SO href="#226">inst_vld</a>[0] | <a  onClick="return qs(event,this)" class=SW href="#589">sc_miss_sticky</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#112">hold_e</a>;
+<a name="pipe_cntl_sc_sticky_reg"></a><a name="589"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	sc_sticky_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#170">sc_miss_sticky</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#588">sc_miss_sticky_set</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>));
+
+<a name="594"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#117">fold_sc_miss_e</a> =	<a  onClick="return qs(event,this)" class=SW href="#571">fold_e</a>&amp;(<a  onClick="return qs(event,this)" class=SI href="#147">scache_rd_miss_e</a>&amp;<a  onClick="return qs(event,this)" class=SO href="#226">inst_vld</a>[0]|<a  onClick="return qs(event,this)" class=SW href="#589">sc_miss_sticky</a>);
+
+
+<a name="pipe_cntl_fold_sc_reg"></a><a name="597"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  fold_sc_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#166">fold_sc_miss_c</a>),
+                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SO href="#594">fold_sc_miss_e</a>),
+                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>),
+                <span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="#113">hold_c</a>));
+ 
+<span class=C>// Reissue instructions 
+</span><span class=C>// for trapped folded group, branch in W stage. timing reasons
+</span><a name="605"></a> <span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#116">reissue_c</a>	= <a  onClick="return qs(event,this)" class=SW href="#607">fold_trapped</a> | <a  onClick="return qs(event,this)" class=SW href="#597">fold_sc_miss_c</a> ;
+
+<a name="pipe_cntl_fold_trapped_reg"></a><a name="607"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>  fold_trapped_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#174">fold_trapped</a>),
+                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#617">fold_c_trapped</a>),
+                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>));
+
+
+<span class=C>// Squash folding 
+</span><span class=C>// If there is a trap of a folded group, disable folding
+</span><span class=C>// for the next 3 instructions.
+</span>
+<a name="617"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#165">fold_c_trapped</a>	=	<a  onClick="return qs(event,this)" class=SO href="#573">fold_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#204">inst_vld_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#128">iu_trap_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#129">async_error</a>;
+<a name="618"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#166">new_inst_r</a>	=	<a  onClick="return qs(event,this)" class=SI href="#134">inst_vld_r</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#111">hold_r</a>;
+<a name="619"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#164">next_fold_state</a>[4:0]    =       <a  onClick="return qs(event,this)" class=F href="#pipe_cntl_fold_state_fn">fold_state_fn</a>(<a  onClick="return qs(event,this)" class=SW href="#624">fold_state</a>[4:0],
+                                        <a  onClick="return qs(event,this)" class=SW href="#617">fold_c_trapped</a>,
+                                        <a  onClick="return qs(event,this)" class=SW href="#618">new_inst_r</a>);
+
+<span class=C>// triquest state_vector {fold_state[4:1],fold_state[0]} FOLD_STATE enum FOLD_STATE_ENUM
+</span><a name="pipe_cntl_fold_state_reg"></a><a name="624"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_4">ff_sr_4</a> fold_state_reg( <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3864">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#164">fold_state</a>[4:1]),
+                                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#619">next_fold_state</a>[4:1]),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+                                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>));
+ 
+<a name="pipe_cntl_fold_state_reg_0"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s">ff_s</a>            fold_state_reg_0(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2137">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#164">fold_state</a>[0]),
+                                <span class=SI>.din</span>(~<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a> | <a  onClick="return qs(event,this)" class=SW href="#619">next_fold_state</a>[0]),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>));
+<a name="632"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#105">squash_fold</a>	=	~<a  onClick="return qs(event,this)" class=SW href="#624">fold_state</a>[0] ;
+
+
+<a name="pipe_cntl_fold_state_fn"></a><span class=K>function</span> [4:0] <a  onClick="return qs(event,this)" class=F href="#pipe_cntl_fold_state_fn">fold_state_fn</a> ;
+ 
+<a name="637"></a><span class=K>input</span>   [4:0]  <a  onClick="return qs(event,this)" class=SI href="#637">cur_state</a> ;
+<a name="638"></a><span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="#638">fold_c_trapped</a> ;
+<a name="639"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#639">new_inst_r</a>;
+
+<a name="641"></a><span class=K>reg</span>	[4:0]	<a  onClick="return qs(event,this)" class=SR href="#656">next_state</a>;
+<span class=C>//State Encoding
+</span><span class=K>parameter</span>	<span class=C>// triquest enum FOLD_STATE_ENUM
+</span><a name="644"></a>	<a  onClick="return qs(event,this)" class=PA href="#644">IDLE</a>		=	5'b00001,
+<a name="645"></a>	<a  onClick="return qs(event,this)" class=PA href="#645">TRAP_STATE</a> 	=	5'b00010,
+<a name="646"></a>	<a  onClick="return qs(event,this)" class=PA href="#646">NONFOLD_1</a> 	=	5'b00100,
+<a name="647"></a>	<a  onClick="return qs(event,this)" class=PA href="#647">NONFOLD_2</a> 	=	5'b01000,
+<a name="648"></a>	<a  onClick="return qs(event,this)" class=PA href="#648">NONFOLD_3</a> 	=	5'b10000;
+	
+<span class=K>begin</span>
+
+<span class=K>case</span> (<a  onClick="return qs(event,this)" class=SI href="#637">cur_state</a>)		<span class=C>//synopsys full_case parallel_case
+</span>
+<a  onClick="return qs(event,this)" class=PA href="#644">IDLE</a>:	<span class=K>begin</span>
+	<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#638">fold_c_trapped</a>) <span class=K>begin</span>
+<a name="656"></a>	<a  onClick="return qs(event,this)" class=SR href="#641">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#645">TRAP_STATE</a>;
+	<span class=K>end</span>
+ 	<span class=K>else</span>    <a  onClick="return qs(event,this)" class=SR href="#641">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#637">cur_state</a> ;
+        <span class=K>end</span>
+
+
+<a  onClick="return qs(event,this)" class=PA href="#645">TRAP_STATE</a>: <span class=K>begin</span>
+	<span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#639">new_inst_r</a>) <span class=K>begin</span>
+	<a  onClick="return qs(event,this)" class=SR href="#641">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#646">NONFOLD_1</a>;
+        <span class=K>end</span>
+        <span class=K>else</span>    <a  onClick="return qs(event,this)" class=SR href="#641">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#637">cur_state</a> ;
+        <span class=K>end</span>
+	
+	
+<a  onClick="return qs(event,this)" class=PA href="#646">NONFOLD_1</a>: <span class=K>begin</span>
+        <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#639">new_inst_r</a>) <span class=K>begin</span>    
+        <a  onClick="return qs(event,this)" class=SR href="#641">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#647">NONFOLD_2</a>;    
+        <span class=K>end</span>    
+        <span class=K>else</span>    <a  onClick="return qs(event,this)" class=SR href="#641">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#637">cur_state</a> ;       
+        <span class=K>end</span>    
+
+
+<a  onClick="return qs(event,this)" class=PA href="#647">NONFOLD_2</a>: <span class=K>begin</span>
+        <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#639">new_inst_r</a>) <span class=K>begin</span>    
+        <a  onClick="return qs(event,this)" class=SR href="#641">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#648">NONFOLD_3</a>;    
+        <span class=K>end</span>    
+        <span class=K>else</span>    <a  onClick="return qs(event,this)" class=SR href="#641">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#637">cur_state</a> ;       
+        <span class=K>end</span>    
+ 
+<a  onClick="return qs(event,this)" class=PA href="#648">NONFOLD_3</a>: <span class=K>begin</span>
+        <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#639">new_inst_r</a>) <span class=K>begin</span>    
+        <a  onClick="return qs(event,this)" class=SR href="#641">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#644">IDLE</a>;    
+        <span class=K>end</span>    
+        <span class=K>else</span>    <a  onClick="return qs(event,this)" class=SR href="#641">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#637">cur_state</a> ;       
+        <span class=K>end</span>    
+
+	<span class=K>default</span>:        <a  onClick="return qs(event,this)" class=SR href="#641">next_state</a> = 5'bx;
+<span class=K>endcase</span>
+
+<a  onClick="return qs(event,this)" class=F href="#pipe_cntl_fold_state_fn">fold_state_fn</a> = <a  onClick="return qs(event,this)" class=SR href="#656">next_state</a> ;
+<span class=K>end</span>
+<span class=K>endfunction</span>
+
+<a name="pipe_cntl_spare"></a><a  onClick="return qs(event,this)" class=MM href="spare.v.html#mj_spare">mj_spare</a> spare( <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#151">clk</a>),
+                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#153">reset_l</a>));
+ 
+<span class=K>endmodule</span>
+
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:53 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/pipe/rtl/pipe_cntl.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

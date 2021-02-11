@@ -1,0 +1,325 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/smu/rtl/smu.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "smu.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+<a name="smu"></a><a  href="cpu.v.html#cpu_smu"><IMG alt="[Up: cpu smu]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span>	<span class=MM>smu</span><a  href="hierarchy-m.p4.html#smu"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+	<a  onClick="return qs(event,this)" class=SI href="#65">iu_optop_in</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#66">iu_optop_int_we</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#67">iu_data_in</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#69">iu_sbase_we</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#98">smu_addr</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#97">smu_data</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#103">smu_sbase</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#104">smu_sbase_we</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#99">smu_ld</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#100">smu_st</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#74">smu_stall</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#75">iu_psr_dre</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#76">iu_int</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#102">smu_we</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#78">low_mark</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#79">high_mark</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#105">smu_hold</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#71">smu_data_vld</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#84">smu_st_c</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#87">iu_smu_flush</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#106">smu_rf_addr</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#73">smu_rf_din</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#70">iu_rf_dout</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#72">dcu_data</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#85">ret_optop_update</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#86">smu_prty</a>,
+
+	<a  onClick="return qs(event,this)" class=SI href="#92">iu_smiss</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#94">iu_address</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#95">iu_data</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#107">smu_na_st</a>,
+
+	<a  onClick="return qs(event,this)" class=SI href="#80">clk</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#82">sm</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#101">so</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#81">sin</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#83">reset_l</a> );
+
+
+<a name="65"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#578">iu_optop_in</a><a  href="hierarchy-s.p9.html#iu_optop_in___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// iu_optop_c value at din input of the flop  
+</span><a name="66"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#579">iu_optop_int_we</a><a  href="hierarchy-s.p9.html#iu_optop_int_we___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// Corresponding wite enable signal
+</span><a name="67"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#576">iu_data_in</a><a  href="hierarchy-s.p9.html#iu_data_in___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// sbase value from IU to be writtne onto act sbase value
+</span>				<span class=C>// in case of wr_sbase ops, etc
+</span><a name="69"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#577">iu_sbase_we</a><a  href="hierarchy-s.p9.html#iu_sbase_we___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Corresponding sbase we signal from iu
+</span><a name="70"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#600">iu_rf_dout</a><a  href="hierarchy-s.p9.html#iu_rf_dout___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;	<span class=C>// Data from IU 
+</span><a name="71"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#595">smu_data_vld</a><a  href="hierarchy-s.p16.html#smu_data_vld___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Data on the dcache data bus is valid
+</span><a name="72"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#601">dcu_data</a><a  href="hierarchy-s.p4.html#dcu_data___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Data bus from Dcache .
+</span><a name="73"></a><span class=K>output</span>	[31:0]	<a  onClick="return qs(event,this)" class=SO href="#191">smu_rf_din</a><a  href="hierarchy-s.p16.html#smu_rf_din___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Data bus to IU
+</span><a name="74"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#592">smu_stall</a><a  href="hierarchy-s.p16.html#smu_stall___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Stall the smu from issuing any ld/st to dcu
+</span><a name="75"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#602">iu_psr_dre</a><a  href="hierarchy-s.p9.html#iu_psr_dre___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Dribller enable bit from Iu
+</span><a name="76"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#76">iu_int</a><a  href="hierarchy-s.p9.html#iu_int___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Input from IU which tells SMU that there is
+</span>				<span class=C>// an interrupt while handling overflows/underflows
+</span><a name="78"></a><span class=K>input</span>	[5:0]	<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#580">low_mark</a><a  href="hierarchy-s.p10.html#low_mark___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="79"></a><span class=K>input</span>	[5:0]	<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#581">high_mark</a><a  href="hierarchy-s.p8.html#high_mark___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="80"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#606">clk</a><a  href="hierarchy-s.p3.html#clk___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="81"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#81">sin</a><a  href="hierarchy-s.p16.html#sin___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="82"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#82">sm</a><a  href="hierarchy-s.p16.html#sm___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="83"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#610">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="84"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#596">smu_st_c</a><a  href="hierarchy-s.p16.html#smu_st_c___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="85"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#583">ret_optop_update</a><a  href="hierarchy-s.p15.html#ret_optop_update___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="86"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#127">smu_prty</a><a  href="hierarchy-s.p16.html#smu_prty___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="87"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#597">iu_smu_flush</a><a  href="hierarchy-s.p9.html#iu_smu_flush___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Signal from IU which is generated as a result of
+</span>                                <span class=C>// IU wanting to write d$ in locations between sb-2 
+</span>				<span class=C>// and sb+2.
+</span>                                <span class=C>// This will create a RAW and WAW hazards as dribbler
+</span>                                <span class=C>// is busy fetching data to these locations in scache
+</span><a name="92"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#603">iu_smiss</a><a  href="hierarchy-s.p9.html#iu_smiss___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Signal from IU which is generated as a result of a 
+</span>				<span class=C>// istore miss
+</span><a name="94"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#604">iu_address</a><a  href="hierarchy-s.p9.html#iu_address___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// istore miss address from IU 
+</span><a name="95"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#605">iu_data</a><a  href="hierarchy-s.p9.html#iu_data___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// istore miss data from IU
+</span>
+<a name="97"></a><span class=K>output</span> 	[31:0]	<a  onClick="return qs(event,this)" class=SO href="#189">smu_data</a><a  href="hierarchy-s.p16.html#smu_data___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// data to the dcache
+</span><a name="98"></a><span class=K>output</span>	[31:0]	<a  onClick="return qs(event,this)" class=SO href="#181">smu_addr</a><a  href="hierarchy-s.p16.html#smu_addr___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// addr to the dcache
+</span><a name="99"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#155">smu_ld</a><a  href="hierarchy-s.p16.html#smu_ld___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// load inst to dcache
+</span><a name="100"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#156">smu_st</a><a  href="hierarchy-s.p16.html#smu_st___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// store inst to dcache
+</span><a name="101"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#101">so</a><a  href="hierarchy-s.p16.html#so___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+<a name="102"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#154">smu_we</a><a  href="hierarchy-s.p16.html#smu_we___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Write enable to Register file
+</span><a name="103"></a><span class=K>output</span>	[31:0]	<a  onClick="return qs(event,this)" class=SO href="#175">smu_sbase</a><a  href="hierarchy-s.p16.html#smu_sbase___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// New stackbase to be updated .
+</span><a name="104"></a><span class=K>output</span>          <a  onClick="return qs(event,this)" class=SO href="#158">smu_sbase_we</a><a  href="hierarchy-s.p16.html#smu_sbase_we___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;   <span class=C>// Write Enable to  for stackbase register.
+</span><a name="105"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#153">smu_hold</a><a  href="hierarchy-s.p16.html#smu_hold___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// hold the iu/microcode pipe.
+</span><a name="106"></a><span class=K>output</span>	[5:0]	<a  onClick="return qs(event,this)" class=SO href="#182">smu_rf_addr</a><a  href="hierarchy-s.p16.html#smu_rf_addr___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// reg file addr for the port being used by smu
+</span><a name="107"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#166">smu_na_st</a><a  href="hierarchy-s.p16.html#smu_na_st___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Tell DCU that it is a non-allocate store 
+</span>
+<a name="109"></a><span class=K>wire</span>	[29:0]	<a  onClick="return qs(event,this)" class=SW href="#176">num_entries</a><a  href="hierarchy-s.p12.html#num_entries___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="110"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="#142">iu_sbase_int_sel</a><a  href="hierarchy-s.p9.html#iu_sbase_int_sel___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="111"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#141">iu_sbase_int_we</a><a  href="hierarchy-s.p9.html#iu_sbase_int_we___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="112"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#179">zero_entries_fl</a><a  href="hierarchy-s.p21.html#zero_entries_fl___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="113"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#177">und_flw_bit</a><a  href="hierarchy-s.p18.html#und_flw_bit___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="114"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="#143">nxt_sb_sel</a><a  href="hierarchy-s.p12.html#nxt_sb_sel___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="115"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="#144">dcache_sb_sel</a><a  href="hierarchy-s.p4.html#dcache_sb_sel___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+<a name="116"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="#145">sbase_sel</a><a  href="hierarchy-s.p16.html#sbase_sel___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+<a name="117"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#159">optop_en</a><a  href="hierarchy-s.p13.html#optop_en___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="118"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#150">spill</a><a  href="hierarchy-s.p16.html#spill___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="119"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#151">fill</a><a  href="hierarchy-s.p6.html#fill___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="120"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#157">sbase_hold</a><a  href="hierarchy-s.p16.html#sbase_hold___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="121"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="#146">scache_addr_sel</a><a  href="hierarchy-s.p16.html#scache_addr_sel___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="122"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="#162">smu_data_sel</a><a  href="hierarchy-s.p16.html#smu_data_sel___smu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+
+
+<a name="smu_smu_ctl"></a><a  onClick="return qs(event,this)" class=MM href="smu_ctl.v.html#smu_ctl">smu_ctl</a> smu_ctl	(
+	
+<a name="127"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#565">.smu_prty</a>(<a  onClick="return qs(event,this)" class=SO href="#86">smu_prty</a>),
+<a name="128"></a><span class=SI>.iu_sbase_we</span>(<a  onClick="return qs(event,this)" class=SI href="#69">iu_sbase_we</a>),
+<a name="129"></a><span class=SI>.num_entries</span>(<a  onClick="return qs(event,this)" class=SW href="#176">num_entries</a>),
+<a name="130"></a><span class=SI>.iu_flush</span>(<a  onClick="return qs(event,this)" class=SI href="#87">iu_smu_flush</a>),
+<a name="131"></a><span class=SI>.zero_entries_fl</span>(<a  onClick="return qs(event,this)" class=SW href="#179">zero_entries_fl</a>),
+<a name="132"></a><span class=SI>.und_flw_bit</span>(<a  onClick="return qs(event,this)" class=SW href="#177">und_flw_bit</a>),
+<a name="133"></a><span class=SI>.low_mark</span>(<a  onClick="return qs(event,this)" class=SI href="#78">low_mark</a>),
+<a name="134"></a><span class=SI>.high_mark</span>(<a  onClick="return qs(event,this)" class=SI href="#79">high_mark</a>),
+<a name="135"></a><span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#80">clk</a>),
+<span class=SI>.sm</span>(),
+<span class=SI>.sin</span>(),
+<a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#79">.so</a>(),
+<a name="139"></a><span class=SI>.ret_optop_update</span>(<a  onClick="return qs(event,this)" class=SI href="#85">ret_optop_update</a>),
+<a name="140"></a><span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#83">reset_l</a>),
+<a name="141"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#463">.iu_sbase_int_we</a>(<a  onClick="return qs(event,this)" class=SW href="#111">iu_sbase_int_we</a>),
+<a name="142"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#470">.iu_sbase_int_sel</a>(<a  onClick="return qs(event,this)" class=SW href="#110">iu_sbase_int_sel</a>),
+<a name="143"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#339">.nxt_sb_sel</a>(<a  onClick="return qs(event,this)" class=SW href="#114">nxt_sb_sel</a>),
+<a name="144"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#346">.dcache_sb_sel</a>(<a  onClick="return qs(event,this)" class=SW href="#115">dcache_sb_sel</a>),
+<a name="145"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#357">.sbase_sel</a>(<a  onClick="return qs(event,this)" class=SW href="#116">sbase_sel</a>),
+<a name="146"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#366">.scache_addr_sel</a>(<a  onClick="return qs(event,this)" class=SW href="#121">scache_addr_sel</a>),
+<a name="147"></a><span class=SI>.iu_psr_dre</span>(<a  onClick="return qs(event,this)" class=SI href="#75">iu_psr_dre</a>),
+<a name="148"></a><span class=SI>.smu_data_vld</span>(<a  onClick="return qs(event,this)" class=SI href="#71">smu_data_vld</a>),
+<a name="149"></a><span class=SI>.iu_int</span>(<a  onClick="return qs(event,this)" class=SI href="#76">iu_int</a>),
+<a name="150"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#228">.spill</a>(<a  onClick="return qs(event,this)" class=SW href="#118">spill</a>),
+<a name="151"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#294">.fill</a>(<a  onClick="return qs(event,this)" class=SW href="#119">fill</a>),
+<a name="152"></a><span class=SI>.smu_st_c</span>(<a  onClick="return qs(event,this)" class=SI href="#84">smu_st_c</a>),
+<a name="153"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#555">.dribble_stall</a>(<a  onClick="return qs(event,this)" class=SO href="#105">smu_hold</a>),
+<a name="154"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#474">.smu_we</a>(<a  onClick="return qs(event,this)" class=SO href="#102">smu_we</a>),
+<a name="155"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#475">.smu_ld</a>(<a  onClick="return qs(event,this)" class=SO href="#99">smu_ld</a>),
+<a name="156"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#477">.smu_st</a>(<a  onClick="return qs(event,this)" class=SO href="#100">smu_st</a>),
+<a name="157"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#376">.sbase_hold</a>(<a  onClick="return qs(event,this)" class=SW href="#120">sbase_hold</a>),
+<a name="158"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#453">.smu_sbase_we</a>(<a  onClick="return qs(event,this)" class=SO href="#104">smu_sbase_we</a>),
+<a name="159"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#492">.optop_en</a>(<a  onClick="return qs(event,this)" class=SW href="#117">optop_en</a>),
+
+<a name="161"></a><span class=SI>.iu_smiss</span>(<a  onClick="return qs(event,this)" class=SI href="#92">iu_smiss</a>),
+<a name="162"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#351">.smu_data_sel</a>(<a  onClick="return qs(event,this)" class=SW href="#122">smu_data_sel</a>),
+<a name="163"></a><span class=SI>.dcu_smu_stall</span>(<a  onClick="return qs(event,this)" class=SI href="#74">smu_stall</a>),	<span class=C>// New smu_stall = stall signal from DCU 
+</span>				<span class=C>// (dcu_smu_stall) and iu_smiss 
+</span><a name="165"></a><span class=SI>.smu_addr</span>(<a  onClick="return qs(event,this)" class=SO href="#181">smu_addr</a>[3:2]),
+<a name="166"></a><a  onClick="return qs(event,this)" class=SO href="smu_ctl.v.html#480">.smu_na_st</a>(<a  onClick="return qs(event,this)" class=SO href="#107">smu_na_st</a>)
+);
+
+
+<a name="smu_smu_dpath"></a><a  onClick="return qs(event,this)" class=MM href="smu_dpath.v.html#smu_dpath">smu_dpath</a> smu_dpath (
+
+<a name="172"></a><span class=SI>.iu_optop_in</span>(<a  onClick="return qs(event,this)" class=SI href="#65">iu_optop_in</a>),
+<a name="173"></a><span class=SI>.iu_optop_int_we</span>(<a  onClick="return qs(event,this)" class=SI href="#66">iu_optop_int_we</a>),
+<a name="174"></a><span class=SI>.iu_data_in</span>(<a  onClick="return qs(event,this)" class=SI href="#67">iu_data_in</a>),
+<a name="175"></a><a  onClick="return qs(event,this)" class=SO href="smu_dpath.v.html#227">.smu_sbase</a>(<a  onClick="return qs(event,this)" class=SO href="#103">smu_sbase</a>),
+<a name="176"></a><a  onClick="return qs(event,this)" class=SO href="smu_dpath.v.html#188">.num_entries</a>(<a  onClick="return qs(event,this)" class=SW href="#109">num_entries</a>),
+<a name="177"></a><a  onClick="return qs(event,this)" class=SO href="smu_dpath.v.html#181">.und_flw_bit</a>(<a  onClick="return qs(event,this)" class=SW href="#113">und_flw_bit</a>),
+<a name="178"></a><span class=SI>.optop_en</span>(<a  onClick="return qs(event,this)" class=SW href="#159">optop_en</a>),
+<a name="179"></a><a  onClick="return qs(event,this)" class=SO href="smu_dpath.v.html#157">.zero_entries_fl</a>(<a  onClick="return qs(event,this)" class=SW href="#112">zero_entries_fl</a>),
+<a name="180"></a><span class=SI>.sbase_hold</span>(<a  onClick="return qs(event,this)" class=SW href="#157">sbase_hold</a>),
+<a name="181"></a><a  onClick="return qs(event,this)" class=SO href="smu_dpath.v.html#208">.smu_addr</a>(<a  onClick="return qs(event,this)" class=SO href="#98">smu_addr</a>),
+<a name="182"></a><a  onClick="return qs(event,this)" class=SO href="smu_dpath.v.html#242">.smu_rf_addr</a>(<a  onClick="return qs(event,this)" class=SO href="#106">smu_rf_addr</a>),
+<a name="183"></a><span class=SI>.nxt_sb_sel</span>(<a  onClick="return qs(event,this)" class=SW href="#143">nxt_sb_sel</a>),
+<a name="184"></a><span class=SI>.iu_sbase_int_we</span>(<a  onClick="return qs(event,this)" class=SW href="#141">iu_sbase_int_we</a>),
+<a name="185"></a><span class=SI>.iu_sbase_int_sel</span>(<a  onClick="return qs(event,this)" class=SW href="#142">iu_sbase_int_sel</a>),
+<a name="186"></a><span class=SI>.dcache_sb_sel</span>(<a  onClick="return qs(event,this)" class=SW href="#144">dcache_sb_sel</a>),
+<a name="187"></a><span class=SI>.sbase_sel</span>(<a  onClick="return qs(event,this)" class=SW href="#145">sbase_sel</a>),
+<a name="188"></a><span class=SI>.scache_addr_sel</span>(<a  onClick="return qs(event,this)" class=SW href="#146">scache_addr_sel</a>),
+<a name="189"></a><a  onClick="return qs(event,this)" class=SO href="smu_dpath.v.html#166">.smu_data</a>(<a  onClick="return qs(event,this)" class=SO href="#97">smu_data</a>),
+<a name="190"></a><span class=SI>.dcu_data</span>(<a  onClick="return qs(event,this)" class=SI href="#72">dcu_data</a>),
+<a name="191"></a><a  onClick="return qs(event,this)" class=SO href="smu_dpath.v.html#176">.smu_rf_din</a>(<a  onClick="return qs(event,this)" class=SO href="#73">smu_rf_din</a>),
+<a name="192"></a><span class=SI>.iu_rf_dout</span>(<a  onClick="return qs(event,this)" class=SI href="#70">iu_rf_dout</a>),
+<a name="193"></a><span class=SI>.fill</span>(<a  onClick="return qs(event,this)" class=SW href="#151">fill</a>),
+<a name="194"></a><span class=SI>.spill</span>(<a  onClick="return qs(event,this)" class=SW href="#150">spill</a>),
+
+<a name="196"></a><span class=SI>.iu_address</span>(<a  onClick="return qs(event,this)" class=SI href="#94">iu_address</a>),
+<a name="197"></a><span class=SI>.iu_data</span>(<a  onClick="return qs(event,this)" class=SI href="#95">iu_data</a>),
+<a name="198"></a><span class=SI>.smu_data_sel</span>(<a  onClick="return qs(event,this)" class=SW href="#162">smu_data_sel</a>),
+
+<a name="200"></a><span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#80">clk</a>),
+<span class=SI>.sin</span>(),
+<a  onClick="return qs(event,this)" class=SO href="smu_dpath.v.html#95">.so</a>(),
+<span class=SI>.sm</span>()
+
+);
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:04 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/smu/rtl/smu.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

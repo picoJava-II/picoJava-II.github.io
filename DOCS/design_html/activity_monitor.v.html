@@ -1,0 +1,294 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/sim/env/activity_monitor.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "activity_monitor.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+<span class=M>`include</span> <a  onClick="return qs(event,this)" class=S href="sys.h.html">&quot;sys.h&quot;</a>
+<span class=M>`include</span> <a  onClick="return qs(event,this)" class=S href="defines.h.html">&quot;defines.h&quot;</a>
+
+
+<a name="activity_monitor"></a><a  href="monitor.v.html#monitor_activity_monitor"><IMG alt="[Up: monitor activity_monitor]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>activity_monitor</span><a  href="hierarchy-m.html#activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SI href="#28">pj_clk</a>, <a  onClick="return qs(event,this)" class=SI href="#29">end_of_simulation</a>);
+<a name="28"></a><span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="monitor.v.html#331">pj_clk</a><a  href="hierarchy-s.p14.html#pj_clk___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="29"></a><span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="monitor.v.html#332">end_of_simulation</a><a  href="hierarchy-s.p5.html#end_of_simulation___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="31"></a><span class=K>wire</span> [14:0] <a  onClick="return qs(event,this)" class=SW href="#49">event_signals</a><a  href="hierarchy-s.p5.html#event_signals___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="32"></a><span class=K>reg</span> <a  onClick="return qs(event,this)" class=SR href="#76">prev_inst_e_2</a><a  href="hierarchy-s.p14.html#prev_inst_e_2___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="33"></a><span class=K>reg</span> <a  onClick="return qs(event,this)" class=SR href="#77">prev_inst_e_3</a><a  href="hierarchy-s.p14.html#prev_inst_e_3___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="34"></a><span class=K>reg</span> <a  onClick="return qs(event,this)" class=SR href="#78">prev_biu_dcu_ack</a><a  href="hierarchy-s.p14.html#prev_biu_dcu_ack___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="35"></a><span class=K>reg</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#135">it_msb</a>:4] <a  onClick="return qs(event,this)" class=SR href="#79">prev_icu_tag_addr</a><a  href="hierarchy-s.p14.html#prev_icu_tag_addr___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="36"></a><span class=K>reg</span> <a  onClick="return qs(event,this)" class=SR href="#80">prev_icu_req</a><a  href="hierarchy-s.p14.html#prev_icu_req___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="38"></a><span class=K>reg</span>[8*40:1] <a  onClick="return qs(event,this)" class=SR href="#86">event_names</a><a  href="hierarchy-s.p5.html#event_names___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>[14:0];
+
+<a name="40"></a><span class=K>reg</span>[8*40:1]   <a  onClick="return qs(event,this)" class=SR href="#40">totalCyclesString</a><a  href="hierarchy-s.p17.html#totalCyclesString___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="41"></a><span class=K>reg</span>[8*40:1]   <a  onClick="return qs(event,this)" class=SR href="#41">totalInsnString</a><a  href="hierarchy-s.p17.html#totalInsnString___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="42"></a><span class=K>reg</span>[8*40:1]   <a  onClick="return qs(event,this)" class=SR href="#42">totalFoldString</a><a  href="hierarchy-s.p17.html#totalFoldString___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="44"></a><span class=K>integer</span> <a  onClick="return qs(event,this)" class=SIT href="#84">event_counts</a><a  href="hierarchy-s.p5.html#event_counts___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>[14:0];
+<a name="45"></a><span class=K>integer</span> <a  onClick="return qs(event,this)" class=SIT href="#45">i</a><a  href="hierarchy-s.p9.html#i___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="46"></a><span class=K>integer</span> <a  onClick="return qs(event,this)" class=SIT href="#74">actv_cntr_on</a><a  href="hierarchy-s.html#actv_cntr_on___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="47"></a><span class=K>integer</span> <a  onClick="return qs(event,this)" class=SIT href="#75">actv_insn_count</a><a  href="hierarchy-s.html#actv_insn_count___activity_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="49"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[0] = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.icu.icctl.ic_cntl.icu_req;
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[1] = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.icram_powerdown;
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[2] = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.icu.icu_dpath.ibuffer.ibuf_enable;
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[3] = (<a  onClick="return qs(event,this)" class=SR href="#76">prev_inst_e_2</a> == 1'b0 &amp;&amp; (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu_inst_e[2] == 1));
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[4] = (<a  onClick="return qs(event,this)" class=SR href="#77">prev_inst_e_3</a> == 1'b0 &amp;&amp; (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu_inst_e[3] == 1));
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[5] = (<a  onClick="return qs(event,this)" class=SR href="#78">prev_biu_dcu_ack</a> == 1'b0 &amp;&amp; (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.dcu.biu_dcu_ack[0] == 1));
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[6] = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.dcu_pwrdown;
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[7] = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.dcu.dcctl.wrbuf_cntl.wb_idle;
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[8] = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.dcu_stall;
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[9] = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.smu_hold;
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[10] = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.ifu.not_valid;
+<span class=C>// assign event_signals[10] = ~ ((`PICOJAVAII.`DESIGN.iu.ifu.valid_rs1_r == 0) | (`PICOJAVAII.`DESIGN.iu.ifu.valid_rs2_r == 0) |
+</span><span class=C>//			     (`PICOJAVAII.`DESIGN.iu.ifu.valid_op == 0) | (`PICOJAVAII.`DESIGN.iu.ifu.valid_rsd_r == 0));
+</span>
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[11] = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.ucode.u_done;
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[12] = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.fp_rdy_e;
+<span class=M>`ifdef</span> <span class=D>NO_ICACHE</span>
+<span class=P>assign event_signals[13] = 0;
+</span><span class=M>`else</span>
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[13] = (<a  onClick="return qs(event,this)" class=SR href="#79">prev_icu_tag_addr</a> != <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.itag_shell.icu_tag_addr );
+<span class=M>`endif</span>
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#31">event_signals</a>[14] = ((<a  onClick="return qs(event,this)" class=SR href="#80">prev_icu_req</a> == 1'b0) &amp;&amp; (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.icu.icu_req == 1'b1));
+
+<span class=K>initial</span>
+<span class=K>begin</span>
+<a name="74"></a>    <a  onClick="return qs(event,this)" class=SIT href="#46">actv_cntr_on</a> = 0;
+<a name="75"></a>    <a  onClick="return qs(event,this)" class=SIT href="#47">actv_insn_count</a> = 0;
+<a name="76"></a>    <a  onClick="return qs(event,this)" class=SR href="#32">prev_inst_e_2</a> = 1'b0;
+<a name="77"></a>    <a  onClick="return qs(event,this)" class=SR href="#33">prev_inst_e_3</a> = 1'b0;
+<a name="78"></a>    <a  onClick="return qs(event,this)" class=SR href="#34">prev_biu_dcu_ack</a> = 1'b0;
+<a name="79"></a>    <a  onClick="return qs(event,this)" class=SR href="#35">prev_icu_tag_addr</a> = 0;
+<a name="80"></a>    <a  onClick="return qs(event,this)" class=SR href="#36">prev_icu_req</a> = 1'b0;
+    
+    <span class=K>for</span> (<a  onClick="return qs(event,this)" class=SIT href="#45">i</a> = 0 ; <a  onClick="return qs(event,this)" class=SIT href="#45">i</a> &lt; 15 ; <a  onClick="return qs(event,this)" class=SIT href="#45">i</a>=<a  onClick="return qs(event,this)" class=SIT href="#45">i</a>+1)
+    <span class=K>begin</span>
+<a name="84"></a>        <a  onClick="return qs(event,this)" class=SIT href="#84">event_counts</a>[<a  onClick="return qs(event,this)" class=SIT href="#45">i</a>] = 0;
+    <span class=K>end</span>
+<a name="86"></a>    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[0] = <span class=S>&quot;ICU_CONTROL_IDLE_CYCLES&quot;</span>;
+    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[1] = <span class=S>&quot;ICRAM_DISABLED_CYCLES&quot;</span>;
+    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[2] = <span class=S>&quot;IBUFFER_ACTIVE_CYCLES&quot;</span>;
+    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[3] = <span class=S>&quot;DCU_READ_CYCLES&quot;</span>;
+    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[4] = <span class=S>&quot;DCU_WRITE_CYCLES&quot;</span>;
+    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[5] = <span class=S>&quot;DCU_LINE_FILL_CYCLES&quot;</span>;
+    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[6] = <span class=S>&quot;DCRAM_DISABLED_CYCLES&quot;</span>;
+    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[7] = <span class=S>&quot;WRITE_BUFFER_IDLE_CYCLES&quot;</span>;
+    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[8] = <span class=S>&quot;DCU_HOLD_PIPE_CYCLES&quot;</span>;
+    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[9] = <span class=S>&quot;SMU_HOLD_PIPE_CYCLES&quot;</span>;
+    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[10] = <span class=S>&quot;ICU_HOLD_PIPE_CYCLES&quot;</span>;
+    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[11] = <span class=S>&quot;UCODE_BUSY_CYCLES&quot;</span>;
+    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[12] = <span class=S>&quot;FPU_IDLE_CYCLES&quot;</span>;
+    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[13] = <span class=S>&quot;NUMBER OF I$ ACCESSES&quot;</span>;
+    <a  onClick="return qs(event,this)" class=SR href="#38">event_names</a>[14] = <span class=S>&quot;NUMBER OF I$ MISSES&quot;</span>;
+    
+    
+<span class=K>end</span>
+
+<span class=C>// check for write to enable/disable perf counters
+</span><span class=C>// temporarily use the perf counter to control the activity monitors
+</span>
+   <span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#28">pj_clk</a>) <span class=K>begin</span>
+     <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.pj_address == <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#29">PERF_COUNTER_ADDRESS</a>) 
+     <span class=K>begin</span>
+        <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.pj_data_out == 1)
+        <span class=K>begin</span>
+           <span class=ST>$display</span> (<span class=S>&quot;Activity data gathering enabled at time %d\n&quot;</span>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.clk_count);
+           <a  onClick="return qs(event,this)" class=SIT href="#46">actv_cntr_on</a> = 1;
+        <span class=K>end</span>
+        <span class=K>else</span> <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.pj_data_out == 0)
+        <span class=K>begin</span>
+           <span class=ST>$display</span> (<span class=S>&quot;Activity data gathering disabled at time %d\n&quot;</span>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.clk_count);
+           <a  onClick="return qs(event,this)" class=SIT href="#46">actv_cntr_on</a> = 0;
+        <span class=K>end</span>
+        <span class=K>else</span>
+          <span class=ST>$display</span> (<span class=S>&quot;Warning: Performance counter location (0x%x) touched with invalid data (0x%x)\n&quot;</span>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#29">PERF_COUNTER_ADDRESS</a>, <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.pj_data_out);
+     <span class=K>end</span>
+   <span class=K>end</span>
+ 
+
+  <span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#28">pj_clk</a>) 
+  <span class=K>begin</span>
+      #1 <a  onClick="return qs(event,this)" class=SR href="#32">prev_inst_e_2</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu_inst_e[2];
+      <a  onClick="return qs(event,this)" class=SR href="#33">prev_inst_e_3</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu_inst_e[3];
+      <a  onClick="return qs(event,this)" class=SR href="#34">prev_biu_dcu_ack</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.dcu.biu_dcu_ack[0];
+<span class=M>`ifdef</span> <span class=D>NO_ICACHE</span>
+<span class=M>`else</span>
+      <a  onClick="return qs(event,this)" class=SR href="#35">prev_icu_tag_addr</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.itag_shell.icu_tag_addr;
+<span class=M>`endif</span>
+      <a  onClick="return qs(event,this)" class=SR href="#36">prev_icu_req</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.icu.icu_req;
+      
+  <span class=K>end</span>
+
+  <span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#28">pj_clk</a>) 
+  <span class=K>begin</span>
+    <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SIT href="#46">actv_cntr_on</a> == 1)
+    <span class=K>begin</span>
+      <span class=K>for</span> (<a  onClick="return qs(event,this)" class=SIT href="#45">i</a> = 0 ; <a  onClick="return qs(event,this)" class=SIT href="#45">i</a> &lt; 15 ; <a  onClick="return qs(event,this)" class=SIT href="#45">i</a>=<a  onClick="return qs(event,this)" class=SIT href="#45">i</a>+1)
+      <span class=K>begin</span>
+        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SW href="#49">event_signals</a>[<a  onClick="return qs(event,this)" class=SIT href="#45">i</a>])
+        <span class=K>begin</span>
+          <a  onClick="return qs(event,this)" class=SIT href="#84">event_counts</a>[<a  onClick="return qs(event,this)" class=SIT href="#45">i</a>] = <a  onClick="return qs(event,this)" class=SIT href="#84">event_counts</a>[<a  onClick="return qs(event,this)" class=SIT href="#45">i</a>]+1;
+        <span class=K>end</span>
+      <span class=K>end</span>
+    <span class=K>end</span>
+  <span class=K>end</span>
+
+
+  <span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#28">pj_clk</a>) 
+  <span class=K>begin</span>
+    <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SIT href="#46">actv_cntr_on</a> == 1)
+    <span class=K>begin</span>
+      <span class=K>if</span> (<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.rcu.rcu_ctl.inst_complete_w)
+          <a  onClick="return qs(event,this)" class=SIT href="#47">actv_insn_count</a> = <a  onClick="return qs(event,this)" class=SIT href="#75">actv_insn_count</a> + 
+                            <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#75">PICOJAVAII</a>.<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>.iu.ifu.instrs_folded_w;
+    <span class=K>end</span>
+  <span class=K>end</span>
+  <span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#29">end_of_simulation</a>)
+  <span class=K>begin</span>
+<span class=C>//      $display(&quot;RTL-STAT: %s %d&quot;, totalCyclesString, `PICOJAVAII.clk_count);
+</span><span class=C>//      $display(&quot;RTL-STAT: %s %d&quot;, totalInsnString, `PICOJAVAII.total_instr_count);
+</span><span class=C>//      $display(&quot;RTL-STAT: %s %d&quot;, totalFoldString, `PICOJAVAII.total_instr_count - `PICOJAVAII.instr_complete_count);
+</span>      <span class=K>for</span> (<a  onClick="return qs(event,this)" class=SIT href="#45">i</a> = 0 ; <a  onClick="return qs(event,this)" class=SIT href="#45">i</a> &lt; 15 ; <a  onClick="return qs(event,this)" class=SIT href="#45">i</a> = <a  onClick="return qs(event,this)" class=SIT href="#45">i</a>+1)
+      <span class=K>begin</span>
+          <span class=ST>$display</span>(<span class=S>&quot;RTL-STAT: %s %d&quot;</span>, <a  onClick="return qs(event,this)" class=SR href="#86">event_names</a>[<a  onClick="return qs(event,this)" class=SIT href="#45">i</a>], <a  onClick="return qs(event,this)" class=SIT href="#84">event_counts</a>[<a  onClick="return qs(event,this)" class=SIT href="#45">i</a>]);
+      <span class=K>end</span>
+      
+  <span class=K>end</span>
+ 
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:45:58 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/sim/env/activity_monitor.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

@@ -1,0 +1,1119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/rcu/rtl/rcu_ctl.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "rcu_ctl.v.p3.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<center><table class=NB cols=3 nosave><tr><td align="center"><font color="#808080">1</font></td><td align="center"><a  href="rcu_ctl.v.p2.html">2</a></td><td align="center"><a  href="rcu_ctl.v.p3.html">3</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<a name="rcu_ctl"></a><a  href="rcu.v.html#rcu_rcu_ctl"><IMG alt="[Up: rcu rcu_ctl]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>rcu_ctl</span><a  href="hierarchy-m.p4.html#rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+	
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#121">opcode_1_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#122">opcode_2_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#123">valid_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#124">help_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#136">lvars_acc_rs1</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#138">st_index_op_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#139">lv_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#140">reverse_ops_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#141">update_optop_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#142">ucode_active</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#144">ucode_dest_we</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#145">ucode_dest_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#147">opcode_1_rs2_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#148">opcode_2_rs2_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#149">valid_rs2_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#150">lvars_acc_rs2</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#152">lv_rs2_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#153">valid_op_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#154">opcode_1_op_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#155">opcode_2_op_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#156">opcode_1_rsd_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#157">opcode_2_rsd_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#158">valid_rsd_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#159">group_1_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#160">group_2_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#161">group_3_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#162">group_4_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#163">group_5_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#164">group_6_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#165">group_7_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#166">group_9_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#167">no_fold_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#168">put_field2_quick_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#169">hold_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#170">hold_c</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#171">hold_ucode</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#172">inst_vld</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#173">sc_miss_rs1_int</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#174">sc_miss_rs2_int</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#175">bypass_scache_rs1_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#176">bypass_scache_rs1_c</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#177">bypass_scache_rs1_w</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#178">bypass_scache_rs2_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#179">bypass_scache_rs2_c</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#180">bypass_scache_rs2_w</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#181">sc_wr_addr_gr_scbot</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#182">iu_smu_flush_le</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#183">iu_smu_flush_ge</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#184">ucode_done</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#185">iu_trap_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#186">sin</a>,	
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#187">sm</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>,
+	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#190">gl_sel_rs1</a>,
+        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#191">const_sel_1_rs1</a>,
+        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#192">const_sel_2_rs1</a>,
+        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#193">const_gl_sel_rs1</a>,
+        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#194">scache_addr_sel_rs1</a>,
+        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#196">final_data_sel_rs1</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#199">gl_sel_rs2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#200">const_sel_1_rs2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#201">const_sel_2_rs2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#202">const_gl_sel_rs2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#203">scache_addr_sel_rs2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#205">final_data_sel_rs2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#207">scache_rd_miss_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#208">optop_incr_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#210">dest_addr_sel_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#209">dest_addr_sel_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#211">net_optop_sel1</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#212">net_optop_sel2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#213">net_optop_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#214">optop_offset_sel_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#215">enable_cmp_e_rs1</a>,
+        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#217">enable_cmp_c_rs1</a>,
+        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#219">enable_cmp_w_rs1</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#221">enable_cmp_e_rs2</a>,
+        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#223">enable_cmp_c_rs2</a>,
+        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#225">enable_cmp_w_rs2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#227">iu_data_we_w</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#228">gl_reg0_we_w</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#229">gl_reg1_we_w</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#230">gl_reg2_we_w</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#231">gl_reg3_we_w</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#232">rs1_forward_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#233">rs2_forward_mux_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#234">scache_wr_miss_w</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#235">iu_smu_flush</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#236">first_cycle</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#237">second_cycle</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#238">first_vld_c</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#239">inst_complete_w</a>,
+	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#240">so</a>
+);
+
+<a name="121"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#306">opcode_1_rs1_r</a><a  href="hierarchy-s.p13.html#opcode_1_rs1_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1st byte of opcode in RS1 stage
+</span><a name="122"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#307">opcode_2_rs1_r</a><a  href="hierarchy-s.p13.html#opcode_2_rs1_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 2nd byte of opcode in RS1 stage
+</span><a name="123"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#308">valid_rs1_r</a><a  href="hierarchy-s.p19.html#valid_rs1_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Inicates that the opcode in RS1 is valid
+</span><a name="124"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#309">help_rs1_r</a><a  href="hierarchy-s.p8.html#help_rs1_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates multi-rstage op. in RS1
+</span><a name="125"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#310">type_rs1_r</a><a  href="hierarchy-s.p17.html#type_rs1_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// indicates the type of long op in rs1
+</span>                                        <span class=C>// type[0] = long or double load
+</span>                                        <span class=C>// type[1] = long or double store
+</span>                                        <span class=C>// type[2] = long add, and, sub, or, xor or 
+</span>                                        <span class=C>// neg operation
+</span>                                        <span class=C>// type[3] = double add, sub, rem, mul, div 
+</span>                                        <span class=C>// or compare operation
+</span>                                        <span class=C>// type[4] = long shift left operation
+</span>                                        <span class=C>// type[5] = long shift right operation
+</span>                                        <span class=C>// type[6] = priv write operations
+</span>                                        <span class=C>// type[7] = long compares
+</span><a name="136"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#312">lvars_acc_rs1</a><a  href="hierarchy-s.p10.html#lvars_acc_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// This signal is asserted for all operations
+</span>					<span class=C>// which access scache using lvars reg in RS1
+</span><a name="138"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#311">st_index_op_rs1_r</a><a  href="hierarchy-s.p16.html#st_index_op_rs1_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// This indicates that there's a st_*_index op in RS1
+</span><a name="139"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#313">lv_rs1_r</a><a  href="hierarchy-s.p10.html#lv_rs1_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates that there's a pure LV op in RS1
+</span><a name="140"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#314">reverse_ops_rs1_r</a><a  href="hierarchy-s.p15.html#reverse_ops_rs1_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Used to fix an Xface proble between FPU and IU
+</span><a name="141"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#315">update_optop_r</a><a  href="hierarchy-s.p18.html#update_optop_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// priv_optop_update op in RS1
+</span><a name="142"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#316">ucode_active</a><a  href="hierarchy-s.p18.html#ucode_active___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// This signal indicates that ucode want to acess
+</span>					<span class=C>// scache
+</span><a name="144"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#317">ucode_dest_we</a><a  href="hierarchy-s.p18.html#ucode_dest_we___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// This signal indicates that ucode wants to write to s$
+</span><a name="145"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#318">ucode_dest_sel</a><a  href="hierarchy-s.p18.html#ucode_dest_sel___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode_dest_sel -&gt; 1: Use adder_out_e as the address, else 
+</span>					<span class=C>// use ucode_areg0
+</span><a name="147"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#319">opcode_1_rs2_r</a><a  href="hierarchy-s.p13.html#opcode_1_rs2_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1st byte of opcode in RS2 stage
+</span><a name="148"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#320">opcode_2_rs2_r</a><a  href="hierarchy-s.p13.html#opcode_2_rs2_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 2nd byte of opcode in RS2 stage
+</span><a name="149"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#321">valid_rs2_r</a><a  href="hierarchy-s.p19.html#valid_rs2_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a valid opcode in RS2 stage
+</span><a name="150"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#322">lvars_acc_rs2</a><a  href="hierarchy-s.p10.html#lvars_acc_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// This signal is asserted for all operations
+</span>					<span class=C>// wich access scache using lvars reg in RS2
+</span><a name="152"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#323">lv_rs2_r</a><a  href="hierarchy-s.p10.html#lv_rs2_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates that there's a pure LV op in RS2
+</span><a name="153"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#324">valid_op_r</a><a  href="hierarchy-s.p19.html#valid_op_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a valid opcode in OP
+</span><a name="154"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#325">opcode_1_op_r</a><a  href="hierarchy-s.p13.html#opcode_1_op_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// First byte of OP
+</span><a name="155"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#326">opcode_2_op_r</a><a  href="hierarchy-s.p13.html#opcode_2_op_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Second byte of OP
+</span><a name="156"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#327">opcode_1_rsd_r</a><a  href="hierarchy-s.p13.html#opcode_1_rsd_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// First byte of RSd
+</span><a name="157"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#328">opcode_2_rsd_r</a><a  href="hierarchy-s.p13.html#opcode_2_rsd_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Second byte of RSd
+</span><a name="158"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#329">valid_rsd_r</a><a  href="hierarchy-s.p19.html#valid_rsd_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a valid MEM op in rsd + long and dstores
+</span><a name="159"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#330">group_1_r</a><a  href="hierarchy-s.p7.html#group_1_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a group 1 folding
+</span><a name="160"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#331">group_2_r</a><a  href="hierarchy-s.p7.html#group_2_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a group 2 folding
+</span><a name="161"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#332">group_3_r</a><a  href="hierarchy-s.p7.html#group_3_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a group 3 folding
+</span><a name="162"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#333">group_4_r</a><a  href="hierarchy-s.p7.html#group_4_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a group 4 folding
+</span><a name="163"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#334">group_5_r</a><a  href="hierarchy-s.p7.html#group_5_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a group 5 folding
+</span><a name="164"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#335">group_6_r</a><a  href="hierarchy-s.p7.html#group_6_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a group 6 folding
+</span><a name="165"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#336">group_7_r</a><a  href="hierarchy-s.p7.html#group_7_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a group 7 folding
+</span><a name="166"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#337">group_9_r</a><a  href="hierarchy-s.p7.html#group_9_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a group 8 folding
+</span><a name="167"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#338">no_fold_r</a><a  href="hierarchy-s.p12.html#no_fold_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates no folding
+</span><a name="168"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#339">put_field2_quick_r</a><a  href="hierarchy-s.p14.html#put_field2_quick_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Indicates a putfield2_quick operation
+</span><a name="169"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#340">hold_e</a><a  href="hierarchy-s.p8.html#hold_e___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Signal from pipeline control to hold e-stage
+</span><a name="170"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#341">hold_c</a><a  href="hierarchy-s.p8.html#hold_c___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Signal from pipeline control to hold c-stage
+</span><a name="171"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#342">hold_ucode</a><a  href="hierarchy-s.p8.html#hold_ucode___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ucode hold signal
+</span><a name="172"></a><span class=K>input</span>	[2:0]	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#343">inst_vld</a><a  href="hierarchy-s.p9.html#inst_vld___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// [2] -&gt; Valid inst. in W, [1] in C stage and soon
+</span><a name="173"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#386">sc_miss_rs1_int</a><a  href="hierarchy-s.p16.html#sc_miss_rs1_int___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Compare output of sc_bototm and scache_addr_rs1
+</span><a name="174"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#387">sc_miss_rs2_int</a><a  href="hierarchy-s.p16.html#sc_miss_rs2_int___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Compare output of sc_bototm and scache_addr_rs2
+</span><a name="175"></a><span class=K>input</span>          	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#344">bypass_scache_rs1_e</a><a  href="hierarchy-s.p2.html#bypass_scache_rs1_e___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    <span class=C>// Bypass data from e-stage to rs1 stage
+</span><a name="176"></a><span class=K>input</span>          	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#345">bypass_scache_rs1_c</a><a  href="hierarchy-s.p2.html#bypass_scache_rs1_c___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    <span class=C>// Bypass data from c-stage to rs1 stage
+</span><a name="177"></a><span class=K>input</span>          	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#346">bypass_scache_rs1_w</a><a  href="hierarchy-s.p2.html#bypass_scache_rs1_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    <span class=C>// Bypass data from w-stage to rs1 stage
+</span><a name="178"></a><span class=K>input</span>          	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#347">bypass_scache_rs2_e</a><a  href="hierarchy-s.p2.html#bypass_scache_rs2_e___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    <span class=C>// Bypass data from e-stage to rs2 stage
+</span><a name="179"></a><span class=K>input</span>          	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#348">bypass_scache_rs2_c</a><a  href="hierarchy-s.p2.html#bypass_scache_rs2_c___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    <span class=C>// Bypass data from c-stage to rs2 stage
+</span><a name="180"></a><span class=K>input</span>          	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#349">bypass_scache_rs2_w</a><a  href="hierarchy-s.p2.html#bypass_scache_rs2_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    <span class=C>// Bypass data from w-stage to rs2 stage
+</span><a name="181"></a><span class=K>input</span>          	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#350">sc_wr_addr_gr_scbot</a><a  href="hierarchy-s.p16.html#sc_wr_addr_gr_scbot___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    <span class=C>// Indicates that scache write address is greater than sc_bot
+</span><a name="182"></a><span class=K>input</span>          	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#351">iu_smu_flush_le</a><a  href="hierarchy-s.p9.html#iu_smu_flush_le___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    	<span class=C>// Indicates that scache write address is less than or eq to sc_bot+8
+</span><a name="183"></a><span class=K>input</span>          	<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#352">iu_smu_flush_ge</a><a  href="hierarchy-s.p9.html#iu_smu_flush_ge___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    	<span class=C>// Indicates that scache write address is gr than or eq to sc_bot+8
+</span><a name="184"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#353">ucode_done</a><a  href="hierarchy-s.p18.html#ucode_done___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates ucode is done
+</span><a name="185"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#354">iu_trap_r</a><a  href="hierarchy-s.p9.html#iu_trap_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Trap in R-stage
+</span><a name="186"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#186">sin</a><a  href="hierarchy-s.p16.html#sin___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// RCU Control Scan In Port
+</span><a name="187"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#187">sm</a><a  href="hierarchy-s.p16.html#sm___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// RCU Control Scan Enable Port
+</span><a name="188"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#357">clk</a><a  href="hierarchy-s.p3.html#clk___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Clock
+</span><a name="189"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="rcu.v.html#358">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Reset
+</span><a name="190"></a><span class=K>output</span>	[3:0]   <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#432">gl_sel_rs1</a><a  href="hierarchy-s.p7.html#gl_sel_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// ctrl signal for selecting one of the gl regs in RS1
+</span><a name="191"></a><span class=K>output</span>  [5:0]   <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#440">const_sel_1_rs1</a><a  href="hierarchy-s.p3.html#const_sel_1_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;        <span class=C>// following two ctrl signals are used for
+</span><a name="192"></a><span class=K>output</span>  [6:0]   <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#448">const_sel_2_rs1</a><a  href="hierarchy-s.p3.html#const_sel_2_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;        <span class=C>// for selecting constants or imm. offset in RS1
+</span><a name="193"></a><span class=K>output</span>  [2:0]   <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#459">const_gl_sel_rs1</a><a  href="hierarchy-s.p3.html#const_gl_sel_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       <span class=C>// ctrl signal to slect one of globals or constants in RS1
+</span><a name="194"></a><span class=K>output</span>  [4:0]   <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#375">scache_addr_sel_rs1</a><a  href="hierarchy-s.p16.html#scache_addr_sel_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    <span class=C>// ctrl signal to determine what address is used for
+</span>                                        <span class=C>// accessing scache in RS1
+</span><a name="196"></a><span class=K>output</span>  [1:0]   <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#472">final_data_sel_rs1</a><a  href="hierarchy-s.p6.html#final_data_sel_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// ctrl signal to determine whether we select data
+</span>                                        <span class=C>// from scache or from globals/constants as the final
+</span>					<span class=C>// rs1_data_e in RS1
+</span><a name="199"></a><span class=K>output</span>  [3:0]   <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#577">gl_sel_rs2</a><a  href="hierarchy-s.p7.html#gl_sel_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// ctrl signal for selecting one of the gl regs in RS2
+</span><a name="200"></a><span class=K>output</span>  [5:0]   <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#584">const_sel_1_rs2</a><a  href="hierarchy-s.p3.html#const_sel_1_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;        <span class=C>// following two ctrl signals are used for
+</span><a name="201"></a><span class=K>output</span>  [6:0]   <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#596">const_sel_2_rs2</a><a  href="hierarchy-s.p3.html#const_sel_2_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;        <span class=C>// for selecting constants or imm. offset in RS2
+</span><a name="202"></a><span class=K>output</span>  [2:0]   <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#606">const_gl_sel_rs2</a><a  href="hierarchy-s.p3.html#const_gl_sel_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       <span class=C>// ctrl signal to slect one of globals or constants in RS2
+</span><a name="203"></a><span class=K>output</span>  [4:0]   <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#517">scache_addr_sel_rs2</a><a  href="hierarchy-s.p16.html#scache_addr_sel_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    <span class=C>// ctrl signal to determine what address is used for
+</span>                                        <span class=C>// accessing scache in RS2
+</span><a name="205"></a><span class=K>output</span>	[1:0]   <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#618">final_data_sel_rs2</a><a  href="hierarchy-s.p6.html#final_data_sel_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// ctrl signal to determine whether we select data
+</span>                                        <span class=C>// from scache or from globals/constants as the final rs2_data_e
+</span><a name="207"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#504">scache_rd_miss_e</a><a  href="hierarchy-s.p16.html#scache_rd_miss_e___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// scache miss in RS1 or RS2 stage
+</span><a name="208"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#647">optop_incr_sel</a><a  href="hierarchy-s.p13.html#optop_incr_sel___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// This will select the appropriate net optop as the dest addr.
+</span><a name="209"></a><span class=K>output</span>	[2:0]	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#655">dest_addr_sel_e</a><a  href="hierarchy-s.p4.html#dest_addr_sel_e___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// this selects the appropriate addr. as the final dest. addr in e
+</span><a name="210"></a><span class=K>output</span>	[2:0]	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#668">dest_addr_sel_r</a><a  href="hierarchy-s.p4.html#dest_addr_sel_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// this selects the appropriate addr. as the final dest. addr in r
+</span><a name="211"></a><span class=K>output</span>	[4:0]	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#683">net_optop_sel1</a><a  href="hierarchy-s.p12.html#net_optop_sel1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// The following three signals are used to select the appr.
+</span><a name="212"></a><span class=K>output</span>	[3:0]	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#684">net_optop_sel2</a><a  href="hierarchy-s.p12.html#net_optop_sel2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// optop in rcu_dpath
+</span><a name="213"></a><span class=K>output</span>	[1:0]	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#685">net_optop_sel</a><a  href="hierarchy-s.p12.html#net_optop_sel___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="214"></a><span class=K>output</span>	[5:0]	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#698">optop_offset_sel_r</a><a  href="hierarchy-s.p13.html#optop_offset_sel_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// This will select app. inc/dec in optop 
+</span><a name="215"></a><span class=K>output</span>           <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#875">enable_cmp_e_rs1</a><a  href="hierarchy-s.p5.html#enable_cmp_e_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    	<span class=C>// Only incase of writes to dest, &quot;d&quot; and read to loc. &quot;d&quot; in e,
+</span>                                        <span class=C>// we should enable the bypassing comparison in e for RS1
+</span><a name="217"></a><span class=K>output</span>           <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#876">enable_cmp_c_rs1</a><a  href="hierarchy-s.p5.html#enable_cmp_c_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     	<span class=C>// Only incase of writes to dest, &quot;d&quot; and read to loc. &quot;d&quot; in e,
+</span>                                       	<span class=C>// we should enable the bypassing comparison in c for RS1
+</span><a name="219"></a><span class=K>output</span>           <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#877">enable_cmp_w_rs1</a><a  href="hierarchy-s.p5.html#enable_cmp_w_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     	<span class=C>// Only incase of writes to dest, &quot;d&quot; and read to loc. &quot;d&quot; in e,
+</span>                                        <span class=C>// we should enable the bypassing comparison in w for RS1
+</span><a name="221"></a><span class=K>output</span>           <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#923">enable_cmp_e_rs2</a><a  href="hierarchy-s.p5.html#enable_cmp_e_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    	<span class=C>// Only incase of writes to dest, &quot;d&quot; and read to loc. &quot;d&quot; in e,
+</span>                                        <span class=C>// we should enable the bypassing comparison in e for RS2
+</span><a name="223"></a><span class=K>output</span>           <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#924">enable_cmp_c_rs2</a><a  href="hierarchy-s.p5.html#enable_cmp_c_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     	<span class=C>// Only incase of writes to dest, &quot;d&quot; and read to loc. &quot;d&quot; in e,
+</span>                                       	<span class=C>// we should enable the bypassing comparison in c for RS2
+</span><a name="225"></a><span class=K>output</span>           <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#925">enable_cmp_w_rs2</a><a  href="hierarchy-s.p5.html#enable_cmp_w_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     	<span class=C>// Only incase of writes to dest, &quot;d&quot; and read to loc. &quot;d&quot; in e,
+</span>                                        <span class=C>// we should enable the bypassing comparison in w for RS2
+</span><a name="227"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#747">iu_data_we_w</a><a  href="hierarchy-s.p9.html#iu_data_we_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// write enable signal to write the data onto scache
+</span><a name="228"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#831">gl_reg0_we_w</a><a  href="hierarchy-s.p7.html#gl_reg0_we_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Write Enable for Global Reg0 
+</span><a name="229"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#832">gl_reg1_we_w</a><a  href="hierarchy-s.p7.html#gl_reg1_we_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Write Enable for Global Reg1 
+</span><a name="230"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#833">gl_reg2_we_w</a><a  href="hierarchy-s.p7.html#gl_reg2_we_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Write Enable for Global Reg2 
+</span><a name="231"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#834">gl_reg3_we_w</a><a  href="hierarchy-s.p7.html#gl_reg3_we_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Write Enable for Global Reg3 
+</span><a name="232"></a><span class=K>output</span>	[3:0]	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1034">rs1_forward_mux_sel</a><a  href="hierarchy-s.p15.html#rs1_forward_mux_sel___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 3-&gt; forward from W, 2 from C and so-on 
+</span><a name="233"></a><span class=K>output</span>	[3:0]	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1100">rs2_forward_mux_sel</a><a  href="hierarchy-s.p15.html#rs2_forward_mux_sel___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 3-&gt; forward from W, 2 from C and so-on 
+</span><a name="234"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#762">scache_wr_miss_w</a><a  href="hierarchy-s.p16.html#scache_wr_miss_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Indicates that there's a scache write miss 
+</span><a name="235"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#766">iu_smu_flush</a><a  href="hierarchy-s.p9.html#iu_smu_flush___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Flush the stores/loads in the dribbler pipeline
+</span><a name="236"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1164">first_cycle</a><a  href="hierarchy-s.p6.html#first_cycle___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// First cycle of a multi-rstage op
+</span><a name="237"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a><a  href="hierarchy-s.p16.html#second_cycle___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Second cycle of a multi-rstage op
+</span><a name="238"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1190">first_vld_c</a><a  href="hierarchy-s.p6.html#first_vld_c___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// For appr. holding of pipe for fpu ops
+</span><a name="239"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1215">inst_complete_w</a><a  href="hierarchy-s.p9.html#inst_complete_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// This signal indicates that instr. is complete (in w-stage)
+</span><a name="240"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#240">so</a><a  href="hierarchy-s.p16.html#so___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// RCU Control Scan Out Port
+</span>
+<a name="242"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1154">mul_cyc_state</a><a  href="hierarchy-s.p11.html#mul_cyc_state___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="243"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1150">nxt_mul_cyc_state</a><a  href="hierarchy-s.p12.html#nxt_mul_cyc_state___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="244"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#782">gl_reg_id_r</a><a  href="hierarchy-s.p7.html#gl_reg_id_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="245"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#815">gl_reg_id_e</a><a  href="hierarchy-s.p7.html#gl_reg_id_e___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="246"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#820">gl_reg_id_c</a><a  href="hierarchy-s.p7.html#gl_reg_id_c___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="247"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#825">gl_reg_id_w</a><a  href="hierarchy-s.p7.html#gl_reg_id_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="248"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#838">gl_reg_id_rs1</a><a  href="hierarchy-s.p7.html#gl_reg_id_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="249"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#881">gl_reg_id_rs2</a><a  href="hierarchy-s.p7.html#gl_reg_id_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="250"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#957">act_bypass_scache_rs2_e</a><a  href="hierarchy-s.html#act_bypass_scache_rs2_e___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="251"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#775">ext_opcode_rsd</a><a  href="hierarchy-s.p5.html#ext_opcode_rsd___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="252"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#786">gl_reg_we_r</a><a  href="hierarchy-s.p7.html#gl_reg_we_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="253"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#795">gl_reg_we_e</a><a  href="hierarchy-s.p7.html#gl_reg_we_e___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="254"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#789">gl_reg_we_e_int</a><a  href="hierarchy-s.p7.html#gl_reg_we_e_int___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="255"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#797">gl_reg_we_c_int</a><a  href="hierarchy-s.p7.html#gl_reg_we_c_int___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="256"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#808">gl_reg_we_w_int</a><a  href="hierarchy-s.p7.html#gl_reg_we_w_int___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="257"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#777">write_global0</a><a  href="hierarchy-s.p20.html#write_global0___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="258"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#778">write_global1</a><a  href="hierarchy-s.p20.html#write_global1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="259"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#779">write_global2</a><a  href="hierarchy-s.p20.html#write_global2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="260"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#780">write_global3</a><a  href="hierarchy-s.p20.html#write_global3___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="261"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1203">ucode_done_c</a><a  href="hierarchy-s.p18.html#ucode_done_c___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="262"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1209">ucode_done_w</a><a  href="hierarchy-s.p18.html#ucode_done_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="263"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#757">scache_wr_miss_w_int</a><a  href="hierarchy-s.p16.html#scache_wr_miss_w_int___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="264"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#595">iinc_rs1</a><a  href="hierarchy-s.p9.html#iinc_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="265"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#754">scache_wr_miss_c</a><a  href="hierarchy-s.p16.html#scache_wr_miss_c___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="266"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1173">first_cycle_e</a><a  href="hierarchy-s.p6.html#first_cycle_e___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="267"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1179">first_cycle_c</a><a  href="hierarchy-s.p6.html#first_cycle_c___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="268"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1195">first_cycle_w</a><a  href="hierarchy-s.p6.html#first_cycle_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="269"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#467">gl_reg_rd_rs1</a><a  href="hierarchy-s.p7.html#gl_reg_rd_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="270"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#614">gl_reg_rd_rs2</a><a  href="hierarchy-s.p7.html#gl_reg_rd_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="271"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#484">scache_access_rs1</a><a  href="hierarchy-s.p16.html#scache_access_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="272"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#628">scache_access_rs2</a><a  href="hierarchy-s.p16.html#scache_access_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="273"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#998">bypass_hit_rs1_r</a><a  href="hierarchy-s.p2.html#bypass_hit_rs1_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="274"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1063">bypass_hit_rs2_r</a><a  href="hierarchy-s.p2.html#bypass_hit_rs2_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="275"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#988">bypass_data_rs1_estage_r</a><a  href="hierarchy-s.p2.html#bypass_data_rs1_estage_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="276"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#990">bypass_data_rs1_cstage_r</a><a  href="hierarchy-s.p2.html#bypass_data_rs1_cstage_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="277"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#992">bypass_data_rs1_wstage_r</a><a  href="hierarchy-s.p2.html#bypass_data_rs1_wstage_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="278"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1052">bypass_data_rs2_estage_r</a><a  href="hierarchy-s.p2.html#bypass_data_rs2_estage_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="279"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1054">bypass_data_rs2_cstage_r</a><a  href="hierarchy-s.p2.html#bypass_data_rs2_cstage_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="280"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1056">bypass_data_rs2_wstage_r</a><a  href="hierarchy-s.p2.html#bypass_data_rs2_wstage_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="281"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#842">bypass_gl_reg_rs1_e</a><a  href="hierarchy-s.p2.html#bypass_gl_reg_rs1_e___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="282"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#847">bypass_gl_reg_rs1_c</a><a  href="hierarchy-s.p2.html#bypass_gl_reg_rs1_c___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="283"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#852">bypass_gl_reg_rs1_w</a><a  href="hierarchy-s.p2.html#bypass_gl_reg_rs1_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="284"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#885">bypass_gl_reg_rs2_e</a><a  href="hierarchy-s.p2.html#bypass_gl_reg_rs2_e___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="285"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#890">bypass_gl_reg_rs2_c</a><a  href="hierarchy-s.p2.html#bypass_gl_reg_rs2_c___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="286"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#895">bypass_gl_reg_rs2_w</a><a  href="hierarchy-s.p2.html#bypass_gl_reg_rs2_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="287"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#995">nobypass_rs1_r</a><a  href="hierarchy-s.p12.html#nobypass_rs1_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="288"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1059">nobypass_rs2_r</a><a  href="hierarchy-s.p12.html#nobypass_rs2_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="289"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#803">gl_reg_we_c</a><a  href="hierarchy-s.p7.html#gl_reg_we_c___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="290"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#813">gl_reg_we_w</a><a  href="hierarchy-s.p7.html#gl_reg_we_w___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#173">sc_miss_rs1_int</a>;
+<a name="292"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#648">iu_data_we_int</a><a  href="hierarchy-s.p9.html#iu_data_we_int___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="293"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#713">iu_data_we_r</a><a  href="hierarchy-s.p9.html#iu_data_we_r___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="294"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#717">iu_data_we_e_int</a><a  href="hierarchy-s.p9.html#iu_data_we_e_int___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="295"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#725">iu_data_we_e_int1</a><a  href="hierarchy-s.p9.html#iu_data_we_e_int1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="296"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#729">iu_data_we_e</a><a  href="hierarchy-s.p9.html#iu_data_we_e___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="297"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#730">iu_data_we_c_int</a><a  href="hierarchy-s.p9.html#iu_data_we_c_int___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="298"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#738">iu_data_we_c</a><a  href="hierarchy-s.p9.html#iu_data_we_c___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="299"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#741">iu_data_we_w_int</a><a  href="hierarchy-s.p9.html#iu_data_we_w_int___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#174">sc_miss_rs2_int</a>;
+<a name="301"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#356">sc_miss_rs1</a><a  href="hierarchy-s.p16.html#sc_miss_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="302"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#363">act_sc_miss_rs1</a><a  href="hierarchy-s.html#act_sc_miss_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="303"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#495">sc_miss_rs2</a><a  href="hierarchy-s.p16.html#sc_miss_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="304"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#502">act_sc_miss_rs2</a><a  href="hierarchy-s.html#act_sc_miss_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="305"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#407">aconst_null_rs1</a><a  href="hierarchy-s.html#aconst_null_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="306"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#408">iconst_m1_rs1</a><a  href="hierarchy-s.p9.html#iconst_m1_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="307"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#409">iconst_0_rs1</a><a  href="hierarchy-s.p9.html#iconst_0_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="308"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#410">iconst_1_rs1</a><a  href="hierarchy-s.p9.html#iconst_1_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="309"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#411">iconst_2_rs1</a><a  href="hierarchy-s.p9.html#iconst_2_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="310"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#412">iconst_3_rs1</a><a  href="hierarchy-s.p9.html#iconst_3_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="311"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#413">iconst_4_rs1</a><a  href="hierarchy-s.p9.html#iconst_4_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="312"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#414">iconst_5_rs1</a><a  href="hierarchy-s.p9.html#iconst_5_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="313"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#417">fconst_0_rs1</a><a  href="hierarchy-s.p6.html#fconst_0_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="314"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#418">fconst_1_rs1</a><a  href="hierarchy-s.p6.html#fconst_1_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="315"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#419">fconst_2_rs1</a><a  href="hierarchy-s.p6.html#fconst_2_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="316"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#415">lconst_0_rs1</a><a  href="hierarchy-s.p10.html#lconst_0_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="317"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#416">lconst_1_rs1</a><a  href="hierarchy-s.p10.html#lconst_1_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="318"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#420">dconst_0_rs1</a><a  href="hierarchy-s.p4.html#dconst_0_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="319"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#421">dconst_1_rs1</a><a  href="hierarchy-s.p4.html#dconst_1_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="320"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#423">sipush_rs1</a><a  href="hierarchy-s.p16.html#sipush_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="321"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#422">bipush_rs1</a><a  href="hierarchy-s.p2.html#bipush_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="322"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#424">read_gl0_rs1</a><a  href="hierarchy-s.p15.html#read_gl0_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="323"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#425">read_gl1_rs1</a><a  href="hierarchy-s.p15.html#read_gl1_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="324"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#426">read_gl2_rs1</a><a  href="hierarchy-s.p15.html#read_gl2_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="325"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#427">read_gl3_rs1</a><a  href="hierarchy-s.p15.html#read_gl3_rs1___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="326"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#552">aconst_null_rs2</a><a  href="hierarchy-s.html#aconst_null_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="327"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#553">iconst_m1_rs2</a><a  href="hierarchy-s.p9.html#iconst_m1_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="328"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#554">iconst_0_rs2</a><a  href="hierarchy-s.p9.html#iconst_0_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="329"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#555">iconst_1_rs2</a><a  href="hierarchy-s.p9.html#iconst_1_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="330"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#556">iconst_2_rs2</a><a  href="hierarchy-s.p9.html#iconst_2_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="331"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#557">iconst_3_rs2</a><a  href="hierarchy-s.p9.html#iconst_3_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="332"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#558">iconst_4_rs2</a><a  href="hierarchy-s.p9.html#iconst_4_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="333"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#559">iconst_5_rs2</a><a  href="hierarchy-s.p9.html#iconst_5_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="334"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#562">fconst_0_rs2</a><a  href="hierarchy-s.p6.html#fconst_0_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="335"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#563">fconst_1_rs2</a><a  href="hierarchy-s.p6.html#fconst_1_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="336"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#564">fconst_2_rs2</a><a  href="hierarchy-s.p6.html#fconst_2_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="337"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#560">lconst_0_rs2</a><a  href="hierarchy-s.p10.html#lconst_0_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="338"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#561">lconst_1_rs2</a><a  href="hierarchy-s.p10.html#lconst_1_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="339"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#565">dconst_0_rs2</a><a  href="hierarchy-s.p4.html#dconst_0_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="340"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#566">dconst_1_rs2</a><a  href="hierarchy-s.p4.html#dconst_1_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="341"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#568">sipush_rs2</a><a  href="hierarchy-s.p16.html#sipush_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="342"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#567">bipush_rs2</a><a  href="hierarchy-s.p2.html#bipush_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="343"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#569">read_gl0_rs2</a><a  href="hierarchy-s.p15.html#read_gl0_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="344"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#570">read_gl1_rs2</a><a  href="hierarchy-s.p15.html#read_gl1_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="345"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#571">read_gl2_rs2</a><a  href="hierarchy-s.p15.html#read_gl2_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="346"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#572">read_gl3_rs2</a><a  href="hierarchy-s.p15.html#read_gl3_rs2___rcu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>//***** BEGIN: RS1 section of the control ******//
+</span>
+<span class=C>// We need to qualify sc_miss_rs1_int with ucode_active and
+</span><span class=C>// lvars_acc_rs1 signal to generate the actual miss signal
+</span>
+<span class=C>// Also if there's  a bypass hit, we should not generate any
+</span><span class=C>// scache read miss signal
+</span>
+<a name="356"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#301">sc_miss_rs1</a> = <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#173">sc_miss_rs1_int</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#142">ucode_active</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#136">lvars_acc_rs1</a>)
+			&amp; !(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#998">bypass_hit_rs1_r</a>); 
+
+<span class=C>// Added to improve timing on scache read miss path 
+</span>
+<span class=C>// hold ucode is used to fix a problem 
+</span>
+<a name="363"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#302">act_sc_miss_rs1</a> = (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#356">sc_miss_rs1</a> &amp; (!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#169">hold_e</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#142">ucode_active</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#171">hold_ucode</a>));
+
+<span class=C>// ff_sr           flop_scache_hit_rs1(.out(sc_miss_rs1_e),
+</span><span class=C>//                                 .din((sc_miss_rs1 &amp; (!hold_e | ucode_active))),
+</span><span class=C>//                                 .clk(clk),
+</span><span class=C>// 				.reset_l(reset_l) );
+</span>
+<span class=C>// Generate scache address select signals for RS1
+</span><span class=C>// Whenever there's &quot;iinc&quot; or &quot;ret&quot; or &quot;ld_*_index&quot; or &quot;st_*_index&quot;   in op, 
+</span><span class=C>// use lvars - offset to access scache
+</span>
+<span class=C>// In the second cycle of long or double loads, select lvars-offset-4
+</span><a name="375"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#194">scache_addr_sel_rs1</a>[4] = !(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#142">ucode_active</a>) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[0] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>;
+
+<span class=C>// For all other lvars access use lvars-offset
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#194">scache_addr_sel_rs1</a>[3] = !(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#142">ucode_active</a>) &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#136">lvars_acc_rs1</a>) &amp; 
+				!(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[0] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>);
+
+<span class=C>// Whenever ucode_active is high use ucode_addr_s
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#194">scache_addr_sel_rs1</a>[2] = <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#142">ucode_active</a>;
+
+<span class=C>// Whenever we want to access optop+2 use this signal
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#194">scache_addr_sel_rs1</a>[1] = !<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#142">ucode_active</a> &amp; (
+
+		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[1] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1164">first_cycle</a>) |	<span class=C>// long or double st and 1st cycle
+</span>		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[2] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1164">first_cycle</a>) | <span class=C>// long add, and, sub, or, xor or
+</span>						<span class=C>// neg operation and 1st cycle
+</span>		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[3] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>)|	<span class=C>// double add,sub,rem.mul,div or
+</span>						<span class=C>// compare operation and 2nd cycle
+</span>		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[4] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>)| <span class=C>// long left shift  and 2nd cycle
+</span>		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[5] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>)| <span class=C>// long right shift and 2nd cycle
+</span>		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[7] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>)|	<span class=C>// long compare and 2nd cycle 
+</span>		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#140">reverse_ops_rs1_r</a>) 	      |	<span class=C>// For d2i,d2l,d2f,l2f,l2d
+</span>		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#141">update_optop_r</a> &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>) <span class=C>// priv_update_optop needs oplim
+</span>						<span class=C>// in the second cycle
+</span>		);
+
+<span class=C>// Otherwise access Top Of Stack
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#194">scache_addr_sel_rs1</a>[0] = !(|<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#375">scache_addr_sel_rs1</a>[4:1]);
+
+<span class=C>// Decode the opcode in RS1
+</span>
+<a name="rcu_ctl_decode_opcode_rs1"></a><a  onClick="return qs(event,this)" class=MM href="rcu_ctl.v.p2.html#decode_opcode">decode_opcode</a>	decode_opcode_rs1(<span class=SI>.opcode</span>({<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#121">opcode_1_rs1_r</a>,<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#122">opcode_2_rs1_r</a>}),
+				<span class=SI>.valid</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#123">valid_rs1_r</a>),
+<a name="407"></a>				<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1281">.aconst_null</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#305">aconst_null_rs1</a>),
+<a name="408"></a>				<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1282">.iconst_m1</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#306">iconst_m1_rs1</a>),
+<a name="409"></a>        			<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1283">.iconst_0</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#307">iconst_0_rs1</a>),
+<a name="410"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1284">.iconst_1</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#308">iconst_1_rs1</a>),
+<a name="411"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1285">.iconst_2</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#309">iconst_2_rs1</a>),
+<a name="412"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1286">.iconst_3</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#310">iconst_3_rs1</a>),
+<a name="413"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1287">.iconst_4</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#311">iconst_4_rs1</a>),
+<a name="414"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1288">.iconst_5</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#312">iconst_5_rs1</a>),
+<a name="415"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1289">.lconst_0</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#316">lconst_0_rs1</a>),
+<a name="416"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1290">.lconst_1</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#317">lconst_1_rs1</a>),
+<a name="417"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1291">.fconst_0</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#313">fconst_0_rs1</a>),
+<a name="418"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1292">.fconst_1</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#314">fconst_1_rs1</a>),
+<a name="419"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1293">.fconst_2</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#315">fconst_2_rs1</a>),
+<a name="420"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1294">.dconst_0</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#318">dconst_0_rs1</a>),
+<a name="421"></a> 			      	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1295">.dconst_1</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#319">dconst_1_rs1</a>),
+<a name="422"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1296">.bipush</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#321">bipush_rs1</a>),
+<a name="423"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1297">.sipush</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#320">sipush_rs1</a>),
+<a name="424"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1300">.read_gl0</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#322">read_gl0_rs1</a>),
+<a name="425"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1301">.read_gl1</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#323">read_gl1_rs1</a>),
+<a name="426"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1302">.read_gl2</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#324">read_gl2_rs1</a>),
+<a name="427"></a>			        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1303">.read_gl3</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#325">read_gl3_rs1</a>)
+				);
+
+<span class=C>// Generate controls for accessing appropriate global register in RS1
+</span>
+<a name="432"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#190">gl_sel_rs1</a>[3] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#427">read_gl3_rs1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#190">gl_sel_rs1</a>[2] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#426">read_gl2_rs1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#190">gl_sel_rs1</a>[1] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#425">read_gl1_rs1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#190">gl_sel_rs1</a>[0] = !(|<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#432">gl_sel_rs1</a>[3:1]);
+
+
+<span class=C>// Generate controls for accessing appropriate constants/offset in RS1
+</span>
+<a name="440"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#191">const_sel_1_rs1</a>[5] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#413">iconst_4_rs1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#191">const_sel_1_rs1</a>[4] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#412">iconst_3_rs1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#191">const_sel_1_rs1</a>[3] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#411">iconst_2_rs1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#191">const_sel_1_rs1</a>[2] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#410">iconst_1_rs1</a> | (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#416">lconst_1_rs1</a> &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1164">first_cycle</a>) ;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#191">const_sel_1_rs1</a>[1] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#407">aconst_null_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#409">iconst_0_rs1</a> | 
+			     (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#416">lconst_1_rs1</a> &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>) | (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#415">lconst_0_rs1</a>);
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#191">const_sel_1_rs1</a>[0] = !(|<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#440">const_sel_1_rs1</a>[5:1]);
+
+<a name="448"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#192">const_sel_2_rs1</a>[6] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#423">sipush_rs1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#192">const_sel_2_rs1</a>[5] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#422">bipush_rs1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#192">const_sel_2_rs1</a>[4] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#419">fconst_2_rs1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#192">const_sel_2_rs1</a>[3] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#421">dconst_1_rs1</a> &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#192">const_sel_2_rs1</a>[2] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#418">fconst_1_rs1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#192">const_sel_2_rs1</a>[1] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#417">fconst_0_rs1</a> | (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#421">dconst_1_rs1</a> &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1164">first_cycle</a>) |
+					(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#420">dconst_0_rs1</a>);
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#192">const_sel_2_rs1</a>[0] = !(|<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#448">const_sel_2_rs1</a>[6:1]);
+
+<span class=C>// Generate controls for accessing either global regs/constants in RS1
+</span>
+<a name="459"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#193">const_gl_sel_rs1</a>[0] =  <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#427">read_gl3_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#426">read_gl2_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#425">read_gl1_rs1</a> |
+			       <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#424">read_gl0_rs1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#193">const_gl_sel_rs1</a>[1] =  <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#408">iconst_m1_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#409">iconst_0_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#407">aconst_null_rs1</a> |
+			       <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#410">iconst_1_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#411">iconst_2_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#412">iconst_3_rs1</a> | 
+			       <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#413">iconst_4_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#415">lconst_0_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#416">lconst_1_rs1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#193">const_gl_sel_rs1</a>[2] =  !(|<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#459">const_gl_sel_rs1</a>[1:0]);
+
+<span class=C>// This signal is used for Global Reg, bypassing
+</span><a name="467"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#269">gl_reg_rd_rs1</a> = <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#459">const_gl_sel_rs1</a>[0];
+
+<span class=C>// Generate controls for accessing either scache data/globaland constants in RS1
+</span><span class=C>// Whenever ucode wants to access data, it should be given priority
+</span>
+<a name="472"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#196">final_data_sel_rs1</a>[0] = ( <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#408">iconst_m1_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#409">iconst_0_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#410">iconst_1_rs1</a> |
+				<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#411">iconst_2_rs1</a>  | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#412">iconst_3_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#413">iconst_4_rs1</a> | 
+				<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#414">iconst_5_rs1</a>  | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#417">fconst_0_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#418">fconst_1_rs1</a> | 
+				<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#419">fconst_2_rs1</a>  | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#420">dconst_0_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#421">dconst_1_rs1</a> | 
+				<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#415">lconst_0_rs1</a>  | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#416">lconst_1_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#423">sipush_rs1</a>   | 
+				<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#422">bipush_rs1</a>    | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#424">read_gl0_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#425">read_gl1_rs1</a> | 
+				<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#426">read_gl2_rs1</a>  | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#427">read_gl3_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#407">aconst_null_rs1</a>) 
+				&amp; !<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#142">ucode_active</a>;
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#196">final_data_sel_rs1</a>[1] = !<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#472">final_data_sel_rs1</a>[0];
+
+<span class=C>// This signal is used for Stcak Cache Access Bypass
+</span><a name="484"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#271">scache_access_rs1</a> = <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#472">final_data_sel_rs1</a>[1];
+
+<span class=C>//***** END: RS1 section of the control *****//
+</span>
+<span class=C>//***** BEGIN: RS2 section of the control *****//
+</span>
+<span class=C>// We need to qualify sc_miss_rs2_int with
+</span><span class=C>// lvars_acc_rs2 signal to generate the actual miss signal
+</span><span class=C>// Also if there's  a bypass hit, we should not generate any
+</span><span class=C>// scache read miss signal
+</span>
+<a name="495"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#303">sc_miss_rs2</a> = (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#174">sc_miss_rs2_int</a> &amp;  <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#150">lvars_acc_rs2</a>) 
+			&amp; !(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.p2.html#1063">bypass_hit_rs2_r</a>); 
+
+<span class=C>// Added to improve timing on read scache miss signal 
+</span>
+<span class=C>// hold ucode is used to fix a problem 
+</span>
+<a name="502"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#304">act_sc_miss_rs2</a> = (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#495">sc_miss_rs2</a> &amp; !(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#169">hold_e</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#142">ucode_active</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#171">hold_ucode</a>) );
+
+<a name="rcu_ctl_flop_scache_hit"></a><a name="504"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>           flop_scache_hit(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#207">scache_rd_miss_e</a>),
+                                <span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#363">act_sc_miss_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#502">act_sc_miss_rs2</a>)),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>) );
+
+<span class=C>// Whenever there's a stack cache miss in either RS1 or RS2 stage
+</span><span class=C>// generate a stck cache read miss. Also qualify it with valid
+</span><span class=C>// inst. in e - Removed this to improve timing on read scache miss 
+</span>
+<span class=C>// assign	scache_rd_miss_e =  (sc_miss_rs1_e | sc_miss_rs2_e) &amp; inst_vld[0];
+</span>
+<span class=C>// Generate scache address select signals for RS1
+</span><span class=C>// Use this signal to access scache using lvars
+</span><a name="517"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#203">scache_addr_sel_rs2</a>[4] = <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#150">lvars_acc_rs2</a> ;
+
+<span class=C>// Use this signal to access scache at location optop+4
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#203">scache_addr_sel_rs2</a>[3] =  
+
+		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[2] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1164">first_cycle</a>) |	<span class=C>// lond add, and, sub, or, xor or
+</span>						<span class=C>// neg operation and 1st cycle
+</span>		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[3] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>)|	<span class=C>// double add,sub,rem,mul,div or
+</span>						<span class=C>// compare operation and 2nd cycle
+</span>		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[7] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>); <span class=C>// long compare and 2nd cycle
+</span>
+<span class=C>//Use this signal to access scache at location optop+3
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#203">scache_addr_sel_rs2</a>[2] =
+
+		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[2] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>) | <span class=C>// lond add, and, sub, or, xor or
+</span>                                                <span class=C>// neg operation and 2nd cycle
+</span>		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[3] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1164">first_cycle</a>)| 	<span class=C>// double add,sub,rem,mul,div or
+</span>                                                <span class=C>// compare operation and 1st cycle
+</span>		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[4]) |		<span class=C>// long left shift op 
+</span>		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[5] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>) |<span class=C>// long right shift and 2nd cycle
+</span>		(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#125">type_rs1_r</a>[7] &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1164">first_cycle</a>)  |<span class=C>// long compares and 1st cycle	
+</span>		<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#168">put_field2_quick_r</a>;		<span class=C>// putfield2_quick
+</span>
+<span class=C>// If there's an LV in RS1 and no LV in RS2 access Top Of Stack
+</span><span class=C>// Also, whenever there are st_*_index operations in RS1 use RS2 to access
+</span><span class=C>// TOS not NTOS
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#203">scache_addr_sel_rs2</a>[1] = (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#139">lv_rs1_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#152">lv_rs2_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#138">st_index_op_rs1_r</a> |
+					<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#140">reverse_ops_rs1_r</a>);  <span class=C>// For d2i,d2l,d2f,l2f,l2d
+</span>
+<span class=C>//Otherwise access Next Top Of Stack
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#203">scache_addr_sel_rs2</a>[0] = !(|<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#517">scache_addr_sel_rs2</a>[4:1]);
+
+<span class=C>//Decode the opcode in RS2
+</span><a name="rcu_ctl_decode_opcode_rs2"></a><a  onClick="return qs(event,this)" class=MM href="rcu_ctl.v.p2.html#decode_opcode">decode_opcode</a>   decode_opcode_rs2(<span class=SI>.opcode</span>({<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#147">opcode_1_rs2_r</a>,<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#148">opcode_2_rs2_r</a>}),
+                                <span class=SI>.valid</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#149">valid_rs2_r</a>),
+<a name="552"></a>				<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1281">.aconst_null</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#326">aconst_null_rs2</a>),
+<a name="553"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1282">.iconst_m1</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#327">iconst_m1_rs2</a>),
+<a name="554"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1283">.iconst_0</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#328">iconst_0_rs2</a>),
+<a name="555"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1284">.iconst_1</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#329">iconst_1_rs2</a>),
+<a name="556"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1285">.iconst_2</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#330">iconst_2_rs2</a>),
+<a name="557"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1286">.iconst_3</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#331">iconst_3_rs2</a>),
+<a name="558"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1287">.iconst_4</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#332">iconst_4_rs2</a>),
+<a name="559"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1288">.iconst_5</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#333">iconst_5_rs2</a>),
+<a name="560"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1289">.lconst_0</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#337">lconst_0_rs2</a>),
+<a name="561"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1290">.lconst_1</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#338">lconst_1_rs2</a>),
+<a name="562"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1291">.fconst_0</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#334">fconst_0_rs2</a>),
+<a name="563"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1292">.fconst_1</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#335">fconst_1_rs2</a>),
+<a name="564"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1293">.fconst_2</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#336">fconst_2_rs2</a>),
+<a name="565"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1294">.dconst_0</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#339">dconst_0_rs2</a>),
+<a name="566"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1295">.dconst_1</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#340">dconst_1_rs2</a>),
+<a name="567"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1296">.bipush</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#342">bipush_rs2</a>),
+<a name="568"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1297">.sipush</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#341">sipush_rs2</a>),
+<a name="569"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1300">.read_gl0</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#343">read_gl0_rs2</a>),
+<a name="570"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1301">.read_gl1</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#344">read_gl1_rs2</a>),
+<a name="571"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1302">.read_gl2</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#345">read_gl2_rs2</a>),
+<a name="572"></a>                                <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1303">.read_gl3</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#346">read_gl3_rs2</a>)
+                                );
+ 
+<span class=C>// Generate controls for accessing appropriate global register in RS2
+</span> 
+<a name="577"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#199">gl_sel_rs2</a>[3] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#572">read_gl3_rs2</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#199">gl_sel_rs2</a>[2] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#571">read_gl2_rs2</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#199">gl_sel_rs2</a>[1] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#570">read_gl1_rs2</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#199">gl_sel_rs2</a>[0] = !(|<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#577">gl_sel_rs2</a>[3:1]);
+
+<span class=C>// Generate controls for accessing appropriate constants/offset in RS2
+</span> 
+<a name="584"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#200">const_sel_1_rs2</a>[5] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#558">iconst_4_rs2</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#200">const_sel_1_rs2</a>[4] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#557">iconst_3_rs2</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#200">const_sel_1_rs2</a>[3] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#556">iconst_2_rs2</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#200">const_sel_1_rs2</a>[2] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#555">iconst_1_rs2</a>; 
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#200">const_sel_1_rs2</a>[1] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#554">iconst_0_rs2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#552">aconst_null_rs2</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#200">const_sel_1_rs2</a>[0] = !(|<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#584">const_sel_1_rs2</a>[5:1]);
+ 
+<span class=C>// Whenver there's an iinc in RS1 we need to sign extend
+</span><span class=C>// offset_2_rs1_r and shove it thru RS2
+</span><span class=C>// For iinc, valid_rs1 is not high. Hence we cannot determine
+</span><span class=C>// it from opcode_1_rs1_r and valid_rs1_r
+</span><a name="595"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#264">iinc_rs1</a> = (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#154">opcode_1_op_r</a> == 8'd132) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#153">valid_op_r</a>;
+<a name="596"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#201">const_sel_2_rs2</a>[6] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#595">iinc_rs1</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#201">const_sel_2_rs2</a>[5] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#568">sipush_rs2</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#201">const_sel_2_rs2</a>[4] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#567">bipush_rs2</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#201">const_sel_2_rs2</a>[3] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#564">fconst_2_rs2</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#201">const_sel_2_rs2</a>[2] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#563">fconst_1_rs2</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#201">const_sel_2_rs2</a>[1] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#562">fconst_0_rs2</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#201">const_sel_2_rs2</a>[0] = !(|<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#596">const_sel_2_rs2</a>[6:1]);
+ 
+<span class=C>// Generate controls for accessing either global regs/constants in RS2
+</span> 
+<a name="606"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#202">const_gl_sel_rs2</a>[0] =  <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#572">read_gl3_rs2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#571">read_gl2_rs2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#570">read_gl1_rs2</a> |
+                               <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#569">read_gl0_rs2</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#202">const_gl_sel_rs2</a>[1] =  <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#553">iconst_m1_rs2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#552">aconst_null_rs2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#554">iconst_0_rs2</a> | 
+			       <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#555">iconst_1_rs2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#556">iconst_2_rs2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#557">iconst_3_rs2</a> | 
+			       <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#558">iconst_4_rs2</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#202">const_gl_sel_rs2</a>[2] =  !(|<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#606">const_gl_sel_rs2</a>[1:0]);
+
+<span class=C>// This signal is used for Global Reg, bypassing
+</span><a name="614"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#270">gl_reg_rd_rs2</a> = <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#606">const_gl_sel_rs2</a>[0];
+
+<span class=C>// Generate controls for accessing either scache data/globaland constants in RS1
+</span> 
+<a name="618"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#205">final_data_sel_rs2</a>[0] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#553">iconst_m1_rs2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#554">iconst_0_rs2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#555">iconst_1_rs2</a> |
+                                <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#556">iconst_2_rs2</a>  | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#557">iconst_3_rs2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#558">iconst_4_rs2</a> |
+                                <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#559">iconst_5_rs2</a>  | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#562">fconst_0_rs2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#563">fconst_1_rs2</a> |
+                                <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#564">fconst_2_rs2</a>  | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#568">sipush_rs2</a>   | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#567">bipush_rs2</a>   | 
+				<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#569">read_gl0_rs2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#570">read_gl1_rs2</a>  | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#571">read_gl2_rs2</a> | 
+				<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#572">read_gl3_rs2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#552">aconst_null_rs2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#595">iinc_rs1</a>;
+ 
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#205">final_data_sel_rs2</a>[1] = !(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#618">final_data_sel_rs2</a>[0]);
+
+<span class=C>// This signal is used for Stcak Cache Access Bypass
+</span><a name="628"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#272">scache_access_rs2</a> = <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#618">final_data_sel_rs2</a>[1];
+
+ 
+<span class=C>//***** END: RS2 section of the control *****//
+</span>
+<span class=C>//***** BEGIN: RSd section of the control ******//
+</span>
+<span class=C>// Instantiate a decoder which will decode the offset which need be added to optop to
+</span><span class=C>// generate the destination address
+</span> 
+<a name="rcu_ctl_dest_dec"></a><a name="638"></a><a  onClick="return qs(event,this)" class=MM href="rcu_ctl.v.p2.html#dest_decoder">dest_decoder</a>    dest_dec(<span class=SI>.opcode</span>({<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#154">opcode_1_op_r</a>,<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#155">opcode_2_op_r</a>}),
+<a name="639"></a>                        <span class=SI>.first_cyc</span>(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1164">first_cycle</a>),
+<a name="640"></a>                        <span class=SI>.second_cyc</span>(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>),
+<a name="641"></a>                        <span class=SI>.valid</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#153">valid_op_r</a>),
+<a name="642"></a>			<span class=SI>.group_2_r</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#160">group_2_r</a>),
+<a name="643"></a>			<span class=SI>.group_3_r</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#161">group_3_r</a>),
+<a name="644"></a>			<span class=SI>.group_5_r</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#163">group_5_r</a>),
+<a name="645"></a>			<span class=SI>.group_6_r</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#164">group_6_r</a>),
+<a name="646"></a>			<span class=SI>.group_7_r</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#165">group_7_r</a>),
+<a name="647"></a>                        <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1538">.optop_incr_sel</a>(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#208">optop_incr_sel</a>),
+<a name="648"></a>			<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1580">.dest_we</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#292">iu_data_we_int</a>) );
+
+<span class=C>// Now whenver there's a valid_rsd or iinc, select lvars - offset as the destination
+</span><span class=C>// address, otherwise select optop + offset
+</span>
+<span class=C>// Whenever, ucode wants to write to stack and ucode_dest_sel is 1,
+</span><span class=C>// select adder_out_e as the dest address
+</span><a name="655"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#209">dest_addr_sel_e</a>[2] =	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#144">ucode_dest_we</a> &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#145">ucode_dest_sel</a>; 
+
+<span class=C>// Whenever, ucode wants to write to stack and ucode_dest_sel is 0,
+</span><span class=C>// select ucode_areg0 as the dest address
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#209">dest_addr_sel_e</a>[1] =	<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#144">ucode_dest_we</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#145">ucode_dest_sel</a>; 
+
+<span class=C>// In all other cases select dest_addr_e_int
+</span>
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#209">dest_addr_sel_e</a>[0] =	!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#144">ucode_dest_we</a>;
+
+
+<span class=C>// Whenever there's a long or double store, select lvars - offset - 4 in the
+</span><span class=C>// second cycle 
+</span><a name="668"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#210">dest_addr_sel_r</a>[1] =  <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#158">valid_rsd_r</a> &amp; <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>;
+
+<span class=C>// otherwise if there's a valid_rsd  select lvars - offset
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#210">dest_addr_sel_r</a>[2] = (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#158">valid_rsd_r</a> &amp; !<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>);
+
+<span class=C>// by default select optop + offset
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#210">dest_addr_sel_r</a>[0] = !(|<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#668">dest_addr_sel_r</a>[2:1]);
+
+
+<a name="rcu_ctl_optop_dec"></a><a name="677"></a><a  onClick="return qs(event,this)" class=MM href="rcu_ctl.v.p2.html#optop_decoder">optop_decoder</a>	optop_dec(<span class=SI>.opcode</span>({<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#154">opcode_1_op_r</a>,<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#155">opcode_2_op_r</a>}),
+<a name="678"></a>			<span class=SI>.valid</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#153">valid_op_r</a>),
+<a name="679"></a>			<span class=SI>.second_cyc</span>(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>),
+<a name="680"></a>			<span class=SI>.group_3_r</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#161">group_3_r</a>),
+<a name="681"></a>			<span class=SI>.group_5_r</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#163">group_5_r</a>),
+<a name="682"></a>			<span class=SI>.group_6_r</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#164">group_6_r</a>),
+<a name="683"></a>			<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p3.html#2092">.net_optop_sel1</a>(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#211">net_optop_sel1</a>),
+<a name="684"></a>			<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p3.html#2108">.net_optop_sel2</a>(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#212">net_optop_sel2</a>),
+<a name="685"></a>			<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p3.html#2122">.net_optop_sel</a>(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#213">net_optop_sel</a>) );
+
+<span class=C>// Whenever there's
+</span><span class=C>// . group_1_r or group_8_r, net inc. in optop is 0
+</span><span class=C>// . group_4_r, net inc. in optop is 1
+</span><span class=C>// . group_9_r, net inc. in optop is 2
+</span><span class=C>// . group_2_r, net inc. in optop is -1
+</span><span class=C>// For all the other groups and in case of just  one instr. issue,
+</span><span class=C>// we have to use the optop_offset_int generated by decoding opcode in OP stage
+</span>
+<span class=C>// Whenever there's a trap in R-stage, we should decrement the optop by 4 entries
+</span><span class=C>// This will save ucode 2 cycles. If valid_op_r is not used in the following 
+</span><span class=C>// equations, then there may be two signals going high at the same time
+</span><a name="698"></a><span class=K>assign</span> 	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#214">optop_offset_sel_r</a>[5] =  <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#185">iu_trap_r</a>;
+<span class=K>assign</span> 	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#214">optop_offset_sel_r</a>[4] =  <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#160">group_2_r</a> &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#153">valid_op_r</a>;
+<span class=K>assign</span> 	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#214">optop_offset_sel_r</a>[3] =  <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#162">group_4_r</a> &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#153">valid_op_r</a>;
+<span class=K>assign</span> 	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#214">optop_offset_sel_r</a>[2] =  <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#166">group_9_r</a> &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#153">valid_op_r</a>;
+<span class=K>assign</span> 	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#214">optop_offset_sel_r</a>[1] =  (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#161">group_3_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#163">group_5_r</a> | 
+			      <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#164">group_6_r</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#167">no_fold_r</a>) &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#153">valid_op_r</a> ;
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#214">optop_offset_sel_r</a>[0] = !(|<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#698">optop_offset_sel_r</a>[5:1]);
+
+<span class=C>// Propogate iu_data_we_r along the pipe
+</span>
+<span class=C>// Whenever there's a valid_rsd (Except for the global writes)
+</span><span class=C>// or whenever there's an operation in OP and no global writes in 
+</span><span class=C>// Rsd, there would be a write enable onto scache
+</span>
+<a name="713"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#293">iu_data_we_r</a> = (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#648">iu_data_we_int</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#158">valid_rsd_r</a>) &amp; 
+			 !(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#777">write_global0</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#778">write_global1</a> |
+					 <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#779">write_global2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#780">write_global3</a>);
+
+<a name="rcu_ctl_flop_data_we_e"></a><a name="717"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>		flop_data_we_e(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#294">iu_data_we_e_int</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#713">iu_data_we_r</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>),
+				<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#169">hold_e</a>));
+
+<span class=C>// iu_data_we enable is either of iu data we or ucode data we
+</span>
+<a name="725"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#295">iu_data_we_e_int1</a> = (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#717">iu_data_we_e_int</a> | <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#144">ucode_dest_we</a> );
+
+<span class=C>// Qualify iu_data_we_e_int1 with inst_vld[0] to generate
+</span><span class=C>// iu_data_we_e
+</span><a name="729"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#296">iu_data_we_e</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#725">iu_data_we_e_int1</a> &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#172">inst_vld</a>[0];
+<a name="rcu_ctl_flop_data_we_c"></a><a name="730"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>		flop_data_we_c(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#297">iu_data_we_c_int</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#729">iu_data_we_e</a> &amp;<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#172">inst_vld</a>[0]),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>),
+				<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#170">hold_c</a>));
+
+<span class=C>// Qualify iu_data_we_c_int with inst_vld[1] to generate
+</span><span class=C>// iu_data_we_c
+</span><a name="738"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#298">iu_data_we_c</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#730">iu_data_we_c_int</a> &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#172">inst_vld</a>[1];
+
+<span class=C>// Since we do not hold w-stage, &quot;AND&quot; iu_data_we_c with !hold_c
+</span><a name="rcu_ctl_flop_data_we_w"></a><a name="741"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		flop_data_we_w(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#299">iu_data_we_w_int</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#738">iu_data_we_c</a> &amp;!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#170">hold_c</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>));
+<span class=C>// Qualify iu_data_we_w_int with inst_vld[2] to generate
+</span><span class=C>// iu_data_we_w
+</span><a name="747"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#227">iu_data_we_w</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#741">iu_data_we_w_int</a> &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#172">inst_vld</a>[2];
+
+<span class=C>// if scache write address is greater than sc_bot or
+</span><span class=C>// if it is less than or equal to optop and 
+</span><span class=C>// if there's a write enable in c-stage and it there's no
+</span><span class=C>// hold in c-stage, generate a iu_sc_wr_miss
+</span>
+<a name="754"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#265">scache_wr_miss_c</a> = (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#181">sc_wr_addr_gr_scbot</a>) &amp;
+			<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#738">iu_data_we_c</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#170">hold_c</a>;
+
+<a name="rcu_ctl_flop_scache_wr_miss"></a><a name="757"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	flop_scache_wr_miss(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#263">scache_wr_miss_w_int</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#754">scache_wr_miss_c</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>));
+
+<a name="762"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#234">scache_wr_miss_w</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#757">scache_wr_miss_w_int</a> &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#172">inst_vld</a>[2];
+
+<span class=C>// Whenever sc_bot-8 &lt;= sc_wr_addr_c &lt;= sc_bot+8 and there's a we signal
+</span><span class=C>// to scache, assert iu_smu_flush signal
+</span><a name="766"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#235">iu_smu_flush</a>	= (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#182">iu_smu_flush_le</a> &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#183">iu_smu_flush_ge</a>) &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#738">iu_data_we_c</a>;
+			
+
+<span class=C>//***** BEGIN: Global Reg. section of the control ******//
+</span>
+<span class=C>// Propogate write enables to global registers and reg. IDs along the pipe
+</span>
+<span class=C>// Generate write enables for global registers
+</span>
+<a name="775"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#251">ext_opcode_rsd</a>	= (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#156">opcode_1_rsd_r</a> == 8'd255)&amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#158">valid_rsd_r</a>;
+
+<a name="777"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#257">write_global0</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#775">ext_opcode_rsd</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#157">opcode_2_rsd_r</a> == 8'd122);
+<a name="778"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#258">write_global1</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#775">ext_opcode_rsd</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#157">opcode_2_rsd_r</a> == 8'd123);
+<a name="779"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#259">write_global2</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#775">ext_opcode_rsd</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#157">opcode_2_rsd_r</a> == 8'd124);
+<a name="780"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#260">write_global3</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#775">ext_opcode_rsd</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#157">opcode_2_rsd_r</a> == 8'd125);
+
+<a name="782"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#244">gl_reg_id_r</a>[0] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#777">write_global0</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#244">gl_reg_id_r</a>[1] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#778">write_global1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#244">gl_reg_id_r</a>[2] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#779">write_global2</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#244">gl_reg_id_r</a>[3] = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#780">write_global3</a>;
+<a name="786"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#252">gl_reg_we_r</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#777">write_global0</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#778">write_global1</a> | 
+			<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#779">write_global2</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#780">write_global3</a>;
+
+<a name="rcu_ctl_flop_global_we_e"></a><a name="789"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>		flop_global_we_e(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#254">gl_reg_we_e_int</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#786">gl_reg_we_r</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>),
+				<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#169">hold_e</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>));
+
+<a name="795"></a><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#253">gl_reg_we_e</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#789">gl_reg_we_e_int</a> &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#172">inst_vld</a>[0];
+
+<a name="rcu_ctl_flop_global_we_c"></a><a name="797"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>		flop_global_we_c(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#255">gl_reg_we_c_int</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#795">gl_reg_we_e</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>),
+				<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#170">hold_c</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>));
+
+<a name="803"></a><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#289">gl_reg_we_c</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#797">gl_reg_we_c_int</a> &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#172">inst_vld</a>[1];
+
+<span class=C>// Since we donot hold w-stage, we have to &quot;AND&quot; gl_reg_we_c with
+</span><span class=C>// !hold_c to generate gl_reg_we_w
+</span>
+<a name="rcu_ctl_flop_global_we_w"></a><a name="808"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		flop_global_we_w(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#256">gl_reg_we_w_int</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#803">gl_reg_we_c</a> &amp;!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#170">hold_c</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#189">reset_l</a>));
+
+<a name="813"></a><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#290">gl_reg_we_w</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#808">gl_reg_we_w_int</a> &amp; <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#172">inst_vld</a>[2];
+
+<a name="rcu_ctl_flop_global_reg_e"></a><a name="815"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_4">ff_se_4</a>		flop_global_reg_e(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3027">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#245">gl_reg_id_e</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#782">gl_reg_id_r</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>),
+				<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#169">hold_e</a>));
+				
+<a name="rcu_ctl_flop_global_reg_c"></a><a name="820"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_4">ff_se_4</a>		flop_global_reg_c(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3027">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#246">gl_reg_id_c</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#815">gl_reg_id_e</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>),
+				<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#170">hold_c</a>));
+				
+<a name="rcu_ctl_flop_global_reg_w"></a><a name="825"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s_4">ff_s_4</a>		flop_global_reg_w(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2218">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#247">gl_reg_id_w</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#820">gl_reg_id_c</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#188">clk</a>));
+
+<span class=C>// Generate write enables to  individual registers
+</span>
+<a name="831"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#228">gl_reg0_we_w</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#813">gl_reg_we_w</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#825">gl_reg_id_w</a>[0];
+<a name="832"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#229">gl_reg1_we_w</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#813">gl_reg_we_w</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#825">gl_reg_id_w</a>[1];
+<a name="833"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#230">gl_reg2_we_w</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#813">gl_reg_we_w</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#825">gl_reg_id_w</a>[2];
+<a name="834"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#231">gl_reg3_we_w</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#813">gl_reg_we_w</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#825">gl_reg_id_w</a>[3];
+
+<span class=C>// Generate bypass controls for Global Register reads in RS1
+</span>
+<a name="838"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#248">gl_reg_id_rs1</a> = {<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#427">read_gl3_rs1</a>,<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#426">read_gl2_rs1</a>,<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#425">read_gl1_rs1</a>,<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#424">read_gl0_rs1</a>};
+
+<span class=C>// Enable the comparision only if there are global reg. reads in RS1 and 
+</span><span class=C>// writes to them in the  app. stages 
+</span><a name="rcu_ctl_comp_bypass_reg_rs1_e"></a><a name="842"></a><a  onClick="return qs(event,this)" class=MM href="rcu_ctl.v.p3.html#cmp_we_4">cmp_we_4</a>	comp_bypass_reg_rs1_e(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p3.html#2140">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#281">bypass_gl_reg_rs1_e</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#838">gl_reg_id_rs1</a>),
+				<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#815">gl_reg_id_e</a>),
+				<span class=SI>.enable</span>((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#795">gl_reg_we_e</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#467">gl_reg_rd_rs1</a>)) );
+				
+<a name="rcu_ctl_comp_bypass_reg_rs1_c"></a><a name="847"></a><a  onClick="return qs(event,this)" class=MM href="rcu_ctl.v.p3.html#cmp_we_4">cmp_we_4</a>	comp_bypass_reg_rs1_c(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p3.html#2140">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#282">bypass_gl_reg_rs1_c</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#838">gl_reg_id_rs1</a>),
+				<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#820">gl_reg_id_c</a>),
+				<span class=SI>.enable</span>((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#803">gl_reg_we_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#467">gl_reg_rd_rs1</a>)) );
+				
+<a name="rcu_ctl_comp_bypass_reg_rs1_w"></a><a name="852"></a><a  onClick="return qs(event,this)" class=MM href="rcu_ctl.v.p3.html#cmp_we_4">cmp_we_4</a>	comp_bypass_reg_rs1_w(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p3.html#2140">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#283">bypass_gl_reg_rs1_w</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#838">gl_reg_id_rs1</a>),
+				<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#825">gl_reg_id_w</a>),
+				<span class=SI>.enable</span>((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#813">gl_reg_we_w</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#467">gl_reg_rd_rs1</a>)) );
+
+<span class=C>// Incase of multiple matches for bypassing, use a priprity encoder to resolve the
+</span><span class=C>// contention
+</span>
+<span class=C>// bypass_gl_reg_rs1[0] = bypass data from c-stage
+</span><span class=C>// bypass_gl_reg_rs1[1] = bypass data from w-stage
+</span><span class=C>// bypass_gl_reg_rs1[2] = bypass data from w+1-stage
+</span>
+<span class=C>// Removed the priority Encoder. bypass signals are used as mux selects in RS1 and
+</span><span class=C>// RS2 and these mux selects already go througha priority encoder. This improves
+</span><span class=C>// timing on byapss as well as RS1 and RS2 paths 
+</span>
+<span class=C>// pri_encod_3	pri_encod_bypass_reg_rs1(.out(bypass_gl_reg_rs1),
+</span><span class=C>// 				.in0(bypass_gl_reg_rs1_e),
+</span><span class=C>// 				.in1(bypass_gl_reg_rs1_c),
+</span><span class=C>// 				.in2(bypass_gl_reg_rs1_w) );
+</span>				
+<span class=C>// These signals will see if there are writes to scache and reads to scache to
+</span><span class=C>// determine bypassing for RS1
+</span><a name="875"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#215">enable_cmp_e_rs1</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#729">iu_data_we_e</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#484">scache_access_rs1</a>;
+<a name="876"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#217">enable_cmp_c_rs1</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#738">iu_data_we_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#484">scache_access_rs1</a>;
+<a name="877"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#219">enable_cmp_w_rs1</a> = <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#747">iu_data_we_w</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#484">scache_access_rs1</a>;
+
+<span class=C>// Generate bypass controls for Global Register reads in RS2
+</span>
+<a name="881"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#249">gl_reg_id_rs2</a> = {<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#572">read_gl3_rs2</a>,<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#571">read_gl2_rs2</a>,<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#570">read_gl1_rs2</a>,<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#569">read_gl0_rs2</a>};
+
+<span class=C>// Enable the comparision only if there are global reg. reads in RS1 and 
+</span><span class=C>// writes to them in the  app. stages 
+</span><a name="rcu_ctl_comp_bypass_reg_rs2_e"></a><a name="885"></a><a  onClick="return qs(event,this)" class=MM href="rcu_ctl.v.p3.html#cmp_we_4">cmp_we_4</a>	comp_bypass_reg_rs2_e(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p3.html#2140">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#284">bypass_gl_reg_rs2_e</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#881">gl_reg_id_rs2</a>),
+				<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#815">gl_reg_id_e</a>),
+				<span class=SI>.enable</span>((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#795">gl_reg_we_e</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#614">gl_reg_rd_rs2</a>)) );
+				
+<a name="rcu_ctl_comp_bypass_reg_rs2_c"></a><a name="890"></a><a  onClick="return qs(event,this)" class=MM href="rcu_ctl.v.p3.html#cmp_we_4">cmp_we_4</a>	comp_bypass_reg_rs2_c(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p3.html#2140">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#285">bypass_gl_reg_rs2_c</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#881">gl_reg_id_rs2</a>),
+				<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#820">gl_reg_id_c</a>),
+				<span class=SI>.enable</span>((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#803">gl_reg_we_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#614">gl_reg_rd_rs2</a>)) );
+				
+<a name="rcu_ctl_comp_bypass_reg_rs2_w"></a><a name="895"></a><a  onClick="return qs(event,this)" class=MM href="rcu_ctl.v.p3.html#cmp_we_4">cmp_we_4</a>	comp_bypass_reg_rs2_w(<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p3.html#2140">.out</a>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#286">bypass_gl_reg_rs2_w</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#881">gl_reg_id_rs2</a>),
+				<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#825">gl_reg_id_w</a>),
+				<span class=SI>.enable</span>((<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#813">gl_reg_we_w</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#614">gl_reg_rd_rs2</a>)) );
+<span class=C>// Incase of multiple matches for bypassing, use a priprity encoder to resolve the
+</span><span class=C>// contention
+</span>
+<span class=C>// bypass_gl_reg_rs2[0] = bypass data from c-stage
+</span><span class=C>// bypass_gl_reg_rs2[1] = bypass data from w-stage
+</span><span class=C>// bypass_gl_reg_rs2[2] = bypass data from w+1-stage
+</span>
+<span class=C>// Removed the priority Encoder. bypass signals are used as mux selects in RS1 and
+</span><span class=C>// RS2 and these mux selects already go througha priority encoder. This improves
+</span><span class=C>// timing on byapss as well as RS1 and RS2 paths 
+</span>
+<span class=C>// pri_encod_3	pri_encod_bypass_reg_rs2(.out(bypass_gl_reg_rs2),
+</span><span class=C>// 				.in0(bypass_gl_reg_rs2_e),
+</span><span class=C>// 				.in1(bypass_gl_reg_rs2_c),
+</span><span class=C>// 				.in2(bypass_gl_reg_rs2_w) );
+</span>
+<span class=C>// Bypass logic for stack operands in RS1
+</span><span class=C>// Qualify the comparision with 
+</span><span class=C>// . (ucode_active | lv_acc_rs1) -&gt; This means the address scache_addr_rs1 
+</span><span class=C>//				    is a valid one and
+</span><span class=C>// . iu_data_we			-&gt; This means dest_addr_e used is a valid one
+</span>
+<span class=C>// These signals will see if there are writes to scache and reads to scache to
+</span><span class=C>// determine bypassing for RS2
+</span><a name="923"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#221">enable_cmp_e_rs2</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#729">iu_data_we_e</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#628">scache_access_rs2</a>;
+<a name="924"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#223">enable_cmp_c_rs2</a> = <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#738">iu_data_we_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#628">scache_access_rs2</a>;
+<a name="925"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#225">enable_cmp_w_rs2</a> = <a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.html#747">iu_data_we_w</a> &amp; <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#628">scache_access_rs2</a>;
+
+<span class=C>// Incase of multiple matches for bypassing, use a priprity encoder to resolve the
+</span><span class=C>// contention
+</span>
+<span class=C>// bypass_scache_rs1[0] = bypass data from c-stage
+</span><span class=C>// bypass_scache_rs1[1] = bypass data from w-stage
+</span><span class=C>// bypass_scache_rs1[2] = bypass data from w+1-stage
+</span>
+<span class=C>// Removed the priority Encoder. bypass signals are used as mux selects in RS1 and
+</span><span class=C>// RS2 and these mux selects already go througha priority encoder. This improves
+</span><span class=C>// timing on byapss as well as RS1 and RS2 paths 
+</span>
+<span class=C>// pri_encod_3	pri_encod_bypass_scache_rs1(.out(bypass_scache_rs1),
+</span><span class=C>// 				.in0(bypass_scache_rs1_e),
+</span><span class=C>// 				.in1(bypass_scache_rs1_c),
+</span><span class=C>// 				.in2(bypass_scache_rs1_w) );
+</span>
+
+<span class=C>// Incase of multiple matches for bypassing, use a priprity encoder to resolve the
+</span><span class=C>// contention
+</span>
+<span class=C>// bypass_scache_rs2[0] = bypass data from c-stage
+</span><span class=C>// bypass_scache_rs2[1] = bypass data from w-stage
+</span><span class=C>// bypass_scache_rs2[2] = bypass data from w+1-stage
+</span>
+<span class=C>// Incase of 2-cycle operations, we dont have to bypass data from
+</span><span class=C>// R2 stage (E-stage) to R1 stage. This will remove lots of false
+</span><span class=C>// bypassing stuff incase of Double operations, Eg:
+</span><span class=C>// DADD -&gt;	cyc.1 Read Top1 and Top3 (MSBs) write to LSB -&gt; Top4
+</span><span class=C>//		cyc.2 Read Top2 and Top4  (LSBs)
+</span>
+<a name="957"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#250">act_bypass_scache_rs2_e</a> = <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#178">bypass_scache_rs2_e</a> &amp; !<a  onClick="return qs(event,this)" class=SO href="rcu_ctl.v.p2.html#1163">second_cycle</a>;
+
+<span class=C>// Removed the priority Encoder. bypass signals are used as mux selects in RS1 and
+</span><span class=C>// RS2 and these mux selects already go througha priority encoder. This improves
+</span><span class=C>// timing on byapss as well as RS1 and RS2 paths 
+</span>
+<span class=C>// pri_encod_3	pri_encod_bypass_scache_rs2(.out(bypass_scache_rs2),
+</span><span class=C>// 				.in0(act_bypass_scache_rs2_e),
+</span><span class=C>// 				.in1(bypass_scache_rs2_c),
+</span><span class=C>// 				.in2(bypass_scache_rs2_w) );
+</span>
+<span class=C>// Final Bypass Signals from R-stage
+</span>
+<span class=C>// For RS1
+</span>
+<span class=C>// In case of Global Reg matches or scache addr matches in estage 
+</span><span class=C>// bypass estage data and so-on
+</span>
+<span class=C>// Removed the priority Encoder. bypass signals are used as mux selects in RS1 and
+</span><span class=C>// RS2 and these mux selects already go througha priority encoder. This improves
+</span><span class=C>// timing on byapss as well as RS1 and RS2 paths 
+</span>
+<span class=C>// assign	bypass_data_rs1_estage_r = bypass_gl_reg_rs1[0] | bypass_scache_rs1[0];
+</span><span class=C>// assign	bypass_data_rs1_cstage_r = bypass_gl_reg_rs1[1] | bypass_scache_rs1[1];
+</span><span class=C>// assign	bypass_data_rs1_wstage_r = bypass_gl_reg_rs1[2] | bypass_scache_rs1[2];
+</span>
+<span class=C>// Added ucode_done to fix a problem 
+</span><span class=C>// Whwnever there's a ucode instruction in E-stage, write_global_X in C/W stage
+</span><span class=C>// and read_global_X in R-stage, we'll have bypass high there by giving wrong
+</span><span class=C>// data to Ucode stack access  
+</span>
+<a name="988"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#275">bypass_data_rs1_estage_r</a> = (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#842">bypass_gl_reg_rs1_e</a> &amp;<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#184">ucode_done</a>)
+					| <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#175">bypass_scache_rs1_e</a>;
+<a name="990"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#276">bypass_data_rs1_cstage_r</a> = (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#847">bypass_gl_reg_rs1_c</a> &amp;<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#184">ucode_done</a>)  
+					| <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#176">bypass_scache_rs1_c</a>;
+<a name="992"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#277">bypass_data_rs1_wstage_r</a> = (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#852">bypass_gl_reg_rs1_w</a> &amp;<a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#184">ucode_done</a>)  
+					| <a  onClick="return qs(event,this)" class=SI href="rcu_ctl.v.html#177">bypass_scache_rs1_w</a>;
+
+<a name="995"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#287">nobypass_rs1_r</a> = !(<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#988">bypass_data_rs1_estage_r</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#990">bypass_data_rs1_cstage_r</a> |
+			   <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#992">bypass_data_rs1_wstage_r</a>);
+<span class=C>// Whenver there's a bypass hit, we should not generate any scache read miss
+</span><a name="998"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#273">bypass_hit_rs1_r</a> = (<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#988">bypass_data_rs1_estage_r</a> | <a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#990">bypass_data_rs1_cstage_r</a> |
+				<a  onClick="return qs(event,this)" class=SW href="rcu_ctl.v.html#992">bypass_data_rs1_wstage_r</a>);
+
+</pre>
+<center><table class=NB cols=4 nosave><tr><td align="center"><a  href="rcu_ctl.v.p2.html">Next</a></td><td align="center"><font color="#808080">1</font></td><td align="center"><a  href="rcu_ctl.v.p2.html">2</a></td><td align="center"><a  href="rcu_ctl.v.p3.html">3</a></td></tr></table></center>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return "rcu_ctl.v.p2.html"; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:19 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/rcu/rtl/rcu_ctl.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ifu/rtl/length_dec.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "length_dec.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<a name="length_dec"></a><a  href="ifu.v.html#ifu_length_dec"><IMG alt="[Up: ifu length_dec]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>length_dec</span><a  href="hierarchy-m.p3.html#length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+	<a  onClick="return qs(event,this)" class=SI href="#47">fetch_len0</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#48">fetch_len1</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#49">fetch_len2</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#50">fetch_len3</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#51">fetch_len4</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#52">fetch_len5</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#53">fetch_len6</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#55">fold_4_inst</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#56">fold_3_inst</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#57">fold_2_inst</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#58">fold_1_inst</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#59">not_valid</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#61">ex_len_first_inst</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#60">hold_d</a>,
+
+	<a  onClick="return qs(event,this)" class=SO href="#64">iu_shift_d</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#65">accum_len0</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#66">accum_len1</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#67">accum_len2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#68">accum_len3</a>
+
+);
+
+<a name="47"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#342">fetch_len0</a><a  href="hierarchy-s.p6.html#fetch_len0___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Length of the first byte as output from Fetch stage
+</span><a name="48"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#343">fetch_len1</a><a  href="hierarchy-s.p6.html#fetch_len1___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// ...
+</span><a name="49"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#344">fetch_len2</a><a  href="hierarchy-s.p6.html#fetch_len2___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="50"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#345">fetch_len3</a><a  href="hierarchy-s.p6.html#fetch_len3___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="51"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#346">fetch_len4</a><a  href="hierarchy-s.p6.html#fetch_len4___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="52"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#347">fetch_len5</a><a  href="hierarchy-s.p6.html#fetch_len5___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="53"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#348">fetch_len6</a><a  href="hierarchy-s.p6.html#fetch_len6___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="55"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#349">fold_4_inst</a><a  href="hierarchy-s.p6.html#fold_4_inst___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="56"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#350">fold_3_inst</a><a  href="hierarchy-s.p6.html#fold_3_inst___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="57"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#351">fold_2_inst</a><a  href="hierarchy-s.p6.html#fold_2_inst___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="58"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#352">fold_1_inst</a><a  href="hierarchy-s.p6.html#fold_1_inst___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="59"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#353">not_valid</a><a  href="hierarchy-s.p12.html#not_valid___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="60"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#355">hold_d</a><a  href="hierarchy-s.p8.html#hold_d___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="61"></a><span class=K>input</span>	[5:0]	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#354">ex_len_first_inst</a><a  href="hierarchy-s.p5.html#ex_len_first_inst___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<a name="64"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="#137">iu_shift_d</a><a  href="hierarchy-s.p9.html#iu_shift_d___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// shift to ibuffer in ICU
+</span><a name="65"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="#140">accum_len0</a><a  href="hierarchy-s.html#accum_len0___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// This will give the accumulated length incl. 1st Inst.
+</span><a name="66"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="#98">accum_len1</a><a  href="hierarchy-s.html#accum_len1___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// This will give the accumulated length incl. 2nd Inst
+</span><a name="67"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="#105">accum_len2</a><a  href="hierarchy-s.html#accum_len2___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// This will give the accumulated length incl. 3nd Inst
+</span><a name="68"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="#116">accum_len3</a><a  href="hierarchy-s.html#accum_len3___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// This will give the accumulated length incl. 4nd Inst
+</span>				<span class=C>// Ex: I1 is 2 bytes long, I2 is 3, I3 is 1 and I4 is 1
+</span>				<span class=C>// accum_len0 = 2, len_1 = 5, len_2 = 6 and len_3 = 7
+</span>
+<a name="72"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#128">iu_shift_d_int</a><a  href="hierarchy-s.p9.html#iu_shift_d_int___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="73"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#81">int_len1</a><a  href="hierarchy-s.p9.html#int_len1___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="74"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#84">int_len2</a><a  href="hierarchy-s.p9.html#int_len2___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="75"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#87">int_len3</a><a  href="hierarchy-s.p9.html#int_len3___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="76"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#90">int_len4</a><a  href="hierarchy-s.p9.html#int_len4___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="77"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#93">int_len5</a><a  href="hierarchy-s.p9.html#int_len5___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="78"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#96">int_len6</a><a  href="hierarchy-s.p9.html#int_len6___length_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="length_dec_index1_add"></a><a name="80"></a><a  onClick="return qs(event,this)" class=MM href="index_adders.v.html#index1_add">index1_add</a>	index1_add( <span class=SI>.operand</span>(<a  onClick="return qs(event,this)" class=SI href="#48">fetch_len1</a>),
+<a name="81"></a>				<a  onClick="return qs(event,this)" class=SO href="index_adders.v.html#32">.sum</a>(<a  onClick="return qs(event,this)" class=SW href="#73">int_len1</a>));
+
+<a name="length_dec_index2_add"></a><a name="83"></a><a  onClick="return qs(event,this)" class=MM href="index_adders.v.html#index2_add">index2_add</a>	index2_add( <span class=SI>.operand</span>(<a  onClick="return qs(event,this)" class=SI href="#49">fetch_len2</a>),
+<a name="84"></a>				<a  onClick="return qs(event,this)" class=SO href="index_adders.v.html#59">.sum</a>(<a  onClick="return qs(event,this)" class=SW href="#74">int_len2</a>));
+
+<a name="length_dec_index3_add"></a><a name="86"></a><a  onClick="return qs(event,this)" class=MM href="index_adders.v.html#index3_add">index3_add</a>	index3_add( <span class=SI>.operand</span>(<a  onClick="return qs(event,this)" class=SI href="#50">fetch_len3</a>),
+<a name="87"></a>				<a  onClick="return qs(event,this)" class=SO href="index_adders.v.html#85">.sum</a>(<a  onClick="return qs(event,this)" class=SW href="#75">int_len3</a>));
+
+<a name="length_dec_index4_add"></a><a name="89"></a><a  onClick="return qs(event,this)" class=MM href="index_adders.v.html#index4_add">index4_add</a>	index4_add( <span class=SI>.operand</span>(<a  onClick="return qs(event,this)" class=SI href="#51">fetch_len4</a>),
+<a name="90"></a>				<a  onClick="return qs(event,this)" class=SO href="index_adders.v.html#112">.sum</a>(<a  onClick="return qs(event,this)" class=SW href="#76">int_len4</a>));
+
+<a name="length_dec_index5_add"></a><a name="92"></a><a  onClick="return qs(event,this)" class=MM href="index_adders.v.html#index5_add">index5_add</a>	index5_add( <span class=SI>.operand</span>(<a  onClick="return qs(event,this)" class=SI href="#52">fetch_len5</a>),
+<a name="93"></a>				<a  onClick="return qs(event,this)" class=SO href="index_adders.v.html#139">.sum</a>(<a  onClick="return qs(event,this)" class=SW href="#77">int_len5</a>));
+
+<a name="length_dec_index6_add"></a><a name="95"></a><a  onClick="return qs(event,this)" class=MM href="index_adders.v.html#index6_add">index6_add</a>	index6_add( <span class=SI>.operand</span>(<a  onClick="return qs(event,this)" class=SI href="#53">fetch_len6</a>),
+<a name="96"></a>				<a  onClick="return qs(event,this)" class=SO href="index_adders.v.html#166">.sum</a>(<a  onClick="return qs(event,this)" class=SW href="#78">int_len6</a>));
+
+<a name="length_dec_mux_len1"></a><a name="98"></a><a  onClick="return qs(event,this)" class=MM href="#sp_mux4_8">sp_mux4_8</a>		mux_len1(<a  onClick="return qs(event,this)" class=SO href="#163">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#66">accum_len1</a>),
+			<span class=SI>.in0</span>(8'b00000001),
+			<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#81">int_len1</a>),
+			<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="#84">int_len2</a>),
+			<span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SW href="#87">int_len3</a>),
+			<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#47">fetch_len0</a>) );
+
+<a name="length_dec_mux_len2"></a><a name="105"></a><a  onClick="return qs(event,this)" class=MM href="#sp_mux8_8">sp_mux8_8</a>		mux_len2(<a  onClick="return qs(event,this)" class=SO href="#237">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#67">accum_len2</a>),
+			<span class=SI>.in0</span>(8'b00000001),
+			<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#81">int_len1</a>),
+			<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="#84">int_len2</a>),
+			<span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SW href="#87">int_len3</a>),
+			<span class=SI>.in4</span>(<a  onClick="return qs(event,this)" class=SW href="#90">int_len4</a>),
+			<span class=SI>.in5</span>(<a  onClick="return qs(event,this)" class=SW href="#93">int_len5</a>),
+			<span class=SI>.in6</span>(<a  onClick="return qs(event,this)" class=SW href="#96">int_len6</a>),
+			<span class=SI>.in7</span>(8'b00000001),
+			<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SO href="#98">accum_len1</a>) );
+
+<a name="length_dec_mux_len3"></a><a name="116"></a><a  onClick="return qs(event,this)" class=MM href="#sp_mux8_8">sp_mux8_8</a>		mux_len3(<a  onClick="return qs(event,this)" class=SO href="#237">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#68">accum_len3</a>),
+			<span class=SI>.in0</span>(8'b00000001),
+			<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#81">int_len1</a>),
+			<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="#84">int_len2</a>),
+			<span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SW href="#87">int_len3</a>),
+			<span class=SI>.in4</span>(<a  onClick="return qs(event,this)" class=SW href="#90">int_len4</a>),
+			<span class=SI>.in5</span>(<a  onClick="return qs(event,this)" class=SW href="#93">int_len5</a>),
+			<span class=SI>.in6</span>(<a  onClick="return qs(event,this)" class=SW href="#96">int_len6</a>),
+			<span class=SI>.in7</span>(8'b00000001),
+			<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SO href="#105">accum_len2</a>) );
+
+
+<a name="length_dec_mux_shift_d"></a><a name="128"></a><a  onClick="return qs(event,this)" class=MM href="#sp_mux4_8">sp_mux4_8</a>               mux_shift_d (<a  onClick="return qs(event,this)" class=SO href="#163">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#72">iu_shift_d_int</a>),
+                                <span class=SI>.in0</span>({2'b0,<a  onClick="return qs(event,this)" class=SI href="#61">ex_len_first_inst</a>}),
+                                <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SO href="#98">accum_len1</a>),
+                                <span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SO href="#105">accum_len2</a>),
+                                <span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SO href="#116">accum_len3</a>),
+                                <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#55">fold_4_inst</a>,<a  onClick="return qs(event,this)" class=SI href="#56">fold_3_inst</a>,<a  onClick="return qs(event,this)" class=SI href="#57">fold_2_inst</a>,
+                                        <a  onClick="return qs(event,this)" class=SI href="#58">fold_1_inst</a>}) );
+
+<span class=C>// Whenever there's hold_d, iu_shift_d = 8'b00000001
+</span><a name="137"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#64">iu_shift_d</a>[7:1] = (<a  onClick="return qs(event,this)" class=SW href="#128">iu_shift_d_int</a>[7:1]) &amp; {7{~<a  onClick="return qs(event,this)" class=SI href="#60">hold_d</a>}};
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#64">iu_shift_d</a>[0] =   (<a  onClick="return qs(event,this)" class=SI href="#59">not_valid</a> | <a  onClick="return qs(event,this)" class=SI href="#60">hold_d</a>);
+
+<a name="140"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#65">accum_len0</a> =  {4'b0,<a  onClick="return qs(event,this)" class=SI href="#47">fetch_len0</a>};
+
+<span class=K>endmodule</span>
+
+
+<a name="sp_mux4_8"></a><a  href="length_dec.v.html#length_dec_mux_len1"><IMG alt="[Up: length_dec mux_len1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="length_dec.v.html#length_dec_mux_shift_d"><IMG alt="[Up: length_dec mux_shift_d]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>sp_mux4_8</span><a  href="hierarchy-m.p4.html#sp_mux4_8"><IMG align=top border=0 SRC="v2html-i.gif"></a> 
+		( <a  onClick="return qs(event,this)" class=SO href="#154">out</a>,
+		  <a  onClick="return qs(event,this)" class=SI href="#155">in0</a>,
+		  <a  onClick="return qs(event,this)" class=SI href="#156">in1</a>,
+		  <a  onClick="return qs(event,this)" class=SI href="#157">in2</a>,
+		  <a  onClick="return qs(event,this)" class=SI href="#158">in3</a>,
+		  <a  onClick="return qs(event,this)" class=SI href="#159">sel</a>);
+
+
+<a name="154"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="#163">out</a><a  href="hierarchy-s.p13.html#out___sp_mux4_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="155"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="#155">in0</a><a  href="hierarchy-s.p9.html#in0___sp_mux4_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="156"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="#156">in1</a><a  href="hierarchy-s.p9.html#in1___sp_mux4_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="157"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="#157">in2</a><a  href="hierarchy-s.p9.html#in2___sp_mux4_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="158"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="#158">in3</a><a  href="hierarchy-s.p9.html#in3___sp_mux4_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="159"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="#159">sel</a><a  href="hierarchy-s.p16.html#sel___sp_mux4_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+
+<a name="163"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#154">out</a>[7] = <a  onClick="return qs(event,this)" class=SI href="#158">in3</a>[7]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[3]|
+		 <a  onClick="return qs(event,this)" class=SI href="#157">in2</a>[7]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[2]|
+		 <a  onClick="return qs(event,this)" class=SI href="#156">in1</a>[7]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[1]|
+		 <a  onClick="return qs(event,this)" class=SI href="#155">in0</a>[7]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[0];
+
+
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#154">out</a>[6] = <a  onClick="return qs(event,this)" class=SI href="#158">in3</a>[6]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#157">in2</a>[6]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#156">in1</a>[6]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#155">in0</a>[6]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[0];
+
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#154">out</a>[5] = <a  onClick="return qs(event,this)" class=SI href="#158">in3</a>[5]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#157">in2</a>[5]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#156">in1</a>[5]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#155">in0</a>[5]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[0];
+
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#154">out</a>[4] = <a  onClick="return qs(event,this)" class=SI href="#158">in3</a>[4]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#157">in2</a>[4]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#156">in1</a>[4]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#155">in0</a>[4]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[0];
+
+
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#154">out</a>[3] = <a  onClick="return qs(event,this)" class=SI href="#158">in3</a>[3]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#157">in2</a>[3]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#156">in1</a>[3]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#155">in0</a>[3]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[0];
+ 
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#154">out</a>[2] = <a  onClick="return qs(event,this)" class=SI href="#158">in3</a>[2]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#157">in2</a>[2]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#156">in1</a>[2]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#155">in0</a>[2]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[0];
+ 
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#154">out</a>[1] = <a  onClick="return qs(event,this)" class=SI href="#158">in3</a>[1]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#157">in2</a>[1]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#156">in1</a>[1]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#155">in0</a>[1]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[0];
+
+
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#154">out</a>[0] = <a  onClick="return qs(event,this)" class=SI href="#158">in3</a>[0]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#157">in2</a>[0]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#156">in1</a>[0]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#155">in0</a>[0]&amp;<a  onClick="return qs(event,this)" class=SI href="#159">sel</a>[0];
+
+
+<span class=K>endmodule</span>
+
+
+<a name="sp_mux8_8"></a><a  href="length_dec.v.html#length_dec_mux_len2"><IMG alt="[Up: length_dec mux_len2]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="length_dec.v.html#length_dec_mux_len3"><IMG alt="[Up: length_dec mux_len3]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>sp_mux8_8</span><a  href="hierarchy-m.p4.html#sp_mux8_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>
+                ( <a  onClick="return qs(event,this)" class=SO href="#223">out</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#224">in0</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#225">in1</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#226">in2</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#227">in3</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#228">in4</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#229">in5</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#230">in6</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#231">in7</a>,
+                  <a  onClick="return qs(event,this)" class=SI href="#233">sel</a>);
+ 
+ 
+<a name="223"></a><span class=K>output</span>  [7:0]   <a  onClick="return qs(event,this)" class=SO href="#237">out</a><a  href="hierarchy-s.p13.html#out___sp_mux8_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="224"></a><span class=K>input</span>   [7:0]   <a  onClick="return qs(event,this)" class=SI href="#224">in0</a><a  href="hierarchy-s.p9.html#in0___sp_mux8_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="225"></a><span class=K>input</span>   [7:0]   <a  onClick="return qs(event,this)" class=SI href="#225">in1</a><a  href="hierarchy-s.p9.html#in1___sp_mux8_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="226"></a><span class=K>input</span>   [7:0]   <a  onClick="return qs(event,this)" class=SI href="#226">in2</a><a  href="hierarchy-s.p9.html#in2___sp_mux8_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="227"></a><span class=K>input</span>   [7:0]   <a  onClick="return qs(event,this)" class=SI href="#227">in3</a><a  href="hierarchy-s.p9.html#in3___sp_mux8_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="228"></a><span class=K>input</span>   [7:0]   <a  onClick="return qs(event,this)" class=SI href="#228">in4</a><a  href="hierarchy-s.p9.html#in4___sp_mux8_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="229"></a><span class=K>input</span>   [7:0]   <a  onClick="return qs(event,this)" class=SI href="#229">in5</a><a  href="hierarchy-s.p9.html#in5___sp_mux8_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="230"></a><span class=K>input</span>   [7:0]   <a  onClick="return qs(event,this)" class=SI href="#230">in6</a><a  href="hierarchy-s.p9.html#in6___sp_mux8_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="231"></a><span class=K>input</span>   [7:0]   <a  onClick="return qs(event,this)" class=SI href="#231">in7</a><a  href="hierarchy-s.p9.html#in7___sp_mux8_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="233"></a><span class=K>input</span>   [7:0]   <a  onClick="return qs(event,this)" class=SI href="#233">sel</a><a  href="hierarchy-s.p16.html#sel___sp_mux8_8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+ 
+ 
+<a name="237"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#223">out</a>[7] = <a  onClick="return qs(event,this)" class=SI href="#231">in7</a>[7]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[7]|
+		 <a  onClick="return qs(event,this)" class=SI href="#230">in6</a>[7]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[6]|
+		 <a  onClick="return qs(event,this)" class=SI href="#229">in5</a>[7]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[5]|
+		 <a  onClick="return qs(event,this)" class=SI href="#228">in4</a>[7]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[4]|
+		 <a  onClick="return qs(event,this)" class=SI href="#227">in3</a>[7]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#226">in2</a>[7]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#225">in1</a>[7]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#224">in0</a>[7]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[0];
+ 
+
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#223">out</a>[6] = <a  onClick="return qs(event,this)" class=SI href="#231">in7</a>[6]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[7]|
+                 <a  onClick="return qs(event,this)" class=SI href="#230">in6</a>[6]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[6]|
+                 <a  onClick="return qs(event,this)" class=SI href="#229">in5</a>[6]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[5]|
+                 <a  onClick="return qs(event,this)" class=SI href="#228">in4</a>[6]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[4]|
+                 <a  onClick="return qs(event,this)" class=SI href="#227">in3</a>[6]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#226">in2</a>[6]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#225">in1</a>[6]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#224">in0</a>[6]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[0];
+
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#223">out</a>[5] = <a  onClick="return qs(event,this)" class=SI href="#231">in7</a>[5]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[7]|
+                 <a  onClick="return qs(event,this)" class=SI href="#230">in6</a>[5]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[6]|
+                 <a  onClick="return qs(event,this)" class=SI href="#229">in5</a>[5]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[5]|
+                 <a  onClick="return qs(event,this)" class=SI href="#228">in4</a>[5]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[4]|
+                 <a  onClick="return qs(event,this)" class=SI href="#227">in3</a>[5]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#226">in2</a>[5]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#225">in1</a>[5]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#224">in0</a>[5]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[0];
+
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#223">out</a>[4] = <a  onClick="return qs(event,this)" class=SI href="#231">in7</a>[4]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[7]|
+                 <a  onClick="return qs(event,this)" class=SI href="#230">in6</a>[4]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[6]|
+                 <a  onClick="return qs(event,this)" class=SI href="#229">in5</a>[4]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[5]|
+                 <a  onClick="return qs(event,this)" class=SI href="#228">in4</a>[4]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[4]|
+                 <a  onClick="return qs(event,this)" class=SI href="#227">in3</a>[4]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#226">in2</a>[4]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#225">in1</a>[4]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#224">in0</a>[4]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[0];
+
+
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#223">out</a>[3] = <a  onClick="return qs(event,this)" class=SI href="#231">in7</a>[3]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[7]|
+                 <a  onClick="return qs(event,this)" class=SI href="#230">in6</a>[3]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[6]|
+                 <a  onClick="return qs(event,this)" class=SI href="#229">in5</a>[3]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[5]|
+                 <a  onClick="return qs(event,this)" class=SI href="#228">in4</a>[3]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[4]|
+                 <a  onClick="return qs(event,this)" class=SI href="#227">in3</a>[3]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#226">in2</a>[3]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#225">in1</a>[3]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#224">in0</a>[3]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[0];
+
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#223">out</a>[2] = <a  onClick="return qs(event,this)" class=SI href="#231">in7</a>[2]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[7]|
+                 <a  onClick="return qs(event,this)" class=SI href="#230">in6</a>[2]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[6]|
+                 <a  onClick="return qs(event,this)" class=SI href="#229">in5</a>[2]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[5]|
+                 <a  onClick="return qs(event,this)" class=SI href="#228">in4</a>[2]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[4]|
+                 <a  onClick="return qs(event,this)" class=SI href="#227">in3</a>[2]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#226">in2</a>[2]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#225">in1</a>[2]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#224">in0</a>[2]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[0];
+
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#223">out</a>[1] = <a  onClick="return qs(event,this)" class=SI href="#231">in7</a>[1]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[7]|
+                 <a  onClick="return qs(event,this)" class=SI href="#230">in6</a>[1]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[6]|
+                 <a  onClick="return qs(event,this)" class=SI href="#229">in5</a>[1]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[5]|
+                 <a  onClick="return qs(event,this)" class=SI href="#228">in4</a>[1]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[4]|
+                 <a  onClick="return qs(event,this)" class=SI href="#227">in3</a>[1]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#226">in2</a>[1]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#225">in1</a>[1]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#224">in0</a>[1]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[0];
+
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#223">out</a>[0] = <a  onClick="return qs(event,this)" class=SI href="#231">in7</a>[0]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[7]|
+                 <a  onClick="return qs(event,this)" class=SI href="#230">in6</a>[0]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[6]|
+                 <a  onClick="return qs(event,this)" class=SI href="#229">in5</a>[0]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[5]|
+                 <a  onClick="return qs(event,this)" class=SI href="#228">in4</a>[0]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[4]|
+                 <a  onClick="return qs(event,this)" class=SI href="#227">in3</a>[0]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[3]|
+                 <a  onClick="return qs(event,this)" class=SI href="#226">in2</a>[0]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[2]|
+                 <a  onClick="return qs(event,this)" class=SI href="#225">in1</a>[0]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[1]|
+                 <a  onClick="return qs(event,this)" class=SI href="#224">in0</a>[0]&amp;<a  onClick="return qs(event,this)" class=SI href="#233">sel</a>[0];
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:12 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ifu/rtl/length_dec.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

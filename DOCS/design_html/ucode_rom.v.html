@@ -1,0 +1,1118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ucode/rtl/ucode_rom.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "ucode_rom.v.p5.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<center><table class=NB cols=5 nosave><tr><td align="center"><font color="#808080">1</font></td><td align="center"><a  href="ucode_rom.v.p2.html">2</a></td><td align="center"><a  href="ucode_rom.v.p3.html">3</a></td><td align="center"><a  href="ucode_rom.v.p4.html">4</a></td><td align="center"><a  href="ucode_rom.v.p5.html">5</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<a name="ucode_rom"></a><span class=K>module</span> <span class=MM>ucode_rom</span><a  href="hierarchy-m.p4.html#ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+                             <a  onClick="return qs(event,this)" class=SI href="ucode_rom.v.html#29">nxt_ucode_cnt</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="ucode_rom.v.html#31">rom_fxx</a> 
+                            );
+
+<span class=C>//  `include  &quot;../../common/ucode.h&quot;
+</span>
+<a name="29"></a><span class=K>input</span>    [8:0] <a  onClick="return qs(event,this)" class=SI href="ucode_rom.v.html#29">nxt_ucode_cnt</a><a  href="hierarchy-s.p12.html#nxt_ucode_cnt___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;      <span class=C>// next_state of_the ucode sequencer
+</span>
+<a name="31"></a><span class=K>output</span> [(<span class=D>`USED_BITS</span>-1):0] <a  onClick="return qs(event,this)" class=SO href="ucode_rom.v.html#65">rom_fxx</a><a  href="hierarchy-s.p15.html#rom_fxx___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>; <span class=C>// actual used rom data_out
+</span>
+<span class=C>// ------------- declarations ---------------------------------------------
+</span>
+<span class=C>// synopsys translate_off
+</span>
+<a name="37"></a><span class=K>reg</span>      [1:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#73">f00</a><a  href="hierarchy-s.p6.html#f00___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// field_00: IU_zero_comparator
+</span><a name="38"></a><span class=K>reg</span>      [2:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#74">f01</a><a  href="hierarchy-s.p6.html#f01___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_01: Ucode and StacK         WT
+</span><a name="39"></a><span class=K>reg</span>      [1:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#75">f02</a><a  href="hierarchy-s.p6.html#f02___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_02: Ucode and Stack         RD
+</span><a name="40"></a><span class=K>reg</span>      [1:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#76">f03</a><a  href="hierarchy-s.p6.html#f03___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_03: Ucode and Data_cache
+</span><a name="41"></a><span class=K>reg</span>      [6:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#77">f04</a><a  href="hierarchy-s.p6.html#f04___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_04: Ucode and Architech_reg RD
+</span><a name="42"></a><span class=K>reg</span>      [2:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#78">f05</a><a  href="hierarchy-s.p6.html#f05___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_05: Ucode and Architech_reg WT
+</span><a name="43"></a><span class=K>reg</span>      [3:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#79">f06</a><a  href="hierarchy-s.p6.html#f06___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_06: Integer Unit ALU a_operand
+</span><a name="44"></a><span class=K>reg</span>      [2:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#80">f07</a><a  href="hierarchy-s.p6.html#f07___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_07: Integer Unit ALU b_operand
+</span><a name="45"></a><span class=K>reg</span>      [2:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#81">f08</a><a  href="hierarchy-s.p6.html#f08___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_08: Read_port_A of temp_regs
+</span><a name="46"></a><span class=K>reg</span>      [2:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#82">f09</a><a  href="hierarchy-s.p6.html#f09___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_09: Read_port_B of temp_regs
+</span><a name="47"></a><span class=K>reg</span>      [2:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#83">f10</a><a  href="hierarchy-s.p6.html#f10___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_10: Write_port_A of temp_reg SEL
+</span><a name="48"></a><span class=K>reg</span>      [2:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#84">f11</a><a  href="hierarchy-s.p6.html#f11___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_11: Write_port_A of temp_reg WT
+</span><a name="49"></a><span class=K>reg</span>      [1:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#85">f12</a><a  href="hierarchy-s.p6.html#f12___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_12: Write_port_B0 of temp_reg SEL
+</span><a name="50"></a><span class=K>reg</span>      [1:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#86">f13</a><a  href="hierarchy-s.p6.html#f13___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_13: Write_port_B1 of temp_reg SEL
+</span><a name="51"></a><span class=K>reg</span>      [1:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#87">f14</a><a  href="hierarchy-s.p6.html#f14___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_14: Write_port_B0 of temp_reg WT
+</span><a name="52"></a><span class=K>reg</span>            <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#88">f15</a><a  href="hierarchy-s.p6.html#f15___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_15: Write_port_B1 of temp_reg WT
+</span><a name="53"></a><span class=K>reg</span>      [1:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#89">f16</a><a  href="hierarchy-s.p6.html#f16___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// Field_16: Sel reg2/3/6-&gt;dat/stk cache
+</span><a name="54"></a><span class=K>reg</span>      [1:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#90">f17</a><a  href="hierarchy-s.p6.html#f17___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// field_17: IU_adder operations
+</span><a name="55"></a><span class=K>reg</span>     [11:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#91">f18</a><a  href="hierarchy-s.p6.html#f18___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// field_18: Branching in ucode
+</span><a name="56"></a><span class=K>reg</span>      [3:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#92">f19</a><a  href="hierarchy-s.p6.html#f19___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// field_19: Mem_adder a_operand
+</span><a name="57"></a><span class=K>reg</span>      [3:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#93">f20</a><a  href="hierarchy-s.p6.html#f20___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// field_20: Mem_adder b_operand
+</span><a name="58"></a><span class=K>reg</span>      [1:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#94">f21</a><a  href="hierarchy-s.p6.html#f21___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// field_21: Mem_adder operations
+</span><a name="59"></a><span class=K>reg</span>            <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#95">f22</a><a  href="hierarchy-s.p6.html#f22___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// field_22: Sel stack_cache address
+</span><a name="60"></a><span class=K>reg</span>      [1:0] <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#96">f23</a><a  href="hierarchy-s.p6.html#f23___ucode_rom"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// field_23: Sel alu_adder input port_a
+</span>
+<span class=K>wire</span> [(<span class=D>`USED_BITS</span>-1):0] <a  onClick="return qs(event,this)" class=SO href="ucode_rom.v.html#31">rom_fxx</a>;   <span class=C>// actual used rom data_out
+</span>
+
+<a name="65"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="ucode_rom.v.html#31">rom_fxx</a> = {<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#73">f00</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#74">f01</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#75">f02</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#76">f03</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#77">f04</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#78">f05</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#79">f06</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#80">f07</a>,
+                    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#81">f08</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#82">f09</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#83">f10</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#84">f11</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#85">f12</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#86">f13</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#87">f14</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#88">f15</a>,
+                    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#89">f16</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#90">f17</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#91">f18</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#92">f19</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#93">f20</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#94">f21</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#95">f22</a>,<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#96">f23</a>};
+
+<span class=C>// ------------- state machine --------------------------------------------
+</span>  <span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="ucode_rom.v.html#29">nxt_ucode_cnt</a>
+          ) <span class=K>begin</span>
+
+<a name="73"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#37">f00</a> = <span class=D>`F00_DEFAULT</span>;
+<a name="74"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#38">f01</a> = <span class=D>`F01_DEFAULT</span>;
+<a name="75"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#39">f02</a> = <span class=D>`F02_DEFAULT</span>;
+<a name="76"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_DEFAULT</span>;
+<a name="77"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#41">f04</a> = <span class=D>`F04_DEFAULT</span>;
+<a name="78"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#42">f05</a> = <span class=D>`F05_DEFAULT</span>;
+<a name="79"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_DEFAULT</span>;
+<a name="80"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_DEFAULT</span>;
+<a name="81"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_DEFAULT</span>;
+<a name="82"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_DEFAULT</span>;
+<a name="83"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_DEFAULT</span>;
+<a name="84"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_DEFAULT</span>;
+<a name="85"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#49">f12</a> = <span class=D>`F12_DEFAULT</span>;
+<a name="86"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_DEFAULT</span>;
+<a name="87"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#51">f14</a> = <span class=D>`F14_DEFAULT</span>;
+<a name="88"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_DEFAULT</span>;
+<a name="89"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#53">f16</a> = <span class=D>`F16_DEFAULT</span>;
+<a name="90"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_DEFAULT</span>;
+<a name="91"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_DEFAULT</span>;
+<a name="92"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_DEFAULT</span>;
+<a name="93"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_DEFAULT</span>;
+<a name="94"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_DEFAULT</span>;
+<a name="95"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#59">f22</a> = <span class=D>`F22_DEFAULT</span>;
+<a name="96"></a>    <a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_DEFAULT</span>;
+
+      <span class=K>case</span> (<a  onClick="return qs(event,this)" class=SI href="ucode_rom.v.html#29">nxt_ucode_cnt</a>)         <span class=C>//synopsys parallel_case
+</span>
+        <span class=D>`U_IDLE</span>: <span class=K>begin</span>
+               <span class=K>end</span> 
+
+<span class=C>// ####### Ucode Operations ######################################
+</span>
+<span class=C>// ---- 9'd1 ~1/3 of arraylength ------------- Offset  9'd0 ------
+</span>
+<span class=C>// ------- start &quot;arraylength&quot; -----------------------------------
+</span>
+        9'd1:  <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_RS1_MA_M2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#38">f01</a> = <span class=D>`F01_WT_DREG_STK_M8</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_OPTOP</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#59">f22</a> = <span class=D>`F22_SEL_IALU</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_RS1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#37">f00</a> = <span class=D>`F00_RS1_COMP_ZERO</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_NULL</span> | <span class=D>`F18_CHK_1CYC_LENG</span>;
+
+               <span class=K>end</span>
+
+        9'd2:  <span class=K>begin</span>
+               <span class=K>end</span>
+
+        9'd3:  <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_DCACHE_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#38">f01</a> = <span class=D>`F01_WT_DREG_STK_M8</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_U_LAST</span>;
+ 
+               <span class=K>end</span>
+
+<span class=C>// ======= end of &quot;arraylength&quot; ==================================
+</span>
+<span class=C>// ---- 9'd1 ~3/5 of baload ------------------ Offset  9'd3 ------
+</span>
+<span class=C>// ------- start &quot;baload&quot; ----------------------------------------
+</span>
+        9'd4:  <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_RS2_MA_M2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_MA_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_01</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_RS1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_ALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_RS2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#37">f00</a> = <span class=D>`F00_RS2_COMP_ZERO</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#49">f12</a> = <span class=D>`F12_SEL_RS1_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#51">f14</a> = <span class=D>`F14_WT_REG5_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_NULL</span> | <span class=D>`F18_CHK_HANDLE</span>;
+
+               <span class=K>end</span>
+
+        9'd5:  <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_ARY_NEG</span>;
+
+               <span class=K>end</span>
+
+        9'd6:  <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_DCACHE_MA2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_MA_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+ 
+               <span class=K>end</span>
+
+        9'd7:  <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_OPTOP_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_MA_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_AREG0_B</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_ALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_ARY_NEG</span>;
+ 
+               <span class=K>end</span>
+
+        9'd8:  <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#53">f16</a> = <span class=D>`F16_SEL_R2_CACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_PORTC_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_03</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_ARY_LD</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#38">f01</a> = <span class=D>`F01_WT_DREG_STK</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_DCACHE_BM8</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_sApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_U_LAST</span> | <span class=D>`F18_CHK_ARY_OVF</span>;
+ 
+               <span class=K>end</span>
+
+<span class=C>// ======= end of &quot;baload&quot; =======================================
+</span>
+<span class=C>// ---- 9'd1 ~3/5 of caload ------------------ Offset  9'd8 ------
+</span>
+<span class=C>// ------- start &quot;caload&quot; ----------------------------------------
+</span>
+        9'd9:  <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_RS2_MA_M2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_MA_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_01</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_RS1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_ALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_RS2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#37">f00</a> = <span class=D>`F00_RS2_COMP_ZERO</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#49">f12</a> = <span class=D>`F12_SEL_RS1_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#51">f14</a> = <span class=D>`F14_WT_REG5_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_NULL</span> | <span class=D>`F18_CHK_HANDLE</span>;
+
+               <span class=K>end</span>
+
+        9'd10: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_ARY_NEG</span>;
+
+               <span class=K>end</span>
+
+        9'd11: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_DCACHE_MA2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_MA_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+ 
+               <span class=K>end</span>
+
+        9'd12: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_OPTOP_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_MA_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_LSH1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_AREG0_B</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_ALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_ARY_NEG</span>;
+ 
+               <span class=K>end</span>
+
+        9'd13: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#53">f16</a> = <span class=D>`F16_SEL_R2_CACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_PORTC_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_02</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_ARY_LD</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#38">f01</a> = <span class=D>`F01_WT_DREG_STK</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_DCACHE_BM8</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_sApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_U_LAST</span> | <span class=D>`F18_CHK_ARY_OVF</span>;
+ 
+               <span class=K>end</span>
+
+<span class=C>// ======= end of &quot;caload&quot; =======================================
+</span>
+<span class=C>// ---- 9'd1 ~3/5 of iaload ------------------ Offset  9'd13 -----
+</span>
+<span class=C>// ------- start &quot;iaload&quot; ----------------------------------------
+</span>
+        9'd14: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_RS2_MA_M2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_MA_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_01</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_RS1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_ALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_RS2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#37">f00</a> = <span class=D>`F00_RS2_COMP_ZERO</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#49">f12</a> = <span class=D>`F12_SEL_RS1_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#51">f14</a> = <span class=D>`F14_WT_REG5_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_NULL</span> | <span class=D>`F18_CHK_HANDLE</span>;
+
+               <span class=K>end</span>
+
+        9'd15: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_ARY_NEG</span>;
+
+               <span class=K>end</span>
+
+        9'd16: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_DCACHE_MA2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_MA_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+ 
+               <span class=K>end</span>
+
+        9'd17: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_OPTOP_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_MA_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_LSH2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_AREG0_B</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_ALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_ARY_NEG</span>;
+ 
+               <span class=K>end</span>
+
+        9'd18: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#53">f16</a> = <span class=D>`F16_SEL_R2_CACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_PORTC_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#38">f01</a> = <span class=D>`F01_WT_DREG_STK</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_DCACHE_BM8</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_sApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_U_LAST</span> | <span class=D>`F18_CHK_ARY_OVF</span>;
+ 
+               <span class=K>end</span>
+
+<span class=C>// ======= end of &quot;iaload&quot; =======================================
+</span>
+<span class=C>// ---- 9'd1 ~4/6 of laload ------------------ Offset  9'd18 -----
+</span>
+<span class=C>// ------- start &quot;laload&quot; ----------------------------------------
+</span>
+        9'd19: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_RS2_MA_M2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_MA_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_01</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_RS1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_ALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_RS2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#37">f00</a> = <span class=D>`F00_RS2_COMP_ZERO</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#49">f12</a> = <span class=D>`F12_SEL_RS1_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#51">f14</a> = <span class=D>`F14_WT_REG5_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_NULL</span> | <span class=D>`F18_CHK_HANDLE</span>;
+
+               <span class=K>end</span>
+
+        9'd20: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_ARY_NEG</span>;
+
+               <span class=K>end</span>
+
+        9'd21: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_DCACHE_MA2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_MA_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+ 
+               <span class=K>end</span>
+
+        9'd22: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_OPTOP_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_08</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_MA_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_LSH3</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_AREG0_B</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_ALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_ARY_NEG</span>;
+ 
+               <span class=K>end</span>
+
+        9'd23: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#53">f16</a> = <span class=D>`F16_SEL_R2_CACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_PORTC_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#38">f01</a> = <span class=D>`F01_WT_DREG_STK</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_DCACHE_BM8</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_sApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_ARY_OVF</span>;
+ 
+               <span class=K>end</span>
+
+        9'd24: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#53">f16</a> = <span class=D>`F16_SEL_R2_CACHE</span>;                  
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_PORTC_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pAsB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_OPTOP</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#59">f22</a> = <span class=D>`F22_SEL_IALU</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#38">f01</a> = <span class=D>`F01_WT_DREG_STK</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_U_LAST</span>;
+
+               <span class=K>end</span>
+
+<span class=C>// ======= end of &quot;laload&quot; =======================================
+</span>
+<span class=C>// ---- 9'd1 ~5/7 of bastore ----------------- Offset  9'd24 -----
+</span>
+<span class=C>// ------- start &quot;bastore&quot; ---------------------------------------
+</span>
+        9'd25: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_OPTOP</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_RS2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#49">f12</a> = <span class=D>`F12_SEL_RS2_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#51">f14</a> = <span class=D>`F14_WT_REG5_B0</span>;
+
+               <span class=K>end</span>                                  
+ 
+        9'd26: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#39">f02</a> = <span class=D>`F02_RD_STK</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_RS1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG3_A</span>;
+ 
+               <span class=K>end</span>
+ 
+        9'd27: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_RS1_MA_M2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_08</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_RS1_M2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_RS1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#37">f00</a> = <span class=D>`F00_RS1_COMP_ZERO</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_NULL</span> | <span class=D>`F18_CHK_HANDLE</span>;
+
+               <span class=K>end</span>
+
+        9'd28: <span class=K>begin</span>
+               <span class=K>end</span>
+
+        9'd29: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_DCACHE_MA2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_DCACHE_BM2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_ARY_NEG</span>;
+ 
+               <span class=K>end</span>
+
+        9'd30: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_AREG0_B</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#53">f16</a> = <span class=D>`F16_SEL_R2_CACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_PORTC_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_01</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_MA_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG1_A</span>;
+ 
+               <span class=K>end</span>
+
+        9'd31: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_AREG0_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#53">f16</a> = <span class=D>`F16_SEL_R3_CACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_WT_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_DCACHE_BM8</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_sApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_U_LAST</span> | <span class=D>`F18_CHK_ARY_OVF</span> | <span class=D>`F18_CHK_ARY_NEG</span>;
+ 
+               <span class=K>end</span>
+
+<span class=C>// ======= end of &quot;bastore&quot; ======================================
+</span>
+<span class=C>// ---- 9'd1 ~5/7 of castore ----------------- Offset  9'd31 -----
+</span>
+<span class=C>// ------- start &quot;castore&quot; ---------------------------------------
+</span>
+        9'd32: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_OPTOP</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_RS2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#49">f12</a> = <span class=D>`F12_SEL_RS2_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#51">f14</a> = <span class=D>`F14_WT_REG5_B0</span>;
+
+               <span class=K>end</span>                                  
+ 
+        9'd33: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#39">f02</a> = <span class=D>`F02_RD_STK</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_RS1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG3_A</span>;
+ 
+               <span class=K>end</span>
+ 
+        9'd34: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_RS1_MA_M2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_08</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_RS1_M2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_RS1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#37">f00</a> = <span class=D>`F00_RS1_COMP_ZERO</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_NULL</span> | <span class=D>`F18_CHK_HANDLE</span>;
+
+               <span class=K>end</span>
+
+        9'd35: <span class=K>begin</span>
+               <span class=K>end</span>
+
+        9'd36: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_DCACHE_MA2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_DCACHE_BM2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_ARY_NEG</span>;
+ 
+               <span class=K>end</span>
+
+        9'd37: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_LSH1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_AREG0_B</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#53">f16</a> = <span class=D>`F16_SEL_R2_CACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_PORTC_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_01</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_MA_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG1_A</span>;
+ 
+               <span class=K>end</span>
+
+        9'd38: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_AREG0_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#53">f16</a> = <span class=D>`F16_SEL_R3_CACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_WT_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_DCACHE_BM8</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_sApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_U_LAST</span> | <span class=D>`F18_CHK_ARY_OVF</span> | <span class=D>`F18_CHK_ARY_NEG</span>;
+ 
+               <span class=K>end</span>
+
+<span class=C>// ======= end of &quot;castore&quot; ======================================
+</span>
+<span class=C>// ---- 9'd1 ~5/7 of iastore ----------------- Offset  9'd38 -----
+</span>
+<span class=C>// ------- start &quot;iastore&quot; ---------------------------------------
+</span>
+        9'd39: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_OPTOP</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_RS2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#49">f12</a> = <span class=D>`F12_SEL_RS2_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#51">f14</a> = <span class=D>`F14_WT_REG5_B0</span>;
+
+               <span class=K>end</span>                                  
+ 
+        9'd40: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#39">f02</a> = <span class=D>`F02_RD_STK</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_RS1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG3_A</span>;
+ 
+               <span class=K>end</span>
+ 
+        9'd41: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_RS1_MA_M2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_08</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_RS1_M2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_RS1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#37">f00</a> = <span class=D>`F00_RS1_COMP_ZERO</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_NULL</span> | <span class=D>`F18_CHK_HANDLE</span>;
+
+               <span class=K>end</span>
+
+        9'd42: <span class=K>begin</span>
+               <span class=K>end</span>
+
+        9'd43: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_DCACHE_MA2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_DCACHE_BM2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_ARY_NEG</span>;
+ 
+               <span class=K>end</span>
+
+        9'd44: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG2_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_LSH2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_AREG0_B</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#53">f16</a> = <span class=D>`F16_SEL_R2_CACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_PORTC_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_01</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_MA_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG1_A</span>;
+ 
+               <span class=K>end</span>
+
+        9'd45: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_AREG0_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#53">f16</a> = <span class=D>`F16_SEL_R3_CACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_WT_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_DCACHE_BM8</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_sApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_U_LAST</span> | <span class=D>`F18_CHK_ARY_OVF</span> | <span class=D>`F18_CHK_ARY_NEG</span>;
+ 
+               <span class=K>end</span>
+
+<span class=C>// ======= end of &quot;iastore&quot; ======================================
+</span>
+<span class=C>// ---- 9'd1 ~6/8 of lastore ----------------- Offset  9'd45 -----
+</span>
+<span class=C>// ------- start &quot;lastore&quot; ---------------------------------------
+</span>
+        9'd46: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_OPTOP</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#49">f12</a> = <span class=D>`F12_SEL_RS2_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#51">f14</a> = <span class=D>`F14_WT_REG6_B0</span>;
+
+               <span class=K>end</span>                                  
+ 
+        9'd47: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#39">f02</a> = <span class=D>`F02_RD_STK</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_AREG0_B</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_sApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_RS1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG3_A</span>;
+ 
+               <span class=K>end</span>
+ 
+        9'd48: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#39">f02</a> = <span class=D>`F02_RD_STK</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_RS1_MA_M2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_08</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_RS1_M2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_RS1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#37">f00</a> = <span class=D>`F00_RS1_COMP_ZERO</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_NULL</span> | <span class=D>`F18_CHK_HANDLE</span>;
+
+               <span class=K>end</span>
+
+        9'd49: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#49">f12</a> = <span class=D>`F12_SEL_RS1_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#51">f14</a> = <span class=D>`F14_WT_REG5_B0</span>;
+
+               <span class=K>end</span>
+
+        9'd50: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_DCACHE_MA2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_DCACHE_BM2</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_ARY_NEG</span>;
+ 
+               <span class=K>end</span>
+
+        9'd51: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_AREG0_B</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_RS1_LH3_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_ALU_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_RS1_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_01</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_MA_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#49">f12</a> = <span class=D>`F12_SEL_RS1_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#51">f14</a> = <span class=D>`F14_WT_REG5_B0</span>;
+ 
+               <span class=K>end</span>
+
+        9'd52: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_AREG0_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#53">f16</a> = <span class=D>`F16_SEL_R3_CACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_WT_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG1_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_DCACHE_BM8</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_sApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_CHK_ARY_OVF</span> | <span class=D>`F18_CHK_ARY_NEG</span>;
+ 
+               <span class=K>end</span>
+
+        9'd53: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_AREG0_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#53">f16</a> = <span class=D>`F16_SEL_R6_CACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_WT_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#55">f18</a> = <span class=D>`F18_U_LAST</span>;
+ 
+               <span class=K>end</span>
+
+<span class=C>// ======= end of &quot;lastore&quot; ======================================
+</span>
+<span class=C>// ---- 9'd1 ~ 11 of invoke_static_quick ----- Offset  9'd53 -----
+</span>
+<span class=C>// ------- start &quot;invoke_static_quick&quot; ---------------------------
+</span>
+        9'd54: <span class=K>begin</span>
+ 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#41">f04</a> = <span class=D>`F04_RD_CONST_P</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_ARCH_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_RD_I16_LSH2_MB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+
+               <span class=K>end</span>
+
+        9'd55: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_OPTOP_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_20</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pAsB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_MA_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG0_A</span>; 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_00</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_OPTOP</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#49">f12</a> = <span class=D>`F12_SEL_ALU_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#51">f14</a> = <span class=D>`F14_WT_REG6_B0</span>;
+
+               <span class=K>end</span>
+
+        9'd56: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_DCACHE_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_MA_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_DCACHE_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG3_A</span>;
+
+               <span class=K>end</span>
+
+        9'd57: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_AREG0_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#43">f06</a> = <span class=D>`F06_A_CONST_03</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#41">f04</a> = <span class=D>`F04_RD_PC</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_ARCH</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pApB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_ALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG2_A</span>;
+
+               <span class=K>end</span>
+
+        9'd58: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_OPTOP_MA</span>; 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_SEL_DCACHE_MB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pAsB</span>;   
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#47">f10</a> = <span class=D>`F10_SEL_MA_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#48">f11</a> = <span class=D>`F11_WT_REG0_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG0_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#46">f09</a> = <span class=D>`F09_RD_DCACHE_B</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#60">f23</a> = <span class=D>`F23_SEL_IALU_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#44">f07</a> = <span class=D>`F07_B_U_PORTB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#54">f17</a> = <span class=D>`F17_IALU_pAsB</span>; 
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#49">f12</a> = <span class=D>`F12_SEL_ALU_B0</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#51">f14</a> = <span class=D>`F14_WT_REG5_B0</span>;
+
+               <span class=K>end</span>
+
+        9'd59: <span class=K>begin</span>
+
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#56">f19</a> = <span class=D>`F19_SEL_AREG0_MA</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#57">f20</a> = <span class=D>`F20_MB_CONST_04</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#58">f21</a> = <span class=D>`F21_MADD_pAsB</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#40">f03</a> = <span class=D>`F03_RD_DCACHE</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#50">f13</a> = <span class=D>`F13_SEL_PASS_A_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#52">f15</a> = <span class=D>`F15_WT_AREG0_B1</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#45">f08</a> = <span class=D>`F08_RD_REG5_A</span>;
+<a  onClick="return qs(event,this)" class=SR href="ucode_rom.v.html#42">f05</a> = <span class=D>`F05_WT_A_OPTOP</span>;
+
+               <span class=K>end</span>
+
+</pre>
+<center><table class=NB cols=6 nosave><tr><td align="center"><a  href="ucode_rom.v.p2.html">Next</a></td><td align="center"><font color="#808080">1</font></td><td align="center"><a  href="ucode_rom.v.p2.html">2</a></td><td align="center"><a  href="ucode_rom.v.p3.html">3</a></td><td align="center"><a  href="ucode_rom.v.p4.html">4</a></td><td align="center"><a  href="ucode_rom.v.p5.html">5</a></td></tr></table></center>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return "ucode_rom.v.p2.html"; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:47 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ucode/rtl/ucode_rom.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

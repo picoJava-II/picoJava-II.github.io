@@ -1,0 +1,330 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ex/rtl/imdr/imdr.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "imdr.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<a name="imdr"></a><a  href="ex.v.html#ex_ex_imdr"><IMG alt="[Up: ex ex_imdr]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>imdr</span><a  href="hierarchy-m.p3.html#imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+             <a  onClick="return qs(event,this)" class=SI href="#40">ie_mul_d</a>,
+             <a  onClick="return qs(event,this)" class=SI href="#41">ie_div_d</a>,
+             <a  onClick="return qs(event,this)" class=SI href="#42">ie_rem_d</a>,
+             <a  onClick="return qs(event,this)" class=SI href="#43">kill_inst_e</a>,
+             <a  onClick="return qs(event,this)" class=SI href="#44">ie_dataA_d</a>,
+             <a  onClick="return qs(event,this)" class=SI href="#45">ie_dataB_d</a>,
+             <a  onClick="return qs(event,this)" class=SI href="#46">pj_hold</a>,
+             <a  onClick="return qs(event,this)" class=SI href="#47">reset_l</a>,
+             <a  onClick="return qs(event,this)" class=SI href="#48">sm</a>,
+             <a  onClick="return qs(event,this)" class=SI href="#49">sin</a>,
+	     <a  onClick="return qs(event,this)" class=SO href="#50">so</a>,
+             <a  onClick="return qs(event,this)" class=SI href="#51">clk</a>,
+             <a  onClick="return qs(event,this)" class=SO href="#53">imdr_done_e</a>,
+             <a  onClick="return qs(event,this)" class=SO href="#54">imdr_div0_e</a>,
+             <a  onClick="return qs(event,this)" class=SO href="#55">imdr_data_out</a>
+            );
+
+<a name="40"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="ex.v.html#854">ie_mul_d</a><a  href="hierarchy-s.p9.html#ie_mul_d___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// imul request, validate operands
+</span><a name="41"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="ex.v.html#855">ie_div_d</a><a  href="hierarchy-s.p9.html#ie_div_d___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// idiv request, validate operands
+</span><a name="42"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="ex.v.html#856">ie_rem_d</a><a  href="hierarchy-s.p9.html#ie_rem_d___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// irem request, validate operands
+</span><a name="43"></a><span class=K>input</span>	      <a  onClick="return qs(event,this)" class=SI href="ex.v.html#857">kill_inst_e</a><a  href="hierarchy-s.p10.html#kill_inst_e___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	   <span class=C>// kill the instruction in E stage
+</span><a name="44"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="ex.v.html#858">ie_dataA_d</a><a  href="hierarchy-s.p9.html#ie_dataA_d___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// a_operand, multiplicand or dividend
+</span><a name="45"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="ex.v.html#859">ie_dataB_d</a><a  href="hierarchy-s.p9.html#ie_dataB_d___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// b_operand, multiplier   or divisor 
+</span><a name="46"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="ex.v.html#860">pj_hold</a><a  href="hierarchy-s.p14.html#pj_hold___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// hold 
+</span><a name="47"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="ex.v.html#861">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// reset 
+</span><a name="48"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="#48">sm</a><a  href="hierarchy-s.p16.html#sm___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                  <span class=C>// register scan mode
+</span><a name="49"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="#49">sin</a><a  href="hierarchy-s.p16.html#sin___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                 <span class=C>// register scan_input
+</span><a name="50"></a><span class=K>output</span>	      <a  onClick="return qs(event,this)" class=SO href="#50">so</a><a  href="hierarchy-s.p16.html#so___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		   <span class=C>// scan out port  
+</span><a name="51"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="ex.v.html#865">clk</a><a  href="hierarchy-s.p3.html#clk___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// clock 
+</span>
+<a name="53"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#161">imdr_done_e</a><a  href="hierarchy-s.p9.html#imdr_done_e___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// imul or idiv or irem done
+</span><a name="54"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#162">imdr_div0_e</a><a  href="hierarchy-s.p9.html#imdr_div0_e___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// a zero divisor is detected
+</span><a name="55"></a><span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="#91">imdr_data_out</a><a  href="hierarchy-s.p9.html#imdr_data_out___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       <span class=C>// imdr resulting data back to stack
+</span>
+<span class=C>// -------------- Ports of the 33-bit adder ------------------------------
+</span><a name="58"></a><span class=K>wire</span>  [32:0] <a  onClick="return qs(event,this)" class=SW href="#58">ie_aop_add</a><a  href="hierarchy-s.p9.html#ie_aop_add___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// a-operand       of the 33-bit adder
+</span><a name="59"></a><span class=K>wire</span>  [32:0] <a  onClick="return qs(event,this)" class=SW href="#59">ie_bop_add</a><a  href="hierarchy-s.p9.html#ie_bop_add___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// b-operand[31:0] of the 33-bit adder
+</span><a name="60"></a><span class=K>wire</span>         <a  onClick="return qs(event,this)" class=SW href="#60">ie_cin</a><a  href="hierarchy-s.p9.html#ie_cin___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// carry-in        of the 33-bit adder
+</span><a name="61"></a><span class=K>wire</span>         <a  onClick="return qs(event,this)" class=SW href="#61">ie_use_dpath</a><a  href="hierarchy-s.p9.html#ie_use_dpath___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a> = 1'b0;        <span class=C>// ie uses the adder
+</span>
+<a name="63"></a><span class=K>wire</span> [32:0] <a  onClick="return qs(event,this)" class=SW href="#97">imdr_sum</a><a  href="hierarchy-s.p9.html#imdr_sum___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// sum             of the 33-bit adder
+</span><a name="64"></a><span class=K>wire</span>        <a  onClick="return qs(event,this)" class=SW href="#98">imdr_cout</a><a  href="hierarchy-s.p9.html#imdr_cout___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// carry-out       of the 33-bit adder
+</span>
+<span class=C>// -------------- Internal buses -----------------------------------------
+</span><a name="67"></a><span class=K>wire</span>    [1:0] <a  onClick="return qs(event,this)" class=SW href="#164">sel_rac</a><a  href="hierarchy-s.p16.html#sel_rac___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#165">sel_ra</a><a  href="hierarchy-s.p16.html#sel_ra___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#166">sel_rb</a><a  href="hierarchy-s.p16.html#sel_rb___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="69"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#167">clr_rac</a><a  href="hierarchy-s.p3.html#clr_rac___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#168">clr_ra2</a><a  href="hierarchy-s.p3.html#clr_ra2___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#169">clr_rb</a><a  href="hierarchy-s.p3.html#clr_rb___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#170">clr_rbb</a><a  href="hierarchy-s.p3.html#clr_rbb___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="70"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#171">clr_aop_</a><a  href="hierarchy-s.p3.html#clr_aop____imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#172">sel_rem_a</a><a  href="hierarchy-s.p16.html#sel_rem_a___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#173">sel_mag_a</a><a  href="hierarchy-s.p16.html#sel_mag_a___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="71"></a><span class=K>wire</span>    [3:0] <a  onClick="return qs(event,this)" class=SW href="#174">sel_rsh_b</a><a  href="hierarchy-s.p16.html#sel_rsh_b___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="72"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#175">sel_rb_b</a><a  href="hierarchy-s.p16.html#sel_rb_b___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#176">sel_neg_b</a><a  href="hierarchy-s.p16.html#sel_neg_b___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="73"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#177">sel_sum_a</a><a  href="hierarchy-s.p16.html#sel_sum_a___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#178">sel_compl_a</a><a  href="hierarchy-s.p16.html#sel_compl_a___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#179">sel_sum</a><a  href="hierarchy-s.p16.html#sel_sum___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="74"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#180">cyc_compare</a><a  href="hierarchy-s.p3.html#cyc_compare___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="75"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#181">ld_a_oprd0</a><a  href="hierarchy-s.p10.html#ld_a_oprd0___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#182">ld_b_oprd0</a><a  href="hierarchy-s.p10.html#ld_b_oprd0___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#183">ld_leading0</a><a  href="hierarchy-s.p10.html#ld_leading0___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="76"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#184">clr_a_oprd0</a><a  href="hierarchy-s.p3.html#clr_a_oprd0___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#185">clr_b_oprd0</a><a  href="hierarchy-s.p3.html#clr_b_oprd0___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#186">clr_leading0</a><a  href="hierarchy-s.p3.html#clr_leading0___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="77"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#123">ain_is0</a><a  href="hierarchy-s.html#ain_is0___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#124">bin_is0</a><a  href="hierarchy-s.p2.html#bin_is0___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#125">div_ovf</a><a  href="hierarchy-s.p4.html#div_ovf___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#126">leading0_r</a><a  href="hierarchy-s.p10.html#leading0_r___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="78"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#191">ld_sign</a><a  href="hierarchy-s.p10.html#ld_sign___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#192">clr_sign</a><a  href="hierarchy-s.p3.html#clr_sign___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#129">bin_sign</a><a  href="hierarchy-s.p2.html#bin_sign___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#130">out_sign</a><a  href="hierarchy-s.p13.html#out_sign___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#131">out_sign_r</a><a  href="hierarchy-s.p13.html#out_sign_r___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="79"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#196">cin</a><a  href="hierarchy-s.p3.html#cin___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#197">mask32_</a><a  href="hierarchy-s.p11.html#mask32____imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#198">mul_cmp</a><a  href="hierarchy-s.p11.html#mul_cmp___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#199">div_cmp</a><a  href="hierarchy-s.p4.html#div_cmp___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#200">rem_cmp</a><a  href="hierarchy-s.p15.html#rem_cmp___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#138">cout</a><a  href="hierarchy-s.p3.html#cout___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="80"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#139">extreme_1</a><a  href="hierarchy-s.p5.html#extreme_1___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#140">extreme_2</a><a  href="hierarchy-s.p5.html#extreme_2___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#141">rem_sum32</a><a  href="hierarchy-s.p15.html#rem_sum32___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="81"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#142">nxt_booth_0</a><a  href="hierarchy-s.p12.html#nxt_booth_0___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#143">booth_neg</a><a  href="hierarchy-s.p2.html#booth_neg___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#144">cur_rbb1</a><a  href="hierarchy-s.p3.html#cur_rbb1___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// -------------- imdr datapath ------------------------------------------
+</span><a name="imdr_imdr_dpath_0"></a><a  onClick="return qs(event,this)" class=MM href="imdr_dpath.v.html#imdr_dpath">imdr_dpath</a> imdr_dpath_0 (
+<a name="85"></a>                   <span class=SI>.ie_dataA_d</span>(<a  onClick="return qs(event,this)" class=SI href="#44">ie_dataA_d</a>),
+<a name="86"></a>                   <span class=SI>.ie_dataB_d</span>(<a  onClick="return qs(event,this)" class=SI href="#45">ie_dataB_d</a>),
+                   <span class=SI>.sm</span>(),
+                   <span class=SI>.sin</span>(),
+		   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#89">.so</a>(),
+<a name="90"></a>                   <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#51">clk</a>),
+<a name="91"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#343">.imdr_data_out</a>(<a  onClick="return qs(event,this)" class=SO href="#55">imdr_data_out</a>),
+
+<a name="93"></a>                   <span class=SI>.ie_aop_add</span>(<a  onClick="return qs(event,this)" class=SW href="#58">ie_aop_add</a>),
+<a name="94"></a>                   <span class=SI>.ie_bop_add</span>(<a  onClick="return qs(event,this)" class=SW href="#59">ie_bop_add</a>),
+<a name="95"></a>                   <span class=SI>.ie_cin</span>(<a  onClick="return qs(event,this)" class=SW href="#60">ie_cin</a>),
+<a name="96"></a>                   <span class=SI>.ie_use_dpath</span>(<a  onClick="return qs(event,this)" class=SW href="#61">ie_use_dpath</a>),
+<a name="97"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#195">.imdr_sum</a>(<a  onClick="return qs(event,this)" class=SW href="#63">imdr_sum</a>),
+<a name="98"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#196">.imdr_cout</a>(<a  onClick="return qs(event,this)" class=SW href="#64">imdr_cout</a>),
+
+<a name="100"></a>                   <span class=SI>.sel_rac</span>(<a  onClick="return qs(event,this)" class=SW href="#164">sel_rac</a>),
+<a name="101"></a>                   <span class=SI>.sel_ra</span>(<a  onClick="return qs(event,this)" class=SW href="#165">sel_ra</a>),
+<a name="102"></a>                   <span class=SI>.sel_rb</span>(<a  onClick="return qs(event,this)" class=SW href="#166">sel_rb</a>),
+<a name="103"></a>                   <span class=SI>.clr_rac</span>(<a  onClick="return qs(event,this)" class=SW href="#167">clr_rac</a>),
+<a name="104"></a>                   <span class=SI>.clr_ra2</span>(<a  onClick="return qs(event,this)" class=SW href="#168">clr_ra2</a>),
+<a name="105"></a>                   <span class=SI>.clr_rb</span>(<a  onClick="return qs(event,this)" class=SW href="#169">clr_rb</a>),
+<a name="106"></a>                   <span class=SI>.clr_rbb</span>(<a  onClick="return qs(event,this)" class=SW href="#170">clr_rbb</a>),
+<a name="107"></a>                   <span class=SI>.clr_aop_</span>(<a  onClick="return qs(event,this)" class=SW href="#171">clr_aop_</a>),
+<a name="108"></a>                   <span class=SI>.sel_rem_a</span>(<a  onClick="return qs(event,this)" class=SW href="#172">sel_rem_a</a>),
+<a name="109"></a>                   <span class=SI>.sel_mag_a</span>(<a  onClick="return qs(event,this)" class=SW href="#173">sel_mag_a</a>),
+<a name="110"></a>                   <span class=SI>.sel_rsh_b</span>(<a  onClick="return qs(event,this)" class=SW href="#174">sel_rsh_b</a>),
+<a name="111"></a>                   <span class=SI>.sel_rb_b</span>(<a  onClick="return qs(event,this)" class=SW href="#175">sel_rb_b</a>),
+<a name="112"></a>                   <span class=SI>.sel_neg_b</span>(<a  onClick="return qs(event,this)" class=SW href="#176">sel_neg_b</a>),
+<a name="113"></a>                   <span class=SI>.sel_sum_a</span>(<a  onClick="return qs(event,this)" class=SW href="#177">sel_sum_a</a>),
+<a name="114"></a>                   <span class=SI>.sel_compl_a</span>(<a  onClick="return qs(event,this)" class=SW href="#178">sel_compl_a</a>),
+<a name="115"></a>                   <span class=SI>.sel_sum</span>(<a  onClick="return qs(event,this)" class=SW href="#179">sel_sum</a>),
+<a name="116"></a>                   <span class=SI>.cyc_compare</span>(<a  onClick="return qs(event,this)" class=SW href="#180">cyc_compare</a>),
+<a name="117"></a>                   <span class=SI>.ld_a_oprd0</span>(<a  onClick="return qs(event,this)" class=SW href="#181">ld_a_oprd0</a>),
+<a name="118"></a>                   <span class=SI>.ld_b_oprd0</span>(<a  onClick="return qs(event,this)" class=SW href="#182">ld_b_oprd0</a>),
+<a name="119"></a>                   <span class=SI>.ld_leading0</span>(<a  onClick="return qs(event,this)" class=SW href="#183">ld_leading0</a>),
+<a name="120"></a>                   <span class=SI>.clr_a_oprd0</span>(<a  onClick="return qs(event,this)" class=SW href="#184">clr_a_oprd0</a>),
+<a name="121"></a>                   <span class=SI>.clr_b_oprd0</span>(<a  onClick="return qs(event,this)" class=SW href="#185">clr_b_oprd0</a>),
+<a name="122"></a>                   <span class=SI>.clr_leading0</span>(<a  onClick="return qs(event,this)" class=SW href="#186">clr_leading0</a>),
+<a name="123"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#364">.ain_is0</a>(<a  onClick="return qs(event,this)" class=SW href="#77">ain_is0</a>),
+<a name="124"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#365">.bin_is0</a>(<a  onClick="return qs(event,this)" class=SW href="#77">bin_is0</a>),
+<a name="125"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#366">.div_ovf</a>(<a  onClick="return qs(event,this)" class=SW href="#77">div_ovf</a>),
+<a name="126"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#368">.leading0_r</a>(<a  onClick="return qs(event,this)" class=SW href="#77">leading0_r</a>),
+<a name="127"></a>                   <span class=SI>.ld_sign</span>(<a  onClick="return qs(event,this)" class=SW href="#191">ld_sign</a>),
+<a name="128"></a>                   <span class=SI>.clr_sign</span>(<a  onClick="return qs(event,this)" class=SW href="#192">clr_sign</a>),
+<a name="129"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#418">.bin_sign</a>(<a  onClick="return qs(event,this)" class=SW href="#78">bin_sign</a>),
+<a name="130"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#419">.out_sign</a>(<a  onClick="return qs(event,this)" class=SW href="#78">out_sign</a>),
+<a name="131"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#420">.out_sign_r</a>(<a  onClick="return qs(event,this)" class=SW href="#78">out_sign_r</a>),
+<a name="132"></a>                   <span class=SI>.cin</span>(<a  onClick="return qs(event,this)" class=SW href="#196">cin</a>),
+<a name="133"></a>                   <span class=SI>.mask32_</span>(<a  onClick="return qs(event,this)" class=SW href="#197">mask32_</a>),
+<a name="134"></a>                   <span class=SI>.mul_cmp</span>(<a  onClick="return qs(event,this)" class=SW href="#198">mul_cmp</a>),
+<a name="135"></a>                   <span class=SI>.div_cmp</span>(<a  onClick="return qs(event,this)" class=SW href="#199">div_cmp</a>),
+<a name="136"></a>                   <span class=SI>.rem_cmp</span>(<a  onClick="return qs(event,this)" class=SW href="#200">rem_cmp</a>),
+<a name="137"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#448">.sum_32</a>(<a  onClick="return qs(event,this)" class=SW href="#137">sum_32</a><a  href="hierarchy-s.p16.html#sum_32___imdr"><IMG align=top border=0 SRC="v2html-i.gif"></a>),
+<a name="138"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#324">.cout</a>(<a  onClick="return qs(event,this)" class=SW href="#79">cout</a>),
+<a name="139"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#446">.extreme_1</a>(<a  onClick="return qs(event,this)" class=SW href="#80">extreme_1</a>),
+<a name="140"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#367">.extreme_2</a>(<a  onClick="return qs(event,this)" class=SW href="#80">extreme_2</a>),
+<a name="141"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#445">.rem_sum32</a>(<a  onClick="return qs(event,this)" class=SW href="#80">rem_sum32</a>),
+<a name="142"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#381">.nxt_booth_0</a>(<a  onClick="return qs(event,this)" class=SW href="#81">nxt_booth_0</a>),
+<a name="143"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#383">.booth_neg</a>(<a  onClick="return qs(event,this)" class=SW href="#81">booth_neg</a>),
+<a name="144"></a>                   <a  onClick="return qs(event,this)" class=SO href="imdr_dpath.v.html#447">.cur_rbb1</a>(<a  onClick="return qs(event,this)" class=SW href="#81">cur_rbb1</a>) 
+                  );
+
+<span class=C>// -------------- imdr control -------------------------------------------
+</span><a name="imdr_imdr_ctrl_0"></a><a  onClick="return qs(event,this)" class=MM href="imdr_ctrl.v.html#imdr_ctrl">imdr_ctrl</a> imdr_ctrl_0 (
+<a name="149"></a>                  <span class=SI>.ie_mul_raw_d</span>(<a  onClick="return qs(event,this)" class=SI href="#40">ie_mul_d</a>),
+<a name="150"></a>                  <span class=SI>.ie_div_raw_d</span>(<a  onClick="return qs(event,this)" class=SI href="#41">ie_div_d</a>),
+<a name="151"></a>                  <span class=SI>.ie_rem_raw_d</span>(<a  onClick="return qs(event,this)" class=SI href="#42">ie_rem_d</a>),
+<a name="152"></a>		  <span class=SI>.kill_inst_e</span>(<a  onClick="return qs(event,this)" class=SI href="#43">kill_inst_e</a>),
+<a name="153"></a>                  <span class=SI>.ie_dataA_d_31</span>(<a  onClick="return qs(event,this)" class=SI href="#44">ie_dataA_d</a>[31]),
+<a name="154"></a>                  <span class=SI>.ie_dataB_d_31</span>(<a  onClick="return qs(event,this)" class=SI href="#45">ie_dataB_d</a>[31]),
+<a name="155"></a>                  <span class=SI>.pj_hold</span>(<a  onClick="return qs(event,this)" class=SI href="#46">pj_hold</a>),
+<a name="156"></a>                  <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#47">reset_l</a>),
+                  <span class=SI>.sm</span>(),
+                  <span class=SI>.sin</span>(),
+                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#95">.so</a>(),
+<a name="160"></a>                  <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#51">clk</a>),
+<a name="161"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#322">.imdr_done_e</a>(<a  onClick="return qs(event,this)" class=SO href="#53">imdr_done_e</a>), 
+<a name="162"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#450">.imdr_div0_e</a>(<a  onClick="return qs(event,this)" class=SO href="#54">imdr_div0_e</a>),
+ 
+<a name="164"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#220">.sel_rac</a>(<a  onClick="return qs(event,this)" class=SW href="#67">sel_rac</a>),
+<a name="165"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#221">.sel_ra</a>(<a  onClick="return qs(event,this)" class=SW href="#67">sel_ra</a>),
+<a name="166"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#222">.sel_rb</a>(<a  onClick="return qs(event,this)" class=SW href="#67">sel_rb</a>),
+<a name="167"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#259">.clr_rac</a>(<a  onClick="return qs(event,this)" class=SW href="#69">clr_rac</a>),
+<a name="168"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#262">.clr_ra2</a>(<a  onClick="return qs(event,this)" class=SW href="#69">clr_ra2</a>),
+<a name="169"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#268">.clr_rb</a>(<a  onClick="return qs(event,this)" class=SW href="#69">clr_rb</a>),
+<a name="170"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#272">.clr_rbb</a>(<a  onClick="return qs(event,this)" class=SW href="#69">clr_rbb</a>),
+<a name="171"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#453">.clr_aop_</a>(<a  onClick="return qs(event,this)" class=SW href="#70">clr_aop_</a>),
+<a name="172"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#453">.sel_rem_a</a>(<a  onClick="return qs(event,this)" class=SW href="#70">sel_rem_a</a>),
+<a name="173"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#408">.sel_mag_a</a>(<a  onClick="return qs(event,this)" class=SW href="#70">sel_mag_a</a>),
+<a name="174"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#460">.sel_rsh_b</a>(<a  onClick="return qs(event,this)" class=SW href="#71">sel_rsh_b</a>),
+<a name="175"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#460">.sel_rb_b</a>(<a  onClick="return qs(event,this)" class=SW href="#72">sel_rb_b</a>),
+<a name="176"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#460">.sel_neg_b</a>(<a  onClick="return qs(event,this)" class=SW href="#72">sel_neg_b</a>),
+<a name="177"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#453">.sel_sum_a</a>(<a  onClick="return qs(event,this)" class=SW href="#73">sel_sum_a</a>),
+<a name="178"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#453">.sel_compl_a</a>(<a  onClick="return qs(event,this)" class=SW href="#73">sel_compl_a</a>),
+<a name="179"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#297">.sel_sum</a>(<a  onClick="return qs(event,this)" class=SW href="#73">sel_sum</a>),
+<a name="180"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#302">.cyc_compare</a>(<a  onClick="return qs(event,this)" class=SW href="#74">cyc_compare</a>),
+<a name="181"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#303">.ld_a_oprd0</a>(<a  onClick="return qs(event,this)" class=SW href="#75">ld_a_oprd0</a>),
+<a name="182"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#304">.ld_b_oprd0</a>(<a  onClick="return qs(event,this)" class=SW href="#75">ld_b_oprd0</a>),
+<a name="183"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#305">.ld_leading0</a>(<a  onClick="return qs(event,this)" class=SW href="#75">ld_leading0</a>),
+<a name="184"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#306">.clr_a_oprd0</a>(<a  onClick="return qs(event,this)" class=SW href="#76">clr_a_oprd0</a>),
+<a name="185"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#307">.clr_b_oprd0</a>(<a  onClick="return qs(event,this)" class=SW href="#76">clr_b_oprd0</a>),
+<a name="186"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#308">.clr_leading0</a>(<a  onClick="return qs(event,this)" class=SW href="#76">clr_leading0</a>),
+<a name="187"></a>                  <span class=SI>.ain_is0</span>(<a  onClick="return qs(event,this)" class=SW href="#123">ain_is0</a>),
+<a name="188"></a>                  <span class=SI>.bin_is0</span>(<a  onClick="return qs(event,this)" class=SW href="#124">bin_is0</a>),
+<a name="189"></a>                  <span class=SI>.div_ovf</span>(<a  onClick="return qs(event,this)" class=SW href="#125">div_ovf</a>),
+<a name="190"></a>                  <span class=SI>.leading0_r</span>(<a  onClick="return qs(event,this)" class=SW href="#126">leading0_r</a>),
+<a name="191"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#313">.ld_sign</a>(<a  onClick="return qs(event,this)" class=SW href="#78">ld_sign</a>),
+<a name="192"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#314">.clr_sign</a>(<a  onClick="return qs(event,this)" class=SW href="#78">clr_sign</a>),
+<a name="193"></a>                  <span class=SI>.bin_sign</span>(<a  onClick="return qs(event,this)" class=SW href="#129">bin_sign</a>),
+<a name="194"></a>                  <span class=SI>.out_sign</span>(<a  onClick="return qs(event,this)" class=SW href="#130">out_sign</a>),
+<a name="195"></a>                  <span class=SI>.out_sign_r</span>(<a  onClick="return qs(event,this)" class=SW href="#131">out_sign_r</a>),
+<a name="196"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#328">.cin</a>(<a  onClick="return qs(event,this)" class=SW href="#79">cin</a>),
+<a name="197"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#332">.mask32_</a>(<a  onClick="return qs(event,this)" class=SW href="#79">mask32_</a>),
+<a name="198"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#315">.mul_cmp</a>(<a  onClick="return qs(event,this)" class=SW href="#79">mul_cmp</a>),
+<a name="199"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#316">.div_cmp</a>(<a  onClick="return qs(event,this)" class=SW href="#79">div_cmp</a>),
+<a name="200"></a>                  <a  onClick="return qs(event,this)" class=SO href="imdr_ctrl.v.html#317">.rem_cmp</a>(<a  onClick="return qs(event,this)" class=SW href="#79">rem_cmp</a>),
+<a name="201"></a>                  <span class=SI>.sum_32</span>(<a  onClick="return qs(event,this)" class=SW href="#137">sum_32</a>),
+<a name="202"></a>                  <span class=SI>.cout</span>(<a  onClick="return qs(event,this)" class=SW href="#138">cout</a>),
+<a name="203"></a>                  <span class=SI>.extreme_1</span>(<a  onClick="return qs(event,this)" class=SW href="#139">extreme_1</a>),
+<a name="204"></a>                  <span class=SI>.extreme_2</span>(<a  onClick="return qs(event,this)" class=SW href="#140">extreme_2</a>),
+<a name="205"></a>                  <span class=SI>.rem_sum32</span>(<a  onClick="return qs(event,this)" class=SW href="#141">rem_sum32</a>),
+<a name="206"></a>                  <span class=SI>.nxt_booth_0</span>(<a  onClick="return qs(event,this)" class=SW href="#142">nxt_booth_0</a>),
+<a name="207"></a>                  <span class=SI>.booth_neg</span>(<a  onClick="return qs(event,this)" class=SW href="#143">booth_neg</a>),
+<a name="208"></a>                  <span class=SI>.cur_rbb1</span>(<a  onClick="return qs(event,this)" class=SW href="#144">cur_rbb1</a>) 
+                  );
+
+<span class=K>endmodule</span>
+
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:28 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ex/rtl/imdr/imdr.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

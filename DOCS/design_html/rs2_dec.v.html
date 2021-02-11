@@ -1,0 +1,253 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ifu/rtl/rs2_dec.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "rs2_dec.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<a name="rs2_dec"></a><a  href="main_dec.v.html#main_dec_rs2_dec_len1"><IMG alt="[Up: main_dec rs2_dec_len1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="main_dec.v.html#main_dec_rs2_dec_len2"><IMG alt="[Up: main_dec rs2_dec_len2]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="main_dec.v.html#main_dec_rs2_dec_len3"><IMG alt="[Up: main_dec rs2_dec_len3]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>rs2_dec</span><a  href="hierarchy-m.p4.html#rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+	<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#32">valid</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#33">offset_sel_rs2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#34">lv_rs2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#35">lvars_acc_rs2</a>
+);
+
+<a name="31"></a><span class=K>input</span>	[15:0]	<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a><a  href="hierarchy-s.p13.html#opcode___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="32"></a><span class=K>input</span>	[2:0]	<a  onClick="return qs(event,this)" class=SI href="#32">valid</a><a  href="hierarchy-s.p19.html#valid___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="33"></a><span class=K>output</span>	[4:0]	<a  onClick="return qs(event,this)" class=SO href="#112">offset_sel_rs2</a><a  href="hierarchy-s.p13.html#offset_sel_rs2___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="34"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#118">lv_rs2</a><a  href="hierarchy-s.p10.html#lv_rs2___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="35"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#126">lvars_acc_rs2</a><a  href="hierarchy-s.p10.html#lvars_acc_rs2___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<span class=C>// offset_sel_rs2[0] =  Select 0 as the offset; 
+</span><span class=C>// offset_sel_rs2[1] =  Select 1 as the offset;
+</span><span class=C>// offset_sel_rs2[2] =  Select 2 as the offset;
+</span><span class=C>// offset_sel_rs2[3] =  Select 3 as the offset;
+</span><span class=C>// offset_sel_rs2[4] =  Select nxt_byte as the offset;
+</span>
+<a name="44"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#58">iload_0</a><a  href="hierarchy-s.p9.html#iload_0___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#63">fload_0</a><a  href="hierarchy-s.p6.html#fload_0___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#68">aload_0</a><a  href="hierarchy-s.html#aload_0___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="45"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#59">iload_1</a><a  href="hierarchy-s.p9.html#iload_1___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#60">iload_2</a><a  href="hierarchy-s.p9.html#iload_2___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#61">iload_3</a><a  href="hierarchy-s.p9.html#iload_3___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="46"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#64">fload_1</a><a  href="hierarchy-s.p6.html#fload_1___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#65">fload_2</a><a  href="hierarchy-s.p6.html#fload_2___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#66">fload_3</a><a  href="hierarchy-s.p6.html#fload_3___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="47"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#69">aload_1</a><a  href="hierarchy-s.html#aload_1___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#70">aload_2</a><a  href="hierarchy-s.html#aload_2___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#71">aload_3</a><a  href="hierarchy-s.html#aload_3___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="48"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#88">iload</a><a  href="hierarchy-s.p9.html#iload___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#89">fload</a><a  href="hierarchy-s.p6.html#fload___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#90">aload</a><a  href="hierarchy-s.html#aload___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#87">sipush</a><a  href="hierarchy-s.p16.html#sipush___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#86">bipush</a><a  href="hierarchy-s.p2.html#bipush___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="49"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#73">aconst_null</a><a  href="hierarchy-s.html#aconst_null___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#74">iconst_m1</a><a  href="hierarchy-s.p9.html#iconst_m1___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#75">iconst_0</a><a  href="hierarchy-s.p9.html#iconst_0___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#76">iconst_1</a><a  href="hierarchy-s.p9.html#iconst_1___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="50"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#77">iconst_2</a><a  href="hierarchy-s.p9.html#iconst_2___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#78">iconst_3</a><a  href="hierarchy-s.p9.html#iconst_3___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#79">iconst_4</a><a  href="hierarchy-s.p9.html#iconst_4___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#80">iconst_5</a><a  href="hierarchy-s.p9.html#iconst_5___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="51"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#82">fconst_0</a><a  href="hierarchy-s.p6.html#fconst_0___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#83">fconst_1</a><a  href="hierarchy-s.p6.html#fconst_1___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#84">fconst_2</a><a  href="hierarchy-s.p6.html#fconst_2___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="52"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#93">read_gl0</a><a  href="hierarchy-s.p15.html#read_gl0___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#94">read_gl1</a><a  href="hierarchy-s.p15.html#read_gl1___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#95">read_gl2</a><a  href="hierarchy-s.p15.html#read_gl2___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#96">read_gl3</a><a  href="hierarchy-s.p15.html#read_gl3___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="53"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#92">ext_opcode</a><a  href="hierarchy-s.p5.html#ext_opcode___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="54"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#98">lload</a><a  href="hierarchy-s.p10.html#lload___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#100">lload_0</a><a  href="hierarchy-s.p10.html#lload_0___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#101">lload_1</a><a  href="hierarchy-s.p10.html#lload_1___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#102">lload_2</a><a  href="hierarchy-s.p10.html#lload_2___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#103">lload_3</a><a  href="hierarchy-s.p10.html#lload_3___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="55"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#99">dload</a><a  href="hierarchy-s.p4.html#dload___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#104">dload_0</a><a  href="hierarchy-s.p4.html#dload_0___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#105">dload_1</a><a  href="hierarchy-s.p4.html#dload_1___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#106">dload_2</a><a  href="hierarchy-s.p4.html#dload_2___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#107">dload_3</a><a  href="hierarchy-s.p4.html#dload_3___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="56"></a><span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SW href="#109">iinc</a><a  href="hierarchy-s.p9.html#iinc___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#110">ret</a><a  href="hierarchy-s.p15.html#ret___rs2_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="58"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#44">iload_0</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd26) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="59"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#45">iload_1</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd27) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="60"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#45">iload_2</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd28) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="61"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#45">iload_3</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd29) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+
+<a name="63"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#44">fload_0</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd34) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="64"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#46">fload_1</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd35) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="65"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#46">fload_2</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd36) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="66"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#46">fload_3</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd37) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+
+<a name="68"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#44">aload_0</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd42) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="69"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#47">aload_1</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd43) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="70"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#47">aload_2</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd44) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="71"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#47">aload_3</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd45) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+
+<a name="73"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#49">aconst_null</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd1) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="74"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#49">iconst_m1</a>   = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd2) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="75"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#49">iconst_0</a>    = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd3) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="76"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#49">iconst_1</a>    = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd4) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="77"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#50">iconst_2</a>    = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd5) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="78"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#50">iconst_3</a>    = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd6) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="79"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#50">iconst_4</a>    = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd7) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="80"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#50">iconst_5</a>    = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd8) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+
+<a name="82"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#51">fconst_0</a>  = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd11) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="83"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#51">fconst_1</a>  = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd12) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="84"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#51">fconst_2</a>  = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd13) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+
+<a name="86"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#48">bipush</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd16) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0] &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[1];
+<a name="87"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#48">sipush</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd17) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0] &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[1] &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[2];
+<a name="88"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#48">iload</a>  = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd21) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0] &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[1];
+<a name="89"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#48">fload</a>  = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd23) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0] &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[1];
+<a name="90"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#48">aload</a>  = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd25) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0] &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[1];
+
+<a name="92"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#53">ext_opcode</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd255) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="93"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#52">read_gl0</a> = <a  onClick="return qs(event,this)" class=SW href="#92">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[7:0] == 8'd90) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[1];
+<a name="94"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#52">read_gl1</a> = <a  onClick="return qs(event,this)" class=SW href="#92">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[7:0] == 8'd91) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[1];
+<a name="95"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#52">read_gl2</a> = <a  onClick="return qs(event,this)" class=SW href="#92">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[7:0] == 8'd92) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[1];
+<a name="96"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#52">read_gl3</a> = <a  onClick="return qs(event,this)" class=SW href="#92">ext_opcode</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[7:0] == 8'd93) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[1];
+
+<a name="98"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#54">lload</a>   = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd22) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0] &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[1];
+<a name="99"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#55">dload</a>   = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd24) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0] &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[1];
+<a name="100"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#54">lload_0</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd30) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="101"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#54">lload_1</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd31) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="102"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#54">lload_2</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd32) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="103"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#54">lload_3</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd33) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="104"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#55">dload_0</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd38) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="105"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#55">dload_1</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd39) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="106"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#55">dload_2</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd40) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="107"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#55">dload_3</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd41) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+
+<a name="109"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#56">iinc</a> = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd132) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+<a name="110"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#56">ret</a>  = (<a  onClick="return qs(event,this)" class=SI href="#31">opcode</a>[15:8] == 8'd169) &amp; <a  onClick="return qs(event,this)" class=SI href="#32">valid</a>[0];
+
+<a name="112"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#33">offset_sel_rs2</a>[1] =  <a  onClick="return qs(event,this)" class=SW href="#59">iload_1</a> | <a  onClick="return qs(event,this)" class=SW href="#64">fload_1</a> | <a  onClick="return qs(event,this)" class=SW href="#69">aload_1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#33">offset_sel_rs2</a>[2] =  <a  onClick="return qs(event,this)" class=SW href="#60">iload_2</a> | <a  onClick="return qs(event,this)" class=SW href="#65">fload_2</a> | <a  onClick="return qs(event,this)" class=SW href="#70">aload_2</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#33">offset_sel_rs2</a>[3] =  <a  onClick="return qs(event,this)" class=SW href="#61">iload_3</a> | <a  onClick="return qs(event,this)" class=SW href="#66">fload_3</a> | <a  onClick="return qs(event,this)" class=SW href="#71">aload_3</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#33">offset_sel_rs2</a>[4] =  <a  onClick="return qs(event,this)" class=SW href="#88">iload</a> | <a  onClick="return qs(event,this)" class=SW href="#89">fload</a> | <a  onClick="return qs(event,this)" class=SW href="#90">aload</a> | <a  onClick="return qs(event,this)" class=SW href="#87">sipush</a> | <a  onClick="return qs(event,this)" class=SW href="#86">bipush</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#33">offset_sel_rs2</a>[0] = !(|<a  onClick="return qs(event,this)" class=SO href="#112">offset_sel_rs2</a>[4:1]);
+
+<a name="118"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#34">lv_rs2</a> = <a  onClick="return qs(event,this)" class=SW href="#73">aconst_null</a> | <a  onClick="return qs(event,this)" class=SW href="#74">iconst_m1</a> | <a  onClick="return qs(event,this)" class=SW href="#75">iconst_0</a> | <a  onClick="return qs(event,this)" class=SW href="#76">iconst_1</a> | <a  onClick="return qs(event,this)" class=SW href="#77">iconst_2</a> |
+                 <a  onClick="return qs(event,this)" class=SW href="#78">iconst_3</a> | <a  onClick="return qs(event,this)" class=SW href="#79">iconst_4</a> | <a  onClick="return qs(event,this)" class=SW href="#80">iconst_5</a> | <a  onClick="return qs(event,this)" class=SW href="#82">fconst_0</a> | <a  onClick="return qs(event,this)" class=SW href="#83">fconst_1</a> |
+                 <a  onClick="return qs(event,this)" class=SW href="#84">fconst_2</a> | <a  onClick="return qs(event,this)" class=SW href="#58">iload_0</a> | <a  onClick="return qs(event,this)" class=SW href="#59">iload_1</a> | <a  onClick="return qs(event,this)" class=SW href="#60">iload_2</a> | <a  onClick="return qs(event,this)" class=SW href="#61">iload_3</a> |  <a  onClick="return qs(event,this)" class=SW href="#63">fload_0</a> |
+                 <a  onClick="return qs(event,this)" class=SW href="#64">fload_1</a> | <a  onClick="return qs(event,this)" class=SW href="#65">fload_2</a> | <a  onClick="return qs(event,this)" class=SW href="#66">fload_3</a> | <a  onClick="return qs(event,this)" class=SW href="#68">aload_0</a> | <a  onClick="return qs(event,this)" class=SW href="#69">aload_1</a> | <a  onClick="return qs(event,this)" class=SW href="#70">aload_2</a> |
+                 <a  onClick="return qs(event,this)" class=SW href="#71">aload_3</a> | <a  onClick="return qs(event,this)" class=SW href="#87">sipush</a> | <a  onClick="return qs(event,this)" class=SW href="#86">bipush</a> | <a  onClick="return qs(event,this)" class=SW href="#88">iload</a> | <a  onClick="return qs(event,this)" class=SW href="#89">fload</a> | <a  onClick="return qs(event,this)" class=SW href="#90">aload</a> |
+                 <a  onClick="return qs(event,this)" class=SW href="#93">read_gl0</a> | <a  onClick="return qs(event,this)" class=SW href="#94">read_gl1</a> | <a  onClick="return qs(event,this)" class=SW href="#95">read_gl2</a> | <a  onClick="return qs(event,this)" class=SW href="#96">read_gl3</a> ;
+
+
+<a name="126"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#35">lvars_acc_rs2</a> = <a  onClick="return qs(event,this)" class=SW href="#58">iload_0</a> | <a  onClick="return qs(event,this)" class=SW href="#59">iload_1</a> | <a  onClick="return qs(event,this)" class=SW href="#60">iload_2</a> | <a  onClick="return qs(event,this)" class=SW href="#61">iload_3</a> |
+                        <a  onClick="return qs(event,this)" class=SW href="#63">fload_0</a> | <a  onClick="return qs(event,this)" class=SW href="#64">fload_1</a> | <a  onClick="return qs(event,this)" class=SW href="#65">fload_2</a> | <a  onClick="return qs(event,this)" class=SW href="#66">fload_3</a> |
+                        <a  onClick="return qs(event,this)" class=SW href="#68">aload_0</a> | <a  onClick="return qs(event,this)" class=SW href="#69">aload_1</a> | <a  onClick="return qs(event,this)" class=SW href="#70">aload_2</a> | <a  onClick="return qs(event,this)" class=SW href="#71">aload_3</a> |
+                        <a  onClick="return qs(event,this)" class=SW href="#88">iload</a>   | <a  onClick="return qs(event,this)" class=SW href="#89">fload</a>   | <a  onClick="return qs(event,this)" class=SW href="#90">aload</a>   | <a  onClick="return qs(event,this)" class=SW href="#109">iinc</a>    |
+                        <a  onClick="return qs(event,this)" class=SW href="#104">dload_0</a> | <a  onClick="return qs(event,this)" class=SW href="#105">dload_1</a> | <a  onClick="return qs(event,this)" class=SW href="#106">dload_2</a> | <a  onClick="return qs(event,this)" class=SW href="#107">dload_3</a> |
+                        <a  onClick="return qs(event,this)" class=SW href="#100">lload_0</a> | <a  onClick="return qs(event,this)" class=SW href="#101">lload_1</a> | <a  onClick="return qs(event,this)" class=SW href="#102">lload_2</a> | <a  onClick="return qs(event,this)" class=SW href="#103">lload_3</a> |
+                        <a  onClick="return qs(event,this)" class=SW href="#110">ret</a> ;
+
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:27 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ifu/rtl/rs2_dec.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

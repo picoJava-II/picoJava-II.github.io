@@ -1,0 +1,398 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/dcu/rtl/wrbuf_cntl.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "wrbuf_cntl.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+<a name="wrbuf_cntl"></a><a  href="dcctl.v.html#dcctl_wrbuf_cntl"><IMG alt="[Up: dcctl wrbuf_cntl]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>wrbuf_cntl</span><a  href="hierarchy-m.p5.html#wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>( 	
+			<a  onClick="return qs(event,this)" class=SO href="#54">wb_ce</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#55">wb_sel</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#56">wb_idle</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#59">wb_req</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#60">real_wb_req</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#65">error_ack</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#70">lru_bit</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#76">nc_write_c</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#67">flush_inst_c2</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#69">flush_set_sel</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#68">flush_inst_c_or_c1</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#61">nc_write_cyc</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#66">normal_ack</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#57">repl_addr</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#71">repl_start</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#63">smu_na_st_fill</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#58">repl_busy</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#73">dc_error</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#74">miss_idle</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#75">first_fill_cyc</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#64">dcu_addr_c</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#72">stall_valid</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#78">sin</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#79">so</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#80">sm</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a> 
+			);
+
+
+<a name="54"></a><span class=K>output</span>	[1:0]		<a  onClick="return qs(event,this)" class=SO href="#107">wb_ce</a><a  href="hierarchy-s.p20.html#wb_ce___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Clock enables to latch data into writebuffer	
+</span><a name="55"></a><span class=K>output</span>	[3:0]           <a  onClick="return qs(event,this)" class=SO href="#141">wb_sel</a><a  href="hierarchy-s.p20.html#wb_sel___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     	<span class=C>// Select which entry in writebuffer to be put on data bus            
+</span><a name="56"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#140">wb_idle</a><a  href="hierarchy-s.p20.html#wb_idle___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// The writeback state machine is in idle state
+</span><a name="57"></a><span class=K>output</span>	[3:0]		<a  onClick="return qs(event,this)" class=SO href="#114">repl_addr</a><a  href="hierarchy-s.p15.html#repl_addr___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Word offset in the line being replaced (one for each bank).
+</span><a name="58"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#117">repl_busy</a><a  href="hierarchy-s.p15.html#repl_busy___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Replacing 1st 64 bits currently
+</span><a name="59"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#146">wb_req</a><a  href="hierarchy-s.p20.html#wb_req___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// Request memory for writing data back to memory
+</span><a name="60"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#148">real_wb_req</a><a  href="hierarchy-s.p15.html#real_wb_req___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Request memory for write back only ,no NC_Wr
+</span><a name="61"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#150">nc_write_cyc</a><a  href="hierarchy-s.p12.html#nc_write_cyc___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Noncacheable write transaction currently going on..
+</span>
+<a name="63"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#417">smu_na_st_fill</a><a  href="hierarchy-s.p16.html#smu_na_st_fill___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  <span class=C>// it's a non_allocationg store in c+2 stage 
+</span><a name="64"></a><span class=K>input</span>	[3:2]		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#409">dcu_addr_c</a><a  href="hierarchy-s.p4.html#dcu_addr_c___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// word offset in a cache line
+</span><a name="65"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#410">error_ack</a><a  href="hierarchy-s.p5.html#error_ack___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     	<span class=C>// Current transaction returned an error acknowledge
+</span><a name="66"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#411">normal_ack</a><a  href="hierarchy-s.p12.html#normal_ack___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    	<span class=C>// Current transaction completed normally
+</span><a name="67"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#412">flush_inst_c2</a><a  href="hierarchy-s.p6.html#flush_inst_c2___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Flush instruction in C2 stage( 2 cycles after C stage)
+</span><a name="68"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#413">flush_inst_c_or_c1</a><a  href="hierarchy-s.p6.html#flush_inst_c_or_c1___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// flush instruction in C stage or C1 stage
+</span><a name="69"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#414">flush_set_sel</a><a  href="hierarchy-s.p6.html#flush_set_sel___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// select set to be flushed
+</span><a name="70"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#415">lru_bit</a><a  href="hierarchy-s.p10.html#lru_bit___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// used for determining line to be replaced
+</span><a name="71"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#416">repl_start</a><a  href="hierarchy-s.p15.html#repl_start___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Line exists to be replaced. start state mc
+</span><a name="72"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#418">stall_valid</a><a  href="hierarchy-s.p16.html#stall_valid___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// need to recirculate inst in C stage due to stall
+</span><a name="73"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#421">dc_error</a><a  href="hierarchy-s.p4.html#dc_error___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Erroneous transaction took place
+</span><a name="74"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#420">miss_idle</a><a  href="hierarchy-s.p11.html#miss_idle___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// miss state machine is in idle state
+</span><a name="75"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#419">first_fill_cyc</a><a  href="hierarchy-s.p6.html#first_fill_cyc___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// first cycle of cache fill transaction is taking place 
+</span><a name="76"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#422">nc_write_c</a><a  href="hierarchy-s.p12.html#nc_write_c___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Noncacheable store in C stage
+</span><a name="77"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#423">clk</a><a  href="hierarchy-s.p3.html#clk___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// clock
+</span><a name="78"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#78">sin</a><a  href="hierarchy-s.p16.html#sin___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       	<span class=C>// Scan In port
+</span><a name="79"></a><span class=K>output</span>                  <a  onClick="return qs(event,this)" class=SO href="#79">so</a><a  href="hierarchy-s.p16.html#so___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Scan out port
+</span><a name="80"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#80">sm</a><a  href="hierarchy-s.p16.html#sm___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Scan enable
+</span><a name="81"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#427">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;       	<span class=C>// Reset
+</span>
+
+<a name="84"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#130">wb_state</a><a  href="hierarchy-s.p20.html#wb_state___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="85"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#122">wb_next_state</a><a  href="hierarchy-s.p20.html#wb_next_state___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="86"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#145">wb_start</a><a  href="hierarchy-s.p20.html#wb_start___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="87"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="#96">repl_state</a><a  href="hierarchy-s.p15.html#repl_state___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="88"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="#108">repl_addr0</a><a  href="hierarchy-s.p15.html#repl_addr0___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="89"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="#111">repl_addr1</a><a  href="hierarchy-s.p15.html#repl_addr1___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="90"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#119">start_wb</a><a  href="hierarchy-s.p16.html#start_wb___wrbuf_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+
+<span class=C>/*******  Replace Dirty Line *****************/</span>
+
+<a name="wrbuf_cntl_repl_state_reg0"></a><a name="96"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		repl_state_reg0(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#87">repl_state</a>[0]),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#71">repl_start</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>) );
+
+<a name="wrbuf_cntl_repl_state_reg1"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>           repl_state_reg1(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#87">repl_state</a>[1]),
+                                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#96">repl_state</a>[0]),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+                                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>) );
+
+
+<a name="107"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#54">wb_ce</a>[1:0]	 =  <a  onClick="return qs(event,this)" class=SW href="#96">repl_state</a>[1:0] ;
+<a name="108"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#88">repl_addr0</a>[0]=  <a  onClick="return qs(event,this)" class=SI href="#70">lru_bit</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="#68">flush_inst_c_or_c1</a> | <a  onClick="return qs(event,this)" class=SI href="#69">flush_set_sel</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#68">flush_inst_c_or_c1</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#88">repl_addr0</a>[1]=  <a  onClick="return qs(event,this)" class=SW href="#96">repl_state</a>[0] ;
+
+<a name="111"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#89">repl_addr1</a>[0]=  !<a  onClick="return qs(event,this)" class=SI href="#70">lru_bit</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="#68">flush_inst_c_or_c1</a>  | !<a  onClick="return qs(event,this)" class=SI href="#69">flush_set_sel</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#68">flush_inst_c_or_c1</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#89">repl_addr1</a>[1]=  <a  onClick="return qs(event,this)" class=SW href="#96">repl_state</a>[0] ;
+
+<a name="114"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#57">repl_addr</a>[3:0] = (<a  onClick="return qs(event,this)" class=SI href="#72">stall_valid</a>)?{<a  onClick="return qs(event,this)" class=SI href="#64">dcu_addr_c</a>[3:2],<a  onClick="return qs(event,this)" class=SI href="#64">dcu_addr_c</a>[3:2]}:{<a  onClick="return qs(event,this)" class=SW href="#111">repl_addr1</a>[1:0],<a  onClick="return qs(event,this)" class=SW href="#108">repl_addr0</a>[1:0]};
+
+
+<a name="117"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#58">repl_busy</a>	=   <a  onClick="return qs(event,this)" class=SW href="#96">repl_state</a>[0] ;
+
+<a name="119"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#90">start_wb</a>	=	<a  onClick="return qs(event,this)" class=SI href="#75">first_fill_cyc</a> | <a  onClick="return qs(event,this)" class=SI href="#67">flush_inst_c2</a> |  <a  onClick="return qs(event,this)" class=SI href="#63">smu_na_st_fill</a>| <a  onClick="return qs(event,this)" class=SI href="#73">dc_error</a>  ;
+<span class=C>/****************** State machine : wb_state ******************************/</span>
+
+<a name="122"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#85">wb_next_state</a>[7:0]	=	<a  onClick="return qs(event,this)" class=F href="#wrbuf_cntl_writeback_state">writeback_state</a>( <a  onClick="return qs(event,this)" class=SW href="#130">wb_state</a>[7:0],
+						<a  onClick="return qs(event,this)" class=SI href="#66">normal_ack</a>,
+						<a  onClick="return qs(event,this)" class=SW href="#119">start_wb</a>,
+						<a  onClick="return qs(event,this)" class=SO href="#117">repl_busy</a>,
+						<a  onClick="return qs(event,this)" class=SI href="#76">nc_write_c</a>,
+						<a  onClick="return qs(event,this)" class=SI href="#65">error_ack</a>,
+						<a  onClick="return qs(event,this)" class=SI href="#74">miss_idle</a> );
+
+<a name="wrbuf_cntl_wb_state_reg"></a><a name="130"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_7">ff_sr_7</a>         wb_state_reg( <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3909">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#84">wb_state</a>[7:1]),
+<a name="131"></a>                                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#122">wb_next_state</a>[7:1]),
+<a name="132"></a>                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+<a name="133"></a>                                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>));
+
+<a name="wrbuf_cntl_wb_state_reg_0"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s">ff_s</a>		wb_state_reg_0(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2137">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#84">wb_state</a>[0]),
+				<span class=SI>.din</span>(!<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a> | <a  onClick="return qs(event,this)" class=SW href="#122">wb_next_state</a>[0]),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>));
+
+
+<a name="140"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#56">wb_idle</a>   = <a  onClick="return qs(event,this)" class=SW href="#130">wb_state</a>[0]  ;
+<a name="141"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#55">wb_sel</a>[0] = !<a  onClick="return qs(event,this)" class=SW href="#130">wb_state</a>[3]&amp; !<a  onClick="return qs(event,this)" class=SW href="#130">wb_state</a>[4] &amp; !<a  onClick="return qs(event,this)" class=SW href="#130">wb_state</a>[5]  ;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#55">wb_sel</a>[1] = <a  onClick="return qs(event,this)" class=SW href="#130">wb_state</a>[3] ;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#55">wb_sel</a>[2] = <a  onClick="return qs(event,this)" class=SW href="#130">wb_state</a>[4] ;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#55">wb_sel</a>[3] = <a  onClick="return qs(event,this)" class=SW href="#130">wb_state</a>[5] ;
+<a name="145"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#86">wb_start</a>  = <a  onClick="return qs(event,this)" class=SW href="#130">wb_state</a>[2] ;
+<a name="146"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#59">wb_req</a>	  =  <a  onClick="return qs(event,this)" class=SW href="#130">wb_state</a>[7] | <a  onClick="return qs(event,this)" class=SW href="#130">wb_state</a>[2];
+
+<a name="148"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#60">real_wb_req</a> = <a  onClick="return qs(event,this)" class=SW href="#130">wb_state</a>[2];
+	
+<a name="150"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#61">nc_write_cyc</a> = <a  onClick="return qs(event,this)" class=SW href="#130">wb_state</a>[7] ;
+
+<span class=C>/*****************************************************************************/</span>
+
+
+<span class=C>// STATE MACHINE FUNCTIONS
+</span>
+<a name="wrbuf_cntl_writeback_state"></a><span class=K>function</span>	[7:0]  <a  onClick="return qs(event,this)" class=F href="#wrbuf_cntl_writeback_state">writeback_state</a>;
+
+<a name="159"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="#159">cur_state</a> ;
+<a name="160"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#160">normal_ack</a>;
+<a name="161"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#161">start_wb</a>;
+<a name="162"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#162">repl_busy</a>;
+<a name="163"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#163">nc_write_c</a>;
+<a name="164"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#164">error_ack</a> ;
+<a name="165"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#165">miss_idle</a>;
+
+<span class=C>// Description: This state machine is responsible for writing data from
+</span><span class=C>// writeback buffer into memory. It sends a write request to memory 
+</span><span class=C>// only if the complete dirty line is present in the writeback buffer.
+</span><span class=C>// It starts transaction once the first cache fill is done.(first_fill_cyc).
+</span><span class=C>// At this point, check is done to see if writebuffer is full. 
+</span>
+<span class=C>// If there is no dirty line, the writebuffer is empty and the
+</span><span class=C>// replacement state m/c is not busy. Thus this state m/c remains
+</span><span class=C>// in idle state except for non-cacheable stores. When a non-cacheable
+</span><span class=C>// store is in C stage, a store request is sent to memory.
+</span><span class=C>// If there is an error ack, it goes into error state for a cycle.
+</span>
+<a name="179"></a><span class=K>reg</span>	[7:0]	<a  onClick="return qs(event,this)" class=SR href="#199">next_state</a>;
+<span class=K>parameter</span> 
+<a name="181"></a>        <a  onClick="return qs(event,this)" class=PA href="#181">IDLE</a>            =       8'b00000001,
+<a name="182"></a>	<a  onClick="return qs(event,this)" class=PA href="#182">WAIT</a>		=	8'b00000010,
+<a name="183"></a>        <a  onClick="return qs(event,this)" class=PA href="#183">REQ_WR_0</a>        =       8'b00000100,
+<a name="184"></a>        <a  onClick="return qs(event,this)" class=PA href="#184">REQ_WR_1</a>        =       8'b00001000,
+<a name="185"></a>        <a  onClick="return qs(event,this)" class=PA href="#185">REQ_WR_2</a>        =       8'b00010000,
+<a name="186"></a>        <a  onClick="return qs(event,this)" class=PA href="#186">REQ_WR_3</a>        =       8'b00100000,
+<a name="187"></a>        <a  onClick="return qs(event,this)" class=PA href="#187">ERROR_STATE</a>     =       8'b01000000,
+<a name="188"></a>	<a  onClick="return qs(event,this)" class=PA href="#188">NC_WR</a>		=	8'b10000000;
+
+<span class=K>begin</span>
+
+<span class=C>// If this is the last cycle of fill operation and the wbuffer is full,
+</span><span class=C>// start wb transaction. If during last cycle of fill, replacement
+</span><span class=C>// of dirty line is continuiing , wait till it is done. If there is
+</span><span class=C>// no replacement of dirty line and wbuffer is not full, stay in idle state.
+</span><span class=K>case</span> (<a  onClick="return qs(event,this)" class=SI href="#159">cur_state</a>)        <span class=C>// synopsys full_case parallel_case
+</span>        <a  onClick="return qs(event,this)" class=PA href="#181">IDLE</a>:        <span class=K>begin</span>
+                        <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#162">repl_busy</a>) <span class=K>begin</span>
+<a name="199"></a>                        <a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> =  <a  onClick="return qs(event,this)" class=PA href="#182">WAIT</a> ;
+			<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#163">nc_write_c</a>) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#188">NC_WR</a> ;
+			<span class=K>end</span>
+                        <span class=K>else</span>    <a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#159">cur_state</a> ;
+                        <span class=K>end</span>
+
+	<a  onClick="return qs(event,this)" class=PA href="#182">WAIT</a>:		<span class=K>begin</span>
+			<span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#161">start_wb</a>) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#183">REQ_WR_0</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#159">cur_state</a>;
+			<span class=K>end</span>
+
+	<a  onClick="return qs(event,this)" class=PA href="#183">REQ_WR_0</a>:	<span class=K>begin</span>
+			<span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#160">normal_ack</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#165">miss_idle</a> ) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#184">REQ_WR_1</a> ;
+			<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#164">error_ack</a>) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#187">ERROR_STATE</a> ;
+			<span class=K>end</span>
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#159">cur_state</a> ;
+			<span class=K>end</span>
+
+	<a  onClick="return qs(event,this)" class=PA href="#188">NC_WR</a>:		<span class=K>begin</span>
+			<span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#160">normal_ack</a>) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#181">IDLE</a> ;
+			<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#164">error_ack</a>) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#187">ERROR_STATE</a> ;
+			<span class=K>end</span>
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#159">cur_state</a>;
+			<span class=K>end</span>
+
+	<a  onClick="return qs(event,this)" class=PA href="#184">REQ_WR_1</a>:	<span class=K>begin</span>
+			<span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#160">normal_ack</a>) <span class=K>begin</span>
+                        <a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#185">REQ_WR_2</a> ;
+			<span class=K>end</span>
+                        <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#164">error_ack</a>) <span class=K>begin</span>
+                        <a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#187">ERROR_STATE</a> ;
+                        <span class=K>end</span>
+                        <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#159">cur_state</a> ;
+                        <span class=K>end</span>
+	
+	<a  onClick="return qs(event,this)" class=PA href="#185">REQ_WR_2</a>:	<span class=K>begin</span>
+			<span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#160">normal_ack</a>) <span class=K>begin</span>  
+                        <a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#186">REQ_WR_3</a> ;
+			<span class=K>end</span>
+                        <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#164">error_ack</a>) <span class=K>begin</span>      
+                        <a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#187">ERROR_STATE</a> ;     
+                        <span class=K>end</span>    
+                        <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#159">cur_state</a> ;  
+                        <span class=K>end</span>    
+
+	<a  onClick="return qs(event,this)" class=PA href="#186">REQ_WR_3</a>:	<span class=K>begin</span>
+			 <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#160">normal_ack</a>) <span class=K>begin</span>  
+                        <a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#181">IDLE</a> ;
+			<span class=K>end</span>
+                        <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#164">error_ack</a>) <span class=K>begin</span>      
+                        <a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#187">ERROR_STATE</a> ;     
+                        <span class=K>end</span>    
+                        <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#159">cur_state</a> ;  
+                        <span class=K>end</span>    
+
+	<a  onClick="return qs(event,this)" class=PA href="#187">ERROR_STATE</a>:	<span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#181">IDLE</a>;
+			<span class=K>end</span>
+
+	<span class=K>default</span>:	<span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#179">next_state</a> = 8'bx;
+			<span class=K>end</span>
+<span class=K>endcase</span>
+<a  onClick="return qs(event,this)" class=F href="#wrbuf_cntl_writeback_state">writeback_state</a>[7:0]	= <a  onClick="return qs(event,this)" class=SR href="#199">next_state</a>[7:0] ;
+<span class=K>end</span>
+<span class=K>endfunction</span>
+
+	
+<a name="wrbuf_cntl_spare"></a><a  onClick="return qs(event,this)" class=MM href="spare.v.html#mj_spare">mj_spare</a> spare (	<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#81">reset_l</a>));
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:45:59 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/dcu/rtl/wrbuf_cntl.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

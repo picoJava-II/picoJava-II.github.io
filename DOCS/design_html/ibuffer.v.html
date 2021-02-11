@@ -1,0 +1,745 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/icu/rtl/ibuffer.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "ibuffer.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+
+<span class=M>`timescale</span>  1ns / 10ps
+
+<a name="ibuffer"></a><a  href="icu_dpath.v.html#icu_dpath_ibuffer"><IMG alt="[Up: icu_dpath ibuffer]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span>	<span class=MM>ibuffer</span><a  href="hierarchy-m.p3.html#ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+	<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#50">ibuf_dout</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#51">ibuf_oplen</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#54">encod_dsel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#56">nxt_ibuf_pc</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#57">jmp_pc</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#58">ibuf_pc_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#63">sin</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#64">sm</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#65">so</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#66">reset_l</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>
+);
+
+<a name="48"></a><span class=K>input</span>	[63:0]	<a  onClick="return qs(event,this)" class=SI href="icu_dpath.v.html#354">icache_data</a><a  href="hierarchy-s.p9.html#icache_data___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data from Icache after aligned properly      -- From Aligner
+</span><a name="49"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="icu_dpath.v.html#355">encode_oplen</a><a  href="hierarchy-s.p5.html#encode_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Opcode length encoded data  -- From Aligner
+</span><a name="50"></a><span class=K>output</span>	[55:0]	<a  onClick="return qs(event,this)" class=SO href="#140">ibuf_dout</a><a  href="hierarchy-s.p9.html#ibuf_dout___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data going out from ibuffer                  -- To iu
+</span><a name="51"></a><span class=K>output</span>	[27:0]	<a  onClick="return qs(event,this)" class=SO href="#143">ibuf_oplen</a><a  href="hierarchy-s.p9.html#ibuf_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// opcode length going out from ibuffer         -- To iu
+</span><a name="52"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="icu_dpath.v.html#356">shft_dsel</a><a  href="hierarchy-s.p16.html#shft_dsel___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// These selects will determine which of the    -- From ibuf_ctl
+</span>                                        <span class=C>// following 7 bytes will be selected
+</span><a name="54"></a><span class=K>input</span>	[2:0]	<a  onClick="return qs(event,this)" class=SI href="icu_dpath.v.html#358">encod_dsel</a><a  href="hierarchy-s.p5.html#encod_dsel___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Encoded value of shft_dsel used in determining the
+</span>					<span class=C>// PC of the first dataum in the ibuffer
+</span><a name="56"></a><span class=K>output</span>  [31:0]  <a  onClick="return qs(event,this)" class=SO href="#473">nxt_ibuf_pc</a><a  href="hierarchy-s.p12.html#nxt_ibuf_pc___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	  	<span class=C>// PC value output from ibuffer		 	-- To iu
+</span><a name="57"></a><span class=K>input</span>  	[31:0]	<a  onClick="return qs(event,this)" class=SI href="icu_dpath.v.html#361">jmp_pc</a><a  href="hierarchy-s.p10.html#jmp_pc___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// PC value input				-- From iu
+</span><a name="58"></a><span class=K>input</span>	[1:0]	<a  onClick="return qs(event,this)" class=SI href="icu_dpath.v.html#362">ibuf_pc_sel</a><a  href="hierarchy-s.p9.html#ibuf_pc_sel___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// This will select either the seq. pc or br pc -- From iu
+</span><a name="59"></a><span class=K>input</span>	[11:0]	<a  onClick="return qs(event,this)" class=SI href="icu_dpath.v.html#363">ic_sel</a><a  href="hierarchy-s.p9.html#ic_sel___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// This will select which of the  8 bytes from	-- From ibuf_ctl
+</span>					<span class=C>// Icache is selected
+</span><a name="61"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="icu_dpath.v.html#359">ibuf_enable</a><a  href="hierarchy-s.p9.html#ibuf_enable___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="62"></a><span class=K>input</span>	[15:0]	<a  onClick="return qs(event,this)" class=SI href="icu_dpath.v.html#360">buf_ic_sel</a><a  href="hierarchy-s.p2.html#buf_ic_sel___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicate whether ibuffer entries are valid or not
+</span><a name="63"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#63">sin</a><a  href="hierarchy-s.p16.html#sin___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Scan data input
+</span><a name="64"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#64">sm</a><a  href="hierarchy-s.p16.html#sm___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Scan Enable input
+</span><a name="65"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#65">so</a><a  href="hierarchy-s.p16.html#so___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Scan data output
+</span><a name="66"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="icu_dpath.v.html#367">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Active-low reset
+</span><a name="67"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="icu_dpath.v.html#368">clk</a><a  href="hierarchy-s.p3.html#clk___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Clk
+</span>
+<a name="69"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#152">ibuf_0_out</a><a  href="hierarchy-s.p9.html#ibuf_0_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="70"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#169">ibuf_1_out</a><a  href="hierarchy-s.p9.html#ibuf_1_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="71"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#186">ibuf_2_out</a><a  href="hierarchy-s.p9.html#ibuf_2_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="72"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#203">ibuf_3_out</a><a  href="hierarchy-s.p9.html#ibuf_3_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="73"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#220">ibuf_4_out</a><a  href="hierarchy-s.p9.html#ibuf_4_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="74"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#237">ibuf_5_out</a><a  href="hierarchy-s.p9.html#ibuf_5_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="75"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#254">ibuf_6_out</a><a  href="hierarchy-s.p9.html#ibuf_6_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="76"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#277">ibuf_7_out</a><a  href="hierarchy-s.p9.html#ibuf_7_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="77"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#300">ibuf_8_out</a><a  href="hierarchy-s.p9.html#ibuf_8_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="78"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#323">ibuf_9_out</a><a  href="hierarchy-s.p9.html#ibuf_9_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="79"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#346">ibuf_10_out</a><a  href="hierarchy-s.p9.html#ibuf_10_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="80"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#369">ibuf_11_out</a><a  href="hierarchy-s.p9.html#ibuf_11_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="81"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#392">ibuf_12_out</a><a  href="hierarchy-s.p9.html#ibuf_12_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="82"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#410">ibuf_13_out</a><a  href="hierarchy-s.p9.html#ibuf_13_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="83"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#427">ibuf_14_out</a><a  href="hierarchy-s.p9.html#ibuf_14_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="84"></a><span class=K>wire</span>  	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#444">ibuf_15_out</a><a  href="hierarchy-s.p9.html#ibuf_15_out___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="85"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#154">ibuf_0_oplen</a><a  href="hierarchy-s.p9.html#ibuf_0_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="86"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#171">ibuf_1_oplen</a><a  href="hierarchy-s.p9.html#ibuf_1_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="87"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#188">ibuf_2_oplen</a><a  href="hierarchy-s.p9.html#ibuf_2_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="88"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#205">ibuf_3_oplen</a><a  href="hierarchy-s.p9.html#ibuf_3_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="89"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#222">ibuf_4_oplen</a><a  href="hierarchy-s.p9.html#ibuf_4_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="90"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#239">ibuf_5_oplen</a><a  href="hierarchy-s.p9.html#ibuf_5_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="91"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#256">ibuf_6_oplen</a><a  href="hierarchy-s.p9.html#ibuf_6_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="92"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#279">ibuf_7_oplen</a><a  href="hierarchy-s.p9.html#ibuf_7_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="93"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#302">ibuf_8_oplen</a><a  href="hierarchy-s.p9.html#ibuf_8_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="94"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#325">ibuf_9_oplen</a><a  href="hierarchy-s.p9.html#ibuf_9_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="95"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#348">ibuf_10_oplen</a><a  href="hierarchy-s.p9.html#ibuf_10_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="96"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#371">ibuf_11_oplen</a><a  href="hierarchy-s.p9.html#ibuf_11_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="97"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#394">ibuf_12_oplen</a><a  href="hierarchy-s.p9.html#ibuf_12_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="98"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#412">ibuf_13_oplen</a><a  href="hierarchy-s.p9.html#ibuf_13_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="99"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#429">ibuf_14_oplen</a><a  href="hierarchy-s.p9.html#ibuf_14_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="100"></a><span class=K>wire</span>  	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#446">ibuf_15_oplen</a><a  href="hierarchy-s.p9.html#ibuf_15_oplen___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="101"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#156">buf_ic_dout_0</a><a  href="hierarchy-s.p2.html#buf_ic_dout_0___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="102"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#173">buf_ic_dout_1</a><a  href="hierarchy-s.p2.html#buf_ic_dout_1___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="103"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#190">buf_ic_dout_2</a><a  href="hierarchy-s.p2.html#buf_ic_dout_2___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="104"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#207">buf_ic_dout_3</a><a  href="hierarchy-s.p2.html#buf_ic_dout_3___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="105"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#224">buf_ic_dout_4</a><a  href="hierarchy-s.p2.html#buf_ic_dout_4___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="106"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#241">buf_ic_dout_5</a><a  href="hierarchy-s.p2.html#buf_ic_dout_5___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="107"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#258">buf_ic_dout_6</a><a  href="hierarchy-s.p2.html#buf_ic_dout_6___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="108"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#281">buf_ic_dout_7</a><a  href="hierarchy-s.p2.html#buf_ic_dout_7___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="109"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#304">buf_ic_dout_8</a><a  href="hierarchy-s.p2.html#buf_ic_dout_8___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="110"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#327">buf_ic_dout_9</a><a  href="hierarchy-s.p2.html#buf_ic_dout_9___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="111"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#350">buf_ic_dout_10</a><a  href="hierarchy-s.p2.html#buf_ic_dout_10___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="112"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#373">buf_ic_dout_11</a><a  href="hierarchy-s.p2.html#buf_ic_dout_11___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="113"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#396">buf_ic_dout_12</a><a  href="hierarchy-s.p2.html#buf_ic_dout_12___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="114"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#414">buf_ic_dout_13</a><a  href="hierarchy-s.p2.html#buf_ic_dout_13___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="115"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#431">buf_ic_dout_14</a><a  href="hierarchy-s.p2.html#buf_ic_dout_14___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="116"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#448">buf_ic_dout_15</a><a  href="hierarchy-s.p2.html#buf_ic_dout_15___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="117"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#157">buf_ic_oplen_0</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_0___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="118"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#174">buf_ic_oplen_1</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_1___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="119"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#191">buf_ic_oplen_2</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_2___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="120"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#208">buf_ic_oplen_3</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_3___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="121"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#225">buf_ic_oplen_4</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_4___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="122"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#242">buf_ic_oplen_5</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_5___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="123"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#259">buf_ic_oplen_6</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_6___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="124"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#282">buf_ic_oplen_7</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_7___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="125"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#305">buf_ic_oplen_8</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_8___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="126"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#328">buf_ic_oplen_9</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_9___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="127"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#351">buf_ic_oplen_10</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_10___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="128"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#374">buf_ic_oplen_11</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_11___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="129"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#397">buf_ic_oplen_12</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_12___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="130"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#415">buf_ic_oplen_13</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_13___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="131"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#432">buf_ic_oplen_14</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_14___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="132"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#449">buf_ic_oplen_15</a><a  href="hierarchy-s.p2.html#buf_ic_oplen_15___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="133"></a><span class=K>wire</span>	[31:0]	<a  onClick="return qs(event,this)" class=SW href="#483">nxt_pc</a><a  href="hierarchy-s.p12.html#nxt_pc___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>	[31:0]	<a  onClick="return qs(event,this)" class=SO href="#56">nxt_ibuf_pc</a>;
+<span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>;
+
+
+<span class=C>// The first 7 bytes of data from ibuffer are available for Decode Unit to choose data from
+</span>
+<a name="140"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#50">ibuf_dout</a>[55:0] = {<a  onClick="return qs(event,this)" class=SW href="#152">ibuf_0_out</a>[7:0],<a  onClick="return qs(event,this)" class=SW href="#169">ibuf_1_out</a>[7:0],<a  onClick="return qs(event,this)" class=SW href="#186">ibuf_2_out</a>[7:0],
+                          <a  onClick="return qs(event,this)" class=SW href="#203">ibuf_3_out</a>[7:0],<a  onClick="return qs(event,this)" class=SW href="#220">ibuf_4_out</a>[7:0],<a  onClick="return qs(event,this)" class=SW href="#237">ibuf_5_out</a>[7:0],<a  onClick="return qs(event,this)" class=SW href="#254">ibuf_6_out</a>[7:0]};
+
+<a name="143"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#51">ibuf_oplen</a>[27:0] = {<a  onClick="return qs(event,this)" class=SW href="#154">ibuf_0_oplen</a>[3:0],<a  onClick="return qs(event,this)" class=SW href="#171">ibuf_1_oplen</a>[3:0],<a  onClick="return qs(event,this)" class=SW href="#188">ibuf_2_oplen</a>[3:0],
+                          <a  onClick="return qs(event,this)" class=SW href="#205">ibuf_3_oplen</a>[3:0],<a  onClick="return qs(event,this)" class=SW href="#222">ibuf_4_oplen</a>[3:0],<a  onClick="return qs(event,this)" class=SW href="#239">ibuf_5_oplen</a>[3:0],<a  onClick="return qs(event,this)" class=SW href="#256">ibuf_6_oplen</a>[3:0]};
+
+<a name="ibuffer_ibuf_0"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_0 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>(8'b00000001),
+		<span class=SI>.shft_data</span>({<a  onClick="return qs(event,this)" class=SW href="#281">buf_ic_dout_7</a>,<a  onClick="return qs(event,this)" class=SW href="#258">buf_ic_dout_6</a>,<a  onClick="return qs(event,this)" class=SW href="#241">buf_ic_dout_5</a>,<a  onClick="return qs(event,this)" class=SW href="#224">buf_ic_dout_4</a>,<a  onClick="return qs(event,this)" class=SW href="#207">buf_ic_dout_3</a>,<a  onClick="return qs(event,this)" class=SW href="#190">buf_ic_dout_2</a>,<a  onClick="return qs(event,this)" class=SW href="#173">buf_ic_dout_1</a>}),
+		<span class=SI>.shft_oplen</span>({<a  onClick="return qs(event,this)" class=SW href="#282">buf_ic_oplen_7</a>,<a  onClick="return qs(event,this)" class=SW href="#259">buf_ic_oplen_6</a>,<a  onClick="return qs(event,this)" class=SW href="#242">buf_ic_oplen_5</a>,<a  onClick="return qs(event,this)" class=SW href="#225">buf_ic_oplen_4</a>,<a  onClick="return qs(event,this)" class=SW href="#208">buf_ic_oplen_3</a>,<a  onClick="return qs(event,this)" class=SW href="#191">buf_ic_oplen_2</a>,<a  onClick="return qs(event,this)" class=SW href="#174">buf_ic_oplen_1</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="152"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#69">ibuf_0_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="154"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#85">ibuf_0_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[0]),
+<a name="156"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#101">buf_ic_dout_0</a>),
+<a name="157"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#117">buf_ic_oplen_0</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+		
+<a name="ibuffer_ibuf_1"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_1 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({6'b0,<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[0],!<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[0]}),
+		<span class=SI>.shft_data</span>({<a  onClick="return qs(event,this)" class=SW href="#304">buf_ic_dout_8</a>,<a  onClick="return qs(event,this)" class=SW href="#281">buf_ic_dout_7</a>,<a  onClick="return qs(event,this)" class=SW href="#258">buf_ic_dout_6</a>,<a  onClick="return qs(event,this)" class=SW href="#241">buf_ic_dout_5</a>,<a  onClick="return qs(event,this)" class=SW href="#224">buf_ic_dout_4</a>,<a  onClick="return qs(event,this)" class=SW href="#207">buf_ic_dout_3</a>,<a  onClick="return qs(event,this)" class=SW href="#190">buf_ic_dout_2</a>}),
+		<span class=SI>.shft_oplen</span>({<a  onClick="return qs(event,this)" class=SW href="#305">buf_ic_oplen_8</a>,<a  onClick="return qs(event,this)" class=SW href="#282">buf_ic_oplen_7</a>,<a  onClick="return qs(event,this)" class=SW href="#259">buf_ic_oplen_6</a>,<a  onClick="return qs(event,this)" class=SW href="#242">buf_ic_oplen_5</a>,<a  onClick="return qs(event,this)" class=SW href="#225">buf_ic_oplen_4</a>,<a  onClick="return qs(event,this)" class=SW href="#208">buf_ic_oplen_3</a>,<a  onClick="return qs(event,this)" class=SW href="#191">buf_ic_oplen_2</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="169"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#70">ibuf_1_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="171"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#86">ibuf_1_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[1]),
+<a name="173"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#102">buf_ic_dout_1</a>),
+<a name="174"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#118">buf_ic_oplen_1</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+		
+<a name="ibuffer_ibuf_2"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_2 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({5'b0,<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[0],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[1],!(<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[0]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[1])}),
+		<span class=SI>.shft_data</span>({<a  onClick="return qs(event,this)" class=SW href="#327">buf_ic_dout_9</a>,<a  onClick="return qs(event,this)" class=SW href="#304">buf_ic_dout_8</a>,<a  onClick="return qs(event,this)" class=SW href="#281">buf_ic_dout_7</a>,<a  onClick="return qs(event,this)" class=SW href="#258">buf_ic_dout_6</a>,<a  onClick="return qs(event,this)" class=SW href="#241">buf_ic_dout_5</a>,<a  onClick="return qs(event,this)" class=SW href="#224">buf_ic_dout_4</a>,<a  onClick="return qs(event,this)" class=SW href="#207">buf_ic_dout_3</a>}),
+		<span class=SI>.shft_oplen</span>({<a  onClick="return qs(event,this)" class=SW href="#328">buf_ic_oplen_9</a>,<a  onClick="return qs(event,this)" class=SW href="#305">buf_ic_oplen_8</a>,<a  onClick="return qs(event,this)" class=SW href="#282">buf_ic_oplen_7</a>,<a  onClick="return qs(event,this)" class=SW href="#259">buf_ic_oplen_6</a>,<a  onClick="return qs(event,this)" class=SW href="#242">buf_ic_oplen_5</a>,<a  onClick="return qs(event,this)" class=SW href="#225">buf_ic_oplen_4</a>,<a  onClick="return qs(event,this)" class=SW href="#208">buf_ic_oplen_3</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="186"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#71">ibuf_2_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="188"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#87">ibuf_2_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[2]),
+<a name="190"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#103">buf_ic_dout_2</a>),
+<a name="191"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#119">buf_ic_oplen_2</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+		
+<a name="ibuffer_ibuf_3"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_3 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({4'b0000,<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[0],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[1],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[2],!(<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[0]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[1]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[2])}),
+		<span class=SI>.shft_data</span>({<a  onClick="return qs(event,this)" class=SW href="#350">buf_ic_dout_10</a>,<a  onClick="return qs(event,this)" class=SW href="#327">buf_ic_dout_9</a>,<a  onClick="return qs(event,this)" class=SW href="#304">buf_ic_dout_8</a>,<a  onClick="return qs(event,this)" class=SW href="#281">buf_ic_dout_7</a>,<a  onClick="return qs(event,this)" class=SW href="#258">buf_ic_dout_6</a>,<a  onClick="return qs(event,this)" class=SW href="#241">buf_ic_dout_5</a>,<a  onClick="return qs(event,this)" class=SW href="#224">buf_ic_dout_4</a>}),
+		<span class=SI>.shft_oplen</span>({<a  onClick="return qs(event,this)" class=SW href="#351">buf_ic_oplen_10</a>,<a  onClick="return qs(event,this)" class=SW href="#328">buf_ic_oplen_9</a>,<a  onClick="return qs(event,this)" class=SW href="#305">buf_ic_oplen_8</a>,<a  onClick="return qs(event,this)" class=SW href="#282">buf_ic_oplen_7</a>,<a  onClick="return qs(event,this)" class=SW href="#259">buf_ic_oplen_6</a>,<a  onClick="return qs(event,this)" class=SW href="#242">buf_ic_oplen_5</a>,<a  onClick="return qs(event,this)" class=SW href="#225">buf_ic_oplen_4</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="203"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#72">ibuf_3_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="205"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#88">ibuf_3_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[3]),
+<a name="207"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#104">buf_ic_dout_3</a>),
+<a name="208"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#120">buf_ic_oplen_3</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+		
+<a name="ibuffer_ibuf_4"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_4 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({3'b0,<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[0],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[1],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[2],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[3],!(<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[0]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[1]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[2]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[3])}),
+		<span class=SI>.shft_data</span>({<a  onClick="return qs(event,this)" class=SW href="#373">buf_ic_dout_11</a>,<a  onClick="return qs(event,this)" class=SW href="#350">buf_ic_dout_10</a>,<a  onClick="return qs(event,this)" class=SW href="#327">buf_ic_dout_9</a>,<a  onClick="return qs(event,this)" class=SW href="#304">buf_ic_dout_8</a>,<a  onClick="return qs(event,this)" class=SW href="#281">buf_ic_dout_7</a>,<a  onClick="return qs(event,this)" class=SW href="#258">buf_ic_dout_6</a>,<a  onClick="return qs(event,this)" class=SW href="#241">buf_ic_dout_5</a>}),
+		<span class=SI>.shft_oplen</span>({<a  onClick="return qs(event,this)" class=SW href="#374">buf_ic_oplen_11</a>,<a  onClick="return qs(event,this)" class=SW href="#351">buf_ic_oplen_10</a>,<a  onClick="return qs(event,this)" class=SW href="#328">buf_ic_oplen_9</a>,<a  onClick="return qs(event,this)" class=SW href="#305">buf_ic_oplen_8</a>,<a  onClick="return qs(event,this)" class=SW href="#282">buf_ic_oplen_7</a>,<a  onClick="return qs(event,this)" class=SW href="#259">buf_ic_oplen_6</a>,<a  onClick="return qs(event,this)" class=SW href="#242">buf_ic_oplen_5</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="220"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#73">ibuf_4_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="222"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#89">ibuf_4_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[4]),
+<a name="224"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#105">buf_ic_dout_4</a>),
+<a name="225"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#121">buf_ic_oplen_4</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+
+<a name="ibuffer_ibuf_5"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_5 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({2'b0,<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[0],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[1],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[2],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[3],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[4],!(<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[0]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[1]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[2]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[3]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[4])}),
+		<span class=SI>.shft_data</span>({<a  onClick="return qs(event,this)" class=SW href="#396">buf_ic_dout_12</a>,<a  onClick="return qs(event,this)" class=SW href="#373">buf_ic_dout_11</a>,<a  onClick="return qs(event,this)" class=SW href="#350">buf_ic_dout_10</a>,<a  onClick="return qs(event,this)" class=SW href="#327">buf_ic_dout_9</a>,<a  onClick="return qs(event,this)" class=SW href="#304">buf_ic_dout_8</a>,<a  onClick="return qs(event,this)" class=SW href="#281">buf_ic_dout_7</a>,<a  onClick="return qs(event,this)" class=SW href="#258">buf_ic_dout_6</a>}),
+		<span class=SI>.shft_oplen</span>({<a  onClick="return qs(event,this)" class=SW href="#397">buf_ic_oplen_12</a>,<a  onClick="return qs(event,this)" class=SW href="#374">buf_ic_oplen_11</a>,<a  onClick="return qs(event,this)" class=SW href="#351">buf_ic_oplen_10</a>,<a  onClick="return qs(event,this)" class=SW href="#328">buf_ic_oplen_9</a>,<a  onClick="return qs(event,this)" class=SW href="#305">buf_ic_oplen_8</a>,<a  onClick="return qs(event,this)" class=SW href="#282">buf_ic_oplen_7</a>,<a  onClick="return qs(event,this)" class=SW href="#259">buf_ic_oplen_6</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="237"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#74">ibuf_5_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="239"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#90">ibuf_5_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[5]),
+<a name="241"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#106">buf_ic_dout_5</a>),
+<a name="242"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#122">buf_ic_oplen_5</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+
+<a name="ibuffer_ibuf_6"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_6 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({1'b0,<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[0],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[1],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[2],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[3],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[4],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[5],!(<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[0]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[1]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[2]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[3]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[4]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[5])}),
+		<span class=SI>.shft_data</span>({<a  onClick="return qs(event,this)" class=SW href="#414">buf_ic_dout_13</a>,<a  onClick="return qs(event,this)" class=SW href="#396">buf_ic_dout_12</a>,<a  onClick="return qs(event,this)" class=SW href="#373">buf_ic_dout_11</a>,<a  onClick="return qs(event,this)" class=SW href="#350">buf_ic_dout_10</a>,<a  onClick="return qs(event,this)" class=SW href="#327">buf_ic_dout_9</a>,<a  onClick="return qs(event,this)" class=SW href="#304">buf_ic_dout_8</a>,<a  onClick="return qs(event,this)" class=SW href="#281">buf_ic_dout_7</a>}),
+		<span class=SI>.shft_oplen</span>({<a  onClick="return qs(event,this)" class=SW href="#415">buf_ic_oplen_13</a>,<a  onClick="return qs(event,this)" class=SW href="#397">buf_ic_oplen_12</a>,<a  onClick="return qs(event,this)" class=SW href="#374">buf_ic_oplen_11</a>,<a  onClick="return qs(event,this)" class=SW href="#351">buf_ic_oplen_10</a>,<a  onClick="return qs(event,this)" class=SW href="#328">buf_ic_oplen_9</a>,<a  onClick="return qs(event,this)" class=SW href="#305">buf_ic_oplen_8</a>,<a  onClick="return qs(event,this)" class=SW href="#282">buf_ic_oplen_7</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="254"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#75">ibuf_6_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="256"></a>	  	<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#91">ibuf_6_oplen</a>),	
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[6]),
+<a name="258"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#107">buf_ic_dout_6</a>),
+<a name="259"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#123">buf_ic_oplen_6</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+
+<a name="265"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#268">or_ic_sel_6_0</a><a  href="hierarchy-s.p13.html#or_ic_sel_6_0___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="ibuffer_i_ibuf7_or7a"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#multor7">multor7</a> i_ibuf7_or7a (	<span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[6:0]),
+<a name="268"></a>			<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#265">or_ic_sel_6_0</a>)
+			);
+
+<a name="ibuffer_ibuf_7"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_7 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[0],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[1],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[2],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[3],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[4],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[5],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[6],!<a  onClick="return qs(event,this)" class=SW href="#268">or_ic_sel_6_0</a>}),
+		<span class=SI>.shft_data</span>({<a  onClick="return qs(event,this)" class=SW href="#431">buf_ic_dout_14</a>,<a  onClick="return qs(event,this)" class=SW href="#414">buf_ic_dout_13</a>,<a  onClick="return qs(event,this)" class=SW href="#396">buf_ic_dout_12</a>,<a  onClick="return qs(event,this)" class=SW href="#373">buf_ic_dout_11</a>,<a  onClick="return qs(event,this)" class=SW href="#350">buf_ic_dout_10</a>,<a  onClick="return qs(event,this)" class=SW href="#327">buf_ic_dout_9</a>,<a  onClick="return qs(event,this)" class=SW href="#304">buf_ic_dout_8</a>}),
+		<span class=SI>.shft_oplen</span>({<a  onClick="return qs(event,this)" class=SW href="#432">buf_ic_oplen_14</a>,<a  onClick="return qs(event,this)" class=SW href="#415">buf_ic_oplen_13</a>,<a  onClick="return qs(event,this)" class=SW href="#397">buf_ic_oplen_12</a>,<a  onClick="return qs(event,this)" class=SW href="#374">buf_ic_oplen_11</a>,<a  onClick="return qs(event,this)" class=SW href="#351">buf_ic_oplen_10</a>,<a  onClick="return qs(event,this)" class=SW href="#328">buf_ic_oplen_9</a>,<a  onClick="return qs(event,this)" class=SW href="#305">buf_ic_oplen_8</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="277"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#76">ibuf_7_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="279"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#92">ibuf_7_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[7]),
+<a name="281"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#108">buf_ic_dout_7</a>),
+<a name="282"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#124">buf_ic_oplen_7</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+
+<a name="288"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#291">or_ic_sel_7_1</a><a  href="hierarchy-s.p13.html#or_ic_sel_7_1___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="ibuffer_i_ibuf7_or7b"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#multor7">multor7</a> i_ibuf7_or7b (	<span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[7:1]),
+<a name="291"></a>			<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#288">or_ic_sel_7_1</a>)
+			);
+
+<a name="ibuffer_ibuf_8"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_8 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[1],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[2],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[3],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[4],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[5],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[6],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[7],!<a  onClick="return qs(event,this)" class=SW href="#291">or_ic_sel_7_1</a>}),
+		<span class=SI>.shft_data</span>({<a  onClick="return qs(event,this)" class=SW href="#448">buf_ic_dout_15</a>,<a  onClick="return qs(event,this)" class=SW href="#431">buf_ic_dout_14</a>,<a  onClick="return qs(event,this)" class=SW href="#414">buf_ic_dout_13</a>,<a  onClick="return qs(event,this)" class=SW href="#396">buf_ic_dout_12</a>,<a  onClick="return qs(event,this)" class=SW href="#373">buf_ic_dout_11</a>,<a  onClick="return qs(event,this)" class=SW href="#350">buf_ic_dout_10</a>,<a  onClick="return qs(event,this)" class=SW href="#327">buf_ic_dout_9</a>}),
+		<span class=SI>.shft_oplen</span>({<a  onClick="return qs(event,this)" class=SW href="#449">buf_ic_oplen_15</a>,<a  onClick="return qs(event,this)" class=SW href="#432">buf_ic_oplen_14</a>,<a  onClick="return qs(event,this)" class=SW href="#415">buf_ic_oplen_13</a>,<a  onClick="return qs(event,this)" class=SW href="#397">buf_ic_oplen_12</a>,<a  onClick="return qs(event,this)" class=SW href="#374">buf_ic_oplen_11</a>,<a  onClick="return qs(event,this)" class=SW href="#351">buf_ic_oplen_10</a>,<a  onClick="return qs(event,this)" class=SW href="#328">buf_ic_oplen_9</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="300"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#77">ibuf_8_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="302"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#93">ibuf_8_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[8]),
+<a name="304"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#109">buf_ic_dout_8</a>),
+<a name="305"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#125">buf_ic_oplen_8</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+
+<a name="311"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#314">or_ic_sel_8_2</a><a  href="hierarchy-s.p13.html#or_ic_sel_8_2___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="ibuffer_i_ibuf7_or7c"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#multor7">multor7</a> i_ibuf7_or7c (	<span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[8:2]),
+<a name="314"></a>			<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#311">or_ic_sel_8_2</a>)
+			);
+
+<a name="ibuffer_ibuf_9"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_9 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[2],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[3],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[4],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[5],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[6],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[7],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[8], !<a  onClick="return qs(event,this)" class=SW href="#314">or_ic_sel_8_2</a>}),
+		<span class=SI>.shft_data</span>({8'b0,<a  onClick="return qs(event,this)" class=SW href="#448">buf_ic_dout_15</a>,<a  onClick="return qs(event,this)" class=SW href="#431">buf_ic_dout_14</a>,<a  onClick="return qs(event,this)" class=SW href="#414">buf_ic_dout_13</a>,<a  onClick="return qs(event,this)" class=SW href="#396">buf_ic_dout_12</a>,<a  onClick="return qs(event,this)" class=SW href="#373">buf_ic_dout_11</a>,<a  onClick="return qs(event,this)" class=SW href="#350">buf_ic_dout_10</a>}),
+		<span class=SI>.shft_oplen</span>({4'b0,<a  onClick="return qs(event,this)" class=SW href="#449">buf_ic_oplen_15</a>,<a  onClick="return qs(event,this)" class=SW href="#432">buf_ic_oplen_14</a>,<a  onClick="return qs(event,this)" class=SW href="#415">buf_ic_oplen_13</a>,<a  onClick="return qs(event,this)" class=SW href="#397">buf_ic_oplen_12</a>,<a  onClick="return qs(event,this)" class=SW href="#374">buf_ic_oplen_11</a>,<a  onClick="return qs(event,this)" class=SW href="#351">buf_ic_oplen_10</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="323"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#78">ibuf_9_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="325"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#94">ibuf_9_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[9]),
+<a name="327"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#110">buf_ic_dout_9</a>),
+<a name="328"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#126">buf_ic_oplen_9</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+
+<a name="334"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#337">or_ic_sel_9_3</a><a  href="hierarchy-s.p13.html#or_ic_sel_9_3___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="ibuffer_i_ibuf7_or7d"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#multor7">multor7</a> i_ibuf7_or7d (	<span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[9:3]),
+<a name="337"></a>			<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#334">or_ic_sel_9_3</a>)
+			);
+
+<a name="ibuffer_ibuf_10"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_10 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[3],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[4],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[5],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[6],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[7],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[8],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[9], !<a  onClick="return qs(event,this)" class=SW href="#337">or_ic_sel_9_3</a>}),
+		<span class=SI>.shft_data</span>({8'b0,8'b0,<a  onClick="return qs(event,this)" class=SW href="#448">buf_ic_dout_15</a>,<a  onClick="return qs(event,this)" class=SW href="#431">buf_ic_dout_14</a>,<a  onClick="return qs(event,this)" class=SW href="#414">buf_ic_dout_13</a>,<a  onClick="return qs(event,this)" class=SW href="#396">buf_ic_dout_12</a>,<a  onClick="return qs(event,this)" class=SW href="#373">buf_ic_dout_11</a>}),
+		<span class=SI>.shft_oplen</span>({4'b0,4'b0,<a  onClick="return qs(event,this)" class=SW href="#449">buf_ic_oplen_15</a>,<a  onClick="return qs(event,this)" class=SW href="#432">buf_ic_oplen_14</a>,<a  onClick="return qs(event,this)" class=SW href="#415">buf_ic_oplen_13</a>,<a  onClick="return qs(event,this)" class=SW href="#397">buf_ic_oplen_12</a>,<a  onClick="return qs(event,this)" class=SW href="#374">buf_ic_oplen_11</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="346"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#79">ibuf_10_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="348"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#95">ibuf_10_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[10]),
+<a name="350"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#111">buf_ic_dout_10</a>),
+<a name="351"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#127">buf_ic_oplen_10</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+
+<a name="357"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#360">or_ic_sel_10_4</a><a  href="hierarchy-s.p13.html#or_ic_sel_10_4___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="ibuffer_i_ibuf7_or7e"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#multor7">multor7</a> i_ibuf7_or7e (	<span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[10:4]),
+<a name="360"></a>			<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#357">or_ic_sel_10_4</a>)
+			);
+
+<a name="ibuffer_ibuf_11"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_11 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[4],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[5],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[6],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[7],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[8],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[9],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[10], !<a  onClick="return qs(event,this)" class=SW href="#360">or_ic_sel_10_4</a>}),
+		<span class=SI>.shft_data</span>({8'b0,8'b0,8'b0,<a  onClick="return qs(event,this)" class=SW href="#448">buf_ic_dout_15</a>,<a  onClick="return qs(event,this)" class=SW href="#431">buf_ic_dout_14</a>,<a  onClick="return qs(event,this)" class=SW href="#414">buf_ic_dout_13</a>,<a  onClick="return qs(event,this)" class=SW href="#396">buf_ic_dout_12</a>}),
+		<span class=SI>.shft_oplen</span>({4'b0,4'b0,4'b0,<a  onClick="return qs(event,this)" class=SW href="#449">buf_ic_oplen_15</a>,<a  onClick="return qs(event,this)" class=SW href="#432">buf_ic_oplen_14</a>,<a  onClick="return qs(event,this)" class=SW href="#415">buf_ic_oplen_13</a>,<a  onClick="return qs(event,this)" class=SW href="#397">buf_ic_oplen_12</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="369"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#80">ibuf_11_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="371"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#96">ibuf_11_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[11]),
+<a name="373"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#112">buf_ic_dout_11</a>),
+<a name="374"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#128">buf_ic_oplen_11</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+	
+<a name="380"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#383">or_ic_sel_11_5</a><a  href="hierarchy-s.p13.html#or_ic_sel_11_5___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="ibuffer_i_ibuf7_or7f"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#multor7">multor7</a> i_ibuf7_or7f (	<span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[11:5]),
+<a name="383"></a>			<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#380">or_ic_sel_11_5</a>)
+			);
+
+<a name="ibuffer_ibuf_12"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_12 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[5],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[6],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[7],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[8],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[9],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[10],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[11], !<a  onClick="return qs(event,this)" class=SW href="#383">or_ic_sel_11_5</a>}),
+		<span class=SI>.shft_data</span>({8'b0,8'b0,8'b0,8'b0,<a  onClick="return qs(event,this)" class=SW href="#448">buf_ic_dout_15</a>,<a  onClick="return qs(event,this)" class=SW href="#431">buf_ic_dout_14</a>,<a  onClick="return qs(event,this)" class=SW href="#414">buf_ic_dout_13</a>}),
+		<span class=SI>.shft_oplen</span>({4'b0,4'b0,4'b0,4'b0,<a  onClick="return qs(event,this)" class=SW href="#449">buf_ic_oplen_15</a>,<a  onClick="return qs(event,this)" class=SW href="#432">buf_ic_oplen_14</a>,<a  onClick="return qs(event,this)" class=SW href="#415">buf_ic_oplen_13</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="392"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#81">ibuf_12_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="394"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#97">ibuf_12_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[12]),
+<a name="396"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#113">buf_ic_dout_12</a>),
+<a name="397"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#129">buf_ic_oplen_12</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+
+
+<a name="ibuffer_ibuf_13"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_13 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[6],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[7],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[8],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[9],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[10],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[11],!(<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[6]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[7]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[8]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[9]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[10]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[11]),1'b0}),
+		<span class=SI>.shft_data</span>({8'b0,8'b0,8'b0,8'b0,8'b0,<a  onClick="return qs(event,this)" class=SW href="#448">buf_ic_dout_15</a>,<a  onClick="return qs(event,this)" class=SW href="#431">buf_ic_dout_14</a>}),
+		<span class=SI>.shft_oplen</span>({4'b0,4'b0,4'b0,4'b0,4'b0,<a  onClick="return qs(event,this)" class=SW href="#449">buf_ic_oplen_15</a>,<a  onClick="return qs(event,this)" class=SW href="#432">buf_ic_oplen_14</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="410"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#82">ibuf_13_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="412"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#98">ibuf_13_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[13]),
+<a name="414"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#114">buf_ic_dout_13</a>),
+<a name="415"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#130">buf_ic_oplen_13</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+
+<a name="ibuffer_ibuf_14"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_14 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[7],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[8],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[9],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[10],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[11],!(<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[7]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[8]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[9]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[10]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[11]),2'b0}),
+		<span class=SI>.shft_data</span>({8'b0,8'b0,8'b0,8'b0,8'b0,8'b0,<a  onClick="return qs(event,this)" class=SW href="#448">buf_ic_dout_15</a>}),
+		<span class=SI>.shft_oplen</span>({4'b0,4'b0,4'b0,4'b0,4'b0,4'b0,<a  onClick="return qs(event,this)" class=SW href="#449">buf_ic_oplen_15</a>}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="427"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#83">ibuf_14_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="429"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#99">ibuf_14_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[14]),
+<a name="431"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#115">buf_ic_dout_14</a>),
+<a name="432"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#131">buf_ic_oplen_14</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+
+<a name="ibuffer_ibuf_15"></a><a  onClick="return qs(event,this)" class=MM href="#ibuf_slice">ibuf_slice</a>	ibuf_15 (<span class=SI>.icache_data</span>(<a  onClick="return qs(event,this)" class=SI href="#48">icache_data</a>),
+		<span class=SI>.icache_data_sel</span>({<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[8],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[9],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[10],<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[11],!(<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[8]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[9]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[10]|<a  onClick="return qs(event,this)" class=SI href="#59">ic_sel</a>[11]),3'b0}),
+		<span class=SI>.shft_data</span>({8'b0,8'b0,8'b0,8'b0,8'b0,8'b0,8'b0}),
+		<span class=SI>.shft_oplen</span>({4'b0,4'b0,4'b0,4'b0,4'b0,4'b0,4'b0}),
+		<span class=SI>.shft_data_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#52">shft_dsel</a>[7:0]),
+		<span class=SI>.ibuf_en</span>(<a  onClick="return qs(event,this)" class=SI href="#61">ibuf_enable</a>),
+<a name="444"></a>		<a  onClick="return qs(event,this)" class=SO href="#614">.ibuf_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#84">ibuf_15_out</a>),
+		<span class=SI>.encode_oplen</span>(<a  onClick="return qs(event,this)" class=SI href="#49">encode_oplen</a>),
+<a name="446"></a>		<a  onClick="return qs(event,this)" class=SO href="#620">.ibuf_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#100">ibuf_15_oplen</a>),
+		<span class=SI>.buf_ic_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#62">buf_ic_sel</a>[15]),
+<a name="448"></a>		<a  onClick="return qs(event,this)" class=SO href="#578">.buf_ic_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#116">buf_ic_dout_15</a>),
+<a name="449"></a>		<a  onClick="return qs(event,this)" class=SO href="#584">.buf_ic_oplen</a>(<a  onClick="return qs(event,this)" class=SW href="#132">buf_ic_oplen_15</a>),
+		<span class=SI>.sin</span>(),
+		<span class=SI>.sm</span>(),
+		<a  onClick="return qs(event,this)" class=SO href="#535">.so</a>(),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>));
+
+<span class=C>// ibuf_pc will indicate the address of the first byte in the Ibuffer
+</span>
+<a name="457"></a><span class=K>wire</span> [31:0] <a  onClick="return qs(event,this)" class=SW href="#459">jmp_pc_d1</a><a  href="hierarchy-s.p10.html#jmp_pc_d1___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+
+<a name="ibuffer_jmp_pc_d1_reg"></a><a name="459"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p2.html#mj_s_ff_snr_d_32">mj_s_ff_snr_d_32</a>  jmp_pc_d1_reg (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p2.html#1728">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#457">jmp_pc_d1</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#57">jmp_pc</a>),
+					<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#66">reset_l</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>)
+					);
+
+<a name="465"></a><span class=K>wire</span> [1:0]  <a  onClick="return qs(event,this)" class=SW href="#467">ibuf_pc_sel_d1</a><a  href="hierarchy-s.p9.html#ibuf_pc_sel_d1___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<a name="ibuffer_ibuf_pc_sel_d1_reg"></a><a name="467"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_s_d_2">mj_s_ff_s_d_2</a> ibuf_pc_sel_d1_reg (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#94">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#465">ibuf_pc_sel_d1</a>),
+		                        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#58">ibuf_pc_sel</a>),
+		                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>)
+					);
+
+
+<a name="ibuffer_pc_mux"></a><a name="473"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a>	pc_mux  (	<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#56">nxt_ibuf_pc</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#459">jmp_pc_d1</a>),
+				<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#483">nxt_pc</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="#467">ibuf_pc_sel_d1</a>[1:0]));
+
+<span class=C>//assign	nxt_pc =  ibuf_pc + encod_dsel;
+</span><a name="479"></a><span class=K>wire</span> [31:0] <a  onClick="return qs(event,this)" class=SW href="#487">ibuf_pc</a><a  href="hierarchy-s.p9.html#ibuf_pc___ibuffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="ibuffer_nxt_pc_adder"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p6.html#cla_adder_32">cla_adder_32</a>    nxt_pc_adder (	<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#487">ibuf_pc</a>),
+                              	<span class=SI>.in2</span>({8'b0,8'b0,8'b0,5'b00000,<a  onClick="return qs(event,this)" class=SI href="#54">encod_dsel</a>}),
+                              	<span class=SI>.cin</span>(1'b0),
+<a name="483"></a>                              	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p6.html#5186">.sum</a>(<a  onClick="return qs(event,this)" class=SW href="#133">nxt_pc</a>),
+			      	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p6.html#5187">.cout</a>()
+				);
+
+<a name="ibuffer_pc_flop"></a><a name="487"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p2.html#mj_s_ff_snr_d_32">mj_s_ff_snr_d_32</a>  pc_flop (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p2.html#1728">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#479">ibuf_pc</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SO href="#473">nxt_ibuf_pc</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#66">reset_l</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>)
+				);
+
+<span class=K>endmodule</span>
+
+<span class=C>/****************************************************************
+***	This module defines one slice of 8 byte buffer which will
+***	be instantiated in the ibuffer.
+****************************************************************/</span>
+
+<a name="ibuf_slice"></a><a  href="ibuffer.v.html#ibuffer_ibuf_0"><IMG alt="[Up: ibuffer ibuf_0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_1"><IMG alt="[Up: ibuffer ibuf_1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_2"><IMG alt="[Up: ibuffer ibuf_2]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_3"><IMG alt="[Up: ibuffer ibuf_3]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_4"><IMG alt="[Up: ibuffer ibuf_4]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_5"><IMG alt="[Up: ibuffer ibuf_5]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_6"><IMG alt="[Up: ibuffer ibuf_6]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_7"><IMG alt="[Up: ibuffer ibuf_7]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_8"><IMG alt="[Up: ibuffer ibuf_8]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_9"><IMG alt="[Up: ibuffer ibuf_9]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_10"><IMG alt="[Up: ibuffer ibuf_10]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_11"><IMG alt="[Up: ibuffer ibuf_11]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_12"><IMG alt="[Up: ibuffer ibuf_12]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_13"><IMG alt="[Up: ibuffer ibuf_13]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_14"><IMG alt="[Up: ibuffer ibuf_14]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_ibuf_15"><IMG alt="[Up: ibuffer ibuf_15]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>ibuf_slice</span><a  href="hierarchy-m.p3.html#ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+	<a  onClick="return qs(event,this)" class=SI href="#519">icache_data</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#520">icache_data_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#522">shft_data</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#523">shft_oplen</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#524">shft_data_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#526">ibuf_dout</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#527">encode_oplen</a>,
+        <a  onClick="return qs(event,this)" class=SO href="#529">ibuf_oplen</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#536">ibuf_en</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#528">buf_ic_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#530">buf_ic_dout</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#531">buf_ic_oplen</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#532">clk</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#533">sin</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#534">sm</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#535">so</a>
+);
+
+<a name="519"></a><span class=K>input</span>	[63:0]	<a  onClick="return qs(event,this)" class=SI href="#519">icache_data</a><a  href="hierarchy-s.p9.html#icache_data___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data from Icache after aligned properly 	-- From Aligner
+</span><a name="520"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="#520">icache_data_sel</a><a  href="hierarchy-s.p9.html#icache_data_sel___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// These selects will determine which of the 	-- From ibuf_ctl
+</span>					<span class=C>// eight bytes from icache will be selected	  
+</span><a name="522"></a><span class=K>input</span>	[55:0]	<a  onClick="return qs(event,this)" class=SI href="#522">shft_data</a><a  href="hierarchy-s.p16.html#shft_data___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data from the following 7 Buffer locations	-- From ibuf
+</span><a name="523"></a><span class=K>input</span>	[27:0]	<a  onClick="return qs(event,this)" class=SI href="#523">shft_oplen</a><a  href="hierarchy-s.p16.html#shft_oplen___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// opcode length from the following 7 Buffer locations	-- From ibuf
+</span><a name="524"></a><span class=K>input</span>   [7:0]   <a  onClick="return qs(event,this)" class=SI href="#524">shft_data_sel</a><a  href="hierarchy-s.p16.html#shft_data_sel___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// These selects will determine which of the 	-- From ibuf_ctl
+</span>					<span class=C>// following 5 bytes will be selected
+</span><a name="526"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="#614">ibuf_dout</a><a  href="hierarchy-s.p9.html#ibuf_dout___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data going out from ibuffer			-- To iu
+</span><a name="527"></a><span class=K>input</span>   [31:0]  <a  onClick="return qs(event,this)" class=SI href="#527">encode_oplen</a><a  href="hierarchy-s.p5.html#encode_oplen___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="528"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#528">buf_ic_sel</a><a  href="hierarchy-s.p2.html#buf_ic_sel___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Tells whether the current Ibuffer entry os valid or not
+</span><a name="529"></a><span class=K>output</span>	[3:0]	<a  onClick="return qs(event,this)" class=SO href="#620">ibuf_oplen</a><a  href="hierarchy-s.p9.html#ibuf_oplen___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// opcode length going out from ibuffer		-- To iu
+</span><a name="530"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="#578">buf_ic_dout</a><a  href="hierarchy-s.p2.html#buf_ic_dout___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Curent ibuffer or icache data out
+</span><a name="531"></a><span class=K>output</span>  [3:0]	<a  onClick="return qs(event,this)" class=SO href="#584">buf_ic_oplen</a><a  href="hierarchy-s.p2.html#buf_ic_oplen___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Current Ibuffer or icache opcode lengths
+</span><a name="532"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#532">clk</a><a  href="hierarchy-s.p3.html#clk___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Clk
+</span><a name="533"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#533">sin</a><a  href="hierarchy-s.p16.html#sin___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Scan data input
+</span><a name="534"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#534">sm</a><a  href="hierarchy-s.p16.html#sm___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Scan Enable input
+</span><a name="535"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#535">so</a><a  href="hierarchy-s.p16.html#so___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Scan data output
+</span><a name="536"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#536">ibuf_en</a><a  href="hierarchy-s.p9.html#ibuf_en___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// ibuffer clock enable
+</span>
+
+<a name="539"></a><span class=K>wire</span>	[7:0] 	<a  onClick="return qs(event,this)" class=SW href="#549">icache_mux_out</a><a  href="hierarchy-s.p9.html#icache_mux_out___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="540"></a><span class=K>wire</span> 	[7:0]	<a  onClick="return qs(event,this)" class=SW href="#591">ic_fill_mux_out</a><a  href="hierarchy-s.p9.html#ic_fill_mux_out___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="541"></a><span class=K>wire</span>    [3:0]   <a  onClick="return qs(event,this)" class=SW href="#563">oplen_mux_out</a><a  href="hierarchy-s.p13.html#oplen_mux_out___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="542"></a><span class=K>wire</span>    [3:0]   <a  onClick="return qs(event,this)" class=SW href="#602">oplen_fill_mux_out</a><a  href="hierarchy-s.p13.html#oplen_fill_mux_out___ibuf_slice"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+
+<span class=C>//  This mux will determine which of the 8 bytes coming from Aligner(Icache)
+</span><span class=C>//  is choosen to reside in this particular ibuffer location
+</span>
+<a name="ibuf_slice_i_ic_mux"></a><a name="549"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux8_8">mux8_8</a> i_ic_mux (	<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5725">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#539">icache_mux_out</a>),
+                        <span class=SI>.in7</span>(<a  onClick="return qs(event,this)" class=SI href="#519">icache_data</a>[7:0]),
+                        <span class=SI>.in6</span>(<a  onClick="return qs(event,this)" class=SI href="#519">icache_data</a>[15:8]),
+                        <span class=SI>.in5</span>(<a  onClick="return qs(event,this)" class=SI href="#519">icache_data</a>[23:16]),
+                        <span class=SI>.in4</span>(<a  onClick="return qs(event,this)" class=SI href="#519">icache_data</a>[31:24]),
+                        <span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SI href="#519">icache_data</a>[39:32]),
+                        <span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#519">icache_data</a>[47:40]),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#519">icache_data</a>[55:48]),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#519">icache_data</a>[63:56]),
+                        <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#520">icache_data_sel</a>));
+
+<span class=C>//  This mux will determine which of the 8 4-bit lengths coming from 
+</span><span class=C>// len dec.s is choosen to reside in this particular ibuffer location
+</span>
+<a name="ibuf_slice_i_oplen_mux"></a><a name="563"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux8_4">mux8_4</a> i_oplen_mux (       <a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5074">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#541">oplen_mux_out</a>),
+                           <span class=SI>.in7</span>(<a  onClick="return qs(event,this)" class=SI href="#527">encode_oplen</a>[3:0]),
+                           <span class=SI>.in6</span>(<a  onClick="return qs(event,this)" class=SI href="#527">encode_oplen</a>[7:4]),
+                           <span class=SI>.in5</span>(<a  onClick="return qs(event,this)" class=SI href="#527">encode_oplen</a>[11:8]),
+                           <span class=SI>.in4</span>(<a  onClick="return qs(event,this)" class=SI href="#527">encode_oplen</a>[15:12]),
+                           <span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SI href="#527">encode_oplen</a>[19:16]),
+                           <span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#527">encode_oplen</a>[23:20]),
+                           <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#527">encode_oplen</a>[27:24]),
+                           <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#527">encode_oplen</a>[31:28]),
+                           <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#520">icache_data_sel</a>));
+
+
+<span class=C>// This mux will determine whether the data from current ibuffer or icache 
+</span><span class=C>// data is selected
+</span>
+<a name="ibuf_slice_ic_fill_mux"></a><a name="578"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a> ic_fill_mux (	<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#530">buf_ic_dout</a>),
+                        	<span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#528">buf_ic_sel</a>,!<a  onClick="return qs(event,this)" class=SI href="#528">buf_ic_sel</a>}),
+	                        <span class=SI>.in0</span>({<a  onClick="return qs(event,this)" class=SW href="#549">icache_mux_out</a>}),
+	                        <span class=SI>.in1</span>({<a  onClick="return qs(event,this)" class=SO href="#614">ibuf_dout</a>})
+	                        );
+
+<a name="ibuf_slice_i_oplen_fill_mux"></a><a name="584"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux2_4">mux2_4</a> i_oplen_fill_mux (	<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4946">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#531">buf_ic_oplen</a>),
+                        	<span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#528">buf_ic_sel</a>,!<a  onClick="return qs(event,this)" class=SI href="#528">buf_ic_sel</a>}),
+                        	<span class=SI>.in0</span>({<a  onClick="return qs(event,this)" class=SW href="#563">oplen_mux_out</a>}),
+                        	<span class=SI>.in1</span>({<a  onClick="return qs(event,this)" class=SO href="#620">ibuf_oplen</a>})
+                        	);
+
+<span class=C>// select the appr. data out and oplen
+</span><a name="ibuf_slice_i_shft_mux"></a><a name="591"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux8_8">mux8_8</a> i_shft_mux (	<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5725">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#540">ic_fill_mux_out</a>),
+	                        <span class=SI>.in7</span>(<a  onClick="return qs(event,this)" class=SI href="#522">shft_data</a>[55:48]),
+	                        <span class=SI>.in6</span>(<a  onClick="return qs(event,this)" class=SI href="#522">shft_data</a>[47:40]),
+	                        <span class=SI>.in5</span>(<a  onClick="return qs(event,this)" class=SI href="#522">shft_data</a>[39:32]),
+	                        <span class=SI>.in4</span>(<a  onClick="return qs(event,this)" class=SI href="#522">shft_data</a>[31:24]),
+	                        <span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SI href="#522">shft_data</a>[23:16]),
+	                        <span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#522">shft_data</a>[15:8]),
+	                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#522">shft_data</a>[7:0]),
+	                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SO href="#578">buf_ic_dout</a>),
+	                        <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#524">shft_data_sel</a>));
+
+<a name="ibuf_slice_i_shft_oplen_mux"></a><a name="602"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux8_4">mux8_4</a> i_shft_oplen_mux (  <a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5074">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#542">oplen_fill_mux_out</a>),
+                                <span class=SI>.in7</span>(<a  onClick="return qs(event,this)" class=SI href="#523">shft_oplen</a>[27:24]),
+                                <span class=SI>.in6</span>(<a  onClick="return qs(event,this)" class=SI href="#523">shft_oplen</a>[23:20]),
+                                <span class=SI>.in5</span>(<a  onClick="return qs(event,this)" class=SI href="#523">shft_oplen</a>[19:16]),
+                                <span class=SI>.in4</span>(<a  onClick="return qs(event,this)" class=SI href="#523">shft_oplen</a>[15:12]),
+                                <span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SI href="#523">shft_oplen</a>[11:8]),
+                                <span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#523">shft_oplen</a>[7:4]),
+                                <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#523">shft_oplen</a>[3:0]),
+                                <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SO href="#584">buf_ic_oplen</a>),
+                                <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#524">shft_data_sel</a>));
+<span class=C>//  Ibuffer flop
+</span>
+<a name="ibuf_slice_ibuf_data_flop"></a><a name="614"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_se_d_8">mj_s_ff_se_d_8</a> ibuf_data_flop (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#131">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#526">ibuf_dout</a>),
+<a name="615"></a>				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#591">ic_fill_mux_out</a>),
+<a name="616"></a>				<span class=SI>.lenable</span>(<a  onClick="return qs(event,this)" class=SI href="#536">ibuf_en</a>),
+<a name="617"></a>				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#532">clk</a>)
+				);
+
+<a name="ibuf_slice_ibuf_len_flop"></a><a name="620"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_se_d_4">mj_s_ff_se_d_4</a> ibuf_len_flop (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#118">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#529">ibuf_oplen</a>),
+<a name="621"></a>				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#602">oplen_fill_mux_out</a>),
+<a name="622"></a>				<span class=SI>.lenable</span>(<a  onClick="return qs(event,this)" class=SI href="#536">ibuf_en</a>),
+<a name="623"></a>				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#532">clk</a>)
+				);
+<span class=K>endmodule</span>
+
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:46:05 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/icu/rtl/ibuffer.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

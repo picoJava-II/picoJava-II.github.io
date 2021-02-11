@@ -1,0 +1,1119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ifu/rtl/ifu.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "ifu.v.p2.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<center><table class=NB cols=2 nosave><tr><td align="center"><font color="#808080">1</font></td><td align="center"><a  href="ifu.v.p2.html">2</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+<a name="ifu"></a><a  href="iu.v.html#iu_ifu"><IMG alt="[Up: iu ifu]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>ifu</span><a  href="hierarchy-m.p3.html#ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#115">ibuff_0</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#116">ibuff_1</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#119">ibuff_4</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#120">ibuff_5</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#121">ibuff_6</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#122">fetch_drty</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#123">fetch_valid</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#124">fetch_len0</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#125">fetch_len1</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#126">fetch_len2</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#127">fetch_len3</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#128">fetch_len4</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#129">fetch_len5</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#130">fetch_len6</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#131">iu_psr_fle</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#132">sc_bottom</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#133">lvars</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#134">squash_fold</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#138">hold_d</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#140">hold_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#141">hold_c</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#142">iu_trap_c</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#143">sin</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#144">sm</a>,	
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>,
+	<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#147">group_1_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#148">group_2_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#149">group_3_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#150">group_4_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#151">group_5_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#152">group_6_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#153">group_7_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#154">group_8_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#155">group_9_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#156">no_fold_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#157">fold_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#158">opcode_1_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#159">opcode_2_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#160">offset_1_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#161">offset_2_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#162">valid_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#163">help_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#164">lv_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#166">type_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#178">lvars_acc_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#179">st_index_op_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#180">reverse_ops_rs1_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#181">update_optop_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#182">opcode_1_rs2_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#183">opcode_2_rs2_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#184">offset_1_rs2_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#185">offset_2_rs2_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#186">valid_rs2_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#187">lv_rs2_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#188">lvars_acc_rs2_r</a>,
+<span class=C>//	Generate different versions of opcode_1_op to
+</span><span class=C>// 	improve timing
+</span>
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#189">opcode_1_op_r_rcu</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#190">opcode_1_op_r_ex</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#191">opcode_1_op_r_fpu</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#192">opcode_1_op_r_ucode</a>,
+
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#193">opcode_2_op_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#194">opcode_3_op_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#195">opcode_4_op_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#196">opcode_5_op_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#200">valid_op_r_rcu</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#201">valid_op_r_ucode</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#202">valid_op_r_pipe</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#203">valid_op_r_ex</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#204">valid_op_r_fpu</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#206">opcode_1_rsd_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#207">opcode_2_rsd_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#208">offset_rsd_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#209">valid_rsd_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#210">offset_pc_br_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#211">drty_inst_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#212">put_field2_quick_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#213">iu_shift_d</a>,
+	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#214">so</a>
+
+
+);
+
+<a name="115"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#600">ibuff_0</a><a  href="hierarchy-s.p9.html#ibuff_0___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1st entry of Ibuffer
+</span><a name="116"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#601">ibuff_1</a><a  href="hierarchy-s.p9.html#ibuff_1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// 2nd entry of Ibuffer		
+</span><a name="117"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#602">ibuff_2</a><a  href="hierarchy-s.p9.html#ibuff_2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// 3rd entry of Ibuffer
+</span><a name="118"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#603">ibuff_3</a><a  href="hierarchy-s.p9.html#ibuff_3___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// 4th entry of Ibuffer
+</span><a name="119"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#604">ibuff_4</a><a  href="hierarchy-s.p9.html#ibuff_4___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// 5th entry of Ibuffer
+</span><a name="120"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#605">ibuff_5</a><a  href="hierarchy-s.p9.html#ibuff_5___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// 6th entry of Ibuffer
+</span><a name="121"></a><span class=K>input</span>	[7:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#606">ibuff_6</a><a  href="hierarchy-s.p9.html#ibuff_6___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// 7th entry of Ibuffer
+</span><a name="122"></a><span class=K>input</span>	[6:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#607">fetch_drty</a><a  href="hierarchy-s.p6.html#fetch_drty___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Dirty bits of the 7 entries in Ibuffer
+</span><a name="123"></a><span class=K>input</span>	[6:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#608">fetch_valid</a><a  href="hierarchy-s.p6.html#fetch_valid___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Valid bits of the 7 entries in Ibuffer
+</span><a name="124"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#609">fetch_len0</a><a  href="hierarchy-s.p6.html#fetch_len0___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Len. of the instr. corresp. to 1st byte in Ibuffer
+</span><a name="125"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#610">fetch_len1</a><a  href="hierarchy-s.p6.html#fetch_len1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// Len. of the instr. corresp. to 2nd byte in Ibuffer
+</span><a name="126"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#611">fetch_len2</a><a  href="hierarchy-s.p6.html#fetch_len2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// Len. of the instr. corresp. to 3rd byte in Ibuffer
+</span><a name="127"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#612">fetch_len3</a><a  href="hierarchy-s.p6.html#fetch_len3___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// Len. of the instr. corresp. to 4th byte in Ibuffer
+</span><a name="128"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#613">fetch_len4</a><a  href="hierarchy-s.p6.html#fetch_len4___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// Len. of the instr. corresp. to 5th byte in Ibuffer
+</span><a name="129"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#614">fetch_len5</a><a  href="hierarchy-s.p6.html#fetch_len5___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// Len. of the instr. corresp. to 6th byte in Ibuffer
+</span><a name="130"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#615">fetch_len6</a><a  href="hierarchy-s.p6.html#fetch_len6___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// Len. of the instr. corresp. to 7th byte in Ibuffer
+</span><a name="131"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#616">iu_psr_fle</a><a  href="hierarchy-s.p9.html#iu_psr_fle___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Bit in PSR reg. to enable folding
+</span><a name="132"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#617">sc_bottom</a><a  href="hierarchy-s.p16.html#sc_bottom___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Stack Bottom Register
+</span><a name="133"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="iu.v.html#618">lvars</a><a  href="hierarchy-s.p10.html#lvars___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Local Var. Register
+</span><a name="134"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#619">squash_fold</a><a  href="hierarchy-s.p16.html#squash_fold___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Signal from pipeline control to disable
+</span>					<span class=C>// folding.
+</span><a name="136"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#620">kill_vld_d</a><a  href="hierarchy-s.p10.html#kill_vld_d___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Signal from pipeline control to kill valids
+</span>					<span class=C>// in the d-stage for branches and traps
+</span><a name="138"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#621">hold_d</a><a  href="hierarchy-s.p8.html#hold_d___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Hold for D-stage
+</span><a name="139"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#622">hold_r</a><a  href="hierarchy-s.p8.html#hold_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Hold for R-stage
+</span><a name="140"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#623">hold_e</a><a  href="hierarchy-s.p8.html#hold_e___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Hold for E-stage
+</span><a name="141"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#624">hold_c</a><a  href="hierarchy-s.p8.html#hold_c___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Hold for C-stage
+</span><a name="142"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#625">iu_trap_c</a><a  href="hierarchy-s.p9.html#iu_trap_c___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Trap in C-stage
+</span><a name="143"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#143">sin</a><a  href="hierarchy-s.p16.html#sin___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// IFU Scan In Port
+</span><a name="144"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#144">sm</a><a  href="hierarchy-s.p16.html#sm___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// IFU Scan Enable Port
+</span><a name="145"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#680">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Reset
+</span><a name="146"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#681">clk</a><a  href="hierarchy-s.p3.html#clk___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Clock
+</span><a name="147"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#486">group_1_r</a><a  href="hierarchy-s.p7.html#group_1_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates  group_1 folding
+</span><a name="148"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#492">group_2_r</a><a  href="hierarchy-s.p7.html#group_2_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Indicates  group_2 folding
+</span><a name="149"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#498">group_3_r</a><a  href="hierarchy-s.p7.html#group_3_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Indicates  group_3 folding
+</span><a name="150"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#504">group_4_r</a><a  href="hierarchy-s.p7.html#group_4_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Indicates  group_4 folding
+</span><a name="151"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#510">group_5_r</a><a  href="hierarchy-s.p7.html#group_5_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Indicates  group_5 folding
+</span><a name="152"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#516">group_6_r</a><a  href="hierarchy-s.p7.html#group_6_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Indicates  group_6 folding
+</span><a name="153"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#522">group_7_r</a><a  href="hierarchy-s.p7.html#group_7_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Indicates  group_7 folding
+</span><a name="154"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#528">group_8_r</a><a  href="hierarchy-s.p7.html#group_8_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Indicates  group_8 folding
+</span><a name="155"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#534">group_9_r</a><a  href="hierarchy-s.p7.html#group_9_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Indicates  group_9 folding
+</span><a name="156"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#548">no_fold_r</a><a  href="hierarchy-s.p12.html#no_fold_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates thatonly one instr. is issued
+</span><a name="157"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#542">fold_r</a><a  href="hierarchy-s.p6.html#fold_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Indicates that more than one instr is issued
+</span><a name="158"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#613">opcode_1_rs1_r</a><a  href="hierarchy-s.p13.html#opcode_1_rs1_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1st byte of opcode in RS1 stage
+</span><a name="159"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#623">opcode_2_rs1_r</a><a  href="hierarchy-s.p13.html#opcode_2_rs1_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 2nd byte of opcode in RS1 stage
+</span><a name="160"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#643">offset_1_rs1_r</a><a  href="hierarchy-s.p13.html#offset_1_rs1_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1st byte of offset in RS1 stage
+</span><a name="161"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#653">offset_2_rs1_r</a><a  href="hierarchy-s.p13.html#offset_2_rs1_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 2nd byte of offset in RS1 stage
+</span><a name="162"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#670">valid_rs1_r</a><a  href="hierarchy-s.p19.html#valid_rs1_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a valid LV + Long Load in RS1
+</span><a name="163"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#677">help_rs1_r</a><a  href="hierarchy-s.p8.html#help_rs1_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates multi-rstage operation in RS1
+</span><a name="164"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#688">lv_rs1_r</a><a  href="hierarchy-s.p10.html#lv_rs1_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates an LV op in RS1
+</span>
+<a name="166"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#707">type_rs1_r</a><a  href="hierarchy-s.p17.html#type_rs1_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// indicates the type of long op in rs1
+</span>                                	<span class=C>// type[0] = long or double load
+</span>                                	<span class=C>// type[1] = long or double store
+</span>                                	<span class=C>// type[2] = long add, and, sub, or, xor or 
+</span>					<span class=C>// neg operation
+</span>                                	<span class=C>// type[3] = double add, sub, rem, mul, div 
+</span>					<span class=C>// or compare operation
+</span>                                	<span class=C>// type[4] = long shift left operation
+</span>                                	<span class=C>// type[5] = long shift right operation
+</span>                                	<span class=C>// type[6] = priv write operations
+</span>                                	<span class=C>// type[7] = long compares
+</span>
+<a name="178"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#701">lvars_acc_rs1_r</a><a  href="hierarchy-s.p10.html#lvars_acc_rs1_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Indicates that a scache access in RS1 uses lvars 
+</span><a name="179"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#719">st_index_op_rs1_r</a><a  href="hierarchy-s.p16.html#st_index_op_rs1_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Indicates that there's st_*_index type of op in RS1
+</span><a name="180"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#713">reverse_ops_rs1_r</a><a  href="hierarchy-s.p15.html#reverse_ops_rs1_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Used to fix an Xface problem between FPU and IU
+</span><a name="181"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#725">update_optop_r</a><a  href="hierarchy-s.p18.html#update_optop_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates that there's a priv_update_optop op
+</span><a name="182"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#751">opcode_1_rs2_r</a><a  href="hierarchy-s.p13.html#opcode_1_rs2_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1st byte of opcode in RS2 stage
+</span><a name="183"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#761">opcode_2_rs2_r</a><a  href="hierarchy-s.p13.html#opcode_2_rs2_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 2nd byte of opcode in RS2 stage
+</span><a name="184"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#781">offset_1_rs2_r</a><a  href="hierarchy-s.p13.html#offset_1_rs2_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1st byte of offset in RS2 stage
+</span><a name="185"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#791">offset_2_rs2_r</a><a  href="hierarchy-s.p13.html#offset_2_rs2_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 2nd byte of offset in RS2 stage
+</span><a name="186"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#809">valid_rs2_r</a><a  href="hierarchy-s.p19.html#valid_rs2_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a valid LV op in RS2
+</span><a name="187"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#820">lv_rs2_r</a><a  href="hierarchy-s.p10.html#lv_rs2_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a valid LV in RS2
+</span><a name="188"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#833">lvars_acc_rs2_r</a><a  href="hierarchy-s.p10.html#lvars_acc_rs2_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Indicates that a scache access in RS2 uses lvars 
+</span><a name="189"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#903">opcode_1_op_r_rcu</a><a  href="hierarchy-s.p13.html#opcode_1_op_r_rcu___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 1st byte of opcode in OP stage to be used in RCU
+</span><a name="190"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#904">opcode_1_op_r_ex</a><a  href="hierarchy-s.p13.html#opcode_1_op_r_ex___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 1st byte of opcode in OP stage to be used in EX
+</span><a name="191"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#905">opcode_1_op_r_fpu</a><a  href="hierarchy-s.p13.html#opcode_1_op_r_fpu___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 1st byte of opcode in OP stage to be used in FPU
+</span><a name="192"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#906">opcode_1_op_r_ucode</a><a  href="hierarchy-s.p13.html#opcode_1_op_r_ucode___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// 1st byte of opcode in OP stage to be used in UCODE
+</span><a name="193"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#908">opcode_2_op_r</a><a  href="hierarchy-s.p13.html#opcode_2_op_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 2nd byte of opcode in OP stage
+</span><a name="194"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#913">opcode_3_op_r</a><a  href="hierarchy-s.p13.html#opcode_3_op_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 3rd byte of opcode in OP stage
+</span><a name="195"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#918">opcode_4_op_r</a><a  href="hierarchy-s.p13.html#opcode_4_op_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 4th byte of opcode in OP stage
+</span><a name="196"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#923">opcode_5_op_r</a><a  href="hierarchy-s.p13.html#opcode_5_op_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 5th byte of opcode in OP stage
+</span>
+<span class=C>// Generating multiple versions of valid_op_r to improve timing on it 
+</span>
+<a name="200"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#937">valid_op_r_rcu</a><a  href="hierarchy-s.p19.html#valid_op_r_rcu___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a valid OP in OP stage: used in RCU
+</span><a name="201"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#943">valid_op_r_ucode</a><a  href="hierarchy-s.p19.html#valid_op_r_ucode___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Indicates a valid OP in OP stage: used in Ucode
+</span><a name="202"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#959">valid_op_r_pipe</a><a  href="hierarchy-s.p19.html#valid_op_r_pipe___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Indicates a valid OP in OP stage: used in Pipe
+</span><a name="203"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#958">valid_op_r_ex</a><a  href="hierarchy-s.p19.html#valid_op_r_ex___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a valid OP in OP stage: used in EX
+</span><a name="204"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#960">valid_op_r_fpu</a><a  href="hierarchy-s.p19.html#valid_op_r_fpu___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a valid OP in OP stage: used in FPU
+</span>
+<a name="206"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.p2.html#1022">opcode_1_rsd_r</a><a  href="hierarchy-s.p13.html#opcode_1_rsd_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 1st byte of opcode in RSd stage
+</span><a name="207"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.p2.html#1027">opcode_2_rsd_r</a><a  href="hierarchy-s.p13.html#opcode_2_rsd_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// 2nd byte of opcode in RSd stage
+</span><a name="208"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.p2.html#1079">offset_rsd_r</a><a  href="hierarchy-s.p13.html#offset_rsd_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// offset in RSd stage
+</span><a name="209"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.p2.html#1053">valid_rsd_r</a><a  href="hierarchy-s.p19.html#valid_rsd_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates a valid MEM operation in RSd stage
+</span><a name="210"></a><span class=K>output</span>	[2:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#984">offset_pc_br_r</a><a  href="hierarchy-s.p13.html#offset_pc_br_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Gives the offset from PC, where the OP is there
+</span><a name="211"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.p2.html#1101">drty_inst_r</a><a  href="hierarchy-s.p4.html#drty_inst_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Indicates that first instruction is a dirty one
+</span><a name="212"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.p2.html#1112">put_field2_quick_r</a><a  href="hierarchy-s.p14.html#put_field2_quick_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Indicates a put_field_quick operation
+</span><a name="213"></a><span class=K>output</span>	[7:0]	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#356">iu_shift_d</a><a  href="hierarchy-s.p9.html#iu_shift_d___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// tells how many bytes are consumed by folding
+</span><a name="214"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#214">so</a><a  href="hierarchy-s.p16.html#so___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// IFU Scan Out Port
+</span>
+
+
+<a name="218"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#357">accum_len0</a><a  href="hierarchy-s.html#accum_len0___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="219"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#358">accum_len1</a><a  href="hierarchy-s.html#accum_len1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="220"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#359">accum_len2</a><a  href="hierarchy-s.html#accum_len2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="221"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#360">accum_len3</a><a  href="hierarchy-s.html#accum_len3___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="222"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#377">dec_valid</a><a  href="hierarchy-s.p4.html#dec_valid___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="223"></a><span class=K>wire</span>	[5:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#329">ex_len_first_inst</a><a  href="hierarchy-s.p5.html#ex_len_first_inst___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="224"></a><span class=K>wire</span>	[5:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#403">inst_1_type</a><a  href="hierarchy-s.p9.html#inst_1_type___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="225"></a><span class=K>wire</span>	[5:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#404">inst_2_type</a><a  href="hierarchy-s.p9.html#inst_2_type___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="226"></a><span class=K>wire</span>	[5:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#405">inst_3_type</a><a  href="hierarchy-s.p9.html#inst_3_type___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="227"></a><span class=K>wire</span>	[5:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#406">inst_4_type</a><a  href="hierarchy-s.p9.html#inst_4_type___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="228"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#635">offset_1_rs1_int</a><a  href="hierarchy-s.p13.html#offset_1_rs1_int___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="229"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#773">offset_1_rs2_int</a><a  href="hierarchy-s.p13.html#offset_1_rs2_int___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="230"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#608">opcode_1_rs1</a><a  href="hierarchy-s.p13.html#opcode_1_rs1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="231"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#618">opcode_2_rs1</a><a  href="hierarchy-s.p13.html#opcode_2_rs1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="232"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#746">opcode_1_rs2</a><a  href="hierarchy-s.p13.html#opcode_1_rs2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="233"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#756">opcode_2_rs2</a><a  href="hierarchy-s.p13.html#opcode_2_rs2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="234"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#895">opcode_1_op_r_gen</a><a  href="hierarchy-s.p13.html#opcode_1_op_r_gen___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="235"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1131">instrs_folded</a><a  href="hierarchy-s.p9.html#instrs_folded___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="236"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1140">instrs_folded_r</a><a  href="hierarchy-s.p9.html#instrs_folded_r___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="237"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1146">instrs_folded_e</a><a  href="hierarchy-s.p9.html#instrs_folded_e___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="238"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1152">instrs_folded_c</a><a  href="hierarchy-s.p9.html#instrs_folded_c___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="239"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1158">instrs_folded_w</a><a  href="hierarchy-s.p9.html#instrs_folded_w___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="240"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#949">valid_op_r_gen</a><a  href="hierarchy-s.p19.html#valid_op_r_gen___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="241"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#578">reverse_ops_rs1</a><a  href="hierarchy-s.p15.html#reverse_ops_rs1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="242"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#579">update_optop</a><a  href="hierarchy-s.p18.html#update_optop___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="243"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1110">put_field2_quick</a><a  href="hierarchy-s.p14.html#put_field2_quick___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="244"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#540">fold</a><a  href="hierarchy-s.p6.html#fold___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="245"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#571">valid_rs1_int1</a><a  href="hierarchy-s.p19.html#valid_rs1_int1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="246"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#474">group_1</a><a  href="hierarchy-s.p7.html#group_1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="247"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#475">group_2</a><a  href="hierarchy-s.p7.html#group_2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="248"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#476">group_3</a><a  href="hierarchy-s.p7.html#group_3___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="249"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#477">group_4</a><a  href="hierarchy-s.p7.html#group_4___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="250"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#478">group_5</a><a  href="hierarchy-s.p7.html#group_5___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="251"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#479">group_6</a><a  href="hierarchy-s.p7.html#group_6___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="252"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#480">group_7</a><a  href="hierarchy-s.p7.html#group_7___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="253"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#481">group_8</a><a  href="hierarchy-s.p7.html#group_8___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="254"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#482">group_9</a><a  href="hierarchy-s.p7.html#group_9___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="255"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#663">valid_rs1_int</a><a  href="hierarchy-s.p19.html#valid_rs1_int___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="256"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#575">lv_rs1_int</a><a  href="hierarchy-s.p10.html#lv_rs1_int___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="257"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#576">lvars_acc_rs1_int</a><a  href="hierarchy-s.p10.html#lvars_acc_rs1_int___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="258"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#577">st_index_op_rs1</a><a  href="hierarchy-s.p16.html#st_index_op_rs1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="259"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#799">valid_rs2_int</a><a  href="hierarchy-s.p19.html#valid_rs2_int___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="260"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#590">lv_rs2_int</a><a  href="hierarchy-s.p10.html#lv_rs2_int___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="261"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#581">lv_rs2_int1</a><a  href="hierarchy-s.p10.html#lv_rs2_int1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="262"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#582">lvars_acc_rs2_int1</a><a  href="hierarchy-s.p10.html#lvars_acc_rs2_int1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="263"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#589">lvars_acc_rs2_int</a><a  href="hierarchy-s.p10.html#lvars_acc_rs2_int___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="264"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#430">vld_drty_entries</a><a  href="hierarchy-s.p19.html#vld_drty_entries___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="265"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#421">scache_miss_int</a><a  href="hierarchy-s.p16.html#scache_miss_int___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="266"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#425">scache_miss</a><a  href="hierarchy-s.p16.html#scache_miss___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="267"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#445">fold_enable</a><a  href="hierarchy-s.p6.html#fold_enable___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="268"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#470">fold_1_inst</a><a  href="hierarchy-s.p6.html#fold_1_inst___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="269"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#471">fold_2_inst</a><a  href="hierarchy-s.p6.html#fold_2_inst___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="270"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#472">fold_3_inst</a><a  href="hierarchy-s.p6.html#fold_3_inst___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="271"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#473">fold_4_inst</a><a  href="hierarchy-s.p6.html#fold_4_inst___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="272"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#469">not_valid</a><a  href="hierarchy-s.p12.html#not_valid___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="273"></a><span class=K>wire</span>	[4:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#570">offset_sel_rs1</a><a  href="hierarchy-s.p13.html#offset_sel_rs1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="274"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#665">valid_rs1</a><a  href="hierarchy-s.p19.html#valid_rs1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="275"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#572">mem_op_rs1</a><a  href="hierarchy-s.p11.html#mem_op_rs1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="276"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#573">help_rs1</a><a  href="hierarchy-s.p8.html#help_rs1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="277"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#574">type_rs1</a><a  href="hierarchy-s.p17.html#type_rs1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="278"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#683">lv_rs1</a><a  href="hierarchy-s.p10.html#lv_rs1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="279"></a><span class=K>wire</span>	[4:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#580">offset_sel_rs2</a><a  href="hierarchy-s.p13.html#offset_sel_rs2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="280"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#630">offset_1_rs1</a><a  href="hierarchy-s.p13.html#offset_1_rs1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="281"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#768">offset_1_rs2</a><a  href="hierarchy-s.p13.html#offset_1_rs2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="282"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#648">offset_2_rs1</a><a  href="hierarchy-s.p13.html#offset_2_rs1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="283"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#786">offset_2_rs2</a><a  href="hierarchy-s.p13.html#offset_2_rs2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="284"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#802">valid_rs2</a><a  href="hierarchy-s.p19.html#valid_rs2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="285"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#849">op_sel</a><a  href="hierarchy-s.p13.html#op_sel___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="286"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#861">opcode_inst2_1</a><a  href="hierarchy-s.p13.html#opcode_inst2_1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="287"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#861">opcode_inst2_2</a><a  href="hierarchy-s.p13.html#opcode_inst2_2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="288"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#861">opcode_inst2_3</a><a  href="hierarchy-s.p13.html#opcode_inst2_3___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="289"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#870">opcode_inst3_1</a><a  href="hierarchy-s.p13.html#opcode_inst3_1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="290"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#870">opcode_inst3_2</a><a  href="hierarchy-s.p13.html#opcode_inst3_2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="291"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#870">opcode_inst3_3</a><a  href="hierarchy-s.p13.html#opcode_inst3_3___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="292"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1004">opcode_inst4_1</a><a  href="hierarchy-s.p13.html#opcode_inst4_1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="293"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1004">opcode_inst4_2</a><a  href="hierarchy-s.p13.html#opcode_inst4_2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="294"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1004">opcode_inst4_3</a><a  href="hierarchy-s.p13.html#opcode_inst4_3___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="295"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#884">opcode_1_op</a><a  href="hierarchy-s.p13.html#opcode_1_op___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="296"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#884">opcode_2_op</a><a  href="hierarchy-s.p13.html#opcode_2_op___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="297"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#884">opcode_3_op</a><a  href="hierarchy-s.p13.html#opcode_3_op___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="298"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#933">valid_op</a><a  href="hierarchy-s.p19.html#valid_op___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="299"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1051">valid_rsd</a><a  href="hierarchy-s.p19.html#valid_rsd___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="300"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#738">rs2_inst_1</a><a  href="hierarchy-s.p15.html#rs2_inst_1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="301"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#738">rs2_inst_2</a><a  href="hierarchy-s.p15.html#rs2_inst_2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="302"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#738">rs2_inst_3</a><a  href="hierarchy-s.p15.html#rs2_inst_3___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="303"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#999">opcode_sel_rsd</a><a  href="hierarchy-s.p13.html#opcode_sel_rsd___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="304"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1015">opcode_1_rsd</a><a  href="hierarchy-s.p13.html#opcode_1_rsd___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="305"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1015">opcode_2_rsd</a><a  href="hierarchy-s.p13.html#opcode_2_rsd___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="306"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1015">opcode_3_rsd</a><a  href="hierarchy-s.p13.html#opcode_3_rsd___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="307"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1064">offset_rsd_int</a><a  href="hierarchy-s.p13.html#offset_rsd_int___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="308"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1071">offset_rsd</a><a  href="hierarchy-s.p13.html#offset_rsd___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="309"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1039">offset_rsd_ctl</a><a  href="hierarchy-s.p13.html#offset_rsd_ctl___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="310"></a><span class=K>wire</span>	[4:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#583">offset_sel_rsd</a><a  href="hierarchy-s.p13.html#offset_sel_rsd___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="311"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#969">offset_pc_br_dec</a><a  href="hierarchy-s.p13.html#offset_pc_br_dec___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="312"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#977">offset_pc_br</a><a  href="hierarchy-s.p13.html#offset_pc_br___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="313"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a><a  href="hierarchy-s.p16.html#swap_rs1_rs2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="314"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1092">drty_inst</a><a  href="hierarchy-s.p4.html#drty_inst___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="315"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1086">drty_inst_1</a><a  href="hierarchy-s.p4.html#drty_inst_1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="316"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1087">drty_inst_2</a><a  href="hierarchy-s.p4.html#drty_inst_2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="317"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1088">drty_inst_3</a><a  href="hierarchy-s.p4.html#drty_inst_3___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="318"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1089">drty_inst_4</a><a  href="hierarchy-s.p4.html#drty_inst_4___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="319"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1090">drty_inst_5</a><a  href="hierarchy-s.p4.html#drty_inst_5___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="320"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#815">lv_rs2</a><a  href="hierarchy-s.p10.html#lv_rs2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="321"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#695">lvars_acc_rs1</a><a  href="hierarchy-s.p10.html#lvars_acc_rs1___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="322"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#828">lvars_acc_rs2</a><a  href="hierarchy-s.p10.html#lvars_acc_rs2___ifu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<span class=C>// Decode the exact length of the first inst.
+</span>
+<a name="ifu_ex_len_dec"></a><a name="327"></a><a  onClick="return qs(event,this)" class=MM href="ex_len_dec.v.html#ex_len_dec">ex_len_dec</a>	ex_len_dec (<span class=SI>.opcode</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#115">ibuff_0</a>),
+<a name="328"></a>				<span class=SI>.valid</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#123">fetch_valid</a>[4:0]),
+<a name="329"></a>				<a  onClick="return qs(event,this)" class=SO href="ex_len_dec.v.html#312">.len0</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#223">ex_len_first_inst</a>[0]),
+				<a  onClick="return qs(event,this)" class=SO href="ex_len_dec.v.html#48">.len1</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#223">ex_len_first_inst</a>[1]),
+				<a  onClick="return qs(event,this)" class=SO href="ex_len_dec.v.html#49">.len2</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#223">ex_len_first_inst</a>[2]),
+				<a  onClick="return qs(event,this)" class=SO href="ex_len_dec.v.html#50">.len3</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#223">ex_len_first_inst</a>[3]),
+				<a  onClick="return qs(event,this)" class=SO href="ex_len_dec.v.html#51">.len4</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#223">ex_len_first_inst</a>[4]),
+				<a  onClick="return qs(event,this)" class=SO href="ex_len_dec.v.html#52">.len5</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#223">ex_len_first_inst</a>[5]) );
+				
+<span class=C>// Instantiate accumulated length detector
+</span><span class=C>// This detector will output four lengths, accum_len0..accum_len3, 
+</span><span class=C>// accum_len0 -&gt; length of the 1st instr
+</span><span class=C>// accum_len1 -&gt; length of the 1st instr + length of the 2nd instr
+</span><span class=C>// The above four lengths correspond to four prospective instructions to be folded
+</span>
+<a name="ifu_length_dec"></a><a name="342"></a><a  onClick="return qs(event,this)" class=MM href="length_dec.v.html#length_dec">length_dec</a>	length_dec (<span class=SI>.fetch_len0</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#124">fetch_len0</a>),
+<a name="343"></a>				<span class=SI>.fetch_len1</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#125">fetch_len1</a>),
+<a name="344"></a>				<span class=SI>.fetch_len2</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#126">fetch_len2</a>),
+<a name="345"></a>				<span class=SI>.fetch_len3</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#127">fetch_len3</a>),
+<a name="346"></a>				<span class=SI>.fetch_len4</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#128">fetch_len4</a>),
+<a name="347"></a>				<span class=SI>.fetch_len5</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#129">fetch_len5</a>),
+<a name="348"></a>				<span class=SI>.fetch_len6</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#130">fetch_len6</a>),
+<a name="349"></a>				<span class=SI>.fold_4_inst</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#473">fold_4_inst</a>),
+<a name="350"></a>				<span class=SI>.fold_3_inst</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#472">fold_3_inst</a>),
+<a name="351"></a>				<span class=SI>.fold_2_inst</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#471">fold_2_inst</a>),
+<a name="352"></a>				<span class=SI>.fold_1_inst</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#470">fold_1_inst</a>),
+<a name="353"></a>				<span class=SI>.not_valid</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#469">not_valid</a>),
+<a name="354"></a>				<span class=SI>.ex_len_first_inst</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#329">ex_len_first_inst</a>),
+<a name="355"></a>				<span class=SI>.hold_d</span>	(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#138">hold_d</a>),
+<a name="356"></a>				<a  onClick="return qs(event,this)" class=SO href="length_dec.v.html#137">.iu_shift_d</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#213">iu_shift_d</a>[7:0]),
+<a name="357"></a>				<a  onClick="return qs(event,this)" class=SO href="length_dec.v.html#140">.accum_len0</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#218">accum_len0</a>),
+<a name="358"></a>				<a  onClick="return qs(event,this)" class=SO href="length_dec.v.html#98">.accum_len1</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#219">accum_len1</a>),
+<a name="359"></a>				<a  onClick="return qs(event,this)" class=SO href="length_dec.v.html#105">.accum_len2</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#220">accum_len2</a>),
+<a name="360"></a>				<a  onClick="return qs(event,this)" class=SO href="length_dec.v.html#116">.accum_len3</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#221">accum_len3</a>) );
+
+<span class=C>// Instantiate valid decoder
+</span><span class=C>// This will output four valids. dec_valid (decoder valids) corrseponding
+</span><span class=C>// to four prospective instructions to be folded
+</span>
+<a name="ifu_valid_dec"></a><a name="366"></a><a  onClick="return qs(event,this)" class=MM href="valid_dec.v.html#valid_dec">valid_dec</a>	valid_dec (<span class=SI>.fetch_valid</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#123">fetch_valid</a>),
+<a name="367"></a>				<span class=SI>.accum_len0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#357">accum_len0</a>),
+<a name="368"></a>				<span class=SI>.accum_len1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#358">accum_len1</a>),
+<a name="369"></a>				<span class=SI>.accum_len2</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#359">accum_len2</a>),
+<a name="370"></a>				<span class=SI>.ex_len_first_inst</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#329">ex_len_first_inst</a>),
+<a name="371"></a>				<span class=SI>.fetch_len1</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#125">fetch_len1</a>),
+<a name="372"></a>				<span class=SI>.fetch_len2</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#126">fetch_len2</a>),
+<a name="373"></a>				<span class=SI>.fetch_len3</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#127">fetch_len3</a>),
+<a name="374"></a>				<span class=SI>.fetch_len4</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#128">fetch_len4</a>),
+<a name="375"></a>				<span class=SI>.fetch_len5</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#129">fetch_len5</a>),
+<a name="376"></a>				<span class=SI>.fetch_len6</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#130">fetch_len6</a>),
+<a name="377"></a>				<a  onClick="return qs(event,this)" class=SO href="valid_dec.v.html#143">.dec_valid</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#222">dec_valid</a>) );
+				
+
+<span class=C>// Instantiate folding decoder
+</span><span class=C>//  This wil output folding types, inst_0..3_type of four prospective instructions
+</span><span class=C>// to be folded	
+</span>
+<span class=C>// inst_0_type[0] =  Non Foldable
+</span><span class=C>// inst_0_type[1] =  Local Variable
+</span><span class=C>// inst_0_type[2] =  Operation
+</span><span class=C>// inst_0_type[3] =  Break Group2
+</span><span class=C>// inst_0_type[4] =  Break Group1
+</span><span class=C>// inst_0_type[5] =  Memory Store
+</span>
+
+
+<a name="ifu_fold_dec"></a><a name="393"></a><a  onClick="return qs(event,this)" class=MM href="fold_dec.v.html#fold_dec">fold_dec</a>	fold_dec (<span class=SI>.ibuff_0</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#115">ibuff_0</a>),
+<a name="394"></a>				<span class=SI>.ibuff_1</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#116">ibuff_1</a>),
+<a name="395"></a>				<span class=SI>.ibuff_2</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>),
+<a name="396"></a>				<span class=SI>.ibuff_3</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>),
+<a name="397"></a>				<span class=SI>.ibuff_4</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#119">ibuff_4</a>),
+<a name="398"></a>				<span class=SI>.ibuff_5</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#120">ibuff_5</a>),
+<a name="399"></a>				<span class=SI>.ibuff_6</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#121">ibuff_6</a>),
+<a name="400"></a>				<span class=SI>.accum_len0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#357">accum_len0</a>),
+<a name="401"></a>				<span class=SI>.accum_len1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#358">accum_len1</a>),
+<a name="402"></a>				<span class=SI>.accum_len2</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#359">accum_len2</a>),
+<a name="403"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_dec.v.html#94">.type_0</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#224">inst_1_type</a>),
+<a name="404"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_dec.v.html#96">.type_1</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#225">inst_2_type</a>),
+<a name="405"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_dec.v.html#107">.type_2</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#226">inst_3_type</a>),
+<a name="406"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_dec.v.html#118">.type_3</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#227">inst_4_type</a>) );
+				
+
+<span class=C>// Determine Folding Enable
+</span><span class=C>// Folding is disbaled if:
+</span><span class=C>// 1. iu_psr_fle is 0
+</span><span class=C>// 2. scache_miss  and there's scache access in one or both of RS1 and RS2
+</span><span class=C>// 3. any valid dirty entries in the ibuff
+</span>
+<span class=C>// determine scache miss
+</span><span class=C>// since we dont have time to calculate exact offset and subtract it from lvars and
+</span><span class=C>// then compare it against sc_bottom, we'll use  a littl bit pessimistic approach
+</span>
+<a name="ifu_scache_miss_comp"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p6.html#comp_gr_32">comp_gr_32</a>	scache_miss_comp(<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#133">lvars</a>),
+				<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#132">sc_bottom</a>),
+<a name="421"></a>				<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p6.html#5664">.gr</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#265">scache_miss_int</a>) );
+
+<span class=C>// Qualify scache_miss_int with local var accesses in RS1 and RS2
+</span><span class=C>// to generate actual scache_miss signal
+</span><a name="425"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#266">scache_miss</a> = <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#421">scache_miss_int</a> &amp; (<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#576">lvars_acc_rs1_int</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#582">lvars_acc_rs2_int1</a>);
+
+<span class=C>// If there are any valid dirty entries in the top 7 bytes of ibuffer
+</span><span class=C>// donot fold
+</span>
+<a name="430"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#264">vld_drty_entries</a> = (	(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#123">fetch_valid</a>[0] &amp; <a  onClick="return qs(event,this)" class=SI href="ifu.v.html#122">fetch_drty</a>[0]) | 
+				(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#123">fetch_valid</a>[1] &amp; <a  onClick="return qs(event,this)" class=SI href="ifu.v.html#122">fetch_drty</a>[1]) |
+				(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#123">fetch_valid</a>[2] &amp; <a  onClick="return qs(event,this)" class=SI href="ifu.v.html#122">fetch_drty</a>[2]) |
+				(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#123">fetch_valid</a>[3] &amp; <a  onClick="return qs(event,this)" class=SI href="ifu.v.html#122">fetch_drty</a>[3]) |
+				(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#123">fetch_valid</a>[4] &amp; <a  onClick="return qs(event,this)" class=SI href="ifu.v.html#122">fetch_drty</a>[4]) |
+				(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#123">fetch_valid</a>[5] &amp; <a  onClick="return qs(event,this)" class=SI href="ifu.v.html#122">fetch_drty</a>[5]) |
+				(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#123">fetch_valid</a>[6] &amp; <a  onClick="return qs(event,this)" class=SI href="ifu.v.html#122">fetch_drty</a>[6]) ) ;
+
+<span class=C>// Optimization: Whenever there are no scache accesses in RS1 and RS2
+</span><span class=C>// Ignore scache hit while folding; This will greatly improve the number
+</span><span class=C>// of instructions being folded
+</span>
+<span class=C>// assign	fold_enable = iu_psr_fle &amp; scache_hit &amp; 
+</span><span class=C>// 			!(vld_drty_entries)  &amp;!squash_fold;
+</span>
+<a name="445"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#267">fold_enable</a> = <a  onClick="return qs(event,this)" class=SI href="ifu.v.html#131">iu_psr_fle</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#425">scache_miss</a> &amp;
+ 			!(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#430">vld_drty_entries</a>)  &amp;!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#134">squash_fold</a>;
+
+<span class=C>// Use folding logic to determine how many instructions can be folded
+</span><span class=C>// and what group the folded instructions fall into
+</span><span class=C>// group_1 : LV LV MEM OP
+</span><span class=C>// group_2 : LV LV OP
+</span><span class=C>// group_3 : LV LV BG2
+</span><span class=C>// group_4 : LV OP MEM
+</span><span class=C>// group_5 : LV BG2
+</span><span class=C>// group_6 : LV BG1
+</span><span class=C>// group_7 : LV OP
+</span><span class=C>// group_8 : LV MEM
+</span><span class=C>// group_9 : OP MEM
+</span>
+<a name="ifu_fold_logic"></a><a name="460"></a><a  onClick="return qs(event,this)" class=MM href="fold_logic.v.html#fold_logic">fold_logic</a>	fold_logic (<span class=SI>.F0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#403">inst_1_type</a>),
+<a name="461"></a>				<span class=SI>.F1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#404">inst_2_type</a>),
+<a name="462"></a>				<span class=SI>.F2</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#405">inst_3_type</a>),
+<a name="463"></a>				<span class=SI>.F3</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#406">inst_4_type</a>),
+<a name="464"></a>				<span class=SI>.V0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#377">dec_valid</a>[0]),
+<a name="465"></a>				<span class=SI>.V1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#377">dec_valid</a>[1]),
+<a name="466"></a>				<span class=SI>.V2</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#377">dec_valid</a>[2]),
+<a name="467"></a>				<span class=SI>.V3</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#377">dec_valid</a>[3]),
+<a name="468"></a>				<span class=SI>.FOE</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#445">fold_enable</a>),
+<a name="469"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_logic.v.html#149">.notvalid</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#272">not_valid</a>),
+<a name="470"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_logic.v.html#148">.fold1</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#268">fold_1_inst</a>),
+<a name="471"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_logic.v.html#144">.fold2</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#269">fold_2_inst</a>),
+<a name="472"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_logic.v.html#145">.fold3</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#270">fold_3_inst</a>),
+<a name="473"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_logic.v.html#146">.fold4</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#271">fold_4_inst</a>),
+<a name="474"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_logic.v.html#126">.gr1</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#246">group_1</a>),
+<a name="475"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_logic.v.html#128">.gr2</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#247">group_2</a>),
+<a name="476"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_logic.v.html#130">.gr3</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#248">group_3</a>),
+<a name="477"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_logic.v.html#132">.gr4</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#249">group_4</a>),
+<a name="478"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_logic.v.html#134">.gr5</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#250">group_5</a>),
+<a name="479"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_logic.v.html#136">.gr6</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#251">group_6</a>),
+<a name="480"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_logic.v.html#138">.gr7</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#252">group_7</a>),
+<a name="481"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_logic.v.html#140">.gr8</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#253">group_8</a>),
+<a name="482"></a>				<a  onClick="return qs(event,this)" class=SO href="fold_logic.v.html#142">.gr9</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#254">group_9</a>) );
+
+<span class=C>// Flop the group information
+</span>
+<a name="ifu_flop_gr_1"></a><a name="486"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_gr_1(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#147">group_1_r</a>),
+		<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#474">group_1</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+		<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+			
+<a name="ifu_flop_gr_2"></a><a name="492"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_gr_2(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#148">group_2_r</a>),
+		<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#475">group_2</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+		<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+			
+<a name="ifu_flop_gr_3"></a><a name="498"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_gr_3(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#149">group_3_r</a>),
+		<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#476">group_3</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+		<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+			
+<a name="ifu_flop_gr_4"></a><a name="504"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_gr_4(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#150">group_4_r</a>),
+		<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#477">group_4</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+		<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+			
+<a name="ifu_flop_gr_5"></a><a name="510"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_gr_5(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#151">group_5_r</a>),
+		<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#478">group_5</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+		<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+			
+<a name="ifu_flop_gr_6"></a><a name="516"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_gr_6(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#152">group_6_r</a>),
+		<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#479">group_6</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+		<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+			
+<a name="ifu_flop_gr_7"></a><a name="522"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_gr_7(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#153">group_7_r</a>),
+		<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#480">group_7</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+		<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+			
+<a name="ifu_flop_gr_8"></a><a name="528"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_gr_8(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#154">group_8_r</a>),
+		<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#481">group_8</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+		<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+			
+<a name="ifu_flop_gr_9"></a><a name="534"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_gr_9(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#155">group_9_r</a>),
+		<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#482">group_9</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+		<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+
+<a name="540"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#244">fold</a> = (<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#471">fold_2_inst</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#472">fold_3_inst</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#473">fold_4_inst</a>);
+
+<a name="ifu_flop_fold"></a><a name="542"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_fold(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#157">fold_r</a>),
+		<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#540">fold</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+		<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+			
+<a name="ifu_flop_no_fold"></a><a name="548"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_no_fold(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#156">no_fold_r</a>),
+		<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#470">fold_1_inst</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+		<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+			
+		
+<span class=C>// Instantiate the main decoder which will provide offset_selects for
+</span><span class=C>// rs1, rs2, valids for them, etc ...
+</span>
+<a name="ifu_main_dec"></a><a name="558"></a><a  onClick="return qs(event,this)" class=MM href="main_dec.v.html#main_dec">main_dec</a>	main_dec (<span class=SI>.ibuff_0</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#115">ibuff_0</a>),
+<a name="559"></a>				<span class=SI>.ibuff_1</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#116">ibuff_1</a>),
+<a name="560"></a>				<span class=SI>.ibuff_2</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>),
+<a name="561"></a>				<span class=SI>.ibuff_3</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>),
+<a name="562"></a>				<span class=SI>.ibuff_4</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#119">ibuff_4</a>),
+<a name="563"></a>				<span class=SI>.ibuff_5</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#120">ibuff_5</a>),
+<a name="564"></a>				<span class=SI>.ibuff_6</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#121">ibuff_6</a>),
+<a name="565"></a>				<span class=SI>.fetch_valid</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#123">fetch_valid</a>[6:0]),
+<a name="566"></a>				<span class=SI>.accum_len0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#357">accum_len0</a>),
+<a name="567"></a>				<span class=SI>.accum_len1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#358">accum_len1</a>),
+<a name="568"></a>				<span class=SI>.accum_len2</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#359">accum_len2</a>),
+<a name="569"></a>				<span class=SI>.offset_rsd_ctl</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1039">offset_rsd_ctl</a>),
+<a name="570"></a>				<a  onClick="return qs(event,this)" class=SO href="main_dec.v.html#103">.offset_sel_rs1</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#273">offset_sel_rs1</a>),
+<a name="571"></a>				<a  onClick="return qs(event,this)" class=SO href="main_dec.v.html#102">.valid_rs1</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#245">valid_rs1_int1</a>),
+<a name="572"></a>				<a  onClick="return qs(event,this)" class=SO href="main_dec.v.html#104">.mem_op</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#275">mem_op_rs1</a>),
+<a name="573"></a>				<a  onClick="return qs(event,this)" class=SO href="main_dec.v.html#105">.help_rs1</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#276">help_rs1</a>),
+<a name="574"></a>				<a  onClick="return qs(event,this)" class=SO href="main_dec.v.html#106">.type</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#277">type_rs1</a>),
+<a name="575"></a>				<a  onClick="return qs(event,this)" class=SO href="main_dec.v.html#107">.lv_rs1</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#256">lv_rs1_int</a>),
+<a name="576"></a>				<a  onClick="return qs(event,this)" class=SO href="main_dec.v.html#111">.lvars_acc_rs1</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#257">lvars_acc_rs1_int</a>),
+<a name="577"></a>				<a  onClick="return qs(event,this)" class=SO href="main_dec.v.html#108">.st_index_op_rs1</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#258">st_index_op_rs1</a>),
+<a name="578"></a>				<a  onClick="return qs(event,this)" class=SO href="main_dec.v.html#110">.reverse_ops_rs1</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#241">reverse_ops_rs1</a>),
+<a name="579"></a>				<a  onClick="return qs(event,this)" class=SO href="main_dec.v.html#109">.update_optop</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#242">update_optop</a>),
+<a name="580"></a>				<a  onClick="return qs(event,this)" class=SO href="main_dec.v.html#131">.offset_sel_rs2</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#279">offset_sel_rs2</a>),
+<a name="581"></a>				<a  onClick="return qs(event,this)" class=SO href="main_dec.v.html#138">.lv_rs2</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#261">lv_rs2_int1</a>),
+<a name="582"></a>				<a  onClick="return qs(event,this)" class=SO href="main_dec.v.html#145">.lvars_acc_rs2</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#262">lvars_acc_rs2_int1</a>),
+<a name="583"></a>				<a  onClick="return qs(event,this)" class=SO href="main_dec.v.html#210">.offset_sel_rsd</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#310">offset_sel_rsd</a>) );
+				
+<span class=C>// Whenever there's no foldable inst in the first spot  make lvars_acc_rs2_int1 
+</span><span class=C>// and lv_rs2_int1 zeroes. This is because in case of combinations like lcmp lload 
+</span><span class=C>// or lcmp iload, we have lvars_acc_rs2_int1 and lv_rs2_int1 are high
+</span><span class=C>// To prevent this we and them !(fold_1_inst);
+</span><a name="589"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#263">lvars_acc_rs2_int</a> = <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#582">lvars_acc_rs2_int1</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#470">fold_1_inst</a>;
+<a name="590"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#260">lv_rs2_int</a> = <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#581">lv_rs2_int1</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#470">fold_1_inst</a>;
+
+<span class=C>// Provide opcode, offset, valids, etc .. for RS1 stage
+</span>
+<span class=C>// Opcode first
+</span>
+<span class=C>// Imp. Note1
+</span><span class=C>// Because of some arch. oversight, incase of groups 
+</span><span class=C>// LV LV OP MEM -&gt; gropu 1
+</span><span class=C>// LV LV OP  -&gt; group 2
+</span><span class=C>// LV LV BG2  -&gt; group 3
+</span><span class=C>// We used to use first LV in RS1 and 2nd one in RS2,
+</span><span class=C>// which is not true. It should be otherway around.
+</span><span class=C>// To incorporate this change we flip i/ps to RS1 and RS2
+</span><span class=C>// for these 3 gropus
+</span>
+<a name="606"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#313">swap_rs1_rs2</a>[1] = (<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#474">group_1</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#475">group_2</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#476">group_3</a> );
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#313">swap_rs1_rs2</a>[0] = !<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>[1];
+<a name="ifu_mux_opcode_1_rs1"></a><a name="608"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a>		mux_opcode_1_rs1(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#230">opcode_1_rs1</a>),
+				<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#115">ibuff_0</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#738">rs2_inst_1</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>) );
+
+<a name="ifu_flop_opcode_1_rs1"></a><a name="613"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_opcode_1_rs1(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#158">opcode_1_rs1_r</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#608">opcode_1_rs1</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>));
+
+<a name="ifu_mux_opcode_2_rs1_swap"></a><a name="618"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a>		mux_opcode_2_rs1_swap(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#231">opcode_2_rs1</a>),
+				<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#116">ibuff_1</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#738">rs2_inst_2</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>) );
+
+<a name="ifu_flop_opcode_2_rs1"></a><a name="623"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_opcode_2_rs1(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#159">opcode_2_rs1_r</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#618">opcode_2_rs1</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>));
+
+<span class=C>// Offset now
+</span>
+<a name="ifu_mux_opcode_2_rs1"></a><a name="630"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a>		mux_opcode_2_rs1(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#280">offset_1_rs1</a>),
+				<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#635">offset_1_rs1_int</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#773">offset_1_rs2_int</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>) );
+
+<a name="ifu_mux_offset_rs1"></a><a name="635"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux5_8">mux5_8</a>		mux_offset_rs1 (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5647">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#228">offset_1_rs1_int</a>),
+				<span class=SI>.in0</span>(8'b00000000),
+				<span class=SI>.in1</span>(8'b00000001),
+				<span class=SI>.in2</span>(8'b00000010),
+				<span class=SI>.in3</span>(8'b00000011),
+				<span class=SI>.in4</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#116">ibuff_1</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#570">offset_sel_rs1</a>) );
+
+<a name="ifu_flop_offset_1_rs1"></a><a name="643"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_offset_1_rs1(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#160">offset_1_rs1_r</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#630">offset_1_rs1</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>));
+
+<a name="ifu_mux_offset_2_rs2_swap"></a><a name="648"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a>		mux_offset_2_rs2_swap(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#282">offset_2_rs1</a>),
+				<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#738">rs2_inst_3</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>) );
+
+<a name="ifu_flop_offset_2_rs1"></a><a name="653"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_offset_2_rs1(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#161">offset_2_rs1_r</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#648">offset_2_rs1</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>));
+
+<span class=C>// valid, dup, type, help, etc .. for RS1 stage
+</span>
+<span class=C>// Look at Imp. Note1
+</span><span class=C>// Whenever there's a kill_vld_d signal is there, kill all valids
+</span><span class=C>// Also propogate these valids even when there is hold_r
+</span><a name="663"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#255">valid_rs1_int</a> = <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#571">valid_rs1_int1</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>;
+
+<a name="ifu_mux_valid_rs1"></a><a name="665"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux2">mux2</a>	mux_valid_rs1 (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4203">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#274">valid_rs1</a>),
+			<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#663">valid_rs1_int</a>),
+			<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#799">valid_rs2_int</a>),
+			<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>) );
+
+<a name="ifu_flop_valid_rs1"></a><a name="670"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_valid_rs1 (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#162">valid_rs1_r</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#665">valid_rs1</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>));
+			
+
+<a name="ifu_flop_help_rs1"></a><a name="677"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_help_rs1 (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#163">help_rs1_r</a>),
+			<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#573">help_rs1</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>));
+
+<a name="ifu_mux_lv_rs1"></a><a name="683"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux2">mux2</a>    mux_lv_rs1 (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4203">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#278">lv_rs1</a>),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#575">lv_rs1_int</a>),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#590">lv_rs2_int</a>),
+                        <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>) );
+ 
+<a name="ifu_flop_lv_rs1"></a><a name="688"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_lv_rs1 (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#164">lv_rs1_r</a>),
+			<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#683">lv_rs1</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>));
+
+<span class=C>// Look at Imp. Note1
+</span><a name="ifu_mux_lvacc_rs1"></a><a name="695"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux2">mux2</a>    mux_lvacc_rs1 (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4203">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#321">lvars_acc_rs1</a>),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#576">lvars_acc_rs1_int</a>),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#589">lvars_acc_rs2_int</a>),
+                        <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>) );
+ 
+
+<a name="ifu_flop_lv_acc_rs1"></a><a name="701"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_lv_acc_rs1 (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#178">lvars_acc_rs1_r</a>),
+			<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#695">lvars_acc_rs1</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>));
+
+<a name="ifu_flop_type_rs1"></a><a name="707"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_8">ff_sre_8</a>	flop_type_rs1 (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4770">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#166">type_rs1_r</a>),
+			<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#574">type_rs1</a>&amp;{8{!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>}})),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>));
+
+<a name="ifu_flop_rev_ops"></a><a name="713"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>		flop_rev_ops (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#180">reverse_ops_rs1_r</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#578">reverse_ops_rs1</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>));
+
+<a name="ifu_flop_st_op"></a><a name="719"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>		flop_st_op (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#179">st_index_op_rs1_r</a>),
+			<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#577">st_index_op_rs1</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+
+<a name="ifu_flop_optop"></a><a name="725"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>		flop_optop (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#181">update_optop_r</a>),
+			<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#579">update_optop</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+
+<span class=C>// Opcode, offset, valid for RS2 stage
+</span>
+<span class=C>// opcode first
+</span>
+<span class=C>// Depending on the length of the first instruction, select the first three
+</span><span class=C>// bytes of the instr. which will go into RS2 
+</span>
+<a name="ifu_mux_rs2_inst"></a><a name="738"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux4_24">mux4_24</a>		mux_rs2_inst ( <a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5854">.out</a>({<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#300">rs2_inst_1</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#301">rs2_inst_2</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#302">rs2_inst_3</a>}),
+				<span class=SI>.in0</span>(24'b0),
+				<span class=SI>.in1</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#116">ibuff_1</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>}),
+				<span class=SI>.in2</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#119">ibuff_4</a>}),
+				<span class=SI>.in3</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#119">ibuff_4</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#120">ibuff_5</a>}),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#357">accum_len0</a>[3:0]) );
+
+<span class=C>//See note Imp. Note1
+</span><a name="ifu_mux_opcode_1_rs2"></a><a name="746"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a>		mux_opcode_1_rs2(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#232">opcode_1_rs2</a>),
+				<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#738">rs2_inst_1</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#115">ibuff_0</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>) );
+
+<a name="ifu_flop_opcode_1_rs2"></a><a name="751"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_opcode_1_rs2(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#182">opcode_1_rs2_r</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#746">opcode_1_rs2</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>));
+
+<a name="ifu_mux_opcode_2_rs2_swap"></a><a name="756"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a>		mux_opcode_2_rs2_swap(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#233">opcode_2_rs2</a>),
+				<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#738">rs2_inst_2</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#116">ibuff_1</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>) );
+
+<a name="ifu_flop_opcode_2_rs2"></a><a name="761"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_opcode_2_rs2(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#183">opcode_2_rs2_r</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#756">opcode_2_rs2</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>));
+
+<span class=C>// Offset now
+</span>
+<a name="ifu_mux_offset_2_rs2"></a><a name="768"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a>		mux_offset_2_rs2(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#281">offset_1_rs2</a>),
+				<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#773">offset_1_rs2_int</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#635">offset_1_rs1_int</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>) );
+
+<a name="ifu_mux_offset_rs2"></a><a name="773"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux5_8">mux5_8</a>		mux_offset_rs2 (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5647">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#229">offset_1_rs2_int</a>),
+				<span class=SI>.in0</span>(8'b00000000),
+				<span class=SI>.in1</span>(8'b00000001),
+				<span class=SI>.in2</span>(8'b00000010),
+				<span class=SI>.in3</span>(8'b00000011),
+				<span class=SI>.in4</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#738">rs2_inst_2</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#580">offset_sel_rs2</a>) );
+
+<a name="ifu_flop_offset_1_rs2"></a><a name="781"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_offset_1_rs2(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#184">offset_1_rs2_r</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#768">offset_1_rs2</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>));
+
+<a name="ifu_mux_opcode_2_rs2"></a><a name="786"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a>		mux_opcode_2_rs2(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#283">offset_2_rs2</a>),
+				<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#738">rs2_inst_3</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>) );
+
+<a name="ifu_flop_offset_2_rs2"></a><a name="791"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_offset_2_rs2(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#185">offset_2_rs2_r</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#786">offset_2_rs2</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>));
+
+<span class=C>// Valid: There's a valid RS2 only for the groups, g1, g2 and g3
+</span><span class=C>// Whenever there's a kill_vld_d signal is there, kill all valids
+</span><span class=C>// Also propogate these valids even when there is hold_r
+</span><a name="799"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#259">valid_rs2_int</a> =	(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#474">group_1</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#475">group_2</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#476">group_3</a>) &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a> ;
+
+<span class=C>// Look at Imp. Note1
+</span><a name="ifu_mux_valid_rs2"></a><a name="802"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux2">mux2</a>    mux_valid_rs2 (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4203">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#284">valid_rs2</a>),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#799">valid_rs2_int</a>),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#663">valid_rs1_int</a>),
+                        <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>) );
+ 
+
+
+<a name="ifu_flop_vld_rs2"></a><a name="809"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>   flop_vld_rs2 (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#186">valid_rs2_r</a>),
+                        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#802">valid_rs2</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>));
+
+<a name="ifu_mux_lv_rs2"></a><a name="815"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux2">mux2</a>    mux_lv_rs2 (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4203">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#320">lv_rs2</a>),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#590">lv_rs2_int</a>),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#575">lv_rs1_int</a>),
+                        <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>) );
+ 
+<a name="ifu_flop_lv_rs2"></a><a name="820"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_lv_rs2 (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#187">lv_rs2_r</a>),
+			<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#815">lv_rs2</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>));
+
+
+<span class=C>// Look at Imp. Note1
+</span><a name="ifu_mux_lvacc_rs2"></a><a name="828"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux2">mux2</a>    mux_lvacc_rs2 (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4203">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#322">lvars_acc_rs2</a>),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#589">lvars_acc_rs2_int</a>),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#576">lvars_acc_rs1_int</a>),
+                        <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#606">swap_rs1_rs2</a>) );
+
+<a name="ifu_flop_lvars_acc_rs2"></a><a name="833"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_lvars_acc_rs2 (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#188">lvars_acc_rs2_r</a>),
+                        <span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#828">lvars_acc_rs2</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)), 
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>));
+
+
+
+
+<span class=C>// Opcode and valid for operation stage
+</span>
+<span class=C>// Depending on Folding groups, op can be either the 1st,2nd or 3rd inst.
+</span><span class=C>// in the group.
+</span>
+<span class=C>// For groups 1..3, op will be the third inst.
+</span>
+<a name="849"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#285">op_sel</a>[2] = (<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#474">group_1</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#475">group_2</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#476">group_3</a>);
+
+<span class=C>// For groups 4..8, op will be the 2nd inst.
+</span>
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#285">op_sel</a>[1] = (<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#477">group_4</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#478">group_5</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#479">group_6</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#480">group_7</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#481">group_8</a>);
+
+<span class=C>// Select the 1st inst. otherwise
+</span>
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#285">op_sel</a>[0] = !(|<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#849">op_sel</a>[2:1]);
+
+<span class=C>// opcode_inst2_1 will be opcode's first byte if the op. is 2nd inst and so-on
+</span>
+<a name="ifu_mux_op_2"></a><a name="861"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux4_24">mux4_24</a>		mux_op_2 (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5854">.out</a>({<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#286">opcode_inst2_1</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#287">opcode_inst2_2</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#288">opcode_inst2_3</a>}),
+				<span class=SI>.in0</span>(24'b0),
+				<span class=SI>.in1</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#116">ibuff_1</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>}),
+				<span class=SI>.in2</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#119">ibuff_4</a>}),
+				<span class=SI>.in3</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#119">ibuff_4</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#120">ibuff_5</a>}),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#357">accum_len0</a>[3:0]) );
+
+<span class=C>// opcode_inst3_1 will be opcode's first byte if the op. is 3nd inst and so-on
+</span>
+<a name="ifu_mux_op_3"></a><a name="870"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux8_24">mux8_24</a>		mux_op_3 (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5899">.out</a>({<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#289">opcode_inst3_1</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#290">opcode_inst3_2</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#291">opcode_inst3_3</a>}),
+				<span class=SI>.in0</span>(24'b0),
+				<span class=SI>.in1</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#116">ibuff_1</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>}),
+				<span class=SI>.in2</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#119">ibuff_4</a>}),
+				<span class=SI>.in3</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#119">ibuff_4</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#120">ibuff_5</a>}),
+				<span class=SI>.in4</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#119">ibuff_4</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#120">ibuff_5</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#121">ibuff_6</a>}),
+				<span class=SI>.in5</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#120">ibuff_5</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#121">ibuff_6</a>,8'b0}),
+				<span class=SI>.in6</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#121">ibuff_6</a>,16'b0}),
+				<span class=SI>.in7</span>({24'b0}),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#358">accum_len1</a>) );
+
+
+<span class=C>// Now select either the 1st, 2nd or 3rd as op.
+</span>
+<a name="ifu_mux_op"></a><a name="884"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux3_24">mux3_24</a>		mux_op (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5814">.out</a>({<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#295">opcode_1_op</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#296">opcode_2_op</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#297">opcode_3_op</a>}),
+<a name="885"></a>			<span class=SI>.in0</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#115">ibuff_0</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#116">ibuff_1</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>}),
+<a name="886"></a>			<span class=SI>.in1</span>({<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#861">opcode_inst2_1</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#861">opcode_inst2_2</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#861">opcode_inst2_3</a>}),
+<a name="887"></a>			<span class=SI>.in2</span>({<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#870">opcode_inst3_1</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#870">opcode_inst3_2</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#870">opcode_inst3_3</a>}),
+<a name="888"></a>			<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#849">op_sel</a>) );
+
+<span class=C>// Whenever there's trap_c, we need to reset the opcode 1 of OP to NOP
+</span><span class=C>// This is because trap_r signal (delayed by one flop wrt trap_c) activates
+</span><span class=C>// the valid_op_r in R-stage and the opcode in R when it goes to E will be
+</span><span class=C>// treated as a genuine one.
+</span>
+<a name="ifu_flop_opcode_1_op"></a><a name="895"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_8">ff_sre_8</a>		flop_opcode_1_op (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4770">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#234">opcode_1_op_r_gen</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#884">opcode_1_op</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>),
+					<span class=SI>.reset_l</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#142">iu_trap_c</a>));
+
+<span class=C>// Replicating opcode_1_op_r_gen to improve timing 
+</span>
+<a name="903"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#189">opcode_1_op_r_rcu</a>   =	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#895">opcode_1_op_r_gen</a>;
+<a name="904"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#190">opcode_1_op_r_ex</a>    =	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#895">opcode_1_op_r_gen</a>;
+<a name="905"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#191">opcode_1_op_r_fpu</a>   =	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#895">opcode_1_op_r_gen</a>;
+<a name="906"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#192">opcode_1_op_r_ucode</a> =	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#895">opcode_1_op_r_gen</a>;
+
+<a name="ifu_flop_opcode_2_op"></a><a name="908"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_opcode_2_op (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#193">opcode_2_op_r</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#884">opcode_2_op</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>));
+
+<a name="ifu_flop_opcode_3_op"></a><a name="913"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_opcode_3_op (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#194">opcode_3_op_r</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#884">opcode_3_op</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>));
+
+<a name="ifu_flop_opcode_4_op"></a><a name="918"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_opcode_4_op (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#195">opcode_4_op_r</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>));
+
+<a name="ifu_flop_opcode_5_op"></a><a name="923"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_opcode_5_op (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#196">opcode_5_op_r</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#119">ibuff_4</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>));
+
+<span class=C>// If there's a folded instr or even just dispatching 1 instr., vaild for op
+</span><span class=C>// should be high
+</span>
+<span class=C>// Whenever there's a kill_vld_d signal is there, kill all valids
+</span><span class=C>// Also propogate all these valids even in the presence of hold_r
+</span><a name="933"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#298">valid_op</a> = <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#377">dec_valid</a>[0] &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>;
+
+<span class=C>// Replicating valid_op_r to improve timing 
+</span>
+<a name="ifu_flop_vld_op_rcu"></a><a name="937"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_vld_op_rcu (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#200">valid_op_r_rcu</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#933">valid_op</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>));
+
+<a name="ifu_flop_vld_op_ucode"></a><a name="943"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_vld_op_ucode (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#201">valid_op_r_ucode</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#933">valid_op</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>));
+
+<a name="ifu_flop_vld_op_gen"></a><a name="949"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_vld_op_gen (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#240">valid_op_r_gen</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#933">valid_op</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>));
+
+<span class=C>// valid_op_r_ex,fgu and pipe are not very critical, so we dont use separate flops to
+</span><span class=C>// generate them
+</span>
+<a name="958"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#203">valid_op_r_ex</a>	= <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#949">valid_op_r_gen</a>;
+<a name="959"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#202">valid_op_r_pipe</a>	= <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#949">valid_op_r_gen</a>;
+<a name="960"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#204">valid_op_r_fpu</a>	= <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#949">valid_op_r_gen</a>;
+
+<span class=C>// Generate offset from PC, where OP is there.
+</span><span class=C>// This is because: For
+</span><span class=C>// LV LV JMP02 X, we need to know the the pc location where JMP02 is there,
+</span><span class=C>// so that the offset (02) acn be added to it to generate the destination address
+</span><span class=C>// In case of no folding, PC of the first inst. is the pc of branch
+</span><span class=C>// Incase of folding 2, use accum_len0 as the offset and so-on
+</span>
+<a name="ifu_mux_offset_br"></a><a name="969"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux3_8">mux3_8</a>		mux_offset_br(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5597">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#311">offset_pc_br_dec</a>),
+				<span class=SI>.in0</span>(8'b00000001),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#357">accum_len0</a>),
+				<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#358">accum_len1</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#849">op_sel</a>) );
+
+<span class=C>// encode the pc_br into 4-bits
+</span>
+<a name="977"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#312">offset_pc_br</a>[2] = (<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#969">offset_pc_br_dec</a>[4] | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#969">offset_pc_br_dec</a>[5] |
+			   <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#969">offset_pc_br_dec</a>[6] | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#969">offset_pc_br_dec</a>[7] );
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#312">offset_pc_br</a>[1] = (<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#969">offset_pc_br_dec</a>[2] | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#969">offset_pc_br_dec</a>[3] |
+			   <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#969">offset_pc_br_dec</a>[6] | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#969">offset_pc_br_dec</a>[7] );
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#312">offset_pc_br</a>[0] = (<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#969">offset_pc_br_dec</a>[1] | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#969">offset_pc_br_dec</a>[3] |
+			   <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#969">offset_pc_br_dec</a>[5] | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#969">offset_pc_br_dec</a>[7] );
+
+<a name="ifu_flop_offset_br"></a><a name="984"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_3">ff_sre_3</a>		flop_offset_br (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4690">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#210">offset_pc_br_r</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#977">offset_pc_br</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+				<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+
+<span class=C>// Opcode, offset and valid for RSd stage
+</span>
+<span class=C>// opcode first
+</span><span class=C>// opcode for RSd can be 
+</span><span class=C>// . 4th instr for group_1
+</span><span class=C>// . 3rd instr for group_4
+</span><span class=C>// . 2nd instr for groups 8 &amp; 9
+</span><span class=C>// . 1st otherwise
+</span>
+<a name="999"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#303">opcode_sel_rsd</a>[3] = <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#474">group_1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#303">opcode_sel_rsd</a>[2] = <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#477">group_4</a>;
+</pre>
+<center><table class=NB cols=3 nosave><tr><td align="center"><a  href="ifu.v.p2.html">Next</a></td><td align="center"><font color="#808080">1</font></td><td align="center"><a  href="ifu.v.p2.html">2</a></td></tr></table></center>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return "ifu.v.p2.html"; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:45:06 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ifu/rtl/ifu.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/sim/env/sys.v page 2</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return "sys.v.html"; }
+function last_page() { return ""; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<center><table class=NB cols=3 nosave><tr><td align="center"><a  href="sys.v.html#bottom_of_page">Prev</a></td><td align="center"><a  href="sys.v.html">1</a></td><td align="center"><font color="#808080">2</font></td></tr></table></center>
+<pre>
+<span class=C>// picoJavaII RTL core
+</span>   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>        <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="sys.h.html#76">DESIGN</a>(
+        .pj_su(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#108">pj_su</a>),
+        .pj_boot8(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#98">pj_boot8</a>),
+        .pj_no_fpu(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#99">pj_no_fpu</a>),
+        .pj_brk1_sync(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#120">pj_brk1_sync</a>),
+        .pj_brk2_sync(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#121">pj_brk2_sync</a>),
+        .pj_in_halt(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#122">pj_in_halt</a>),
+        .pj_inst_complete(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#123">pj_inst_complete</a>),
+        .pj_halt(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#160">pj_halt_in</a>),
+        .pj_resume(<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1107">pj_resume</a>),
+        .pj_irl(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#114">pj_irl</a>),
+        .pj_nmi(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#113">pj_nmi</a>),
+<span class=C>//        .pj_standby(pj_standby),
+</span>        .pj_standby_out(pj_standby_out),
+        .sm(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#100">pj_scan_mode</a>),
+        .sin(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#101">pj_scan_in</a>),
+        .so(pj_scan_out),
+        .pj_clk_out(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#138">pj_clk_out</a>),
+        .clk(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#103">pj_clk</a>),
+        .pj_reset_out(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#117">pj_reset_out</a>),
+        .reset_l(!<a  onClick="return qs(event,this)" class=SR href="sys.v.html#97">pj_reset</a>),
+
+        .pj_dcureq(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#132">pj_dcureq</a>),
+        .pj_dcusize(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#135">pj_dcusize</a>[1:0]),
+        .pj_dcutype(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#134">pj_dcutype</a>[2:0]),
+        .pj_dcuaddr(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#133">pj_dcuaddr</a>[31:0]),
+        .pj_dataout(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#137">pj_dataout</a>[31:0]),
+        .pj_dcuack(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#136">pj_dcuack</a>[1:0]),
+        .pj_icureq(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#126">pj_icureq</a>),
+        .pj_icusize(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#129">pj_icusize</a>[1:0]),
+        .pj_icutype(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#128">pj_icutype</a>),
+        .pj_icuaddr(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#127">pj_icuaddr</a>[31:0]),
+        .pj_icuack(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#130">pj_icuack</a>[1:0]),
+        .pj_datain(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#131">pj_datain</a>[31:0]),
+
+        <span class=C>// The following are dummy ports for performance counter
+</span>        .pj_perf_sgnl(),
+
+        <span class=C>// These are ports for test purpose, they are set to non-test mode
+</span>        <span class=C>// now, so it shouldn't affect picoJavaII simulation. 
+</span>        .dc_test_err_l(),
+        .dt_test_err_l(),
+        .ic_test_err_l(),
+        .it_test_err_l(),
+        .bist_mode(2'b0),
+        .bist_reset(1'b0),
+        .test_mode(1'b0)
+
+);
+
+
+
+<span class=C>// Module BIU [Bus Interface Unit]
+</span><a name="picoJavaII_biu"></a><a  onClick="return qs(event,this)" class=MM href="biu.v.html#biu">biu</a>             biu (
+<a name="1056"></a>        <span class=SI>.icu_req</span>                (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#126">pj_icureq</a>),
+<a name="1057"></a>        <span class=SI>.icu_addr</span>               (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#127">pj_icuaddr</a>[31:0]),
+<a name="1058"></a>        <span class=SI>.icu_type</span>               ({2'b00,<a  onClick="return qs(event,this)" class=SW href="sys.v.html#128">pj_icutype</a>,1'b0}),
+<a name="1059"></a>        <span class=SI>.icu_size</span>               (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#129">pj_icusize</a>[1:0]),
+<a name="1060"></a>        <a  onClick="return qs(event,this)" class=SO href="biu.v.html#86">.biu_icu_ack</a>            (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#130">pj_icuack</a>[1:0]),
+<a name="1061"></a>        <a  onClick="return qs(event,this)" class=SO href="biu.v.html#108">.biu_data</a>               (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#131">pj_datain</a>[31:0]),
+<a name="1062"></a>        <span class=SI>.dcu_req</span>                (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#132">pj_dcureq</a>),
+<a name="1063"></a>        <span class=SI>.dcu_addr</span>               (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#133">pj_dcuaddr</a>[31:0]),
+<a name="1064"></a>        <span class=SI>.dcu_type</span>               ({<a  onClick="return qs(event,this)" class=SW href="sys.v.html#134">pj_dcutype</a>[2],<a  onClick="return qs(event,this)" class=SW href="sys.v.html#132">pj_dcureq</a>,<a  onClick="return qs(event,this)" class=SW href="sys.v.html#134">pj_dcutype</a>[1:0]}),
+<a name="1065"></a>        <span class=SI>.dcu_size</span>               (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#135">pj_dcusize</a>[1:0]),
+<a name="1066"></a>        <span class=SI>.dcu_dataout</span>            (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#137">pj_dataout</a>[31:0]),
+<a name="1067"></a>        <a  onClick="return qs(event,this)" class=SO href="biu.v.html#90">.biu_dcu_ack</a>            (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#136">pj_dcuack</a>[1:0]),
+<a name="1068"></a>        <span class=SI>.clk</span>                    (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#138">pj_clk_out</a>),
+<a name="1069"></a>        <span class=SI>.reset_l</span>                 (~<a  onClick="return qs(event,this)" class=SR href="sys.v.html#653">pj_reset</a>),
+<a name="1070"></a>        <a  onClick="return qs(event,this)" class=SO href="biu.v.html#80">.pj_addr</a>                (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#119">pj_address</a>[29:0]),
+<a name="1071"></a>        <a  onClick="return qs(event,this)" class=SO href="biu.v.html#111">.pj_data_out</a>            (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#118">pj_data_out</a>[31:0]),
+<a name="1072"></a>        <span class=SI>.pj_data_in</span>             (<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1088">pj_data_in</a>[31:0]),
+<a name="1073"></a>        <a  onClick="return qs(event,this)" class=SO href="biu.v.html#93">.pj_tv</a>                  (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#109">pj_tv</a>),
+<a name="1074"></a>        <a  onClick="return qs(event,this)" class=SO href="biu.v.html#95">.pj_size</a>                (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#111">pj_size</a>[1:0]),
+<a name="1075"></a>        <a  onClick="return qs(event,this)" class=SO href="biu.v.html#101">.pj_ale</a>                 (<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1075">pj_ale</a><a  href="hierarchy-s.p14.html#pj_ale___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>),
+<a name="1076"></a>        <a  onClick="return qs(event,this)" class=SO href="biu.v.html#94">.pj_type</a>                (<a  onClick="return qs(event,this)" class=SW href="sys.v.html#110">pj_type</a>[3:0]),
+<a name="1077"></a>        <span class=SI>.pj_ack</span>                 (<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1093">pj_ack</a>[1:0]),
+        <span class=SI>.sin</span>                    (),
+        <a  onClick="return qs(event,this)" class=SO href="biu.v.html#75">.so</a>                   	(),
+        <span class=SI>.sm</span>                         (1'b0)
+        );
+
+
+<span class=C>// memory controller
+</span>
+<a name="picoJavaII_memc"></a><a name="1086"></a><a  onClick="return qs(event,this)" class=MM href="memc.v.html#memc">memc</a>        memc(<span class=SI>.decaf_clk</span>(<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1108">pj_clk</a>),
+<a name="1087"></a>        <span class=SI>.mem_data_bus_in</span>(<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1071">pj_data_out</a>[31:0]),
+<a name="1088"></a>        <a  onClick="return qs(event,this)" class=SO href="memc.v.html#48">.mem_data_bus_out</a>(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#102">pj_data_in</a>[31:0]),
+<a name="1089"></a>        <span class=SI>.mem_addr_bus</span>({2'b0, <a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1070">pj_address</a>[29:0]}),
+<a name="1090"></a>        <span class=SI>.mem_size</span>(<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1074">pj_size</a>[1:0]),
+<a name="1091"></a>        <span class=SI>.mem_type</span>(<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1076">pj_type</a>[3:0]),
+<a name="1092"></a>        <span class=SI>.mem_tv</span>(<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1073">pj_tv</a>),
+<a name="1093"></a>        <a  onClick="return qs(event,this)" class=SO href="memc.v.html#69">.mem_ack</a>(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#106">pj_ack</a>[1:0]),
+<a name="1094"></a>        <span class=SI>.reset</span>(<a  onClick="return qs(event,this)" class=SR href="sys.v.html#653">pj_reset</a>)
+);
+
+<span class=C>// recorder
+</span><a name="picoJavaII_picoJavaII_pin_recorder"></a><a  onClick="return qs(event,this)" class=MM href="picoJavaII_pin_recorder.v.html#picoJavaII_pin_recorder">picoJavaII_pin_recorder</a> picoJavaII_pin_recorder();
+
+
+<span class=C>// monitors
+</span><a name="picoJavaII_monitor"></a><a  onClick="return qs(event,this)" class=MM href="monitor.v.html#monitor">monitor</a>  monitor(
+<a name="1103"></a>        <a  onClick="return qs(event,this)" class=SO href="monitor.v.html#93">.pj_standby</a>		(<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1103">pj_standby</a><a  href="hierarchy-s.p14.html#pj_standby___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>),
+<a name="1104"></a>        <a  onClick="return qs(event,this)" class=SO href="monitor.v.html#92">.pj_nmi</a>			(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#113">pj_nmi</a>),
+<a name="1105"></a>        <a  onClick="return qs(event,this)" class=SO href="monitor.v.html#91">.pj_irl</a>			(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#114">pj_irl</a>[3:0]),
+<a name="1106"></a>        <a  onClick="return qs(event,this)" class=SO href="monitor.v.html#110">.pj_halt</a>		(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#159">pj_halt</a>),
+<a name="1107"></a>        <a  onClick="return qs(event,this)" class=SO href="monitor.v.html#111">.pj_resume</a>		(<a  onClick="return qs(event,this)" class=SW href="sys.v.p2.html#1107">pj_resume</a><a  href="hierarchy-s.p14.html#pj_resume___picoJavaII"><IMG align=top border=0 SRC="v2html-i.gif"></a>),
+<a name="1108"></a>        <a  onClick="return qs(event,this)" class=SO href="monitor.v.html#116">.pj_clk</a>			(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#103">pj_clk</a>),
+<a name="1109"></a>        <a  onClick="return qs(event,this)" class=SO href="monitor.v.html#51">.monitor_end_sim</a>	(<a  onClick="return qs(event,this)" class=SW href="sys.v.html#55">monitor_end_sim</a>)
+);
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=2 nosave><tr><td align="center"><a  href="sys.v.html">1</a></td><td align="center"><font color="#808080">2</font></td></tr></table></center>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return "sys.v.html"; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:07 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/sim/env/sys.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

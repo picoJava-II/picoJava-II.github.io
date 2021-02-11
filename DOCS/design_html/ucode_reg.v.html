@@ -1,0 +1,326 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ucode/rtl/ucode_reg.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "ucode_reg.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<a name="ucode_reg"></a><a  href="ucode_dpath.v.html#ucode_dpath_ucode_reg_0"><IMG alt="[Up: ucode_dpath ucode_reg_0]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>ucode_reg</span><a  href="hierarchy-m.p4.html#ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+                             <a  onClick="return qs(event,this)" class=SI href="#58">rom_fxx</a>,
+                             <a  onClick="return qs(event,this)" class=SI href="#60">ie_stall_ucode</a>,
+                             <a  onClick="return qs(event,this)" class=SI href="#61">sel_fxx_default</a>,
+                             <a  onClick="return qs(event,this)" class=SI href="#62">u_abt_cur</a>,
+                             <a  onClick="return qs(event,this)" class=SI href="#64">sm</a>,
+                             <a  onClick="return qs(event,this)" class=SI href="#65">sin</a>,
+                             <a  onClick="return qs(event,this)" class=SI href="#66">clk</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#69">so</a>,
+		     	     <a  onClick="return qs(event,this)" class=SI href="#67">test_mode</a>, 
+                             <a  onClick="return qs(event,this)" class=SO href="#71">u_f00</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#72">u_f01</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#73">u_f02</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#74">u_f03</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#75">u_f04</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#76">u_f05</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#77">u_f06</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#78">u_f07</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#79">u_f08</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#80">u_f09</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#81">u_f10</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#82">u_f11</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#83">u_f12</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#84">u_f13</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#85">u_f14</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#86">u_f15</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#87">u_f16</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#88">u_f17</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#89">u_f18</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#90">u_f19</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#91">u_f20</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#92">u_f21</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#93">u_f22</a>,
+                             <a  onClick="return qs(event,this)" class=SO href="#94">u_f23</a> 
+                            );
+
+<a name="58"></a><span class=K>input</span> [(<span class=D>`USED_BITS</span>-1):0] <a  onClick="return qs(event,this)" class=SI href="ucode_dpath.v.html#220">rom_fxx</a><a  href="hierarchy-s.p15.html#rom_fxx___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  <span class=C>// actual used rom data_out
+</span>
+<a name="60"></a><span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="ucode_dpath.v.html#221">ie_stall_ucode</a><a  href="hierarchy-s.p9.html#ie_stall_ucode___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// IE unit holds off ucode execution
+</span><a name="61"></a><span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="ucode_dpath.v.html#222">sel_fxx_default</a><a  href="hierarchy-s.p16.html#sel_fxx_default___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    <span class=C>// an ucode exception to squash all ucode ctrls
+</span><a name="62"></a><span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="ucode_dpath.v.html#223">u_abt_cur</a><a  href="hierarchy-s.p18.html#u_abt_cur___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// abort current read/write requested by ucode
+</span>
+<a name="64"></a><span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="#64">sm</a><a  href="hierarchy-s.p16.html#sm___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                 <span class=C>// register scan mode
+</span><a name="65"></a><span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="#65">sin</a><a  href="hierarchy-s.p16.html#sin___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// register scan_input
+</span><a name="66"></a><span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="ucode_dpath.v.html#226">clk</a><a  href="hierarchy-s.p3.html#clk___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                <span class=C>// clock
+</span><a name="67"></a><span class=K>input</span>	       <a  onClick="return qs(event,this)" class=SI href="ucode_dpath.v.html#228">test_mode</a><a  href="hierarchy-s.p17.html#test_mode___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// test mode 
+</span>
+<a name="69"></a><span class=K>output</span>         <a  onClick="return qs(event,this)" class=SO href="#69">so</a><a  href="hierarchy-s.p16.html#so___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                 <span class=C>// register scan_output
+</span>
+<a name="71"></a><span class=K>output</span>   [1:0] <a  onClick="return qs(event,this)" class=SO href="#142">u_f00</a><a  href="hierarchy-s.p18.html#u_f00___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// field_00: IU_zero_comparator
+</span><a name="72"></a><span class=K>output</span>   [2:0] <a  onClick="return qs(event,this)" class=SO href="#142">u_f01</a><a  href="hierarchy-s.p18.html#u_f01___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_01: Ucode and StacK         WT
+</span><a name="73"></a><span class=K>output</span>   [1:0] <a  onClick="return qs(event,this)" class=SO href="#142">u_f02</a><a  href="hierarchy-s.p18.html#u_f02___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_02: Ucode and Stack         RD
+</span><a name="74"></a><span class=K>output</span>   [1:0] <a  onClick="return qs(event,this)" class=SO href="#204">u_f03</a><a  href="hierarchy-s.p18.html#u_f03___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_03: Ucode and Data_cache
+</span><a name="75"></a><span class=K>output</span>   [6:0] <a  onClick="return qs(event,this)" class=SO href="#142">u_f04</a><a  href="hierarchy-s.p18.html#u_f04___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_04: Ucode and Architech_reg RD
+</span><a name="76"></a><span class=K>output</span>   [2:0] <a  onClick="return qs(event,this)" class=SO href="#142">u_f05</a><a  href="hierarchy-s.p18.html#u_f05___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_05: Ucode and Architech_reg WT
+</span><a name="77"></a><span class=K>output</span>   [3:0] <a  onClick="return qs(event,this)" class=SO href="#142">u_f06</a><a  href="hierarchy-s.p18.html#u_f06___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_06: Integer Unit ALU a_operand
+</span><a name="78"></a><span class=K>output</span>   [2:0] <a  onClick="return qs(event,this)" class=SO href="#142">u_f07</a><a  href="hierarchy-s.p18.html#u_f07___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_07: Integer Unit ALU b_operand
+</span><a name="79"></a><span class=K>output</span>   [2:0] <a  onClick="return qs(event,this)" class=SO href="#143">u_f08</a><a  href="hierarchy-s.p18.html#u_f08___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_08: Read_port_A of temp_regs
+</span><a name="80"></a><span class=K>output</span>   [2:0] <a  onClick="return qs(event,this)" class=SO href="#143">u_f09</a><a  href="hierarchy-s.p18.html#u_f09___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_09: Read_port_B of temp_regs
+</span><a name="81"></a><span class=K>output</span>   [2:0] <a  onClick="return qs(event,this)" class=SO href="#143">u_f10</a><a  href="hierarchy-s.p18.html#u_f10___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_10: Write_port_A of temp_reg SEL
+</span><a name="82"></a><span class=K>output</span>   [2:0] <a  onClick="return qs(event,this)" class=SO href="#143">u_f11</a><a  href="hierarchy-s.p18.html#u_f11___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_11: Write_port_A of temp_reg WT
+</span><a name="83"></a><span class=K>output</span>   [1:0] <a  onClick="return qs(event,this)" class=SO href="#143">u_f12</a><a  href="hierarchy-s.p18.html#u_f12___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_12: Write_port_B0 of temp_reg SEL
+</span><a name="84"></a><span class=K>output</span>   [1:0] <a  onClick="return qs(event,this)" class=SO href="#143">u_f13</a><a  href="hierarchy-s.p18.html#u_f13___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_13: Write_port_B1 of temp_reg SEL
+</span><a name="85"></a><span class=K>output</span>   [1:0] <a  onClick="return qs(event,this)" class=SO href="#143">u_f14</a><a  href="hierarchy-s.p18.html#u_f14___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_14: Write_port_B0 of temp_reg WT
+</span><a name="86"></a><span class=K>output</span>         <a  onClick="return qs(event,this)" class=SO href="#143">u_f15</a><a  href="hierarchy-s.p18.html#u_f15___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_15: Write_port_B1 of temp_reg WT
+</span><a name="87"></a><span class=K>output</span>   [1:0] <a  onClick="return qs(event,this)" class=SO href="#144">u_f16</a><a  href="hierarchy-s.p18.html#u_f16___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Field_16: Sel reg2/3/6-&gt;dat/stk cache
+</span><a name="88"></a><span class=K>output</span>   [1:0] <a  onClick="return qs(event,this)" class=SO href="#144">u_f17</a><a  href="hierarchy-s.p18.html#u_f17___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// field_17: IU_adder operations
+</span><a name="89"></a><span class=K>output</span>  [11:0] <a  onClick="return qs(event,this)" class=SO href="#144">u_f18</a><a  href="hierarchy-s.p18.html#u_f18___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// field_18: Branching in ucode
+</span><a name="90"></a><span class=K>output</span>   [3:0] <a  onClick="return qs(event,this)" class=SO href="#144">u_f19</a><a  href="hierarchy-s.p18.html#u_f19___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// field_19: Mem_adder a_operand
+</span><a name="91"></a><span class=K>output</span>   [3:0] <a  onClick="return qs(event,this)" class=SO href="#144">u_f20</a><a  href="hierarchy-s.p18.html#u_f20___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// field_20: Mem_adder b_operand
+</span><a name="92"></a><span class=K>output</span>   [1:0] <a  onClick="return qs(event,this)" class=SO href="#144">u_f21</a><a  href="hierarchy-s.p18.html#u_f21___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// field_21: Mem_adder operations
+</span><a name="93"></a><span class=K>output</span>         <a  onClick="return qs(event,this)" class=SO href="#144">u_f22</a><a  href="hierarchy-s.p18.html#u_f22___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// field_22: Sel stack_cache address
+</span><a name="94"></a><span class=K>output</span>   [1:0] <a  onClick="return qs(event,this)" class=SO href="#144">u_f23</a><a  href="hierarchy-s.p18.html#u_f23___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// field_23: Sel alu_adder input port_a
+</span>
+
+<span class=C>// ------------- declarations ---------------------------------------------
+</span>
+<span class=K>wire</span>     [1:0] <a  onClick="return qs(event,this)" class=SO href="#71">u_f00</a>;
+<span class=K>wire</span>     [2:0] <a  onClick="return qs(event,this)" class=SO href="#72">u_f01</a>;
+<span class=K>wire</span>     [1:0] <a  onClick="return qs(event,this)" class=SO href="#73">u_f02</a>;
+<a name="102"></a><span class=K>wire</span>     [1:0] <a  onClick="return qs(event,this)" class=SO href="#74">u_f03</a>, <a  onClick="return qs(event,this)" class=SW href="#142">u_f03_i</a><a  href="hierarchy-s.p18.html#u_f03_i___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>     [6:0] <a  onClick="return qs(event,this)" class=SO href="#75">u_f04</a>;
+<span class=K>wire</span>     [2:0] <a  onClick="return qs(event,this)" class=SO href="#76">u_f05</a>;
+<span class=K>wire</span>     [3:0] <a  onClick="return qs(event,this)" class=SO href="#77">u_f06</a>;
+<span class=K>wire</span>     [2:0] <a  onClick="return qs(event,this)" class=SO href="#78">u_f07</a>;
+<span class=K>wire</span>     [2:0] <a  onClick="return qs(event,this)" class=SO href="#79">u_f08</a>;
+<span class=K>wire</span>     [2:0] <a  onClick="return qs(event,this)" class=SO href="#80">u_f09</a>;
+<span class=K>wire</span>     [2:0] <a  onClick="return qs(event,this)" class=SO href="#81">u_f10</a>;
+<span class=K>wire</span>     [2:0] <a  onClick="return qs(event,this)" class=SO href="#82">u_f11</a>;
+<span class=K>wire</span>     [1:0] <a  onClick="return qs(event,this)" class=SO href="#83">u_f12</a>;
+<span class=K>wire</span>     [1:0] <a  onClick="return qs(event,this)" class=SO href="#84">u_f13</a>;
+<span class=K>wire</span>     [1:0] <a  onClick="return qs(event,this)" class=SO href="#85">u_f14</a>;
+<span class=K>wire</span>           <a  onClick="return qs(event,this)" class=SO href="#86">u_f15</a>;
+<span class=K>wire</span>     [1:0] <a  onClick="return qs(event,this)" class=SO href="#87">u_f16</a>;
+<span class=K>wire</span>     [1:0] <a  onClick="return qs(event,this)" class=SO href="#88">u_f17</a>;
+<span class=K>wire</span>    [11:0] <a  onClick="return qs(event,this)" class=SO href="#89">u_f18</a>;
+<span class=K>wire</span>     [3:0] <a  onClick="return qs(event,this)" class=SO href="#90">u_f19</a>;
+<span class=K>wire</span>     [3:0] <a  onClick="return qs(event,this)" class=SO href="#91">u_f20</a>;
+<span class=K>wire</span>     [1:0] <a  onClick="return qs(event,this)" class=SO href="#92">u_f21</a>;
+<span class=K>wire</span>           <a  onClick="return qs(event,this)" class=SO href="#93">u_f22</a>;
+<span class=K>wire</span>     [1:0] <a  onClick="return qs(event,this)" class=SO href="#94">u_f23</a>;
+
+<a name="124"></a><span class=K>wire</span> [(<span class=D>`ROM_BITS</span>-1):0] <a  onClick="return qs(event,this)" class=SW href="#132">fxx_default</a><a  href="hierarchy-s.p6.html#fxx_default___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="125"></a><span class=K>wire</span> [(<span class=D>`ROM_BITS</span>-1):0] <a  onClick="return qs(event,this)" class=SW href="#140">fxx</a><a  href="hierarchy-s.p6.html#fxx___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="126"></a><span class=K>wire</span> [(<span class=D>`ROM_BITS</span>-1):0] <a  onClick="return qs(event,this)" class=SW href="#173">nxt_u_fxx</a><a  href="hierarchy-s.p12.html#nxt_u_fxx___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="127"></a><span class=K>wire</span> [(<span class=D>`ROM_BITS</span>-1):0] <a  onClick="return qs(event,this)" class=SW href="#187">reg_u_fxx</a><a  href="hierarchy-s.p15.html#reg_u_fxx___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="128"></a><span class=K>wire</span> [(<span class=D>`ROM_BITS</span>-1):0] <a  onClick="return qs(event,this)" class=SW href="#147">d_reg_u_fxx</a><a  href="hierarchy-s.p4.html#d_reg_u_fxx___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<span class=C>/*********** Ucode data path registers ***************************************/</span>
+<a name="132"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#124">fxx_default</a> = { {(<span class=D>`ROM_BITS</span>-<span class=D>`USED_BITS</span>){1'b0}},
+                        <span class=D>`F00_DEFAULT</span>,<span class=D>`F01_DEFAULT</span>,<span class=D>`F02_DEFAULT</span>,<span class=D>`F03_DEFAULT</span>,
+                        <span class=D>`F04_DEFAULT</span>,<span class=D>`F05_DEFAULT</span>,<span class=D>`F06_DEFAULT</span>,<span class=D>`F07_DEFAULT</span>,
+                        <span class=D>`F08_DEFAULT</span>,<span class=D>`F09_DEFAULT</span>,<span class=D>`F10_DEFAULT</span>,<span class=D>`F11_DEFAULT</span>,
+                        <span class=D>`F12_DEFAULT</span>,<span class=D>`F13_DEFAULT</span>,<span class=D>`F14_DEFAULT</span>,<span class=D>`F15_DEFAULT</span>,
+                        <span class=D>`F16_DEFAULT</span>,<span class=D>`F17_DEFAULT</span>,<span class=D>`F18_DEFAULT</span>,<span class=D>`F19_DEFAULT</span>,
+                        <span class=D>`F20_DEFAULT</span>,<span class=D>`F21_DEFAULT</span>,<span class=D>`F22_DEFAULT</span>,<span class=D>`F23_DEFAULT</span>};
+
+<a name="140"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#125">fxx</a> = { {(<span class=D>`ROM_BITS</span>-<span class=D>`USED_BITS</span>){1'b0}}, <a  onClick="return qs(event,this)" class=SI href="#58">rom_fxx</a> };
+
+<a name="142"></a>  <span class=K>assign</span> {<a  onClick="return qs(event,this)" class=SO href="#71">u_f00</a>,<a  onClick="return qs(event,this)" class=SO href="#72">u_f01</a>,<a  onClick="return qs(event,this)" class=SO href="#73">u_f02</a>,<a  onClick="return qs(event,this)" class=SW href="#102">u_f03_i</a>,<a  onClick="return qs(event,this)" class=SO href="#75">u_f04</a>,<a  onClick="return qs(event,this)" class=SO href="#76">u_f05</a>,<a  onClick="return qs(event,this)" class=SO href="#77">u_f06</a>,<a  onClick="return qs(event,this)" class=SO href="#78">u_f07</a>,
+<a name="143"></a>          <a  onClick="return qs(event,this)" class=SO href="#79">u_f08</a>,<a  onClick="return qs(event,this)" class=SO href="#80">u_f09</a>,<a  onClick="return qs(event,this)" class=SO href="#81">u_f10</a>,<a  onClick="return qs(event,this)" class=SO href="#82">u_f11</a>,  <a  onClick="return qs(event,this)" class=SO href="#83">u_f12</a>,<a  onClick="return qs(event,this)" class=SO href="#84">u_f13</a>,<a  onClick="return qs(event,this)" class=SO href="#85">u_f14</a>,<a  onClick="return qs(event,this)" class=SO href="#86">u_f15</a>,
+<a name="144"></a>          <a  onClick="return qs(event,this)" class=SO href="#87">u_f16</a>,<a  onClick="return qs(event,this)" class=SO href="#88">u_f17</a>,<a  onClick="return qs(event,this)" class=SO href="#89">u_f18</a>,<a  onClick="return qs(event,this)" class=SO href="#90">u_f19</a>,  <a  onClick="return qs(event,this)" class=SO href="#91">u_f20</a>,<a  onClick="return qs(event,this)" class=SO href="#92">u_f21</a>,<a  onClick="return qs(event,this)" class=SO href="#93">u_f22</a>,<a  onClick="return qs(event,this)" class=SO href="#94">u_f23</a>}
+         = <a  onClick="return qs(event,this)" class=SW href="#187">reg_u_fxx</a>[(<span class=D>`USED_BITS</span>-1):0]; 
+
+<a name="ucode_reg_del1_32_0"></a><a name="147"></a>  <a  onClick="return qs(event,this)" class=MM href="ucode_lib.v.html#del1_32">del1_32</a> del1_32_0 ( <span class=SI>.inp</span>(<a  onClick="return qs(event,this)" class=SW href="#187">reg_u_fxx</a>[31:0]),  <a  onClick="return qs(event,this)" class=SO href="ucode_lib.v.html#50">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#128">d_reg_u_fxx</a>[31:0])  );
+<a name="ucode_reg_del1_32_1"></a>  <a  onClick="return qs(event,this)" class=MM href="ucode_lib.v.html#del1_32">del1_32</a> del1_32_1 ( <span class=SI>.inp</span>(<a  onClick="return qs(event,this)" class=SW href="#187">reg_u_fxx</a>[63:32]), <a  onClick="return qs(event,this)" class=SO href="ucode_lib.v.html#50">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#128">d_reg_u_fxx</a>[63:32]) );
+<a name="ucode_reg_del1_16_2"></a><a name="149"></a>  <a  onClick="return qs(event,this)" class=MM href="ucode_lib.v.html#del1_16">del1_16</a> del1_16_2 ( <span class=SI>.inp</span>(<a  onClick="return qs(event,this)" class=SW href="#187">reg_u_fxx</a>[(<span class=D>`ROM_BITS</span>-1):64]),
+                                                <a  onClick="return qs(event,this)" class=SO href="ucode_lib.v.html#39">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#128">d_reg_u_fxx</a>[(<span class=D>`ROM_BITS</span>-1):64]) );
+
+  <span class=C>//  assign nxt_u_fxx = test_mode ? fxx : sel_fxx_default ? fxx_default :
+</span>  <span class=C>//                     ie_stall_ucode  ? reg_u_fxx   : fxx;
+</span><a name="154"></a>  <span class=K>wire</span> [(<span class=D>`ROM_BITS</span>-1):0] <a  onClick="return qs(event,this)" class=SW href="#157">ie_stall_ucode_data</a><a  href="hierarchy-s.p9.html#ie_stall_ucode_data___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="155"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#155">ie_stall_ucode_sel</a><a  href="hierarchy-s.p9.html#ie_stall_ucode_sel___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a> = <a  onClick="return qs(event,this)" class=SI href="#60">ie_stall_ucode</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#67">test_mode</a>; 
+<a name="ucode_reg_ie_stall_ucode_data0_mux"></a>  <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> ie_stall_ucode_data0_mux (
+<a name="157"></a>                              <a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#154">ie_stall_ucode_data</a>[31:0]),
+                              <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#147">d_reg_u_fxx</a>[31:0]),
+                              <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#140">fxx</a>[31:0]),
+                              <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SW href="#155">ie_stall_ucode_sel</a>,~<a  onClick="return qs(event,this)" class=SW href="#155">ie_stall_ucode_sel</a>}));
+<a name="ucode_reg_ie_stall_ucode_data1_mux"></a>  <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> ie_stall_ucode_data1_mux (
+                              <a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#154">ie_stall_ucode_data</a>[63:32]),
+                              <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#147">d_reg_u_fxx</a>[63:32]),
+                              <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#140">fxx</a>[63:32]),
+                              <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SW href="#155">ie_stall_ucode_sel</a>,~<a  onClick="return qs(event,this)" class=SW href="#155">ie_stall_ucode_sel</a>}));
+<a name="ucode_reg_ie_stall_ucode_data2_mux"></a>  <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_16">mux2_16</a> ie_stall_ucode_data2_mux (
+                              <a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5747">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#154">ie_stall_ucode_data</a>[(<span class=D>`ROM_BITS</span>-1):64]),
+                              <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#147">d_reg_u_fxx</a>[(<span class=D>`ROM_BITS</span>-1):64]),
+                              <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#140">fxx</a>[(<span class=D>`ROM_BITS</span>-1):64]),
+                              <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SW href="#155">ie_stall_ucode_sel</a>,~<a  onClick="return qs(event,this)" class=SW href="#155">ie_stall_ucode_sel</a>}));
+
+<a name="172"></a>  <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#172">sel_fxx_default_sel</a><a  href="hierarchy-s.p16.html#sel_fxx_default_sel___ucode_reg"><IMG align=top border=0 SRC="v2html-i.gif"></a> = <a  onClick="return qs(event,this)" class=SI href="#61">sel_fxx_default</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#67">test_mode</a>;
+<a name="ucode_reg_nxt_u_fxx0_mux"></a><a name="173"></a>  <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> nxt_u_fxx0_mux (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#126">nxt_u_fxx</a>[31:0]),
+                          <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#132">fxx_default</a>[31:0]),
+                          <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#157">ie_stall_ucode_data</a>[31:0]),
+                          <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SW href="#172">sel_fxx_default_sel</a>,~<a  onClick="return qs(event,this)" class=SW href="#172">sel_fxx_default_sel</a>}));
+<a name="ucode_reg_nxt_u_fxx1_mux"></a>  <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> nxt_u_fxx1_mux (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#126">nxt_u_fxx</a>[63:32]),
+                          <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#132">fxx_default</a>[63:32]),
+                          <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#157">ie_stall_ucode_data</a>[63:32]),
+                          <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SW href="#172">sel_fxx_default_sel</a>,~<a  onClick="return qs(event,this)" class=SW href="#172">sel_fxx_default_sel</a>}));
+<a name="ucode_reg_nxt_u_fxx2_mux"></a>  <a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_16">mux2_16</a> nxt_u_fxx2_mux (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5747">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#126">nxt_u_fxx</a>[(<span class=D>`ROM_BITS</span>-1):64]),
+                          <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#132">fxx_default</a>[(<span class=D>`ROM_BITS</span>-1):64]),
+                          <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#157">ie_stall_ucode_data</a>[(<span class=D>`ROM_BITS</span>-1):64]),
+                          <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SW href="#172">sel_fxx_default_sel</a>,~<a  onClick="return qs(event,this)" class=SW href="#172">sel_fxx_default_sel</a>}));
+
+<a name="ucode_reg_ff_s_32_1"></a>  <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s_32">ff_s_32</a> ff_s_32_1 (
+<a name="187"></a>                     <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2960">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#127">reg_u_fxx</a>[31:0]),
+                     <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#173">nxt_u_fxx</a>[31:0]),
+                     <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#66">clk</a>)
+                    );
+
+<a name="ucode_reg_ff_s_32_2"></a>  <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s_32">ff_s_32</a> ff_s_32_2 (  
+                     <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2960">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#127">reg_u_fxx</a>[63:32]),
+                     <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#173">nxt_u_fxx</a>[63:32]),
+                     <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#66">clk</a>)
+                    );
+
+<a name="ucode_reg_ff_s_16_1"></a>  <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s_16">ff_s_16</a> ff_s_16_1 (
+                     <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2440">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#127">reg_u_fxx</a>[(<span class=D>`ROM_BITS</span>-1):64]),
+<a name="200"></a>                     <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#173">nxt_u_fxx</a>[(<span class=D>`ROM_BITS</span>-1):64]),
+<a name="201"></a>                     <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#66">clk</a>)
+                    );
+ 
+<a name="204"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#74">u_f03</a>[0] = <a  onClick="return qs(event,this)" class=SW href="#142">u_f03_i</a>[0] &amp; !<a  onClick="return qs(event,this)" class=SI href="#62">u_abt_cur</a>;
+  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#74">u_f03</a>[1] = <a  onClick="return qs(event,this)" class=SW href="#142">u_f03_i</a>[1] &amp; !<a  onClick="return qs(event,this)" class=SI href="#62">u_abt_cur</a>;
+
+<span class=K>endmodule</span>
+
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:46:06 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ucode/rtl/ucode_reg.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

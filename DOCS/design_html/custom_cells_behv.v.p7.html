@@ -1,0 +1,488 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/rtl/custom_cells_behv.v page 7</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return "custom_cells_behv.v.p6.html"; }
+function last_page() { return ""; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<center><table class=NB cols=8 nosave><tr><td align="center"><a  href="custom_cells_behv.v.p6.html#bottom_of_page">Prev</a></td><td align="center"><a  href="custom_cells_behv.v.html">1</a></td><td align="center"><a  href="custom_cells_behv.v.p2.html">2</a></td><td align="center"><a  href="custom_cells_behv.v.p3.html">3</a></td><td align="center"><a  href="custom_cells_behv.v.p4.html">4</a></td><td align="center"><a  href="custom_cells_behv.v.p5.html">5</a></td><td align="center"><a  href="custom_cells_behv.v.p6.html">6</a></td><td align="center"><font color="#808080">7</font></td></tr></table></center>
+<pre>
+<a name="6001"></a><span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6009">mx_out</a><a  href="hierarchy-s.p11.html#mx_out___mx21_32_l"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6002"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6002">sel</a><a  href="hierarchy-s.p16.html#sel___mx21_32_l"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6003"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6003">in0</a><a  href="hierarchy-s.p9.html#in0___mx21_32_l"><IMG align=top border=0 SRC="v2html-i.gif"></a> , <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6003">in1</a><a  href="hierarchy-s.p9.html#in1___mx21_32_l"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+
+<a name="6005"></a><span class=K>wire</span>   [31:0] <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6007">sel_not</a><a  href="hierarchy-s.p16.html#sel_not___mx21_32_l"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6008">mux_sel</a><a  href="hierarchy-s.p11.html#mux_sel___mx21_32_l"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="6007"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6005">sel_not</a> = {32{~<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6002">sel</a>}};
+<a name="6008"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6005">mux_sel</a> = {32{ <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6002">sel</a>}};
+<a name="6009"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6001">mx_out</a>  = ~(<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6008">mux_sel</a> &amp; <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6003">in1</a> | <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6007">sel_not</a> &amp; <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6003">in0</a>) ;
+
+<span class=K>endmodule</span>
+
+<a name="compare_lt_32"></a><a  href="incmod.v.html#incmod_complt"><IMG alt="[Up: incmod complt]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>compare_lt_32</span><a  href="hierarchy-m.html#compare_lt_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6016">out</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6015">in0</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6015">in1</a>);
+ 
+<a name="6015"></a> <span class=K>input</span>  [31:0]  <a  onClick="return qs(event,this)" class=SI href="incmod.v.html#212">in0</a><a  href="hierarchy-s.p9.html#in0___compare_lt_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="incmod.v.html#213">in1</a><a  href="hierarchy-s.p9.html#in1___compare_lt_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6016"></a> <span class=K>output</span>         <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6022">out</a><a  href="hierarchy-s.p13.html#out___compare_lt_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<span class=C>/* assign out = (in0 &lt; in1) ? 1'h1 : 1'h0; */</span>
+
+<a name="compare_lt_32_i_compare_lt_32"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p3.html#cmp32_ks_lt">cmp32_ks_lt</a>  i_compare_lt_32 (	<span class=SI>.ai</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6015">in0</a>),
+				<span class=SI>.bi</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6015">in1</a>),
+<a name="6022"></a>				<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p4.html#3036">.a_ltn_b</a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6016">out</a>)
+				);
+<span class=K>endmodule</span>
+
+<a name="pri_encode"></a><a  href="prils_dp.v.html#prils_dp_pri_e"><IMG alt="[Up: prils_dp pri_e]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>pri_encode</span><a  href="hierarchy-m.p4.html#pri_encode"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6030">out</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6029">in</a>);
+<span class=C>// Leading zero output: if all 32 bits are zero output 32.
+</span> 
+<a name="6029"></a> <span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="prils_dp.v.html#90">in</a><a  href="hierarchy-s.p9.html#in___pri_encode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6030"></a> <span class=K>output</span>  [5:0]  <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6032">out</a><a  href="hierarchy-s.p13.html#out___pri_encode"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<a name="pri_encode_f_dpcl_lbd32"></a><a name="6032"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p3.html#lbd32">lbd32</a> f_dpcl_lbd32(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p3.html#2224">.zr_num</a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6030">out</a>),<span class=SI>.di</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6029">in</a>));
+ 
+<span class=K>endmodule</span>
+
+
+<a name="rshifter"></a><a  href="rsadd_dp.v.html#rsadd_dp_rshift1"><IMG alt="[Up: rsadd_dp rshift1]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>rshifter</span><a  href="hierarchy-m.p4.html#rshifter"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6044">rshiftout</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6040">high</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6039">low</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6041">stin</a>,<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6045">sticky</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6042">saout</a>);
+ 
+<a name="6039"></a>  <span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="rsadd_dp.v.html#93">low</a><a  href="hierarchy-s.p10.html#low___rshifter"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6040"></a>  <span class=K>input</span>  [30:0] <a  onClick="return qs(event,this)" class=SI href="rsadd_dp.v.html#92">high</a><a  href="hierarchy-s.p8.html#high___rshifter"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6041"></a>  <span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="rsadd_dp.v.html#94">stin</a><a  href="hierarchy-s.p16.html#stin___rshifter"><IMG align=top border=0 SRC="v2html-i.gif"></a>;   <span class=C>// Input from prevoius STICKY
+</span><a name="6042"></a>  <span class=K>input</span>   [4:0] <a  onClick="return qs(event,this)" class=SI href="rsadd_dp.v.html#96">saout</a><a  href="hierarchy-s.p16.html#saout___rshifter"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  <span class=C>// Shift Amount.
+</span> 
+<a name="6044"></a>  <span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6047">rshiftout</a><a  href="hierarchy-s.p15.html#rshiftout___rshifter"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6045"></a>  <span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6048">sticky</a><a  href="hierarchy-s.p16.html#sticky___rshifter"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  <span class=C>// Or of all bits below the GBIT.
+</span> 
+<a name="rshifter_fpu_dp_cells_rshift"></a><a name="6047"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p3.html#rsft31_63i_32o">rsft31_63i_32o</a> fpu_dp_cells_rshift(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p3.html#2925">.rsf_out</a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6044">rshiftout</a>),<span class=SI>.hi</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6040">high</a>),<span class=SI>.lo</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6039">low</a>),
+<a name="6048"></a>                 <span class=SI>.stin</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6041">stin</a>),<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p3.html#2937">.sticky</a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6045">sticky</a>),<span class=SI>.rsa</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6042">saout</a>), <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p3.html#2871">.gbit</a>(), <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p3.html#2872">.nxstin</a>());
+ 
+<span class=K>endmodule</span>
+
+<a name="lshift"></a><a  href="prils_dp.v.html#prils_dp_lsh"><IMG alt="[Up: prils_dp lsh]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>lshift</span><a  href="hierarchy-m.p3.html#lshift"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6058">out</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6055">high</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6056">low</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6057">shifta</a>);
+<span class=C>// performs the 32-bit Left Shift.
+</span> 
+<a name="6055"></a> <span class=K>input</span>  [31:0]  <a  onClick="return qs(event,this)" class=SI href="prils_dp.v.html#85">high</a><a  href="hierarchy-s.p8.html#high___lshift"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6056"></a> <span class=K>input</span>  [30:0]  <a  onClick="return qs(event,this)" class=SI href="prils_dp.v.html#86">low</a><a  href="hierarchy-s.p10.html#low___lshift"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  <span class=C>// high 31 bits of the m0out bus.
+</span><a name="6057"></a> <span class=K>input</span>  [4:0]   <a  onClick="return qs(event,this)" class=SI href="prils_dp.v.html#87">shifta</a><a  href="hierarchy-s.p16.html#shifta___lshift"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6058"></a> <span class=K>output</span> [31:0]  <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6060">out</a><a  href="hierarchy-s.p13.html#out___lshift"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<a name="lshift_f_dpcl_lshift"></a><a name="6060"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p3.html#lsft31_63i_32o">lsft31_63i_32o</a> f_dpcl_lshift(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p3.html#2852">.lsf_out</a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6058">out</a>),<span class=SI>.hi</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6055">high</a>),<span class=SI>.lo</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6056">low</a>),<span class=SI>.lsa</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6057">shifta</a>));
+ 
+<span class=K>endmodule</span>
+
+<a name="cmp_zro_16"></a><a  href="exponent_dp.v.html#exponent_dp_az"><IMG alt="[Up: exponent_dp az]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="exponent_dp.v.html#exponent_dp_bz"><IMG alt="[Up: exponent_dp bz]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>cmp_zro_16</span><a  href="hierarchy-m.html#cmp_zro_16"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6066">out</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6065">in</a>);
+<a name="6065"></a><span class=K>input</span> [15:0]  <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6065">in</a><a  href="hierarchy-s.p9.html#in___cmp_zro_16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6066"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6068">out</a><a  href="hierarchy-s.p13.html#out___cmp_zro_16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<a name="cmp_zro_16_f_dpcl_cmp16zero"></a><a name="6068"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p3.html#cmp16zero">cmp16zero</a> f_dpcl_cmp16zero(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p3.html#2126">.a_eql_z</a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6066">out</a>),<span class=SI>.ai</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6065">in</a>));
+ 
+<span class=K>endmodule</span>
+
+
+<a name="compare_zero_32"></a><a  href="rsadd_dp.v.html#rsadd_dp_a0comp"><IMG alt="[Up: rsadd_dp a0comp]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ex_regs.v.p2.html#ex_regs_la0_null_cmp"><IMG alt="[Up: ex_regs la0_null_cmp]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ex_regs.v.p2.html#ex_regs_la1_null_cmp"><IMG alt="[Up: ex_regs la1_null_cmp]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mantissa_dp.v.html#mantissa_dp_a1zero"><IMG alt="[Up: mantissa_dp a1zero]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mantissa_dp.v.html#mantissa_dp_b1zero"><IMG alt="[Up: mantissa_dp b1zero]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mantissa_dp.v.html#mantissa_dp_a0zero"><IMG alt="[Up: mantissa_dp a0zero]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mantissa_dp.v.html#mantissa_dp_b0zero"><IMG alt="[Up: mantissa_dp b0zero]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ex_dpath.v.html#ex_dpath_objref_cmp"><IMG alt="[Up: ex_dpath objref_cmp]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>compare_zero_32</span><a  href="hierarchy-m.html#compare_zero_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6076">out</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6075">in</a>);
+<span class=C>//  Performs an EQUALITY comparision to zero:
+</span><a name="6075"></a><span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6075">in</a><a  href="hierarchy-s.p9.html#in___compare_zero_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6076"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6078">out</a><a  href="hierarchy-s.p13.html#out___compare_zero_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<a name="compare_zero_32_f_dpcl_cmp32zero"></a><a name="6078"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.html#cmp32zero">cmp32zero</a> f_dpcl_cmp32zero(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.html#558">.a_eql_z</a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6076">out</a>),<span class=SI>.ai</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6075">in</a>));
+<span class=K>endmodule</span>
+
+<a name="compare_16"></a><a  href="exponent_dp.v.html#exponent_dp_expsame_comp"><IMG alt="[Up: exponent_dp expsame_comp]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="exponent_dp.v.html#exponent_dp_be"><IMG alt="[Up: exponent_dp be]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="exponent_dp.v.html#exponent_dp_ae"><IMG alt="[Up: exponent_dp ae]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>compare_16</span><a  href="hierarchy-m.html#compare_16"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6084">out</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6083">in0</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6083">in1</a>);
+<span class=C>//  Performs an EQUALITY comparision
+</span><a name="6083"></a><span class=K>input</span> [15:0]  <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6083">in0</a><a  href="hierarchy-s.p9.html#in0___compare_16"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6083">in1</a><a  href="hierarchy-s.p9.html#in1___compare_16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6084"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6086">out</a><a  href="hierarchy-s.p13.html#out___compare_16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<a name="compare_16_f_dpcl_cmp16_e"></a><a name="6086"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p3.html#cmp16_e">cmp16_e</a> f_dpcl_cmp16_e(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p3.html#2098">.a_eql_b</a>(<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6084">out</a>),<span class=SI>.ai</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6083">in0</a>),<span class=SI>.bi</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6083">in1</a>));
+<span class=K>endmodule</span>
+
+
+<a name="encoder16"></a><a  href="custom_cells_behv.v.p6.html#pencoder_16_i_pencoder_16"><IMG alt="[Up: pencoder_16 i_pencoder_16]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>encoder16</span><a  href="hierarchy-m.html#encoder16"><IMG align=top border=0 SRC="v2html-i.gif"></a>( <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6092">ptrap_in_e</a> ,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6093">trap_vec_e</a>);
+
+<a name="6092"></a><span class=K>output</span> [15:0] <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6140">ptrap_in_e</a><a  href="hierarchy-s.p14.html#ptrap_in_e___encoder16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6093"></a><span class=K>input</span> [15:0] <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p6.html#5712">trap_vec_e</a><a  href="hierarchy-s.p17.html#trap_vec_e___encoder16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6094"></a><span class=K>wire</span> [3:0] <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6133">ptrap_in_e1</a><a  href="hierarchy-s.p14.html#ptrap_in_e1___encoder16"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6130">ptrap_in_e2</a><a  href="hierarchy-s.p14.html#ptrap_in_e2___encoder16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6095"></a><span class=K>wire</span> [3:0] <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6127">ptrap_in_e3</a><a  href="hierarchy-s.p14.html#ptrap_in_e3___encoder16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6096"></a><span class=K>wire</span> [3:0] <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6136">ptrap_in_e0</a><a  href="hierarchy-s.p14.html#ptrap_in_e0___encoder16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6097"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6125">e2</a><a  href="hierarchy-s.p5.html#e2___encoder16"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6124">e1</a><a  href="hierarchy-s.p5.html#e1___encoder16"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6123">e0</a><a  href="hierarchy-s.p5.html#e0___encoder16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6098"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6146">c2</a><a  href="hierarchy-s.p3.html#c2___encoder16"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6145">c1</a><a  href="hierarchy-s.p3.html#c1___encoder16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>/*always @(trap_vec_e[15:0]) begin
+  casex (trap_vec_e[15:0])
+    16'b1xxxxxxxxxxxxxxx : ptrap_in_e=16'h8000;
+    16'b01xxxxxxxxxxxxxx : ptrap_in_e=16'h4000;
+    16'b001xxxxxxxxxxxxx : ptrap_in_e=16'h2000;
+    16'b0001xxxxxxxxxxxx : ptrap_in_e=16'h1000;
+    16'b00001xxxxxxxxxxx : ptrap_in_e=16'h0800;
+    16'b000001xxxxxxxxxx : ptrap_in_e=16'h0400;
+    16'b0000001xxxxxxxxx : ptrap_in_e=16'h0200;
+    16'b00000001xxxxxxxx : ptrap_in_e=16'h0100;
+    16'b000000001xxxxxxx : ptrap_in_e=16'h0080;
+    16'b0000000001xxxxxx : ptrap_in_e=16'h0040;
+    16'b00000000001xxxxx : ptrap_in_e=16'h0020;
+    16'b000000000001xxxx : ptrap_in_e=16'h0010;
+    16'b0000000000001xxx : ptrap_in_e=16'h0008;
+    16'b00000000000001xx : ptrap_in_e=16'h0004;
+    16'b000000000000001x : ptrap_in_e=16'h0002;
+    16'b0000000000000001 : ptrap_in_e=16'h0001;
+   default               : ptrap_in_e=16'h0000;
+  endcase
+end
+*/</span>
+
+<a name="6123"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6097">e0</a> = (&amp;(~(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6093">trap_vec_e</a>[15:12])));
+<a name="6124"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6097">e1</a> = (&amp;(~(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6093">trap_vec_e</a>[11:8])));
+<a name="6125"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6097">e2</a> = (&amp;(~(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6093">trap_vec_e</a>[7:4])));
+
+<a name="encoder16_trap3"></a><a name="6127"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#trp">trp</a>  trap3( <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6157">.ptrap_in</a>(<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6095">ptrap_in_e3</a>[3:0]),
+	     <span class=SI>.trap_v</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6093">trap_vec_e</a>[15:12])
+           );
+<a name="encoder16_trap2"></a><a name="6130"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#trp">trp</a>  trap2( <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6157">.ptrap_in</a>(<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6094">ptrap_in_e2</a>[3:0]),
+	     <span class=SI>.trap_v</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6093">trap_vec_e</a>[11:8])
+           );
+<a name="encoder16_trap1"></a><a name="6133"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#trp">trp</a>  trap1( <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6157">.ptrap_in</a>(<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6094">ptrap_in_e1</a>[3:0]),
+	     <span class=SI>.trap_v</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6093">trap_vec_e</a>[7:4])
+           );
+<a name="encoder16_trap0"></a><a name="6136"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p7.html#trp">trp</a>  trap0( <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6157">.ptrap_in</a>(<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6096">ptrap_in_e0</a>[3:0]),
+	     <span class=SI>.trap_v</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6093">trap_vec_e</a>[3:0])
+           );
+
+<a name="6140"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6092">ptrap_in_e</a>[15:12] = <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6127">ptrap_in_e3</a>[3:0];
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6092">ptrap_in_e</a>[11:8] = ({4{<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6123">e0</a>}} &amp; <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6130">ptrap_in_e2</a>[3:0]);
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6092">ptrap_in_e</a>[7:4] = ({4{<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6145">c1</a>}} &amp; <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6133">ptrap_in_e1</a>[3:0]);
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6092">ptrap_in_e</a>[3:0] = ({4{<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6146">c2</a>}} &amp; <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6136">ptrap_in_e0</a>[3:0]);
+
+<a name="6145"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6098">c1</a> = (<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6123">e0</a> &amp; <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6124">e1</a>) ;
+<a name="6146"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6098">c2</a> = (<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6145">c1</a> &amp; <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6125">e2</a>) ;
+
+<span class=K>endmodule</span>
+
+<a name="trp"></a><a  href="custom_cells_behv.v.p7.html#encoder16_trap3"><IMG alt="[Up: encoder16 trap3]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="custom_cells_behv.v.p7.html#encoder16_trap2"><IMG alt="[Up: encoder16 trap2]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="custom_cells_behv.v.p7.html#encoder16_trap1"><IMG alt="[Up: encoder16 trap1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="custom_cells_behv.v.p7.html#encoder16_trap0"><IMG alt="[Up: encoder16 trap0]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>trp</span><a  href="hierarchy-m.p4.html#trp"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6151">ptrap_in</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6152">trap_v</a>);
+<a name="6151"></a><span class=K>output</span>[3:0] <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6157">ptrap_in</a><a  href="hierarchy-s.p14.html#ptrap_in___trp"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6152"></a><span class=K>input</span>[3:0] <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6152">trap_v</a><a  href="hierarchy-s.p17.html#trap_v___trp"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>reg</span> [3:0] <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6151">ptrap_in</a>;  
+<span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6152">trap_v</a>)
+<span class=K>begin</span>
+<span class=K>casex</span>(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6152">trap_v</a>[3:0])
+<a name="6157"></a>     4'b1xxx : <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6151">ptrap_in</a>=4'h8;
+     4'b01xx : <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6151">ptrap_in</a>=4'h4;
+     4'b001x : <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6151">ptrap_in</a>=4'h2;
+     4'b0001 : <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6151">ptrap_in</a>=4'h1;
+       <span class=K>default</span> : <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6151">ptrap_in</a>=4'h0;
+<span class=K>endcase</span>
+<span class=K>end</span>
+
+<span class=K>endmodule</span>
+
+
+<a name="buf_64"></a><a  href="code_seq_dp.v.html#code_seq_dp_buf1"><IMG alt="[Up: code_seq_dp buf1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="code_seq_dp.v.html#code_seq_dp_buf0"><IMG alt="[Up: code_seq_dp buf0]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>buf_64</span><a  href="hierarchy-m.html#buf_64"><IMG align=top border=0 SRC="v2html-i.gif"></a> ( <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6169">out</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6170">in</a> );
+<a name="6169"></a><span class=K>output</span> [63:0] <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6172">out</a><a  href="hierarchy-s.p13.html#out___buf_64"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6170"></a><span class=K>input</span> [63:0]  <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6170">in</a><a  href="hierarchy-s.p9.html#in___buf_64"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="6172"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6169">out</a> = <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6170">in</a> ;
+
+<span class=K>endmodule</span>
+
+
+<a name="multor7"></a><a  href="mult_array.v.html#propagate_end_finalor"><IMG alt="[Up: propagate_end finalor]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_i_ibuf7_or7a"><IMG alt="[Up: ibuffer i_ibuf7_or7a]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_i_ibuf7_or7b"><IMG alt="[Up: ibuffer i_ibuf7_or7b]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_i_ibuf7_or7c"><IMG alt="[Up: ibuffer i_ibuf7_or7c]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_i_ibuf7_or7d"><IMG alt="[Up: ibuffer i_ibuf7_or7d]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_i_ibuf7_or7e"><IMG alt="[Up: ibuffer i_ibuf7_or7e]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ibuffer.v.html#ibuffer_i_ibuf7_or7f"><IMG alt="[Up: ibuffer i_ibuf7_or7f]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>multor7</span><a  href="hierarchy-m.p3.html#multor7"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6178">in</a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6179">out</a>);
+<a name="6178"></a><span class=K>input</span> [6:0] <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6178">in</a><a  href="hierarchy-s.p9.html#in___multor7"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6179"></a><span class=K>output</span> 	    <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6181">out</a><a  href="hierarchy-s.p13.html#out___multor7"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="6181"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6179">out</a> = |<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6178">in</a>[6:0];
+
+<span class=K>endmodule</span>
+
+
+<a name="multfa"></a><a  href="mult_array.v.html#propagate_end_propfa0"><IMG alt="[Up: propagate_end propfa0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#propagate_end_propfa1"><IMG alt="[Up: propagate_end propfa1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#propagate_end_propfa2"><IMG alt="[Up: propagate_end propfa2]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#propagate_end_propfa3"><IMG alt="[Up: propagate_end propfa3]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa0"><IMG alt="[Up: tree23 tree23fa0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa1"><IMG alt="[Up: tree23 tree23fa1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa2"><IMG alt="[Up: tree23 tree23fa2]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa3"><IMG alt="[Up: tree23 tree23fa3]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa4"><IMG alt="[Up: tree23 tree23fa4]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa5"><IMG alt="[Up: tree23 tree23fa5]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa6"><IMG alt="[Up: tree23 tree23fa6]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa7"><IMG alt="[Up: tree23 tree23fa7]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa8"><IMG alt="[Up: tree23 tree23fa8]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa9"><IMG alt="[Up: tree23 tree23fa9]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa10"><IMG alt="[Up: tree23 tree23fa10]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa11"><IMG alt="[Up: tree23 tree23fa11]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa12"><IMG alt="[Up: tree23 tree23fa12]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa13"><IMG alt="[Up: tree23 tree23fa13]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa14"><IMG alt="[Up: tree23 tree23fa14]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa15"><IMG alt="[Up: tree23 tree23fa15]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa16"><IMG alt="[Up: tree23 tree23fa16]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa17"><IMG alt="[Up: tree23 tree23fa17]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa18"><IMG alt="[Up: tree23 tree23fa18]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa19"><IMG alt="[Up: tree23 tree23fa19]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa20"><IMG alt="[Up: tree23 tree23fa20]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa21"><IMG alt="[Up: tree23 tree23fa21]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree23_tree23fa22"><IMG alt="[Up: tree23 tree23fa22]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree27_tree27fa0"><IMG alt="[Up: tree27 tree27fa0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree27_tree27fa1"><IMG alt="[Up: tree27 tree27fa1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree27_tree27fa2"><IMG alt="[Up: tree27 tree27fa2]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree27_tree27fa3"><IMG alt="[Up: tree27 tree27fa3]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#tree27_tree27fa4"><IMG alt="[Up: tree27 tree27fa4]" align=bottom border=0 SRC="v2html-up.gif"></a><b><i>... (truncated)</i></b>
+<span class=K>module</span> <span class=MM>multfa</span><a  href="hierarchy-m.p3.html#multfa"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6187">ai</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6187">bi</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6187">ci</a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6188">so</a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6188">co</a>);
+<a name="6187"></a><span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6187">ai</a><a  href="hierarchy-s.html#ai___multfa"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6187">bi</a><a  href="hierarchy-s.p2.html#bi___multfa"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6187">ci</a><a  href="hierarchy-s.p3.html#ci___multfa"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6188"></a><span class=K>output</span>	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6190">so</a><a  href="hierarchy-s.p16.html#so___multfa"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6190">co</a><a  href="hierarchy-s.p3.html#co___multfa"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="6190"></a><span class=K>assign</span> {<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6188">co</a>,<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6188">so</a>} = <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6187">ai</a> + <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6187">bi</a> + <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6187">ci</a>;
+
+<span class=K>endmodule</span>
+
+
+
+<a name="multha"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha0"><IMG alt="[Up: mult_addinc inc_ha0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha1"><IMG alt="[Up: mult_addinc inc_ha1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha2"><IMG alt="[Up: mult_addinc inc_ha2]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha3"><IMG alt="[Up: mult_addinc inc_ha3]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha5"><IMG alt="[Up: mult_addinc inc_ha5]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha6"><IMG alt="[Up: mult_addinc inc_ha6]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha7"><IMG alt="[Up: mult_addinc inc_ha7]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha8"><IMG alt="[Up: mult_addinc inc_ha8]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha9"><IMG alt="[Up: mult_addinc inc_ha9]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha10"><IMG alt="[Up: mult_addinc inc_ha10]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha11"><IMG alt="[Up: mult_addinc inc_ha11]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha12"><IMG alt="[Up: mult_addinc inc_ha12]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha13"><IMG alt="[Up: mult_addinc inc_ha13]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha14"><IMG alt="[Up: mult_addinc inc_ha14]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha15"><IMG alt="[Up: mult_addinc inc_ha15]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha16"><IMG alt="[Up: mult_addinc inc_ha16]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha17"><IMG alt="[Up: mult_addinc inc_ha17]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha18"><IMG alt="[Up: mult_addinc inc_ha18]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha19"><IMG alt="[Up: mult_addinc inc_ha19]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha20"><IMG alt="[Up: mult_addinc inc_ha20]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha21"><IMG alt="[Up: mult_addinc inc_ha21]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha22"><IMG alt="[Up: mult_addinc inc_ha22]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha23"><IMG alt="[Up: mult_addinc inc_ha23]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha24"><IMG alt="[Up: mult_addinc inc_ha24]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha25"><IMG alt="[Up: mult_addinc inc_ha25]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha26"><IMG alt="[Up: mult_addinc inc_ha26]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="multmod_dp.v.html#mult_addinc_inc_ha27"><IMG alt="[Up: mult_addinc inc_ha27]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#highlow_hiloha0"><IMG alt="[Up: highlow hiloha0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#highlow_hiloha1"><IMG alt="[Up: highlow hiloha1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#highlow_hiloha2"><IMG alt="[Up: highlow hiloha2]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#highlow_hiloha3"><IMG alt="[Up: highlow hiloha3]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#highlow_hiloha4"><IMG alt="[Up: highlow hiloha4]" align=bottom border=0 SRC="v2html-up.gif"></a><b><i>... (truncated)</i></b>
+<span class=K>module</span> <span class=MM>multha</span><a  href="hierarchy-m.p3.html#multha"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6197">ai</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6197">bi</a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6198">so</a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6198">co</a>);
+<a name="6197"></a><span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6197">ai</a><a  href="hierarchy-s.html#ai___multha"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6197">bi</a><a  href="hierarchy-s.p2.html#bi___multha"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6198"></a><span class=K>output</span>	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6200">so</a><a  href="hierarchy-s.p16.html#so___multha"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6200">co</a><a  href="hierarchy-s.p3.html#co___multha"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="6200"></a><span class=K>assign</span> {<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6198">co</a>,<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6198">so</a>} = <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6197">ai</a> + <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6197">bi</a>;
+
+<span class=K>endmodule</span>
+
+
+<a name="mppartial"></a><a  href="mult_array.v.html#mpmux_mppart1"><IMG alt="[Up: mpmux mppart1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#mpmux_mppart2"><IMG alt="[Up: mpmux mppart2]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#mpmux_mppart3"><IMG alt="[Up: mpmux mppart3]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#mpmux_mppart4"><IMG alt="[Up: mpmux mppart4]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#mpmux_mppart5"><IMG alt="[Up: mpmux mppart5]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#mpmux_mppart6"><IMG alt="[Up: mpmux mppart6]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="mult_array.v.html#mpmux_mppart7"><IMG alt="[Up: mpmux mppart7]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>mppartial</span><a  href="hierarchy-m.p3.html#mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a> (	<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P0</a>, <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P1</a>, <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P2</a>, <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P3</a>,
+			<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6211">LO</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">RI</a>,
+			<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SBN</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SB</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SL0</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SL1</a>,
+			<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">A0</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">A1</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">A2</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">A3</a>,
+			<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">B0</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">B1</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">B2</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">B3</a>);
+
+<a name="6211"></a><span class=K>output</span> <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6222">P0</a><a  href="hierarchy-s.p14.html#P0___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6222">P1</a><a  href="hierarchy-s.p14.html#P1___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6222">P2</a><a  href="hierarchy-s.p14.html#P2___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6222">P3</a><a  href="hierarchy-s.p14.html#P3___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6234">LO</a><a  href="hierarchy-s.p10.html#LO___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6212"></a><span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">A0</a><a  href="hierarchy-s.html#A0___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">B0</a><a  href="hierarchy-s.p2.html#B0___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">A1</a><a  href="hierarchy-s.html#A1___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">B1</a><a  href="hierarchy-s.p2.html#B1___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">A2</a><a  href="hierarchy-s.html#A2___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">B2</a><a  href="hierarchy-s.p2.html#B2___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">A3</a><a  href="hierarchy-s.html#A3___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">B3</a><a  href="hierarchy-s.p2.html#B3___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SBN</a><a  href="hierarchy-s.p16.html#SBN___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SB</a><a  href="hierarchy-s.p16.html#SB___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">RI</a><a  href="hierarchy-s.p15.html#RI___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SL0</a><a  href="hierarchy-s.p16.html#SL0___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SL1</a><a  href="hierarchy-s.p16.html#SL1___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>reg</span> <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P0</a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P1</a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P2</a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P3</a>;
+<a name="6215"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6215">A3_OUT</a><a  href="hierarchy-s.html#A3_OUT___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a> = <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SB</a> ? <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">B3</a>:<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">A3</a>;
+<a name="6216"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6216">A2_OUT</a><a  href="hierarchy-s.html#A2_OUT___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a> = <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SB</a> ? <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">B2</a>:<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">A2</a>;
+<a name="6217"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6217">A1_OUT</a><a  href="hierarchy-s.html#A1_OUT___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a> = <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SB</a> ? <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">B1</a>:<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">A1</a>;
+<a name="6218"></a><span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6218">A0_OUT</a><a  href="hierarchy-s.html#A0_OUT___mppartial"><IMG align=top border=0 SRC="v2html-i.gif"></a> = <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SB</a> ? <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">B0</a>:<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">A0</a>;
+ 
+<span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SL0</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SL1</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6215">A3_OUT</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6216">A2_OUT</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6217">A1_OUT</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6218">A0_OUT</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">RI</a>) <span class=K>begin</span>
+  <span class=K>case</span> ({<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SL0</a>,<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">SL1</a>})
+<a name="6222"></a>        2'b01:  {<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P0</a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P1</a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P2</a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P3</a>} = {~<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">RI</a>, ~<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6218">A0_OUT</a>, ~<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6217">A1_OUT</a>, ~<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6216">A2_OUT</a>};
+        2'b10:  {<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P0</a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P1</a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P2</a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P3</a>} = {~<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6218">A0_OUT</a>, ~<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6217">A1_OUT</a>, ~<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6216">A2_OUT</a>, ~<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6215">A3_OUT</a>};
+        2'b00:  {<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P0</a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P1</a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P2</a>,<a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P3</a>} = 4'b1111;
+        2'b11:  <span class=K>begin</span>
+                   <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P0</a> = (<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6218">A0_OUT</a> | <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6212">RI</a>) ? 1'b0 : 1'b1;
+                   <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P1</a> = (<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6217">A1_OUT</a> | <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6218">A0_OUT</a>) ? 1'b0 : 1'b1;
+                   <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P2</a> = (<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6216">A2_OUT</a> | <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6217">A1_OUT</a>) ? 1'b0 : 1'b1;
+                   <a  onClick="return qs(event,this)" class=SOR href="custom_cells_behv.v.p7.html#6211">P3</a> = (<a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6215">A3_OUT</a> | <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6216">A2_OUT</a>) ? 1'b0 : 1'b1;
+                <span class=K>end</span>
+  <span class=K>endcase</span>
+  <span class=K>end</span>
+ 
+<a name="6234"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6211">LO</a> = <a  onClick="return qs(event,this)" class=SW href="custom_cells_behv.v.p7.html#6215">A3_OUT</a>;
+<span class=K>endmodule</span>
+ 
+
+<a name="adder_33"></a><a  href="imdr_dpath.v.html#imdr_dpath_adder_33_0"><IMG alt="[Up: imdr_dpath adder_33_0]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>adder_33</span><a  href="hierarchy-m.html#adder_33"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6240">op_a</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6241">op_b</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6242">cin</a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6243">sum</a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6244">cout</a>);
+ 
+<a name="6240"></a><span class=K>input</span>  [32:0]  <a  onClick="return qs(event,this)" class=SI href="imdr_dpath.v.html#320">op_a</a><a  href="hierarchy-s.p13.html#op_a___adder_33"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6241"></a><span class=K>input</span>  [32:0]  <a  onClick="return qs(event,this)" class=SI href="imdr_dpath.v.html#321">op_b</a><a  href="hierarchy-s.p13.html#op_b___adder_33"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6242"></a><span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="imdr_dpath.v.html#322">cin</a><a  href="hierarchy-s.p3.html#cin___adder_33"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6243"></a><span class=K>output</span> [32:0]  <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6248">sum</a><a  href="hierarchy-s.p16.html#sum___adder_33"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6244"></a><span class=K>output</span>         <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6248">cout</a><a  href="hierarchy-s.p3.html#cout___adder_33"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<span class=K>wire</span>   [32:0]  <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6243">sum</a>;
+ 
+<a name="6248"></a>  <span class=K>assign</span> {<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6244">cout</a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6243">sum</a>} = <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6240">op_a</a> + <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6241">op_b</a> + <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6242">cin</a>;
+ 
+<span class=K>endmodule</span>
+ 
+
+
+<a name="incre_32"></a><a  href="lib_imdr.v.html#mx2_compl_32_incre_32_0"><IMG alt="[Up: mx2_compl_32 incre_32_0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="lib_imdr.v.html#compl_32_incre_32_0"><IMG alt="[Up: compl_32 incre_32_0]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>incre_32</span><a  href="hierarchy-m.p3.html#incre_32"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6256">inp</a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6257">out</a>);
+ 
+<a name="6256"></a><span class=K>input</span>  [31:0]  <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6256">inp</a><a  href="hierarchy-s.p9.html#inp___incre_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6257"></a><span class=K>output</span> [31:0]  <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6261">out</a><a  href="hierarchy-s.p13.html#out___incre_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<span class=K>wire</span>   [31:0]  <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6257">out</a>;
+ 
+<a name="6261"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6257">out</a> = <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6256">inp</a> + 1;
+ 
+<span class=K>endmodule</span>
+ 
+
+<a name="inc16"></a><a  href="ucode_ind.v.html#ucode_ind_inc16_ind"><IMG alt="[Up: ucode_ind inc16_ind]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>inc16</span><a  href="hierarchy-m.p3.html#inc16"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6268">ai</a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6269">sum</a>);
+ 
+<a name="6268"></a><span class=K>input</span>  [15:0]  <a  onClick="return qs(event,this)" class=SI href="ucode_ind.v.html#62">ai</a><a  href="hierarchy-s.html#ai___inc16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6269"></a><span class=K>output</span> [15:0]  <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6271">sum</a><a  href="hierarchy-s.p16.html#sum___inc16"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<a name="6271"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6269">sum</a>[15:0]=<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6268">ai</a>[15:0]+ 1'b1;
+<span class=K>endmodule</span>
+ 
+
+<a name="inc8"></a><a  href="ucode_seq.v.html#ucode_seq_inc8_rom_add2"><IMG alt="[Up: ucode_seq inc8_rom_add2]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>inc8</span><a  href="hierarchy-m.p3.html#inc8"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6277">ai</a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6278">sum</a>);
+ 
+<a name="6277"></a><span class=K>input</span>  [7:0]  <a  onClick="return qs(event,this)" class=SI href="ucode_seq.v.html#167">ai</a><a  href="hierarchy-s.html#ai___inc8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6278"></a><span class=K>output</span> [7:0]  <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6280">sum</a><a  href="hierarchy-s.p16.html#sum___inc8"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<a name="6280"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6278">sum</a>[7:0]=<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6277">ai</a>[7:0]+ 1'b1;
+<span class=K>endmodule</span>
+ 
+<a name="inc9"></a><a  href="ucode_seq.v.html#ucode_seq_inc9_rom_add1"><IMG alt="[Up: ucode_seq inc9_rom_add1]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>inc9</span><a  href="hierarchy-m.p3.html#inc9"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6285">ai</a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6286">sum</a>);
+ 
+<a name="6285"></a><span class=K>input</span>  [8:0]  <a  onClick="return qs(event,this)" class=SI href="ucode_seq.v.html#165">ai</a><a  href="hierarchy-s.html#ai___inc9"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6286"></a><span class=K>output</span> [8:0]  <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6288">sum</a><a  href="hierarchy-s.p16.html#sum___inc9"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<a name="6288"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6286">sum</a>[8:0]=<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6285">ai</a>[8:0]+ 1'b1;
+<span class=K>endmodule</span>
+ 
+ 
+<a name="fa9"></a><a  href="ucode_seq.v.html#ucode_seq_fa9_rom_add3"><IMG alt="[Up: ucode_seq fa9_rom_add3]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>fa9</span><a  href="hierarchy-m.p2.html#fa9"><IMG align=top border=0 SRC="v2html-i.gif"></a> (<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6294">a</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6295">b</a>, <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6298">c</a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6296">sum</a>, <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6299">cout</a>);
+ 
+<a name="6294"></a><span class=K>input</span>  [8:0]  <a  onClick="return qs(event,this)" class=SI href="ucode_seq.v.html#170">a</a><a  href="hierarchy-s.html#a___fa9"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6295"></a><span class=K>input</span>  [8:0]  <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6295">b</a><a  href="hierarchy-s.p2.html#b___fa9"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6296"></a><span class=K>output</span>  [8:0]  <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6301">sum</a><a  href="hierarchy-s.p16.html#sum___fa9"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+ 
+<a name="6298"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6298">c</a><a  href="hierarchy-s.p3.html#c___fa9"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// carry in
+</span><a name="6299"></a><span class=K>output</span>          <a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6301">cout</a><a  href="hierarchy-s.p3.html#cout___fa9"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// carry out
+</span> 
+<a name="6301"></a><span class=K>assign</span> {<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6299">cout</a>,<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6296">sum</a>} = <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6294">a</a> + <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6295">b</a> + <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6298">c</a>;
+ 
+ 
+<span class=K>endmodule</span>
+ 
+
+<a name="buf10_drv_32"></a><a  href="ex_dpath.v.html#ex_dpath_buf_rs1"><IMG alt="[Up: ex_dpath buf_rs1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ex_dpath.v.html#ex_dpath_buf_rs2_1"><IMG alt="[Up: ex_dpath buf_rs2_1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ex_dpath.v.html#ex_dpath_buf_rs2_2"><IMG alt="[Up: ex_dpath buf_rs2_2]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>buf10_drv_32</span><a  href="hierarchy-m.html#buf10_drv_32"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+	<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6314">in</a>,
+	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6315">out</a>
+
+);
+
+<a name="6314"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6314">in</a><a  href="hierarchy-s.p9.html#in___buf10_drv_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6315"></a><span class=K>output</span>	[31:0]	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6317">out</a><a  href="hierarchy-s.p13.html#out___buf10_drv_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="6317"></a>	<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6315">out</a> = <a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6314">in</a>;
+
+<span class=K>endmodule</span>
+
+<a name="inv10_drv_32"></a><a  href="ex_dpath.v.html#ex_dpath_inv_rs1_1"><IMG alt="[Up: ex_dpath inv_rs1_1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ex_dpath.v.html#ex_dpath_inv_rs1_2"><IMG alt="[Up: ex_dpath inv_rs1_2]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="ex_dpath.v.html#ex_dpath_inv_rs1_3"><IMG alt="[Up: ex_dpath inv_rs1_3]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>inv10_drv_32</span><a  href="hierarchy-m.p3.html#inv10_drv_32"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+	<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6328">in</a>,
+	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6329">out</a>
+
+);
+
+<a name="6328"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6328">in</a><a  href="hierarchy-s.p9.html#in___inv10_drv_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6329"></a><span class=K>output</span>	[31:0]	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6331">out</a><a  href="hierarchy-s.p13.html#out___inv10_drv_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="6331"></a>	<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6329">out</a> = ~<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6328">in</a>;
+
+<span class=K>endmodule</span>
+
+<a name="inv4_drv_32"></a><span class=K>module</span> <span class=MM>inv4_drv_32</span><a  href="hierarchy-m.p3.html#inv4_drv_32"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+	<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6342">in</a>,
+	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6343">out</a>
+
+);
+
+<a name="6342"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6342">in</a><a  href="hierarchy-s.p9.html#in___inv4_drv_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="6343"></a><span class=K>output</span>	[31:0]	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6345">out</a><a  href="hierarchy-s.p13.html#out___inv4_drv_32"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="6345"></a>	<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6343">out</a> = ~<a  onClick="return qs(event,this)" class=SI href="custom_cells_behv.v.p7.html#6342">in</a>;
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="custom_cells_behv.v.html">1</a></td><td align="center"><a  href="custom_cells_behv.v.p2.html">2</a></td><td align="center"><a  href="custom_cells_behv.v.p3.html">3</a></td><td align="center"><a  href="custom_cells_behv.v.p4.html">4</a></td><td align="center"><a  href="custom_cells_behv.v.p5.html">5</a></td><td align="center"><a  href="custom_cells_behv.v.p6.html">6</a></td><td align="center"><font color="#808080">7</font></td></tr></table></center>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return "custom_cells_behv.v.html"; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:44 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/rtl/custom_cells_behv.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

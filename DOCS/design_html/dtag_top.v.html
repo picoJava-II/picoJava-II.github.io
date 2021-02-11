@@ -1,0 +1,313 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/dtag/rtl/dtag_top.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "dtag_top.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+<span class=M>`timescale</span> 1ns/10ps
+
+<span class=C>/*
+`define  dc_size	8191  	  // Size of 1 set of Cache Ram.
+`define	 dc_msb		12	  // MSB of Address Bus needed to index into the cache 
+`define  dt_msb		18	  // MSB of Dcache Tag Field (Used for storing tag of a cache line)
+`define  dt_index	8	  // MSB of Tag address used to index tag of a cache.
+`define  dt_mxblks	512       // Number of Blocks in the cache
+*/</span>
+
+
+<a name="dtag_top"></a><a  href="dtag_shell.v.html#dtag_shell_dtag_top"><IMG alt="[Up: dtag_shell dtag_top]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>dtag_top</span><a  href="hierarchy-m.html#dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SI href="#39">clk</a>, <a  onClick="return qs(event,this)" class=SI href="#40">bist_reset</a>, <a  onClick="return qs(event,this)" class=SI href="#41">bist_mode</a>, <a  onClick="return qs(event,this)" class=SI href="#42">addr</a>, <a  onClick="return qs(event,this)" class=SI href="#43">tag_in</a>, <a  onClick="return qs(event,this)" class=SI href="#44">tag_we</a>, <a  onClick="return qs(event,this)" class=SI href="#45">enable</a>, <a  onClick="return qs(event,this)" class=SI href="#46">set_sel</a>, <a  onClick="return qs(event,this)" class=SI href="#47">wb_set_sel</a>,
+       <a  onClick="return qs(event,this)" class=SI href="#48">cmp_addr_in</a>, <a  onClick="return qs(event,this)" class=SI href="#50">sin</a>, <a  onClick="return qs(event,this)" class=SI href="#49">sm</a>, <a  onClick="return qs(event,this)" class=SI href="#51">test_mode</a>, <a  onClick="return qs(event,this)" class=SI href="#52">stat_addr</a>, <a  onClick="return qs(event,this)" class=SI href="#53">stat_in</a>, <a  onClick="return qs(event,this)" class=SI href="#54">stat_we</a>,
+       <a  onClick="return qs(event,this)" class=SO href="#57">so</a>, <a  onClick="return qs(event,this)" class=SO href="#56">ERROR</a>, <a  onClick="return qs(event,this)" class=SO href="#58">dtag_dout</a>, <a  onClick="return qs(event,this)" class=SO href="#59">stat_out</a>, <a  onClick="return qs(event,this)" class=SO href="#60">hit0_out</a>, <a  onClick="return qs(event,this)" class=SO href="#61">hit1_out</a>);
+
+<a name="39"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#96">clk</a><a  href="hierarchy-s.p3.html#clk___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="40"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#101">bist_reset</a><a  href="hierarchy-s.p2.html#bist_reset___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="41"></a>   <span class=K>input</span> [1:0] <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#102">bist_mode</a><a  href="hierarchy-s.p2.html#bist_mode___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="42"></a>   <span class=K>input</span> [<span class=D>`dc_msb</span>:4] <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#91">addr</a><a  href="hierarchy-s.html#addr___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="43"></a>   <span class=K>input</span> [<span class=D>`dt_msb</span>:0] <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#86">tag_in</a><a  href="hierarchy-s.p17.html#tag_in___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="44"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#87">tag_we</a><a  href="hierarchy-s.p17.html#tag_we___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="45"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#95">enable</a><a  href="hierarchy-s.p5.html#enable___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="46"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#89">set_sel</a><a  href="hierarchy-s.p16.html#set_sel___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="47"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#90">wb_set_sel</a><a  href="hierarchy-s.p20.html#wb_set_sel___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="48"></a>   <span class=K>input</span> [<span class=D>`dt_msb</span>:0] <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#88">cmp_addr_in</a><a  href="hierarchy-s.p3.html#cmp_addr_in___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="49"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#106">sm</a><a  href="hierarchy-s.p16.html#sm___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="50"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#105">sin</a><a  href="hierarchy-s.p16.html#sin___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="51"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#104">test_mode</a><a  href="hierarchy-s.p17.html#test_mode___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="52"></a>   <span class=K>input</span> [<span class=D>`dc_msb</span>:4] <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#94">stat_addr</a><a  href="hierarchy-s.p16.html#stat_addr___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="53"></a>   <span class=K>input</span> [4:0] <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#92">stat_in</a><a  href="hierarchy-s.p16.html#stat_in___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="54"></a>   <span class=K>input</span> [4:0] <a  onClick="return qs(event,this)" class=SI href="dtag_shell.v.html#93">stat_we</a><a  href="hierarchy-s.p16.html#stat_we___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+
+<a name="56"></a>   <span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#105">ERROR</a><a  href="hierarchy-s.p5.html#ERROR___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="57"></a>   <span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#57">so</a><a  href="hierarchy-s.p16.html#so___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="58"></a>   <span class=K>output</span> [<span class=D>`dt_msb</span>:0] <a  onClick="return qs(event,this)" class=SO href="#127">dtag_dout</a><a  href="hierarchy-s.p4.html#dtag_dout___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="59"></a>   <span class=K>output</span> [4:0] <a  onClick="return qs(event,this)" class=SO href="#128">stat_out</a><a  href="hierarchy-s.p16.html#stat_out___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="60"></a>   <span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#127">hit0_out</a><a  href="hierarchy-s.p8.html#hit0_out___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="61"></a>   <span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#127">hit1_out</a><a  href="hierarchy-s.p8.html#hit1_out___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+
+<a name="63"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#105">BACKGROUND</a><a  href="hierarchy-s.p2.html#BACKGROUND___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="64"></a>   <span class=K>wire</span> [8:0] <a  onClick="return qs(event,this)" class=SW href="#102">BIST_ADR</a><a  href="hierarchy-s.p2.html#BIST_ADR___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="65"></a>   <span class=K>wire</span> [<span class=D>`dc_msb</span>:4] <a  onClick="return qs(event,this)" class=SW href="#97">int_BIST_ADR</a><a  href="hierarchy-s.p9.html#int_BIST_ADR___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="66"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#104">BIST_ON</a><a  href="hierarchy-s.p2.html#BIST_ON___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="67"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#103">BIST_WE</a><a  href="hierarchy-s.p2.html#BIST_WE___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="68"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#104">END_SEQ</a><a  href="hierarchy-s.p5.html#END_SEQ___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="69"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#105">ERRN_ON</a><a  href="hierarchy-s.p5.html#ERRN_ON___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="70"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#104">INVERSE</a><a  href="hierarchy-s.p9.html#INVERSE___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="71"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#105">NO_COMP</a><a  href="hierarchy-s.p12.html#NO_COMP___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="72"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#103">rr512x5_ENABLE</a><a  href="hierarchy-s.p15.html#rr512x5_ENABLE___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="73"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#123">rr512x5_ERROR</a><a  href="hierarchy-s.p15.html#rr512x5_ERROR___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="74"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#102">rrdtag_0_ENABLE</a><a  href="hierarchy-s.p15.html#rrdtag_0_ENABLE___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="75"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#111">rrdtag_0_ERROR</a><a  href="hierarchy-s.p15.html#rrdtag_0_ERROR___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="76"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#103">rrdtag_1_ENABLE</a><a  href="hierarchy-s.p15.html#rrdtag_1_ENABLE___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="77"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#117">rrdtag_1_ERROR</a><a  href="hierarchy-s.p15.html#rrdtag_1_ERROR___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="78"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#119">int_web</a><a  href="hierarchy-s.p9.html#int_web___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="79"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#107">int_we0</a><a  href="hierarchy-s.p9.html#int_we0___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="80"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#113">int_we1</a><a  href="hierarchy-s.p9.html#int_we1___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="81"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#81">int_test_mode</a><a  href="hierarchy-s.p9.html#int_test_mode___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="82"></a>   <span class=K>wire</span> [4:0] <a  onClick="return qs(event,this)" class=SW href="#91">bist_stat_we</a><a  href="hierarchy-s.p2.html#bist_stat_we___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+   <span class=K>wire</span> [4:0] <a  onClick="return qs(event,this)" class=SO href="#59">stat_out</a>;
+<a name="84"></a>   <span class=K>wire</span> [4:0] <a  onClick="return qs(event,this)" class=SW href="#119">int_dib</a><a  href="hierarchy-s.p9.html#int_dib___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="85"></a>   <span class=K>wire</span> [<span class=D>`dt_msb</span>:0] <a  onClick="return qs(event,this)" class=SW href="#130">int_do0</a><a  href="hierarchy-s.p9.html#int_do0___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="86"></a>   <span class=K>wire</span> [<span class=D>`dt_msb</span>:0] <a  onClick="return qs(event,this)" class=SW href="#131">int_do1</a><a  href="hierarchy-s.p9.html#int_do1___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="87"></a>   <span class=K>wire</span> [<span class=D>`dt_msb</span>:0] <a  onClick="return qs(event,this)" class=SW href="#107">int_di0</a><a  href="hierarchy-s.p9.html#int_di0___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="88"></a>   <span class=K>wire</span> [<span class=D>`dt_msb</span>:0] <a  onClick="return qs(event,this)" class=SW href="#113">int_di1</a><a  href="hierarchy-s.p9.html#int_di1___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="89"></a>   <span class=K>wire</span> [<span class=D>`dt_msb</span>:0] <a  onClick="return qs(event,this)" class=SW href="#89">int_dit</a><a  href="hierarchy-s.p9.html#int_dit___dtag_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="91"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#82">bist_stat_we</a>[0] = <a  onClick="return qs(event,this)" class=SW href="#119">int_web</a>;
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#82">bist_stat_we</a>[1] = <a  onClick="return qs(event,this)" class=SW href="#119">int_web</a>;
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#82">bist_stat_we</a>[2] = <a  onClick="return qs(event,this)" class=SW href="#119">int_web</a>;
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#82">bist_stat_we</a>[3] = <a  onClick="return qs(event,this)" class=SW href="#119">int_web</a>;
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#82">bist_stat_we</a>[4] = <a  onClick="return qs(event,this)" class=SW href="#119">int_web</a>;
+
+<a name="97"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#65">int_BIST_ADR</a>[<span class=D>`dc_msb</span>:4]  = <a  onClick="return qs(event,this)" class=SW href="#102">BIST_ADR</a>[8:0];
+
+
+<a name="dtag_top_Controller_Ins"></a><a name="100"></a>   <a  onClick="return qs(event,this)" class=MM href="#Controller1">Controller1</a>  Controller_Ins(<span class=SI>.TCLK</span>(<a  onClick="return qs(event,this)" class=SI href="#39">clk</a>), <span class=SI>.TRESET</span>(<a  onClick="return qs(event,this)" class=SI href="#40">bist_reset</a>), <span class=SI>.MODE</span>(<a  onClick="return qs(event,this)" class=SI href="#41">bist_mode</a>), 
+<a name="101"></a>      <span class=SI>.rrdtag_0_ERROR</span>(<a  onClick="return qs(event,this)" class=SW href="#111">rrdtag_0_ERROR</a>), <span class=SI>.rrdtag_1_ERROR</span>(<a  onClick="return qs(event,this)" class=SW href="#117">rrdtag_1_ERROR</a>), 
+<a name="102"></a>      <span class=SI>.rr512x5_ERROR</span>(<a  onClick="return qs(event,this)" class=SW href="#123">rr512x5_ERROR</a>), <a  onClick="return qs(event,this)" class=SO href="#141">.BIST_ADR</a>(<a  onClick="return qs(event,this)" class=SW href="#64">BIST_ADR</a>), <a  onClick="return qs(event,this)" class=SO href="#143">.rrdtag_0_ENABLE</a>(<a  onClick="return qs(event,this)" class=SW href="#74">rrdtag_0_ENABLE</a>), 
+<a name="103"></a>      <a  onClick="return qs(event,this)" class=SO href="#143">.rrdtag_1_ENABLE</a>(<a  onClick="return qs(event,this)" class=SW href="#76">rrdtag_1_ENABLE</a>), <a  onClick="return qs(event,this)" class=SO href="#143">.rr512x5_ENABLE</a>(<a  onClick="return qs(event,this)" class=SW href="#72">rr512x5_ENABLE</a>), <a  onClick="return qs(event,this)" class=SO href="#143">.BIST_WE</a>(<a  onClick="return qs(event,this)" class=SW href="#67">BIST_WE</a>), 
+<a name="104"></a>      <a  onClick="return qs(event,this)" class=SO href="#143">.INVERSE</a>(<a  onClick="return qs(event,this)" class=SW href="#70">INVERSE</a>), <a  onClick="return qs(event,this)" class=SO href="#144">.END_SEQ</a>(<a  onClick="return qs(event,this)" class=SW href="#68">END_SEQ</a>), <a  onClick="return qs(event,this)" class=SO href="#144">.BIST_ON</a>(<a  onClick="return qs(event,this)" class=SW href="#66">BIST_ON</a>), <span class=SI>.test_mode</span>(<a  onClick="return qs(event,this)" class=SW href="#81">int_test_mode</a>),
+<a name="105"></a>      <a  onClick="return qs(event,this)" class=SO href="#144">.ERRN_ON</a>(<a  onClick="return qs(event,this)" class=SW href="#69">ERRN_ON</a>), <a  onClick="return qs(event,this)" class=SO href="#144">.NO_COMP</a>(<a  onClick="return qs(event,this)" class=SW href="#71">NO_COMP</a>), <a  onClick="return qs(event,this)" class=SO href="#144">.BACKGROUND</a>(<a  onClick="return qs(event,this)" class=SW href="#63">BACKGROUND</a>), <a  onClick="return qs(event,this)" class=SO href="#144">.DONE</a>(), <a  onClick="return qs(event,this)" class=SO href="#144">.ERROR</a>(<a  onClick="return qs(event,this)" class=SO href="#56">ERROR</a>), <a  onClick="return qs(event,this)" class=SO href="#144">.FAIL</a>());
+
+<a name="dtag_top_rrdtag_0_Bist_Ins"></a><a name="107"></a>   <a  onClick="return qs(event,this)" class=MM href="#rrdtag_0_LocalBist">rrdtag_0_LocalBist</a>  rrdtag_0_Bist_Ins(<a  onClick="return qs(event,this)" class=SO href="#154">.BIST_PATTERN</a>(<a  onClick="return qs(event,this)" class=SW href="#87">int_di0</a>), <a  onClick="return qs(event,this)" class=SO href="#158">.we</a>(<a  onClick="return qs(event,this)" class=SW href="#79">int_we0</a>), <span class=SI>.func_do</span>(<a  onClick="return qs(event,this)" class=SW href="#130">int_do0</a>),
+<a name="108"></a>      <span class=SI>.BIST_ADR</span>(<a  onClick="return qs(event,this)" class=SW href="#102">BIST_ADR</a>), <span class=SI>.BIST_WE</span>(<a  onClick="return qs(event,this)" class=SW href="#103">BIST_WE</a>),
+<a name="109"></a>      <span class=SI>.BIST_ON</span>(<a  onClick="return qs(event,this)" class=SW href="#104">BIST_ON</a>), <span class=SI>.ERRN_ON</span>(<a  onClick="return qs(event,this)" class=SW href="#105">ERRN_ON</a>), <span class=SI>.INVERSE</span>(<a  onClick="return qs(event,this)" class=SW href="#104">INVERSE</a>),
+<a name="110"></a>      <span class=SI>.NO_COMP</span>(<a  onClick="return qs(event,this)" class=SW href="#105">NO_COMP</a>), <span class=SI>.END_SEQ</span>(<a  onClick="return qs(event,this)" class=SW href="#104">END_SEQ</a>), <span class=SI>.rrdtag_0_ENABLE</span>(<a  onClick="return qs(event,this)" class=SW href="#102">rrdtag_0_ENABLE</a>),
+<a name="111"></a>      <span class=SI>.BACKGROUND</span>(<a  onClick="return qs(event,this)" class=SW href="#105">BACKGROUND</a>), <a  onClick="return qs(event,this)" class=SO href="#158">.rrdtag_0_ERROR</a>(<a  onClick="return qs(event,this)" class=SW href="#75">rrdtag_0_ERROR</a>));
+
+<a name="dtag_top_rrdtag_1_Bist_Ins"></a><a name="113"></a>   <a  onClick="return qs(event,this)" class=MM href="#rrdtag_1_LocalBist">rrdtag_1_LocalBist</a>  rrdtag_1_Bist_Ins(<a  onClick="return qs(event,this)" class=SO href="#170">.BIST_PATTERN</a>(<a  onClick="return qs(event,this)" class=SW href="#88">int_di1</a>), <a  onClick="return qs(event,this)" class=SO href="#174">.we</a>(<a  onClick="return qs(event,this)" class=SW href="#80">int_we1</a>), <span class=SI>.func_do</span>(<a  onClick="return qs(event,this)" class=SW href="#131">int_do1</a>),
+<a name="114"></a>      <span class=SI>.BIST_ADR</span>(<a  onClick="return qs(event,this)" class=SW href="#102">BIST_ADR</a>), <span class=SI>.BIST_WE</span>(<a  onClick="return qs(event,this)" class=SW href="#103">BIST_WE</a>),
+<a name="115"></a>      <span class=SI>.BIST_ON</span>(<a  onClick="return qs(event,this)" class=SW href="#104">BIST_ON</a>), <span class=SI>.ERRN_ON</span>(<a  onClick="return qs(event,this)" class=SW href="#105">ERRN_ON</a>), <span class=SI>.INVERSE</span>(<a  onClick="return qs(event,this)" class=SW href="#104">INVERSE</a>),
+<a name="116"></a>      <span class=SI>.NO_COMP</span>(<a  onClick="return qs(event,this)" class=SW href="#105">NO_COMP</a>), <span class=SI>.END_SEQ</span>(<a  onClick="return qs(event,this)" class=SW href="#104">END_SEQ</a>), <span class=SI>.rrdtag_1_ENABLE</span>(<a  onClick="return qs(event,this)" class=SW href="#103">rrdtag_1_ENABLE</a>),
+<a name="117"></a>      <span class=SI>.BACKGROUND</span>(<a  onClick="return qs(event,this)" class=SW href="#105">BACKGROUND</a>), <a  onClick="return qs(event,this)" class=SO href="#174">.rrdtag_1_ERROR</a>(<a  onClick="return qs(event,this)" class=SW href="#77">rrdtag_1_ERROR</a>));
+
+<a name="dtag_top_rr512x5_Bist_Ins"></a><a name="119"></a>   <a  onClick="return qs(event,this)" class=MM href="#rr512x5_LocalBist">rr512x5_LocalBist</a>  rr512x5_Bist_Ins(<a  onClick="return qs(event,this)" class=SO href="#185">.BIST_PATTERN</a>(<a  onClick="return qs(event,this)" class=SW href="#84">int_dib</a>), <a  onClick="return qs(event,this)" class=SO href="#189">.web</a>(<a  onClick="return qs(event,this)" class=SW href="#78">int_web</a>), <span class=SI>.func_doa</span>(<a  onClick="return qs(event,this)" class=SO href="#128">stat_out</a>),
+<a name="120"></a>      <span class=SI>.BIST_ADR</span>(<a  onClick="return qs(event,this)" class=SW href="#102">BIST_ADR</a>), <span class=SI>.BIST_WE</span>(<a  onClick="return qs(event,this)" class=SW href="#103">BIST_WE</a>),
+<a name="121"></a>      <span class=SI>.BIST_ON</span>(<a  onClick="return qs(event,this)" class=SW href="#104">BIST_ON</a>), <span class=SI>.ERRN_ON</span>(<a  onClick="return qs(event,this)" class=SW href="#105">ERRN_ON</a>), <span class=SI>.INVERSE</span>(<a  onClick="return qs(event,this)" class=SW href="#104">INVERSE</a>),
+<a name="122"></a>      <span class=SI>.NO_COMP</span>(<a  onClick="return qs(event,this)" class=SW href="#105">NO_COMP</a>), <span class=SI>.END_SEQ</span>(<a  onClick="return qs(event,this)" class=SW href="#104">END_SEQ</a>), <span class=SI>.rr512x5_ENABLE</span>(<a  onClick="return qs(event,this)" class=SW href="#103">rr512x5_ENABLE</a>),
+<a name="123"></a>      <span class=SI>.BACKGROUND</span>(<a  onClick="return qs(event,this)" class=SW href="#105">BACKGROUND</a>), <a  onClick="return qs(event,this)" class=SO href="#189">.rr512x5_ERROR</a>(<a  onClick="return qs(event,this)" class=SW href="#73">rr512x5_ERROR</a>));
+
+<a name="dtag_top_dtag"></a><a name="125"></a>   <a  onClick="return qs(event,this)" class=MM href="dtag.v.html#dtag">dtag</a>	 dtag(<span class=SI>.tag_in</span>(<a  onClick="return qs(event,this)" class=SI href="#43">tag_in</a>), <span class=SI>.tag_we</span>(<a  onClick="return qs(event,this)" class=SI href="#44">tag_we</a>), <span class=SI>.cmp_addr_in</span>(<a  onClick="return qs(event,this)" class=SI href="#48">cmp_addr_in</a>), <span class=SI>.set_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#46">set_sel</a>),
+<a name="126"></a>      <span class=SI>.wb_set_sel</span>(<a  onClick="return qs(event,this)" class=SI href="#47">wb_set_sel</a>), <span class=SI>.addr</span>(<a  onClick="return qs(event,this)" class=SI href="#42">addr</a>), <span class=SI>.stat_in</span>(<a  onClick="return qs(event,this)" class=SI href="#53">stat_in</a>), <span class=SI>.stat_we</span>(<a  onClick="return qs(event,this)" class=SI href="#54">stat_we</a>), <span class=SI>.stat_addr</span>(<a  onClick="return qs(event,this)" class=SI href="#52">stat_addr</a>),
+<a name="127"></a>      <span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="#45">enable</a>), <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#39">clk</a>), <a  onClick="return qs(event,this)" class=SO href="dtag.v.html#170">.hit0_out</a>(<a  onClick="return qs(event,this)" class=SO href="#60">hit0_out</a>),<a  onClick="return qs(event,this)" class=SO href="dtag.v.html#168">.hit1_out</a>(<a  onClick="return qs(event,this)" class=SO href="#61">hit1_out</a>), <a  onClick="return qs(event,this)" class=SO href="dtag.v.html#165">.dtag_dout</a>(<a  onClick="return qs(event,this)" class=SO href="#58">dtag_dout</a>),
+<a name="128"></a>      <a  onClick="return qs(event,this)" class=SO href="dtag.v.html#196">.stat_out</a>(<a  onClick="return qs(event,this)" class=SO href="#59">stat_out</a>), <span class=SI>.test_mode</span>(<a  onClick="return qs(event,this)" class=SI href="#51">test_mode</a>), <span class=SI>.bist_enable</span>(1'b1),
+<a name="129"></a>      <span class=SI>.bist_tag_we0</span>(<a  onClick="return qs(event,this)" class=SW href="#107">int_we0</a>), <span class=SI>.bist_tag_we1</span>(<a  onClick="return qs(event,this)" class=SW href="#113">int_we1</a>), <span class=SI>.bist_stat_we</span>(<a  onClick="return qs(event,this)" class=SW href="#91">bist_stat_we</a>), <span class=SI>.bist_tag_in</span>(<a  onClick="return qs(event,this)" class=SW href="#89">int_dit</a>),
+<a name="130"></a>      <span class=SI>.bist_stat_in</span>(<a  onClick="return qs(event,this)" class=SW href="#119">int_dib</a>), <span class=SI>.bist_addr</span>(<a  onClick="return qs(event,this)" class=SW href="#97">int_BIST_ADR</a>), <span class=SI>.bist_stat_addr</span>(<a  onClick="return qs(event,this)" class=SW href="#97">int_BIST_ADR</a>), <a  onClick="return qs(event,this)" class=SO href="dtag.v.html#172">.bist_tag_dout0</a>(<a  onClick="return qs(event,this)" class=SW href="#85">int_do0</a>),
+<a name="131"></a>      <a  onClick="return qs(event,this)" class=SO href="dtag.v.html#173">.bist_tag_dout1</a>(<a  onClick="return qs(event,this)" class=SW href="#86">int_do1</a>));
+
+<span class=K>endmodule</span>
+
+
+<a name="Controller1"></a><a  href="dtag_top.v.html#dtag_top_Controller_Ins"><IMG alt="[Up: dtag_top Controller_Ins]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>Controller1</span><a  href="hierarchy-m.html#Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a> ( <a  onClick="return qs(event,this)" class=SI href="#142">TCLK</a>, <a  onClick="return qs(event,this)" class=SI href="#142">TRESET</a>, <a  onClick="return qs(event,this)" class=SI href="#140">MODE</a>, <a  onClick="return qs(event,this)" class=SI href="#142">rrdtag_0_ERROR</a>, 
+    <a  onClick="return qs(event,this)" class=SI href="#142">rrdtag_1_ERROR</a>, <a  onClick="return qs(event,this)" class=SI href="#142">rr512x5_ERROR</a>, <a  onClick="return qs(event,this)" class=SO href="#141">BIST_ADR</a>, <a  onClick="return qs(event,this)" class=SO href="#143">rrdtag_0_ENABLE</a>, <a  onClick="return qs(event,this)" class=SO href="#143">rrdtag_1_ENABLE</a>, 
+    <a  onClick="return qs(event,this)" class=SO href="#143">rr512x5_ENABLE</a>, <a  onClick="return qs(event,this)" class=SO href="#143">BIST_WE</a>, <a  onClick="return qs(event,this)" class=SO href="#143">INVERSE</a>, <a  onClick="return qs(event,this)" class=SO href="#144">END_SEQ</a>, <a  onClick="return qs(event,this)" class=SO href="#144">BIST_ON</a>, <a  onClick="return qs(event,this)" class=SO href="#144">ERRN_ON</a>, <a  onClick="return qs(event,this)" class=SO href="#144">NO_COMP</a>, 
+    <a  onClick="return qs(event,this)" class=SO href="#144">BACKGROUND</a>, <a  onClick="return qs(event,this)" class=SO href="#144">DONE</a>, <a  onClick="return qs(event,this)" class=SO href="#144">ERROR</a>, <a  onClick="return qs(event,this)" class=SO href="#144">FAIL</a>, <a  onClick="return qs(event,this)" class=SI href="#142">test_mode</a> );
+<a name="140"></a><span class=K>input</span>  [1:0] <a  onClick="return qs(event,this)" class=SI href="#100">MODE</a><a  href="hierarchy-s.p11.html#MODE___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="141"></a><span class=K>output</span> [8:0] <a  onClick="return qs(event,this)" class=SO href="#141">BIST_ADR</a><a  href="hierarchy-s.p2.html#BIST_ADR___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="142"></a><span class=K>input</span>  <a  onClick="return qs(event,this)" class=SI href="#100">TCLK</a><a  href="hierarchy-s.p17.html#TCLK___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#100">TRESET</a><a  href="hierarchy-s.p17.html#TRESET___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#101">rrdtag_0_ERROR</a><a  href="hierarchy-s.p15.html#rrdtag_0_ERROR___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#101">rrdtag_1_ERROR</a><a  href="hierarchy-s.p15.html#rrdtag_1_ERROR___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#102">rr512x5_ERROR</a><a  href="hierarchy-s.p15.html#rr512x5_ERROR___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#104">test_mode</a><a  href="hierarchy-s.p17.html#test_mode___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="143"></a><span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#143">rrdtag_0_ENABLE</a><a  href="hierarchy-s.p15.html#rrdtag_0_ENABLE___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#143">rrdtag_1_ENABLE</a><a  href="hierarchy-s.p15.html#rrdtag_1_ENABLE___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#143">rr512x5_ENABLE</a><a  href="hierarchy-s.p15.html#rr512x5_ENABLE___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#143">BIST_WE</a><a  href="hierarchy-s.p2.html#BIST_WE___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#143">INVERSE</a><a  href="hierarchy-s.p9.html#INVERSE___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="144"></a>    <a  onClick="return qs(event,this)" class=SO href="#144">END_SEQ</a><a  href="hierarchy-s.p5.html#END_SEQ___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#144">BIST_ON</a><a  href="hierarchy-s.p2.html#BIST_ON___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#144">ERRN_ON</a><a  href="hierarchy-s.p5.html#ERRN_ON___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#144">NO_COMP</a><a  href="hierarchy-s.p12.html#NO_COMP___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#144">BACKGROUND</a><a  href="hierarchy-s.p2.html#BACKGROUND___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#144">DONE</a><a  href="hierarchy-s.p4.html#DONE___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#144">ERROR</a><a  href="hierarchy-s.p5.html#ERROR___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#144">FAIL</a><a  href="hierarchy-s.p6.html#FAIL___Controller1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+    
+<span class=K>endmodule</span>
+
+<a name="rrdtag_0_LocalBist"></a><a  href="dtag_top.v.html#dtag_top_rrdtag_0_Bist_Ins"><IMG alt="[Up: dtag_top rrdtag_0_Bist_Ins]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>rrdtag_0_LocalBist</span><a  href="hierarchy-m.p4.html#rrdtag_0_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a> ( <a  onClick="return qs(event,this)" class=SI href="#155">BIST_ADR</a>, <a  onClick="return qs(event,this)" class=SI href="#156">BIST_WE</a>, 
+    <a  onClick="return qs(event,this)" class=SI href="#153">func_do</a>, <a  onClick="return qs(event,this)" class=SI href="#156">BIST_ON</a>, <a  onClick="return qs(event,this)" class=SI href="#156">ERRN_ON</a>, <a  onClick="return qs(event,this)" class=SI href="#156">INVERSE</a>, 
+    <a  onClick="return qs(event,this)" class=SI href="#157">NO_COMP</a>, <a  onClick="return qs(event,this)" class=SI href="#157">END_SEQ</a>, <a  onClick="return qs(event,this)" class=SI href="#157">rrdtag_0_ENABLE</a>, <a  onClick="return qs(event,this)" class=SI href="#157">BACKGROUND</a>, <a  onClick="return qs(event,this)" class=SO href="#154">BIST_PATTERN</a>, <a  onClick="return qs(event,this)" class=SO href="#158">we</a>, 
+    <a  onClick="return qs(event,this)" class=SO href="#158">rrdtag_0_ERROR</a> );
+
+<a name="153"></a><span class=K>input</span>  [<span class=D>`dt_msb</span>:0] <a  onClick="return qs(event,this)" class=SI href="#107">func_do</a><a  href="hierarchy-s.p6.html#func_do___rrdtag_0_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="154"></a><span class=K>output</span> [<span class=D>`dt_msb</span>:0] <a  onClick="return qs(event,this)" class=SO href="#154">BIST_PATTERN</a><a  href="hierarchy-s.p2.html#BIST_PATTERN___rrdtag_0_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="155"></a><span class=K>input</span>  [8:0] <a  onClick="return qs(event,this)" class=SI href="#108">BIST_ADR</a><a  href="hierarchy-s.p2.html#BIST_ADR___rrdtag_0_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="156"></a><span class=K>input</span>  <a  onClick="return qs(event,this)" class=SI href="#108">BIST_WE</a><a  href="hierarchy-s.p2.html#BIST_WE___rrdtag_0_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#109">BIST_ON</a><a  href="hierarchy-s.p2.html#BIST_ON___rrdtag_0_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#109">ERRN_ON</a><a  href="hierarchy-s.p5.html#ERRN_ON___rrdtag_0_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#109">INVERSE</a><a  href="hierarchy-s.p9.html#INVERSE___rrdtag_0_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="157"></a>       <a  onClick="return qs(event,this)" class=SI href="#110">NO_COMP</a><a  href="hierarchy-s.p12.html#NO_COMP___rrdtag_0_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#110">END_SEQ</a><a  href="hierarchy-s.p5.html#END_SEQ___rrdtag_0_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#110">rrdtag_0_ENABLE</a><a  href="hierarchy-s.p15.html#rrdtag_0_ENABLE___rrdtag_0_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#111">BACKGROUND</a><a  href="hierarchy-s.p2.html#BACKGROUND___rrdtag_0_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="158"></a><span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#158">rrdtag_0_ERROR</a><a  href="hierarchy-s.p15.html#rrdtag_0_ERROR___rrdtag_0_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#158">we</a><a  href="hierarchy-s.p20.html#we___rrdtag_0_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>endmodule</span>
+
+
+
+<a name="rrdtag_1_LocalBist"></a><a  href="dtag_top.v.html#dtag_top_rrdtag_1_Bist_Ins"><IMG alt="[Up: dtag_top rrdtag_1_Bist_Ins]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>rrdtag_1_LocalBist</span><a  href="hierarchy-m.p4.html#rrdtag_1_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a> ( <a  onClick="return qs(event,this)" class=SI href="#171">BIST_ADR</a>, <a  onClick="return qs(event,this)" class=SI href="#172">BIST_WE</a>, 
+    <a  onClick="return qs(event,this)" class=SI href="#169">func_do</a>, <a  onClick="return qs(event,this)" class=SI href="#172">BIST_ON</a>, <a  onClick="return qs(event,this)" class=SI href="#172">ERRN_ON</a>, <a  onClick="return qs(event,this)" class=SI href="#172">INVERSE</a>, 
+    <a  onClick="return qs(event,this)" class=SI href="#173">NO_COMP</a>, <a  onClick="return qs(event,this)" class=SI href="#173">END_SEQ</a>, <a  onClick="return qs(event,this)" class=SI href="#173">rrdtag_1_ENABLE</a>, <a  onClick="return qs(event,this)" class=SI href="#173">BACKGROUND</a>, <a  onClick="return qs(event,this)" class=SO href="#170">BIST_PATTERN</a>, <a  onClick="return qs(event,this)" class=SO href="#174">we</a>, 
+    <a  onClick="return qs(event,this)" class=SO href="#174">rrdtag_1_ERROR</a> );
+
+<a name="169"></a><span class=K>input</span>  [<span class=D>`dt_msb</span>:0] <a  onClick="return qs(event,this)" class=SI href="#113">func_do</a><a  href="hierarchy-s.p6.html#func_do___rrdtag_1_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="170"></a><span class=K>output</span> [<span class=D>`dt_msb</span>:0] <a  onClick="return qs(event,this)" class=SO href="#170">BIST_PATTERN</a><a  href="hierarchy-s.p2.html#BIST_PATTERN___rrdtag_1_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="171"></a><span class=K>input</span>  [8:0] <a  onClick="return qs(event,this)" class=SI href="#114">BIST_ADR</a><a  href="hierarchy-s.p2.html#BIST_ADR___rrdtag_1_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="172"></a><span class=K>input</span>  <a  onClick="return qs(event,this)" class=SI href="#114">BIST_WE</a><a  href="hierarchy-s.p2.html#BIST_WE___rrdtag_1_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#115">BIST_ON</a><a  href="hierarchy-s.p2.html#BIST_ON___rrdtag_1_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#115">ERRN_ON</a><a  href="hierarchy-s.p5.html#ERRN_ON___rrdtag_1_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#115">INVERSE</a><a  href="hierarchy-s.p9.html#INVERSE___rrdtag_1_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="173"></a>       <a  onClick="return qs(event,this)" class=SI href="#116">NO_COMP</a><a  href="hierarchy-s.p12.html#NO_COMP___rrdtag_1_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#116">END_SEQ</a><a  href="hierarchy-s.p5.html#END_SEQ___rrdtag_1_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#116">rrdtag_1_ENABLE</a><a  href="hierarchy-s.p15.html#rrdtag_1_ENABLE___rrdtag_1_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#117">BACKGROUND</a><a  href="hierarchy-s.p2.html#BACKGROUND___rrdtag_1_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="174"></a><span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#174">rrdtag_1_ERROR</a><a  href="hierarchy-s.p15.html#rrdtag_1_ERROR___rrdtag_1_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#174">we</a><a  href="hierarchy-s.p20.html#we___rrdtag_1_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>endmodule</span>
+
+
+<a name="rr512x5_LocalBist"></a><a  href="dtag_top.v.html#dtag_top_rr512x5_Bist_Ins"><IMG alt="[Up: dtag_top rr512x5_Bist_Ins]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>rr512x5_LocalBist</span><a  href="hierarchy-m.p4.html#rr512x5_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a> ( <a  onClick="return qs(event,this)" class=SI href="#186">BIST_ADR</a>, <a  onClick="return qs(event,this)" class=SI href="#187">BIST_WE</a>,
+    <a  onClick="return qs(event,this)" class=SI href="#184">func_doa</a>, <a  onClick="return qs(event,this)" class=SI href="#187">BIST_ON</a>, <a  onClick="return qs(event,this)" class=SI href="#187">ERRN_ON</a>, <a  onClick="return qs(event,this)" class=SI href="#187">INVERSE</a>,
+    <a  onClick="return qs(event,this)" class=SI href="#188">NO_COMP</a>, <a  onClick="return qs(event,this)" class=SI href="#188">END_SEQ</a>, <a  onClick="return qs(event,this)" class=SI href="#188">rr512x5_ENABLE</a>, <a  onClick="return qs(event,this)" class=SI href="#188">BACKGROUND</a>,  <a  onClick="return qs(event,this)" class=SO href="#185">BIST_PATTERN</a>, <a  onClick="return qs(event,this)" class=SO href="#189">web</a>,
+    <a  onClick="return qs(event,this)" class=SO href="#189">rr512x5_ERROR</a> );
+    
+<a name="184"></a><span class=K>input</span>  [4:0] <a  onClick="return qs(event,this)" class=SI href="#119">func_doa</a><a  href="hierarchy-s.p6.html#func_doa___rr512x5_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="185"></a><span class=K>output</span> [4:0] <a  onClick="return qs(event,this)" class=SO href="#185">BIST_PATTERN</a><a  href="hierarchy-s.p2.html#BIST_PATTERN___rr512x5_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="186"></a><span class=K>input</span>  [8:0] <a  onClick="return qs(event,this)" class=SI href="#120">BIST_ADR</a><a  href="hierarchy-s.p2.html#BIST_ADR___rr512x5_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="187"></a><span class=K>input</span>  <a  onClick="return qs(event,this)" class=SI href="#120">BIST_WE</a><a  href="hierarchy-s.p2.html#BIST_WE___rr512x5_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#121">BIST_ON</a><a  href="hierarchy-s.p2.html#BIST_ON___rr512x5_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#121">ERRN_ON</a><a  href="hierarchy-s.p5.html#ERRN_ON___rr512x5_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#121">INVERSE</a><a  href="hierarchy-s.p9.html#INVERSE___rr512x5_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="188"></a>       <a  onClick="return qs(event,this)" class=SI href="#122">NO_COMP</a><a  href="hierarchy-s.p12.html#NO_COMP___rr512x5_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#122">END_SEQ</a><a  href="hierarchy-s.p5.html#END_SEQ___rr512x5_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#122">rr512x5_ENABLE</a><a  href="hierarchy-s.p15.html#rr512x5_ENABLE___rr512x5_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#123">BACKGROUND</a><a  href="hierarchy-s.p2.html#BACKGROUND___rr512x5_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="189"></a><span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#189">rr512x5_ERROR</a><a  href="hierarchy-s.p15.html#rr512x5_ERROR___rr512x5_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#189">web</a><a  href="hierarchy-s.p20.html#web___rr512x5_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:00 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/dtag/rtl/dtag_top.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

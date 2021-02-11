@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/dtag/rtl/dtag_dummy.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "dtag_dummy.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+<span class=M>`include</span> <a  onClick="return qs(event,this)" class=S href="defines.h.html">&quot;defines.h&quot;</a>
+
+<a name="dtag_dummy"></a><span class=K>module</span> 	<span class=MM>dtag_dummy</span><a  href="hierarchy-m.html#dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>	(
+		<a  onClick="return qs(event,this)" class=SI href="#52">tag_in</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#57">tag_we</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#53">cmp_addr_in</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#55">set_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#56">wb_set_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#59">addr</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#54">stat_in</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#58">stat_we</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#60">stat_addr</a>, 
+		<a  onClick="return qs(event,this)" class=SI href="#61">reg_enable</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#62">clk</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#63">sin</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#64">sm</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#69">so</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#70">hit0_out</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#71">hit1_out</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#72">dtag_dout</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#73">stat_out</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#65">test_mode</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#66">bist_mode</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#67">bist_reset</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#74">dtag_test_err_l</a>
+		);
+
+
+<a name="52"></a><span class=K>input</span>	[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#61">dt_msb</a>:0]	<a  onClick="return qs(event,this)" class=SI href="#52">tag_in</a><a  href="hierarchy-s.p17.html#tag_in___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Write data_in
+</span><a name="53"></a><span class=K>input</span>	[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#61">dt_msb</a>:0]	<a  onClick="return qs(event,this)" class=SI href="#53">cmp_addr_in</a><a  href="hierarchy-s.p3.html#cmp_addr_in___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  <span class=C>// dcu_addr_c for hit/miss decision, out of FF.
+</span><a name="54"></a><span class=K>input</span>	[4:0]		<a  onClick="return qs(event,this)" class=SI href="#54">stat_in</a><a  href="hierarchy-s.p16.html#stat_in___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Write status bus
+</span><a name="55"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#55">set_sel</a><a  href="hierarchy-s.p16.html#set_sel___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Select set 
+</span><a name="56"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#56">wb_set_sel</a><a  href="hierarchy-s.p20.html#wb_set_sel___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Select set for tag_out
+</span><a name="57"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#57">tag_we</a><a  href="hierarchy-s.p17.html#tag_we___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Write enable for tag array
+</span><a name="58"></a><span class=K>input</span>	[4:0]		<a  onClick="return qs(event,this)" class=SI href="#58">stat_we</a><a  href="hierarchy-s.p16.html#stat_we___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;	<span class=C>// Write enable for status array
+</span><a name="59"></a><span class=K>input</span>	[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>:4]	<a  onClick="return qs(event,this)" class=SI href="#59">addr</a><a  href="hierarchy-s.html#addr___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Address inputs for reading tags and status reg
+</span><a name="60"></a><span class=K>input</span>	[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>:4]	<a  onClick="return qs(event,this)" class=SI href="#60">stat_addr</a><a  href="hierarchy-s.p16.html#stat_addr___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Address inputs for writing into status regs
+</span><a name="61"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#61">reg_enable</a><a  href="hierarchy-s.p15.html#reg_enable___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// power down mode
+</span><a name="62"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#62">clk</a><a  href="hierarchy-s.p3.html#clk___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Clock
+</span><a name="63"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#63">sin</a><a  href="hierarchy-s.p16.html#sin___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Scan input
+</span><a name="64"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#64">sm</a><a  href="hierarchy-s.p16.html#sm___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Scan mode
+</span><a name="65"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#65">test_mode</a><a  href="hierarchy-s.p17.html#test_mode___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="66"></a><span class=K>input</span>   [1:0]		<a  onClick="return qs(event,this)" class=SI href="#66">bist_mode</a><a  href="hierarchy-s.p2.html#bist_mode___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="67"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#67">bist_reset</a><a  href="hierarchy-s.p2.html#bist_reset___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="69"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#69">so</a><a  href="hierarchy-s.p16.html#so___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// scan output
+</span><a name="70"></a><span class=K>output</span> 			<a  onClick="return qs(event,this)" class=SO href="#70">hit0_out</a><a  href="hierarchy-s.p8.html#hit0_out___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       <span class=C>// d$ hit on set0
+</span><a name="71"></a><span class=K>output</span> 			<a  onClick="return qs(event,this)" class=SO href="#71">hit1_out</a><a  href="hierarchy-s.p8.html#hit1_out___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;    	<span class=C>// d$ hit on set1 
+</span><a name="72"></a><span class=K>output</span>  [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#61">dt_msb</a>:0]	<a  onClick="return qs(event,this)" class=SO href="#72">dtag_dout</a><a  href="hierarchy-s.p4.html#dtag_dout___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Tag output for lower bits of wb_addr 
+</span><a name="73"></a><span class=K>output</span>	[4:0]		<a  onClick="return qs(event,this)" class=SO href="#73">stat_out</a><a  href="hierarchy-s.p16.html#stat_out___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// status reg output
+</span><a name="74"></a><span class=K>output</span> 			<a  onClick="return qs(event,this)" class=SO href="#74">dtag_test_err_l</a><a  href="hierarchy-s.p4.html#dtag_test_err_l___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="76"></a><span class=K>wire</span>	[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#61">dt_msb</a>:0]	<a  onClick="return qs(event,this)" class=SW href="#76">bist_tag_in</a><a  href="hierarchy-s.p2.html#bist_tag_in___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="77"></a><span class=K>wire</span>	[4:0]		<a  onClick="return qs(event,this)" class=SW href="#77">bist_stat_in</a><a  href="hierarchy-s.p2.html#bist_stat_in___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="78"></a><span class=K>wire</span> 	[8:0]		<a  onClick="return qs(event,this)" class=SW href="#78">bist_addr</a><a  href="hierarchy-s.p2.html#bist_addr___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="79"></a><span class=K>wire</span>	[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>:4]	<a  onClick="return qs(event,this)" class=SW href="#79">bist_stat_addr</a><a  href="hierarchy-s.p2.html#bist_stat_addr___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="80"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#80">bist_wb_set_sel</a><a  href="hierarchy-s.p2.html#bist_wb_set_sel___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="81"></a><span class=K>wire</span> 			<a  onClick="return qs(event,this)" class=SW href="#81">bist_tag_we</a><a  href="hierarchy-s.p2.html#bist_tag_we___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="82"></a><span class=K>wire</span> 	[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#61">dt_msb</a>:0] 	<a  onClick="return qs(event,this)" class=SW href="#82">bist_tagin</a><a  href="hierarchy-s.p2.html#bist_tagin___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="83"></a><span class=K>wire</span>	[4:0]		<a  onClick="return qs(event,this)" class=SW href="#83">bist_stat_we</a><a  href="hierarchy-s.p2.html#bist_stat_we___dtag_dummy"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:17 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/dtag/rtl/dtag_dummy.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

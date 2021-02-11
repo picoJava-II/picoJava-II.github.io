@@ -1,0 +1,401 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/sim/env/trap_monitor.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "trap_monitor.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+<a name="trap_monitor"></a><a  href="monitor.v.html#monitor_trap_monitor"><IMG alt="[Up: monitor trap_monitor]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>trap_monitor</span><a  href="hierarchy-m.p4.html#trap_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>();
+
+<a name="25"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#28">trap_count</a><a  href="hierarchy-s.p17.html#trap_count___trap_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>initial</span>
+<a name="28"></a>  <a  onClick="return qs(event,this)" class=SIT href="#25">trap_count</a> = 0;
+
+<span class=K>always</span> @(<span class=D>`PICOJAVAII</span>.end_of_simulation)
+  <span class=ST>$display</span>(<span class=S>&quot;Total number of traps taken: %d&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#25">trap_count</a>);
+
+ <span class=C>// Trap monitor
+</span><span class=K>always</span> @(<span class=K>posedge</span> <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.clk) <span class=K>begin</span>
+
+ <span class=C>// Trap Monitor
+</span>  <span class=K>if</span>(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.tbase_tt_we_e) <span class=K>begin</span>
+	<a  onClick="return qs(event,this)" class=SIT href="#25">trap_count</a> = <a  onClick="return qs(event,this)" class=SIT href="#28">trap_count</a> + 1;
+	<span class=K>case</span> (<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.tbase_tt_e[7:0])
+	    8'h01:
+		<span class=ST>$write</span>(<span class=S>&quot;asynchronous_error &quot;</span>);
+	    8'h02:
+		<span class=ST>$write</span>(<span class=S>&quot;memory_protection_error &quot;</span>);
+	    8'h03:
+		<span class=ST>$write</span>(<span class=S>&quot;data_access_mem_error &quot;</span>);
+	    8'h04:
+		<span class=ST>$write</span>(<span class=S>&quot;instruction_access_error &quot;</span>);
+	    8'h05:
+		<span class=ST>$write</span>(<span class=S>&quot;privileged_instruction &quot;</span>);
+	    8'h06:
+		<span class=ST>$write</span>(<span class=S>&quot;illegal_instruction &quot;</span>);
+	    8'h07:
+		<span class=ST>$write</span>(<span class=S>&quot;breakpoint1 &quot;</span>);
+	    8'h08:
+		<span class=ST>$write</span>(<span class=S>&quot;breakpoint2 &quot;</span>);
+	    8'h09:
+		<span class=ST>$write</span>(<span class=S>&quot;mem_address_not_aligned &quot;</span>);
+	    8'h0a:
+		<span class=ST>$write</span>(<span class=S>&quot;data_access_io_error &quot;</span>);
+	    8'h0c:
+		<span class=ST>$write</span>(<span class=S>&quot;oplim_trap &quot;</span>);
+	    8'h62:
+		<span class=ST>$write</span>(<span class=S>&quot;fadd &quot;</span>);
+	    8'h63:
+		<span class=ST>$write</span>(<span class=S>&quot;dadd &quot;</span>);
+	    8'h66:
+		<span class=ST>$write</span>(<span class=S>&quot;fsub &quot;</span>);
+	    8'h67:
+		<span class=ST>$write</span>(<span class=S>&quot;dsub &quot;</span>);
+	    8'h6A:
+		<span class=ST>$write</span>(<span class=S>&quot;fmul &quot;</span>);
+	    8'h6B:
+		<span class=ST>$write</span>(<span class=S>&quot;dmul &quot;</span>);
+	    8'h6E:
+		<span class=ST>$write</span>(<span class=S>&quot;fdiv &quot;</span>);
+	    8'h6F:
+		<span class=ST>$write</span>(<span class=S>&quot;ddiv &quot;</span>);
+	    8'h72:
+		<span class=ST>$write</span>(<span class=S>&quot;frem 1 &quot;</span>);
+	    8'h73:
+		<span class=ST>$write</span>(<span class=S>&quot;drem 2 &quot;</span>);
+	    8'h86:
+		<span class=ST>$write</span>(<span class=S>&quot;i2f &quot;</span>);
+	    8'h87:
+		<span class=ST>$write</span>(<span class=S>&quot;I2d &quot;</span>);
+	    8'h89:
+		<span class=ST>$write</span>(<span class=S>&quot;l2f &quot;</span>);
+	    8'h8A:
+		<span class=ST>$write</span>(<span class=S>&quot;l2d  &quot;</span>);
+	    8'h8B:
+		<span class=ST>$write</span>(<span class=S>&quot;f2i &quot;</span>);
+	    8'h8C:
+		<span class=ST>$write</span>(<span class=S>&quot;f2l &quot;</span>);
+	    8'h8E:
+		<span class=ST>$write</span>(<span class=S>&quot;d2i &quot;</span>);
+	    8'h8F:
+		<span class=ST>$write</span>(<span class=S>&quot;d2l &quot;</span>);
+	    8'h8D:
+		<span class=ST>$write</span>(<span class=S>&quot;f2d &quot;</span>);
+	    8'h90:
+		<span class=ST>$write</span>(<span class=S>&quot;d2f &quot;</span>);
+	    8'h96:
+		<span class=ST>$write</span>(<span class=S>&quot;fcmpg &quot;</span>);
+	    8'h95:
+		<span class=ST>$write</span>(<span class=S>&quot;fcmpl &quot;</span>);
+	    8'h98:
+		<span class=ST>$write</span>(<span class=S>&quot;dcmpg &quot;</span>);
+	    8'h97:
+		<span class=ST>$write</span>(<span class=S>&quot;dcmpl  &quot;</span>);
+	    8'h0d:
+		<span class=ST>$write</span>(<span class=S>&quot;soft_trap &quot;</span>);
+	    8'h6d:
+		<span class=ST>$write</span>(<span class=S>&quot;ldiv3 &quot;</span>);
+	    8'h69:
+		<span class=ST>$write</span>(<span class=S>&quot;lmul3 &quot;</span>);
+	    8'h71:
+		<span class=ST>$write</span>(<span class=S>&quot;lrem3 &quot;</span>);
+	    8'h12:
+		<span class=ST>$write</span>(<span class=S>&quot;ldc &quot;</span>);
+	    8'h13:
+		<span class=ST>$write</span>(<span class=S>&quot;ldc_w &quot;</span>);
+	    8'h14:
+		<span class=ST>$write</span>(<span class=S>&quot;ldc2_w &quot;</span>);
+	    8'hB2:
+		<span class=ST>$write</span>(<span class=S>&quot;getstatic &quot;</span>);
+	    8'hB3:
+		<span class=ST>$write</span>(<span class=S>&quot;putstatic &quot;</span>);
+	    8'hB4:
+		<span class=ST>$write</span>(<span class=S>&quot;getfield &quot;</span>);
+	    8'hB5:
+		<span class=ST>$write</span>(<span class=S>&quot;putfield &quot;</span>);
+	    8'hBB:
+		<span class=ST>$write</span>(<span class=S>&quot;new &quot;</span>);
+	    8'hBC:
+		<span class=ST>$write</span>(<span class=S>&quot;newarray &quot;</span>);
+	    8'hBD:
+		<span class=ST>$write</span>(<span class=S>&quot;anewarray &quot;</span>);
+	    8'hC0:
+		<span class=ST>$write</span>(<span class=S>&quot;checkcast &quot;</span>);
+	    8'hC1:
+		<span class=ST>$write</span>(<span class=S>&quot;instanceof &quot;</span>);
+	    8'hC5:
+		<span class=ST>$write</span>(<span class=S>&quot;multianewarray &quot;</span>);
+	    8'hDD:
+		<span class=ST>$write</span>(<span class=S>&quot;new_quick &quot;</span>);
+	    8'hDE:
+		<span class=ST>$write</span>(<span class=S>&quot;anewarray_quick &quot;</span>);
+	    8'hE0:
+		<span class=ST>$write</span>(<span class=S>&quot;checkcast_quick &quot;</span>);
+	    8'hE1:
+		<span class=ST>$write</span>(<span class=S>&quot;instanceof_quick &quot;</span>);
+	    8'hDF:
+		<span class=ST>$write</span>(<span class=S>&quot;multianewarray_quick &quot;</span>);
+	    8'hB6:
+		<span class=ST>$write</span>(<span class=S>&quot;invokevirtual &quot;</span>);
+	    8'hB7:
+		<span class=ST>$write</span>(<span class=S>&quot;invokespecial &quot;</span>);
+	    8'hB8:
+		<span class=ST>$write</span>(<span class=S>&quot;invokestatic &quot;</span>);
+	    8'hB9:
+		<span class=ST>$write</span>(<span class=S>&quot;invokeinterface &quot;</span>);
+	    8'hDA:
+		<span class=ST>$write</span>(<span class=S>&quot;invokeinterface_quick &quot;</span>);
+	    8'hDB:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xdb &quot;</span>);
+	    8'hE4:
+		<span class=ST>$write</span>(<span class=S>&quot;putfield_quick_w &quot;</span>);
+	    8'hE3:
+		<span class=ST>$write</span>(<span class=S>&quot;getfield_quick_w &quot;</span>);
+	    8'h53:
+		<span class=ST>$write</span>(<span class=S>&quot;aastore &quot;</span>);
+	    8'hBF:
+		<span class=ST>$write</span>(<span class=S>&quot;athrow &quot;</span>);
+	    8'hCA:
+		<span class=ST>$write</span>(<span class=S>&quot;breakpoint  &quot;</span>);
+	    8'hAB:
+		<span class=ST>$write</span>(<span class=S>&quot;lookupswitch &quot;</span>);
+	    8'hC4:
+		<span class=ST>$write</span>(<span class=S>&quot;wide &quot;</span>);
+	    8'hDC:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xdc &quot;</span>);
+	    8'hEE:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xee &quot;</span>);
+	    8'hEF:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xef &quot;</span>);
+	    8'hF0:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xf0 &quot;</span>);
+	    8'hF1:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xf1 &quot;</span>);
+	    8'hF2:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xf2 &quot;</span>);
+	    8'hF3:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xf3 &quot;</span>);
+	    8'hF4:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xf4 &quot;</span>);
+	    8'hF5:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xf5 &quot;</span>);
+	    8'hF6:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xf6 &quot;</span>);
+	    8'hF7:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xf7 &quot;</span>);
+	    8'hF8:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xf8 &quot;</span>);
+	    8'hF9:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xf9 &quot;</span>);
+	    8'hFA:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xfa &quot;</span>);
+	    8'hFB:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xfb &quot;</span>);
+	    8'hFC:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xfc &quot;</span>);
+	    8'hFD:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xfd &quot;</span>);
+	    8'hFE:
+		<span class=ST>$write</span>(<span class=S>&quot;unimplemented_instr_0xfe &quot;</span>);
+	    8'h16:
+		<span class=ST>$write</span>(<span class=S>&quot;runtime_ArithmeticException &quot;</span>);
+	    8'h19:
+		<span class=ST>$write</span>(<span class=S>&quot;runtime_IndexOutOfBndsException &quot;</span>);
+	    8'h1B:
+		<span class=ST>$write</span>(<span class=S>&quot;runtime_NullPtrException &quot;</span>);
+	    8'h23:
+		<span class=ST>$write</span>(<span class=S>&quot;LockCountOverflowTrap &quot;</span>);
+	    8'h24:
+		<span class=ST>$write</span>(<span class=S>&quot;LockEnterMissTrap &quot;</span>);
+	    8'h25:
+		<span class=ST>$write</span>(<span class=S>&quot;LockReleaseTrap &quot;</span>);
+	    8'h26:
+		<span class=ST>$write</span>(<span class=S>&quot;LockExitMissTrap &quot;</span>);
+	    8'h27:
+		<span class=ST>$write</span>(<span class=S>&quot;gc_notify &quot;</span>);
+	    8'h29:
+		<span class=ST>$write</span>(<span class=S>&quot;ZeroLineEmulationTrap4 &quot;</span>);
+	    8'h30:
+		<span class=ST>$write</span>(<span class=S>&quot;nmi &quot;</span>);
+	    8'h31:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_1 &quot;</span>);
+	    8'h32:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_2 &quot;</span>);
+	    8'h33:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_3 &quot;</span>);
+	    8'h34:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_4 &quot;</span>);
+	    8'h35:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_5 &quot;</span>);
+	    8'h36:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_6 &quot;</span>);
+	    8'h37:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_7 &quot;</span>);
+	    8'h38:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_8 &quot;</span>);
+	    8'h39:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_9 &quot;</span>);
+	    8'h3a:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_a &quot;</span>);
+	    8'h3b:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_b &quot;</span>);
+	    8'h3c:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_c &quot;</span>);
+	    8'h3d:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_d &quot;</span>);
+	    8'h3e:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_e &quot;</span>);
+	    8'h3F:
+		<span class=ST>$write</span>(<span class=S>&quot;Interrupt_level_f &quot;</span>);
+	    <span class=K>default</span>:
+		<span class=ST>$write</span>(<span class=S>&quot;Undefined &quot;</span>);
+	<span class=K>endcase</span>
+
+	<span class=ST>$display</span> (<span class=S>&quot;trap taken ... with tt= [%h] vars= [%h]&quot;</span>,
+                                <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.tbase_tt_e[7:0], <span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.lvars[31:0]);
+  <span class=K>end</span>
+
+<span class=C>/*
+ // Return from Trap monitor
+  if(`PICOJAVAII.`DESIGN.iu.datapath.regs.priv_ret_from_trap_op_e &amp; `PICOJAVAII.`DESIGN.iu.datapath.regs.help0_op_e) $display (
+  &quot; Returning from Trap0 ... with frame= [%h], lvars= [%h]&quot;,
+                              `PICOJAVAII.`DESIGN.iu.ex.ex_regs.frame_w[31:0], `PICOJAVAII.`DESIGN.iu.ex.ex_regs.vars_w[31:0]);
+*/</span>
+<span class=K>end</span>
+
+
+<span class=K>endmodule</span> 
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:57 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/sim/env/trap_monitor.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

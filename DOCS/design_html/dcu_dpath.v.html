@@ -1,0 +1,659 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/dcu/rtl/dcu_dpath.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "dcu_dpath.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+<span class=M>`include</span>	<a  onClick="return qs(event,this)" class=S href="defines.h.html">&quot;defines.h&quot;</a>
+
+<a name="dcu_dpath"></a><a  href="dcu_nocache.v.html#dcu_nocache_dcu_dpath"><IMG alt="[Up: dcu_nocache dcu_dpath]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="dcu.v.html#dcu_dcu_dpath"><IMG alt="[Up: dcu dcu_dpath]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>dcu_dpath</span><a  href="hierarchy-m.html#dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+	<a  onClick="return qs(event,this)" class=SI href="#82">iu_data_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#83">iu_addr_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#84">misc_din</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#85">misc_dout</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#86">dcu_data</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#88">smu_data</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#89">smu_addr</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#91">dcu_addr_out</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#92">dc_addr_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#98">dc_data_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#96">arbiter_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#99">latch_cf_addr</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#100">latch_wb_addr</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#97">latch_addr_c</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#101">dcu_hit0</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#102">cf_word_addr</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#103">repl_word_addr</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#93">word_addr</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#94">diag_stat_bits</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#95">dtag_rd_c</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#107">wb_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#108">wb_ce</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#112">repl_addr</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#109">req_addr_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#110">stat_addr_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#113">algn_sign_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#114">algn_size_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#115">algn_sel_7_0</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#116">algn_sel_15_8</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#117">algn_sel_23_16</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#118">algn_sel_31_24</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#119">swap_sel_7_0</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#120">swap_sel_15_8</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#121">swap_sel_23_16</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#122">swap_sel_31_24</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#123">merge_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#106">fill_byte</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#104">dcu_addr_c_31</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#124">latch_wr_data</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#111">dcu_tag_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#125">dtg_dout</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#126">dcu_din_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#90">dcram_dout</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#127">dcu_stat_addr</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#87">dcu_tag_in</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#128">dcu_biu_addr</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#129">dcu_biu_data</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#105">dcu_dout_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#130">biu_data</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#131">clk</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#132">sin</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#133">so</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#134">sm</a>
+	);
+	
+
+<a name="82"></a><span class=K>input</span> 	[31:0]		<a  onClick="return qs(event,this)" class=SI href="#82">iu_data_e</a><a  href="hierarchy-s.p9.html#iu_data_e___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data from IU
+</span><a name="83"></a><span class=K>input</span>	[31:0]		<a  onClick="return qs(event,this)" class=SI href="#83">iu_addr_e</a><a  href="hierarchy-s.p9.html#iu_addr_e___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Address from IU
+</span><a name="84"></a><span class=K>input</span>	[31:0]		<a  onClick="return qs(event,this)" class=SI href="#84">misc_din</a><a  href="hierarchy-s.p11.html#misc_din___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;		<span class=C>// Diagnostic data input
+</span><a name="85"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#345">misc_dout</a><a  href="hierarchy-s.p11.html#misc_dout___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Diagnostic data output
+</span><a name="86"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#334">dcu_data</a><a  href="hierarchy-s.p4.html#dcu_data___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data out of DCU to IU/Dribbler
+</span><a name="87"></a><span class=K>output</span>	[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#45">dt_addr_msb</a>:<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>+1]  <a  onClick="return qs(event,this)" class=SO href="#215">dcu_tag_in</a><a  href="hierarchy-s.p4.html#dcu_tag_in___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Data input to the tag ram
+</span><a name="88"></a><span class=K>input</span>	[31:0]		<a  onClick="return qs(event,this)" class=SI href="#88">smu_data</a><a  href="hierarchy-s.p16.html#smu_data___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data from Dribbler
+</span><a name="89"></a><span class=K>input</span>	[31:0]		<a  onClick="return qs(event,this)" class=SI href="#89">smu_addr</a><a  href="hierarchy-s.p16.html#smu_addr___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Address from Dribbler
+</span><a name="90"></a><span class=K>input</span>	[63:0]		<a  onClick="return qs(event,this)" class=SI href="#90">dcram_dout</a><a  href="hierarchy-s.p4.html#dcram_dout___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Output of Data RAM
+</span><a name="91"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#179">dcu_addr_out</a><a  href="hierarchy-s.p4.html#dcu_addr_out___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Address of data to be accessed in cache next cycle
+</span><a name="92"></a><span class=K>input</span>	[3:0]		<a  onClick="return qs(event,this)" class=SI href="#92">dc_addr_sel</a><a  href="hierarchy-s.p4.html#dc_addr_sel___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// select Addr to be indexed into rams. 
+</span><a name="93"></a><span class=K>input</span>	[1:0]		<a  onClick="return qs(event,this)" class=SI href="#93">word_addr</a><a  href="hierarchy-s.p20.html#word_addr___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// select word of a given cache line
+</span><a name="94"></a><span class=K>input</span>	[2:0]		<a  onClick="return qs(event,this)" class=SI href="#94">diag_stat_bits</a><a  href="hierarchy-s.p4.html#diag_stat_bits___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// status bits for diagnostic reads
+</span><a name="95"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#95">dtag_rd_c</a><a  href="hierarchy-s.p4.html#dtag_rd_c___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Read Dcache tag inst in C stage
+</span><a name="96"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#96">arbiter_sel</a><a  href="hierarchy-s.html#arbiter_sel___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// selects arbitrates iu and smu addr/data
+</span><a name="97"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#97">latch_addr_c</a><a  href="hierarchy-s.p10.html#latch_addr_c___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// CE to latch the addr/data in C stage
+</span><a name="98"></a><span class=K>input</span>	[3:0]		<a  onClick="return qs(event,this)" class=SI href="#98">dc_data_sel</a><a  href="hierarchy-s.p4.html#dc_data_sel___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// select data input to dcram 
+</span><a name="99"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#99">latch_cf_addr</a><a  href="hierarchy-s.p10.html#latch_cf_addr___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;		<span class=C>// CE to latch cache fill addr
+</span><a name="100"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#100">latch_wb_addr</a><a  href="hierarchy-s.p10.html#latch_wb_addr___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;		<span class=C>// CE to latch write back addr
+</span><a name="101"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#101">dcu_hit0</a><a  href="hierarchy-s.p4.html#dcu_hit0___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// cache hit in set 0
+</span><a name="102"></a><span class=K>output</span>	[3:0]		<a  onClick="return qs(event,this)" class=SO href="#195">cf_word_addr</a><a  href="hierarchy-s.p3.html#cf_word_addr___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// word offset of word being filled in
+</span><a name="103"></a><span class=K>output</span>	[3:0]		<a  onClick="return qs(event,this)" class=SO href="#196">repl_word_addr</a><a  href="hierarchy-s.p15.html#repl_word_addr___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// word offset of word being replaced
+</span><a name="104"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#104">dcu_addr_c_31</a><a  href="hierarchy-s.p4.html#dcu_addr_c_31___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// used to select set for diagnostic reads
+</span><a name="105"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#105">dcu_dout_sel</a><a  href="hierarchy-s.p4.html#dcu_dout_sel___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// selects data to be sent onto memory bus
+</span><a name="106"></a><span class=K>input</span>	[1:0]		<a  onClick="return qs(event,this)" class=SI href="#106">fill_byte</a><a  href="hierarchy-s.p6.html#fill_byte___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="107"></a><span class=K>input</span>	[3:0]		<a  onClick="return qs(event,this)" class=SI href="#107">wb_sel</a><a  href="hierarchy-s.p20.html#wb_sel___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Select particular 32 bit writeback register
+</span><a name="108"></a><span class=K>input</span>	[1:0]		<a  onClick="return qs(event,this)" class=SI href="#108">wb_ce</a><a  href="hierarchy-s.p20.html#wb_ce___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// CE to store data into particular wbreg
+</span><a name="109"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#109">req_addr_sel</a><a  href="hierarchy-s.p15.html#req_addr_sel___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;		<span class=C>// select betn writeback addr,NC addr, fill cycle addr
+</span><a name="110"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#110">stat_addr_sel</a><a  href="hierarchy-s.p16.html#stat_addr_sel___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// select addr to access status register
+</span><a name="111"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#111">dcu_tag_sel</a><a  href="hierarchy-s.p4.html#dcu_tag_sel___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Select data input to the tag ram
+</span><a name="112"></a><span class=K>input</span>	[3:0]		<a  onClick="return qs(event,this)" class=SI href="#112">repl_addr</a><a  href="hierarchy-s.p15.html#repl_addr___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// word offset of line being replaced
+</span><a name="113"></a><span class=K>input</span>	[4:0]		<a  onClick="return qs(event,this)" class=SI href="#113">algn_sign_sel</a><a  href="hierarchy-s.html#algn_sign_sel___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// select sign extension
+</span><a name="114"></a><span class=K>input</span>	[1:0]		<a  onClick="return qs(event,this)" class=SI href="#114">algn_size_sel</a><a  href="hierarchy-s.html#algn_size_sel___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// select sign depending on size of data
+</span><a name="115"></a><span class=K>input</span>	[3:0]		<a  onClick="return qs(event,this)" class=SI href="#115">algn_sel_7_0</a><a  href="hierarchy-s.html#algn_sel_7_0___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// sel the correct 7:0 bits (rotation/align)
+</span><a name="116"></a><span class=K>input</span>	[3:0]		<a  onClick="return qs(event,this)" class=SI href="#116">algn_sel_15_8</a><a  href="hierarchy-s.html#algn_sel_15_8___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// sel the correct 15:8 bits (rotation/align)
+</span><a name="117"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#117">algn_sel_23_16</a><a  href="hierarchy-s.html#algn_sel_23_16___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// sel the correct 23:16 bits (rotation/align)
+</span><a name="118"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#118">algn_sel_31_24</a><a  href="hierarchy-s.html#algn_sel_31_24___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// sel the correct 31:24 bits (rotation/align)
+</span><a name="119"></a><span class=K>input</span>	[2:0]		<a  onClick="return qs(event,this)" class=SI href="#119">swap_sel_7_0</a><a  href="hierarchy-s.p16.html#swap_sel_7_0___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;		<span class=C>// sel the correct 7:0 bits during merging
+</span><a name="120"></a><span class=K>input</span>	[2:0]		<a  onClick="return qs(event,this)" class=SI href="#120">swap_sel_15_8</a><a  href="hierarchy-s.p16.html#swap_sel_15_8___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;		<span class=C>// sel the correct 15:8 bits during merging
+</span><a name="121"></a><span class=K>input</span>	[2:0]		<a  onClick="return qs(event,this)" class=SI href="#121">swap_sel_23_16</a><a  href="hierarchy-s.p16.html#swap_sel_23_16___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;	<span class=C>// sel the correct 23:16 bits during merging
+</span><a name="122"></a><span class=K>input</span>	[2:0]		<a  onClick="return qs(event,this)" class=SI href="#122">swap_sel_31_24</a><a  href="hierarchy-s.p16.html#swap_sel_31_24___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;	<span class=C>// sel the correct 31:24 bits during merging
+</span><a name="123"></a><span class=K>input</span>	[3:0]		<a  onClick="return qs(event,this)" class=SI href="#123">merge_sel</a><a  href="hierarchy-s.p11.html#merge_sel___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// final byte selects during merging
+</span><a name="124"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#124">latch_wr_data</a><a  href="hierarchy-s.p10.html#latch_wr_data___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// latch write miss data
+</span><a name="125"></a><span class=K>input</span>	[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#61">dt_msb</a>:0]	<a  onClick="return qs(event,this)" class=SI href="#125">dtg_dout</a><a  href="hierarchy-s.p4.html#dtg_dout___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data out of the Tag for writeback addressing 
+</span><a name="126"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#294">dcu_din_e</a><a  href="hierarchy-s.p4.html#dcu_din_e___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data into the Data RAM
+</span><a name="127"></a><span class=K>output</span>  [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>:0]	<a  onClick="return qs(event,this)" class=SO href="#204">dcu_stat_addr</a><a  href="hierarchy-s.p4.html#dcu_stat_addr___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Address for writes to status reg/ data RAM
+</span><a name="128"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#240">dcu_biu_addr</a><a  href="hierarchy-s.p4.html#dcu_biu_addr___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Address to the BIU
+</span><a name="129"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#356">dcu_biu_data</a><a  href="hierarchy-s.p4.html#dcu_biu_data___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data to the BIU
+</span><a name="130"></a><span class=K>input</span>	[31:0]		<a  onClick="return qs(event,this)" class=SI href="#130">biu_data</a><a  href="hierarchy-s.p2.html#biu_data___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data from the BIU
+</span><a name="131"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#131">clk</a><a  href="hierarchy-s.p3.html#clk___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// clock
+</span><a name="132"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#132">sin</a><a  href="hierarchy-s.p16.html#sin___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// scan in
+</span><a name="133"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#133">so</a><a  href="hierarchy-s.p16.html#so___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// scan out
+</span><a name="134"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#134">sm</a><a  href="hierarchy-s.p16.html#sm___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// scan enable
+</span>
+<a name="136"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#166">dcu_addr_c</a><a  href="hierarchy-s.p4.html#dcu_addr_c___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="137"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#199">dcu_stat_addr_tmp</a><a  href="hierarchy-s.p4.html#dcu_stat_addr_tmp___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#91">dcu_addr_out</a>;
+<a name="139"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#161">dcu_addr_e</a><a  href="hierarchy-s.p4.html#dcu_addr_e___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="140"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#227">wb_addr</a><a  href="hierarchy-s.p20.html#wb_addr___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// addr of write buffer data
+</span><a name="141"></a><span class=K>wire</span>	[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#45">dt_addr_msb</a>+2:0]	<a  onClick="return qs(event,this)" class=SW href="#226">wb_addr_tmp</a><a  href="hierarchy-s.p20.html#wb_addr_tmp___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Intermediate storage of addr of write buffer data
+</span><a name="142"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#190">cf_addr</a><a  href="hierarchy-s.p3.html#cf_addr___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;	<span class=C>// addr of cache fill line
+</span><a name="143"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#235">wb_addr_d1</a><a  href="hierarchy-s.p20.html#wb_addr_d1___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="144"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#269">wr_miss</a><a  href="hierarchy-s.p20.html#wr_miss___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;	<span class=C>// write miss data
+</span><a name="145"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#274">merge_data</a><a  href="hierarchy-s.p11.html#merge_data___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// data after merging write miss data &amp; cache fill data
+</span><a name="146"></a><span class=K>wire</span>	[63:0]		<a  onClick="return qs(event,this)" class=SW href="#314">align_data</a><a  href="hierarchy-s.html#align_data___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Data after alignment/rotation
+</span><a name="147"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#363">wrbuf_data</a><a  href="hierarchy-s.p20.html#wrbuf_data___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="148"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#255">dcu_data_c</a><a  href="hierarchy-s.p4.html#dcu_data_c___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="149"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#250">dcu_data_e</a><a  href="hierarchy-s.p4.html#dcu_data_e___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="150"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#267">swap_dout</a><a  href="hierarchy-s.p16.html#swap_dout___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="151"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#220">diag_tagout</a><a  href="hierarchy-s.p4.html#diag_tagout___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="152"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#339">misc_rd_data</a><a  href="hierarchy-s.p11.html#misc_rd_data___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="153"></a><span class=K>wire</span>	[31:0]		<a  onClick="return qs(event,this)" class=SW href="#210">dcu_tag_in_tmp</a><a  href="hierarchy-s.p4.html#dcu_tag_in_tmp___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// Address Datapath
+</span>
+<span class=C>// Selects IU or SMU request for Dcache. When pipe stalls, recirculates addr
+</span><span class=C>// Recirculation is done when a cache miss occurs while there is an outstanding memory request
+</span><span class=C>// Also recirculated when there is a write hit followed by a cache fill transaction
+</span>
+<a name="dcu_dpath_dcu_addr_e_mux"></a><a name="161"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a>	dcu_addr_e_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#139">dcu_addr_e</a>[31:0]),
+			<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#83">iu_addr_e</a>[31:0]),
+			<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#89">smu_addr</a>[31:0]),
+			<span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#96">arbiter_sel</a>,~<a  onClick="return qs(event,this)" class=SI href="#96">arbiter_sel</a>}));
+
+<a name="dcu_dpath_dcu_addr_c_reg"></a><a name="166"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a> dcu_addr_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#136">dcu_addr_c</a>[31:0]),
+	<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#161">dcu_addr_e</a>[31:0]),
+	<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#131">clk</a>),
+	<span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="#97">latch_addr_c</a>));
+
+<span class=C>// selct addr_c for replacing old line
+</span><span class=C>// select cf_addr for cache fill line
+</span><span class=C>// for normal operation select dcu_addr_e
+</span><span class=C>// NOTE: The dcu_addr_out[1:0] are used are used as addr[3:2] for bank 1,
+</span><span class=C>// This is done to accomodate accessing different word of the same line 
+</span><span class=C>// in the two banks. this scenario arises for replacing dirty line due
+</span><span class=C>// to set interleaving.
+</span>
+<a name="dcu_dpath_dcu_adout_mux"></a><a name="179"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux4_32">mux4_32</a>	dcu_adout_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6208">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#91">dcu_addr_out</a>[31:0]),
+		<span class=SI>.in3</span>({<a  onClick="return qs(event,this)" class=SW href="#166">dcu_addr_c</a>[31:4],<a  onClick="return qs(event,this)" class=SI href="#112">repl_addr</a>[3:0]}),
+		<span class=SI>.in2</span>({<a  onClick="return qs(event,this)" class=SW href="#190">cf_addr</a>[31:4],<a  onClick="return qs(event,this)" class=SI href="#93">word_addr</a>[1:0],<a  onClick="return qs(event,this)" class=SI href="#93">word_addr</a>[1:0]}),
+		<span class=SI>.in1</span>({<a  onClick="return qs(event,this)" class=SI href="#83">iu_addr_e</a>[31:2],<a  onClick="return qs(event,this)" class=SI href="#83">iu_addr_e</a>[3:2]}),
+		<span class=SI>.in0</span>({<a  onClick="return qs(event,this)" class=SI href="#89">smu_addr</a>[31:2],<a  onClick="return qs(event,this)" class=SI href="#89">smu_addr</a>[3:2]}),
+		<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#92">dc_addr_sel</a>[3:0]));
+
+
+<span class=C>// cf_addr --&gt; cache fill address. Used for all cache fill transactions.
+</span><span class=C>// This register get its new value whenever a load/store misses the cache.
+</span>
+<a name="dcu_dpath_cf_addr_reg"></a><a name="190"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a> cf_addr_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#142">cf_addr</a>[31:0]),
+        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#166">dcu_addr_c</a>[31:0]),
+        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#131">clk</a>),
+	<span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="#99">latch_cf_addr</a>));
+
+<a name="195"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#102">cf_word_addr</a>[3:0]	= <a  onClick="return qs(event,this)" class=SW href="#190">cf_addr</a>[3:0] ;
+<a name="196"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#103">repl_word_addr</a>[3:0]	= <a  onClick="return qs(event,this)" class=SW href="#166">dcu_addr_c</a>[3:0];
+
+<span class=C>// Address for DC RAM &amp; for Status RAM
+</span><a name="dcu_dpath_dcu_stat_addr_mux"></a><a name="199"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> dcu_stat_addr_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#137">dcu_stat_addr_tmp</a>[31:0]),
+                        <span class=SI>.in1</span>({<a  onClick="return qs(event,this)" class=SW href="#166">dcu_addr_c</a>[31:2],<a  onClick="return qs(event,this)" class=SW href="#166">dcu_addr_c</a>[3:2]}),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SO href="#179">dcu_addr_out</a>[31:0]),
+                        <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#110">stat_addr_sel</a>,~<a  onClick="return qs(event,this)" class=SI href="#110">stat_addr_sel</a>}));
+
+<a name="204"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#127">dcu_stat_addr</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>:0] = <a  onClick="return qs(event,this)" class=SW href="#199">dcu_stat_addr_tmp</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>:0] ;
+ 
+
+
+<span class=C>// Data input to the Tag Ram
+</span><span class=C>// select E stage addr for tag input in case of diagnostic writes
+</span><a name="dcu_dpath_dcu_tag_in_mux"></a><a name="210"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> dcu_tag_in_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#153">dcu_tag_in_tmp</a>[31:0]),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#190">cf_addr</a>[31:0]),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#84">misc_din</a>[31:0]),
+                        <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#111">dcu_tag_sel</a>,~<a  onClick="return qs(event,this)" class=SI href="#111">dcu_tag_sel</a>}));
+
+<a name="215"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#87">dcu_tag_in</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#45">dt_addr_msb</a>:<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>+1] = <a  onClick="return qs(event,this)" class=SW href="#210">dcu_tag_in_tmp</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#45">dt_addr_msb</a>:<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>+1] ;
+
+
+<span class=C>// Data output of Tag ram
+</span>
+<a name="220"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#151">diag_tagout</a>[31:<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>+1] = <a  onClick="return qs(event,this)" class=SW href="#227">wb_addr</a>[31:<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>+1];
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#151">diag_tagout</a>[2:0] 	= <a  onClick="return qs(event,this)" class=SI href="#94">diag_stat_bits</a>[2:0] ;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#151">diag_tagout</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>:3]	= {(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>-2){1'b0}} ;
+
+<span class=C>// The upper 2 bits are set to 0 for dt_addr_msb = 29.
+</span>
+<a name="226"></a><span class=K>assign</span> 	<a  onClick="return qs(event,this)" class=SW href="#141">wb_addr_tmp</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#45">dt_addr_msb</a>+2:<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>+1] = {2'b00,<a  onClick="return qs(event,this)" class=SI href="#125">dtg_dout</a>};
+<a name="227"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#140">wb_addr</a>[31:0] = <a  onClick="return qs(event,this)" class=SW href="#226">wb_addr_tmp</a>[31:0];
+
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#140">wb_addr</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>:4] = <a  onClick="return qs(event,this)" class=SW href="#166">dcu_addr_c</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#60">dc_msb</a>:4] ;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#140">wb_addr</a>[3:0]	 = 4'b0000 ;
+
+
+ 
+<span class=C>// Used to store copyback transaction addr
+</span><a name="dcu_dpath_wb_addr_reg"></a><a name="235"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a> wb_addr_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#143">wb_addr_d1</a>[31:0]),
+        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#227">wb_addr</a>[31:0]),
+        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#131">clk</a>),
+        <span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="#100">latch_wb_addr</a>));
+
+<a name="dcu_dpath_dcu_biu_adr_mux"></a><a name="240"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> dcu_biu_adr_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#128">dcu_biu_addr</a>[31:0]),
+                        <span class=SI>.in1</span>({<a  onClick="return qs(event,this)" class=SW href="#190">cf_addr</a>[31:2],<a  onClick="return qs(event,this)" class=SI href="#106">fill_byte</a>}),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#235">wb_addr_d1</a>[31:0]),
+                        <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#109">req_addr_sel</a>,~<a  onClick="return qs(event,this)" class=SI href="#109">req_addr_sel</a>}));
+ 
+
+
+
+<span class=C>/*******      Data  Path	******/</span>
+
+<a name="dcu_dpath_dcu_data_e_mux"></a><a name="250"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a> dcu_data_e_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#149">dcu_data_e</a>[31:0]),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#82">iu_data_e</a>[31:0]),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#88">smu_data</a>[31:0]),
+                        <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#96">arbiter_sel</a>,~<a  onClick="return qs(event,this)" class=SI href="#96">arbiter_sel</a>}));
+
+<a name="dcu_dpath_dcu_data_reg"></a><a name="255"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a> dcu_data_reg (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#148">dcu_data_c</a>[31:0]),
+        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#250">dcu_data_e</a>[31:0]),
+	<span class=SI>.enable</span> (<a  onClick="return qs(event,this)" class=SI href="#97">latch_addr_c</a>),
+        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#131">clk</a>));
+
+<span class=C>// For endianness &amp; aligning stores 
+</span><a name="dcu_dpath_data_swapper"></a><a  onClick="return qs(event,this)" class=MM href="#swapper">swapper</a>		data_swapper( 
+<a name="262"></a>			<span class=SI>.din</span>		(<a  onClick="return qs(event,this)" class=SW href="#255">dcu_data_c</a>[31:0]),
+<a name="263"></a>			<span class=SI>.sel_7_0</span>	(<a  onClick="return qs(event,this)" class=SI href="#119">swap_sel_7_0</a>[2:0]),
+<a name="264"></a>			<span class=SI>.sel_15_8</span>	(<a  onClick="return qs(event,this)" class=SI href="#120">swap_sel_15_8</a>[2:0]),
+<a name="265"></a>			<span class=SI>.sel_23_16</span>	(<a  onClick="return qs(event,this)" class=SI href="#121">swap_sel_23_16</a>[2:0]),
+<a name="266"></a>			<span class=SI>.sel_31_24</span>	(<a  onClick="return qs(event,this)" class=SI href="#122">swap_sel_31_24</a>[2:0]),
+<a name="267"></a>			<a  onClick="return qs(event,this)" class=SO href="#462">.dout</a>		(<a  onClick="return qs(event,this)" class=SW href="#150">swap_dout</a>[31:0]));
+
+<a name="dcu_dpath_write_miss_reg"></a><a name="269"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a> write_miss_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#144">wr_miss</a>[31:0]),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#267">swap_dout</a>[31:0]),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#131">clk</a>),
+			<span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="#124">latch_wr_data</a>));
+
+<a name="dcu_dpath_merge_data_mux3"></a><a name="274"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a> merge_data_mux3(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#145">merge_data</a>[31:24]),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#269">wr_miss</a>[31:24]),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#130">biu_data</a>[31:24]),
+                        <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#123">merge_sel</a>[3],~<a  onClick="return qs(event,this)" class=SI href="#123">merge_sel</a>[3]}));
+
+<a name="dcu_dpath_merge_data_mux2"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a> merge_data_mux2(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#145">merge_data</a>[23:16]),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#269">wr_miss</a>[23:16]),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#130">biu_data</a>[23:16]),
+                        <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#123">merge_sel</a>[2],~<a  onClick="return qs(event,this)" class=SI href="#123">merge_sel</a>[2]}));
+ 
+<a name="dcu_dpath_merge_data_mux1"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a> merge_data_mux1(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#145">merge_data</a>[15:8]),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#269">wr_miss</a>[15:8]),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#130">biu_data</a>[15:8]),
+                        <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#123">merge_sel</a>[1],~<a  onClick="return qs(event,this)" class=SI href="#123">merge_sel</a>[1]}));
+ 
+<a name="dcu_dpath_merge_data_mux0"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a> merge_data_mux0(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#145">merge_data</a>[7:0]),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#269">wr_miss</a>[7:0]),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#130">biu_data</a>[7:0]),
+                        <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#123">merge_sel</a>[0],~<a  onClick="return qs(event,this)" class=SI href="#123">merge_sel</a>[0]}));
+
+<a name="dcu_dpath_dcu_data_c_mux"></a><a name="294"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux4_32">mux4_32</a>  dcu_data_c_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6208">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#126">dcu_din_e</a>[31:0]),
+	<span class=SI>.in3</span>({32{1'b0}}),		<span class=C>// cache line zeroing
+</span>	<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#84">misc_din</a>[31:0]),		<span class=C>// diagnostic writes
+</span>	<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#274">merge_data</a>[31:0]),		<span class=C>// cache fill write or write misses 
+</span>	<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#267">swap_dout</a>[31:0]),		<span class=C>// Write Hits
+</span>	<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#98">dc_data_sel</a>[3:0]) );
+
+
+<span class=C>/***** Alignment Muxes -- Rotation ******/</span>
+<span class=C>// Assumption - data is aligned on boundaries //
+</span><span class=C>// Endianness is also corrected at this point
+</span>
+<a name="dcu_dpath_aligner_1"></a><a  onClick="return qs(event,this)" class=MM href="#aligner">aligner</a>		aligner_1(
+		<span class=SI>.dcram_dout</span>	(<a  onClick="return qs(event,this)" class=SI href="#90">dcram_dout</a>[31:0]),
+		<span class=SI>.sign_sel</span>	(<a  onClick="return qs(event,this)" class=SI href="#113">algn_sign_sel</a>[4:0]),
+		<span class=SI>.algn_sel_7_0</span>	(<a  onClick="return qs(event,this)" class=SI href="#115">algn_sel_7_0</a>[3:0] ),
+		<span class=SI>.algn_sel_15_8</span>	(<a  onClick="return qs(event,this)" class=SI href="#116">algn_sel_15_8</a>[3:0]),
+		<span class=SI>.algn_sel_23_16</span>	(<a  onClick="return qs(event,this)" class=SI href="#117">algn_sel_23_16</a>),
+		<span class=SI>.algn_sel_31_24</span>	(<a  onClick="return qs(event,this)" class=SI href="#118">algn_sel_31_24</a>),
+		<span class=SI>.algn_size_sel</span>	(<a  onClick="return qs(event,this)" class=SI href="#114">algn_size_sel</a>[1:0]),
+<a name="314"></a>		<a  onClick="return qs(event,this)" class=SO href="#408">.align_data</a>	(<a  onClick="return qs(event,this)" class=SW href="#146">align_data</a>[31:0]));
+
+<a name="dcu_dpath_aligner_2"></a><a  onClick="return qs(event,this)" class=MM href="#aligner">aligner</a>       aligner_2(
+                <span class=SI>.dcram_dout</span>        (<a  onClick="return qs(event,this)" class=SI href="#90">dcram_dout</a>[63:32]),
+                <span class=SI>.sign_sel</span>       (<a  onClick="return qs(event,this)" class=SI href="#113">algn_sign_sel</a>[4:0]),
+                <span class=SI>.algn_sel_7_0</span>   (<a  onClick="return qs(event,this)" class=SI href="#115">algn_sel_7_0</a>[3:0] ),
+                <span class=SI>.algn_sel_15_8</span>  (<a  onClick="return qs(event,this)" class=SI href="#116">algn_sel_15_8</a>[3:0]),
+                <span class=SI>.algn_sel_23_16</span> (<a  onClick="return qs(event,this)" class=SI href="#117">algn_sel_23_16</a>),
+                <span class=SI>.algn_sel_31_24</span> (<a  onClick="return qs(event,this)" class=SI href="#118">algn_sel_31_24</a>),
+                <span class=SI>.algn_size_sel</span>  (<a  onClick="return qs(event,this)" class=SI href="#114">algn_size_sel</a>[1:0]),
+                <a  onClick="return qs(event,this)" class=SO href="#408">.align_data</a>     (<a  onClick="return qs(event,this)" class=SW href="#146">align_data</a>[63:32])
+                );
+
+
+<a name="328"></a><span class=K>wire</span> [31:0] <a  onClick="return qs(event,this)" class=SW href="#330">dcu_data_l</a><a  href="hierarchy-s.p4.html#dcu_data_l___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="dcu_dpath_dcu_d_mx"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p6.html#mx21_32_l">mx21_32_l</a> dcu_d_mx (
+<a name="330"></a>	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6009">.mx_out</a>(<a  onClick="return qs(event,this)" class=SW href="#328">dcu_data_l</a>), 
+	<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#101">dcu_hit0</a>), 
+	<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#314">align_data</a>[63:32]), 
+	<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#314">align_data</a>[31: 0]) );
+<a name="334"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#86">dcu_data</a> = ~ <a  onClick="return qs(event,this)" class=SW href="#330">dcu_data_l</a>;
+
+<span class=C>// Select data for diagnostic reads and replacing dirty lines into writebuffer
+</span>
+<a name="dcu_dpath_misc_rd_d_mx"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p6.html#mx21_32_l">mx21_32_l</a> misc_rd_d_mx (
+<a name="339"></a>	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6009">.mx_out</a>(<a  onClick="return qs(event,this)" class=SW href="#152">misc_rd_data</a>), 		<span class=C>// inverted value
+</span>	<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#104">dcu_addr_c_31</a>), 
+	<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#90">dcram_dout</a>[31:0]), 
+	<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#90">dcram_dout</a>[63:32]) );
+
+<a name="dcu_dpath_dtag_rd_d_mx"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p6.html#mx21_32_l">mx21_32_l</a> dtag_rd_d_mx (
+<a name="345"></a>	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6009">.mx_out</a>(<a  onClick="return qs(event,this)" class=SO href="#85">misc_dout</a>), 
+	<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#95">dtag_rd_c</a>), 
+	<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#339">misc_rd_data</a>), 		<span class=C>// inverted value
+</span>	<span class=SI>.in1</span>(~<a  onClick="return qs(event,this)" class=SW href="#220">diag_tagout</a>) );
+
+<a name="350"></a><span class=K>wire</span> [31:0] <a  onClick="return qs(event,this)" class=SW href="#352">dcu_biu_data_l</a><a  href="hierarchy-s.p4.html#dcu_biu_data_l___dcu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="dcu_dpath_dcu_biu_d_mx"></a><a  onClick="return qs(event,this)" class=MM href="custom_cells_behv.v.p6.html#mx21_32_l">mx21_32_l</a> dcu_biu_d_mx (
+<a name="352"></a>	<a  onClick="return qs(event,this)" class=SO href="custom_cells_behv.v.p7.html#6009">.mx_out</a>(<a  onClick="return qs(event,this)" class=SW href="#350">dcu_biu_data_l</a>), 
+	<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#105">dcu_dout_sel</a>), 
+	<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#363">wrbuf_data</a>), 
+	<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#269">wr_miss</a>) );
+<a name="356"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#129">dcu_biu_data</a> = ~ <a  onClick="return qs(event,this)" class=SW href="#352">dcu_biu_data_l</a>;
+
+
+<span class=C>/**************************  WRITE BUFFER  **********************************/</span>
+
+<a name="dcu_dpath_wr_buffer"></a><a  onClick="return qs(event,this)" class=MM href="#buffer">buffer</a>       wr_buffer  ( 
+<a name="362"></a>                <span class=SI>.din</span>            (<a  onClick="return qs(event,this)" class=SI href="#90">dcram_dout</a>[63:0]),
+<a name="363"></a>                <a  onClick="return qs(event,this)" class=SO href="#529">.dout</a>           (<a  onClick="return qs(event,this)" class=SW href="#147">wrbuf_data</a>[31:0]),
+<a name="364"></a>                <span class=SI>.buf_sel</span>        (<a  onClick="return qs(event,this)" class=SI href="#107">wb_sel</a>[3:0]),
+<a name="365"></a>                <span class=SI>.buf_ce</span>         (<a  onClick="return qs(event,this)" class=SI href="#108">wb_ce</a>[1:0]),
+<a name="366"></a>                <span class=SI>.clk</span>            (<a  onClick="return qs(event,this)" class=SI href="#131">clk</a>),
+                <a  onClick="return qs(event,this)" class=SO href="#504">.so</a>             (),
+                <span class=SI>.sin</span>             (),
+                <span class=SI>.sm</span>             ());
+
+
+<span class=K>endmodule</span>
+
+ 
+
+<a name="aligner"></a><a  href="dcu_dpath.v.html#dcu_dpath_aligner_1"><IMG alt="[Up: dcu_dpath aligner_1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="dcu_dpath.v.html#dcu_dpath_aligner_2"><IMG alt="[Up: dcu_dpath aligner_2]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>aligner</span><a  href="hierarchy-m.html#aligner"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+	<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#389">sign_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#390">algn_sel_7_0</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#391">algn_sel_15_8</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#392">algn_sel_23_16</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#393">algn_sel_31_24</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#394">algn_size_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#395">align_data</a>
+	);
+
+<a name="388"></a><span class=K>input</span>	[31:0]	 	<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a><a  href="hierarchy-s.p4.html#dcram_dout___aligner"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="389"></a><span class=K>input</span>	[4:0]		<a  onClick="return qs(event,this)" class=SI href="#389">sign_sel</a><a  href="hierarchy-s.p16.html#sign_sel___aligner"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="390"></a><span class=K>input</span>	[3:0]		<a  onClick="return qs(event,this)" class=SI href="#390">algn_sel_7_0</a><a  href="hierarchy-s.html#algn_sel_7_0___aligner"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>//sel the correct 7:0 bits (rotation)
+</span><a name="391"></a><span class=K>input</span>   [3:0]           <a  onClick="return qs(event,this)" class=SI href="#391">algn_sel_15_8</a><a  href="hierarchy-s.html#algn_sel_15_8___aligner"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// sel the correct 15:8 bits (rotation)
+</span><a name="392"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#392">algn_sel_23_16</a><a  href="hierarchy-s.html#algn_sel_23_16___aligner"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// sel the correct 23:16 bits (rotation)
+</span><a name="393"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#393">algn_sel_31_24</a><a  href="hierarchy-s.html#algn_sel_31_24___aligner"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// sel the correct 31:24 bits (rotation)
+</span><a name="394"></a><span class=K>input</span>   [1:0]           <a  onClick="return qs(event,this)" class=SI href="#394">algn_size_sel</a><a  href="hierarchy-s.html#algn_size_sel___aligner"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// select sign extension depending on size of data
+</span><a name="395"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#408">align_data</a><a  href="hierarchy-s.html#align_data___aligner"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+
+<a name="397"></a><span class=K>wire</span>	[31:8]	<a  onClick="return qs(event,this)" class=SW href="#415">unsign_data</a><a  href="hierarchy-s.p18.html#unsign_data___aligner"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;
+<a name="398"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#400">sign</a><a  href="hierarchy-s.p16.html#sign___aligner"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="aligner_sign_sel_mux"></a><a name="400"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux5">mux5</a>    sign_sel_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4300">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#398">sign</a>),
+        <span class=SI>.in4</span>(1'b0),
+        <span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[7]),
+        <span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[15]),
+        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[23]),
+        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[31]),
+        <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#389">sign_sel</a>[4:0]) );
+ 
+<a name="aligner_align_data_7_0_mux"></a><a name="408"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux4_8">mux4_8</a>  align_data_7_0_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5621">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#395">align_data</a>[7:0]),
+        <span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[31:24]), 
+	<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[23:16]), 
+	<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[15:8]),
+        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[7:0] ),
+        <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#390">algn_sel_7_0</a>[3:0]) );
+
+<a name="aligner_unsign_data_15_8_mux"></a><a name="415"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux4_8">mux4_8</a>  unsign_data_15_8_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5621">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#397">unsign_data</a>[15:8]),
+        <span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[31:24]),
+        <span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[23:16]),
+        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[15:8]),
+        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[7:0] ),
+        <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#391">algn_sel_15_8</a>[3:0]) );
+ 
+<a name="aligner_unsign_data_mux1"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a> unsign_data_mux1(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#397">unsign_data</a>[23:16]),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[23:16]),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[15:8]),
+                        <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#392">algn_sel_23_16</a>,~<a  onClick="return qs(event,this)" class=SI href="#392">algn_sel_23_16</a>}));
+
+<a name="aligner_unsign_data_mux2"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a> unsign_data_mux2(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#397">unsign_data</a>[31:24]),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[31:24]),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#388">dcram_dout</a>[7:0]),
+                        <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#393">algn_sel_31_24</a>,~<a  onClick="return qs(event,this)" class=SI href="#393">algn_sel_31_24</a>}));
+
+<a name="aligner_align_data_mux1"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_8">mux2_8</a> align_data_mux1(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5573">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#395">align_data</a>[15:8]),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#415">unsign_data</a>[15:8]),
+                        <span class=SI>.in0</span>({8{<a  onClick="return qs(event,this)" class=SW href="#400">sign</a>}}),
+                        <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#394">algn_size_sel</a>[0],~<a  onClick="return qs(event,this)" class=SI href="#394">algn_size_sel</a>[0]}));
+
+<a name="aligner_align_data_mux2"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_16">mux2_16</a> align_data_mux2(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5747">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#395">align_data</a>[31:16]),
+                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#415">unsign_data</a>[31:16]),
+                        <span class=SI>.in0</span>({16{<a  onClick="return qs(event,this)" class=SW href="#400">sign</a>}}),
+                        <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#394">algn_size_sel</a>[1],~<a  onClick="return qs(event,this)" class=SI href="#394">algn_size_sel</a>[1]}));
+ 
+
+<span class=K>endmodule</span>
+
+
+
+<a name="swapper"></a><a  href="dcu_dpath.v.html#dcu_dpath_data_swapper"><IMG alt="[Up: dcu_dpath data_swapper]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span>	<span class=MM>swapper</span><a  href="hierarchy-m.p4.html#swapper"><IMG align=top border=0 SRC="v2html-i.gif"></a>(
+		<a  onClick="return qs(event,this)" class=SI href="#455">din</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#456">sel_7_0</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#457">sel_15_8</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#458">sel_23_16</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#459">sel_31_24</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#460">dout</a>);
+
+<a name="455"></a><span class=K>input</span>	[31:0]		<a  onClick="return qs(event,this)" class=SI href="#262">din</a><a  href="hierarchy-s.p4.html#din___swapper"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="456"></a><span class=K>input</span>	[2:0]           <a  onClick="return qs(event,this)" class=SI href="#263">sel_7_0</a><a  href="hierarchy-s.p16.html#sel_7_0___swapper"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="457"></a><span class=K>input</span>   [2:0]           <a  onClick="return qs(event,this)" class=SI href="#264">sel_15_8</a><a  href="hierarchy-s.p16.html#sel_15_8___swapper"><IMG align=top border=0 SRC="v2html-i.gif"></a>        ;
+<a name="458"></a><span class=K>input</span>   [2:0]           <a  onClick="return qs(event,this)" class=SI href="#265">sel_23_16</a><a  href="hierarchy-s.p16.html#sel_23_16___swapper"><IMG align=top border=0 SRC="v2html-i.gif"></a>       ;
+<a name="459"></a><span class=K>input</span>   [2:0]           <a  onClick="return qs(event,this)" class=SI href="#266">sel_31_24</a><a  href="hierarchy-s.p16.html#sel_31_24___swapper"><IMG align=top border=0 SRC="v2html-i.gif"></a>       ;
+<a name="460"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#462">dout</a><a  href="hierarchy-s.p4.html#dout___swapper"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;
+
+<a name="swapper_swap_data_31_24_mux"></a><a name="462"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux3_8">mux3_8</a>          swap_data_31_24_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5597">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#460">dout</a>[31:24]),
+                                <span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#455">din</a>[31:24]),
+                                <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#455">din</a>[15:8]),
+                                <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#455">din</a>[7:0]),
+                                <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#459">sel_31_24</a>[2:0]) );
+ 
+<a name="swapper_swap_data_23_16_mux"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux3_8">mux3_8</a>          swap_data_23_16_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5597">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#460">dout</a>[23:16]),
+                                <span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#455">din</a>[23:16]),
+                                <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#455">din</a>[15:8]),
+                                <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#455">din</a>[7:0]),
+                                <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#458">sel_23_16</a>[2:0]) );
+ 
+<a name="swapper_swap_data_15_8_mux"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux3_8">mux3_8</a>          swap_data_15_8_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5597">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#460">dout</a>[15:8]),
+                                <span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#455">din</a>[23:16]),
+                                <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#455">din</a>[15:8]),
+                                <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#455">din</a>[7:0]),
+                                <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#457">sel_15_8</a>[2:0]) );
+ 
+<a name="swapper_swap_data_7_0_mux"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux3_8">mux3_8</a>          swap_data_7_0_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5597">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#460">dout</a>[7:0]),
+                                <span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#455">din</a>[31:24]),
+                                <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#455">din</a>[15:8]),
+                                <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#455">din</a>[7:0]),
+                                <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#456">sel_7_0</a>[2:0]) );
+
+<span class=K>endmodule</span>
+
+
+<a name="buffer"></a><a  href="dcu_dpath.v.html#dcu_dpath_wr_buffer"><IMG alt="[Up: dcu_dpath wr_buffer]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> 	<span class=MM>buffer</span><a  href="hierarchy-m.html#buffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>	( <a  onClick="return qs(event,this)" class=SI href="#498">din</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#499">dout</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#500">buf_sel</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#501">buf_ce</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#502">clk</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#504">so</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#503">sin</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#505">sm</a> );
+
+<a name="498"></a><span class=K>input</span>	[63:0]		<a  onClick="return qs(event,this)" class=SI href="#362">din</a><a  href="hierarchy-s.p4.html#din___buffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="499"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#529">dout</a><a  href="hierarchy-s.p4.html#dout___buffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="500"></a><span class=K>input</span>	[3:0]		<a  onClick="return qs(event,this)" class=SI href="#364">buf_sel</a><a  href="hierarchy-s.p2.html#buf_sel___buffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="501"></a><span class=K>input</span>	[1:0]		<a  onClick="return qs(event,this)" class=SI href="#365">buf_ce</a><a  href="hierarchy-s.p2.html#buf_ce___buffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="502"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#366">clk</a><a  href="hierarchy-s.p3.html#clk___buffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="503"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#503">sin</a><a  href="hierarchy-s.p16.html#sin___buffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="504"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#504">so</a><a  href="hierarchy-s.p16.html#so___buffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="505"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#505">sm</a><a  href="hierarchy-s.p16.html#sm___buffer"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+
+<a name="507"></a><span class=K>wire</span>	[31:0]	<a  onClick="return qs(event,this)" class=SW href="#509">buf_data0</a><a  href="hierarchy-s.p2.html#buf_data0___buffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#514">buf_data1</a><a  href="hierarchy-s.p2.html#buf_data1___buffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#519">buf_data2</a><a  href="hierarchy-s.p2.html#buf_data2___buffer"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#524">buf_data3</a><a  href="hierarchy-s.p2.html#buf_data3___buffer"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+
+<a name="buffer_buf0"></a><a name="509"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a>  buf0(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#507">buf_data0</a>[31:0]),
+        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#498">din</a>[63:32]),
+        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#502">clk</a>),
+        <span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="#501">buf_ce</a>[0]));
+ 
+<a name="buffer_buf1"></a><a name="514"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a>  buf1(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#507">buf_data1</a>[31:0]),
+        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#498">din</a>[31:0]),
+        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#502">clk</a>),
+        <span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="#501">buf_ce</a>[0]));
+ 
+<a name="buffer_buf2"></a><a name="519"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a>  buf2(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#507">buf_data2</a>[31:0]),
+        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#498">din</a>[63:32]),
+        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#502">clk</a>),
+        <span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="#501">buf_ce</a>[1]));
+ 
+<a name="buffer_buf3"></a><a name="524"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_32">ff_se_32</a>  buf3(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3797">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#507">buf_data3</a>[31:0]),
+        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#498">din</a>[31:0]),
+        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#502">clk</a>),
+        <span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="#501">buf_ce</a>[1]));
+
+<a name="buffer_buf_mux"></a><a name="529"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux4_32">mux4_32</a>  buf_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6208">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#499">dout</a>[31:0]),
+        <span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SW href="#524">buf_data3</a>[31:0]),
+        <span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="#519">buf_data2</a>[31:0]),
+        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#514">buf_data1</a>[31:0]),
+        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#509">buf_data0</a>[31:0]),
+        <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#500">buf_sel</a>[3:0]) );
+
+<span class=K>endmodule</span>
+
+
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:54 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/dcu/rtl/dcu_dpath.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/sim/env/fpu_mon.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "fpu_mon.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+<span class=M>`include</span> <a  onClick="return qs(event,this)" class=S href="fpu_mon.h.html">&quot;fpu_mon.h&quot;</a>
+
+<a name="fpu_mon"></a><a  href="monitor.v.html#monitor_fpu_mon"><IMG alt="[Up: monitor fpu_mon]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>fpu_mon</span><a  href="hierarchy-m.p2.html#fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>(
+     <a  onClick="return qs(event,this)" class=SI href="#37">pj_clk</a>,
+     <a  onClick="return qs(event,this)" class=SI href="#38">fpain</a>,    <span class=C>// 32-bit A bus input.
+</span>     <a  onClick="return qs(event,this)" class=SI href="#38">fpbin</a>,    <span class=C>// 32-bit B bus input.
+</span>     <a  onClick="return qs(event,this)" class=SI href="#39">fpop</a>,     <span class=C>// Java Fp opcode (connected to first byte in IBUFF).
+</span>     <a  onClick="return qs(event,this)" class=SI href="#44">fpbusyn</a>,  <span class=C>// Signal asserted after valid operation begins
+</span>     <a  onClick="return qs(event,this)" class=SI href="#40">fpkill</a>,   <span class=C>// Input kills the operation returns to idle state.
+</span>     <a  onClick="return qs(event,this)" class=SI href="#43">fpout</a>,    
+     <a  onClick="return qs(event,this)" class=SI href="#40">fphold</a>,     <span class=C>// Signal to hold the data input/output on IU stalls.
+</span>     <a  onClick="return qs(event,this)" class=SI href="#41">fpop_valid</a>); 
+
+
+<a name="37"></a>  <span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="monitor.v.html#166">pj_clk</a><a  href="hierarchy-s.p14.html#pj_clk___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="38"></a>  <span class=K>input</span> [31:0]  <a  onClick="return qs(event,this)" class=SI href="monitor.v.html#167">fpain</a><a  href="hierarchy-s.p6.html#fpain___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#168">fpbin</a><a  href="hierarchy-s.p6.html#fpbin___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="39"></a>  <span class=K>input</span>  [7:0]  <a  onClick="return qs(event,this)" class=SI href="monitor.v.html#169">fpop</a><a  href="hierarchy-s.p6.html#fpop___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="40"></a>  <span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="monitor.v.html#171">fpkill</a><a  href="hierarchy-s.p6.html#fpkill___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#173">fphold</a><a  href="hierarchy-s.p6.html#fphold___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="41"></a>  <span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="monitor.v.html#174">fpop_valid</a><a  href="hierarchy-s.p6.html#fpop_valid___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="43"></a>  <span class=K>input</span> [31:0] <a  onClick="return qs(event,this)" class=SI href="monitor.v.html#172">fpout</a><a  href="hierarchy-s.p6.html#fpout___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       
+<a name="44"></a>  <span class=K>input</span>        <a  onClick="return qs(event,this)" class=SI href="monitor.v.html#170">fpbusyn</a><a  href="hierarchy-s.p6.html#fpbusyn___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// Output signal fo;
+</span>
+
+
+<a name="48"></a><span class=K>integer</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a><a  href="hierarchy-s.p12.html#no_inputs___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a><a  href="hierarchy-s.p12.html#no_outputs___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="49"></a><span class=K>reg</span> <a  onClick="return qs(event,this)" class=SR href="#49">opcode_valid</a><a  href="hierarchy-s.p13.html#opcode_valid___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SR href="#134">exec_state_reg</a><a  href="hierarchy-s.p5.html#exec_state_reg___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="50"></a><span class=K>reg</span> [2:0] <a  onClick="return qs(event,this)" class=SR href="#59">state</a><a  href="hierarchy-s.p16.html#state___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="51"></a><span class=K>reg</span> [7:0] <a  onClick="return qs(event,this)" class=SR href="#94">fopcode</a><a  href="hierarchy-s.p6.html#fopcode___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="52"></a><span class=K>integer</span> <a  onClick="return qs(event,this)" class=SIT href="#60">clk_count</a><a  href="hierarchy-s.p3.html#clk_count___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="53"></a><span class=K>integer</span> <a  onClick="return qs(event,this)" class=SIT href="#156">bsy_low_cnt</a><a  href="hierarchy-s.p2.html#bsy_low_cnt___fpu_mon"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>event</span> print_fpout;
+
+
+<span class=K>initial</span> <span class=K>begin</span>
+
+<a name="59"></a>  <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#52">IN1</a>;
+<a name="60"></a>  <a  onClick="return qs(event,this)" class=SIT href="#52">clk_count</a> = 0;
+
+<span class=K>end</span>
+
+<span class=C>// clock counter
+</span>  <span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#37">pj_clk</a>)
+   <span class=K>begin</span>
+    <a  onClick="return qs(event,this)" class=SIT href="#52">clk_count</a> = <a  onClick="return qs(event,this)" class=SIT href="#60">clk_count</a> +1;
+   <span class=K>end</span>
+
+<span class=C>//  FPU Monitor State M/C
+</span>
+<span class=K>always</span> @( <span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#37">pj_clk</a>) <span class=K>begin</span>
+
+ <span class=C>//#1;
+</span> <span class=K>case</span> (<a  onClick="return qs(event,this)" class=SR href="#50">state</a>)
+
+ <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#52">IN1</a>: <span class=K>begin</span>
+
+  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#44">fpbusyn</a> == 1'b0) 
+    <span class=ST>$display</span>(<span class=S>&quot;ERROR: PICO.FPU.FPUBUSYN asserted during FPU Idle state&quot;</span>);
+   
+  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#40">fphold</a> == 1'b1 || <a  onClick="return qs(event,this)" class=SI href="#40">fpkill</a> == 1'b1) 
+     <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#52">IN1</a>;
+  <span class=K>else</span> <span class=K>begin</span>
+   
+   <span class=K>if</span> (^(<a  onClick="return qs(event,this)" class=SI href="#39">fpop</a>) === 1'bx &amp;&amp; <a  onClick="return qs(event,this)" class=SI href="#41">fpop_valid</a> == 1'b1) <span class=K>begin</span>
+      <span class=ST>$display</span>(<span class=S>&quot;\nFPU getting the opcode as X's&quot;</span>);
+      <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#52">IN1</a>;
+   <span class=K>end</span>
+   <span class=K>else</span> <span class=K>begin</span>
+    <a  onClick="return qs(event,this)" class=T href="#fpu_mon_Is_Valid_Opcode">Is_Valid_Opcode</a>(<a  onClick="return qs(event,this)" class=SR href="#49">opcode_valid</a>,<a  onClick="return qs(event,this)" class=SI href="#41">fpop_valid</a>,<a  onClick="return qs(event,this)" class=SI href="#39">fpop</a>);
+
+    <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#49">opcode_valid</a> == 1'b1) <span class=K>begin</span>
+<a name="94"></a>	<a  onClick="return qs(event,this)" class=SR href="#51">fopcode</a> = <a  onClick="return qs(event,this)" class=SI href="#39">fpop</a>;
+	<a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#53">IN2_OPR1</a>;
+    <span class=K>end</span>
+   <span class=K>end</span>
+  <span class=K>end</span>
+  #1;
+ <span class=K>end</span>
+
+ <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#53">IN2_OPR1</a>: <span class=K>begin</span>
+
+<span class=C>//      $display(&quot;\nclk:%d fpop:%x fpain:%x fpbin:%x fpkill:%x fphold:%x fpop_valid:%x fpout:%x\n&quot;,clk_count,fopcode,fpain,fpbin,fpkill,fphold,fpop_valid,fpout); 
+</span>
+   <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#40">fpkill</a> == 1'b1)
+     <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#52">IN1</a>;
+   <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#40">fphold</a> == 1'b1)
+     <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#53">IN2_OPR1</a>;
+   <span class=K>else</span> <span class=K>begin</span>
+ 
+     <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> == 1) <span class=K>begin</span>
+      <span class=K>if</span> (^<a  onClick="return qs(event,this)" class=SI href="#38">fpain</a> === 1'bx)
+       <span class=ST>$display</span>(<span class=S>&quot;\nERROR: Input Data went to X's&quot;</span>);
+     <span class=K>end</span>
+     <span class=K>else</span> <span class=K>begin</span>
+      <span class=K>if</span> (^<a  onClick="return qs(event,this)" class=SI href="#38">fpain</a> === 1'bx || ^<a  onClick="return qs(event,this)" class=SI href="#38">fpbin</a> === 1'bx) 
+          <span class=ST>$display</span>(<span class=S>&quot;\nERROR: Input Data went to X's&quot;</span>);
+     <span class=K>end</span>
+
+     <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;fpu_debug&quot;</span>))
+     <span class=K>begin</span>
+        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> == 1) 
+          <span class=ST>$display</span>(<span class=S>&quot;\nclk:%d Opcode:%x Operand1:%x\n&quot;</span>,<a  onClick="return qs(event,this)" class=SIT href="#52">clk_count</a>,<a  onClick="return qs(event,this)" class=SR href="#51">fopcode</a>,<a  onClick="return qs(event,this)" class=SI href="#38">fpain</a>);
+
+        <span class=K>else</span>
+          <span class=ST>$display</span>(<span class=S>&quot;\nclk:%d Opcode:%x Operand1:%x Operand2:%x\n&quot;</span>,<a  onClick="return qs(event,this)" class=SIT href="#52">clk_count</a>,<a  onClick="return qs(event,this)" class=SR href="#51">fopcode</a>,<a  onClick="return qs(event,this)" class=SI href="#38">fpain</a>,<a  onClick="return qs(event,this)" class=SI href="#38">fpbin</a>);
+
+     <span class=K>end</span>
+
+      <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> == 4) 
+        <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#54">IN2_OPR2</a>;
+      <span class=K>else</span> <span class=K>begin</span>
+<a name="134"></a>        <a  onClick="return qs(event,this)" class=SR href="#49">exec_state_reg</a> = 1'b0;
+        <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#55">EXEC</a>;
+      <span class=K>end</span>
+   <span class=K>end</span>
+
+  #1;
+
+ <span class=K>end</span>
+
+ <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#54">IN2_OPR2</a>: <span class=K>begin</span>
+
+  
+    <span class=K>if</span> ( <a  onClick="return qs(event,this)" class=SI href="#40">fpkill</a> == 1'b1)
+      <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#52">IN1</a>;
+    <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#40">fphold</a> == 1'b1)
+      <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#54">IN2_OPR2</a>;
+    <span class=K>else</span> <span class=K>begin</span>
+      <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#44">fpbusyn</a> === 1'bx)
+        <span class=ST>$display</span>(<span class=S>&quot;\n ERROR: PICO.FPU.FPBUSYN went to x in clk:%d&quot;</span>,<a  onClick="return qs(event,this)" class=SIT href="#52">clk_count</a>);       
+      <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#44">fpbusyn</a> != 1'b0)
+       <span class=ST>$display</span>(<span class=S>&quot;\nERROR: PICO.FPU.FPBUSYN did not go low in clk:%d&quot;</span>,<a  onClick="return qs(event,this)" class=SIT href="#52">clk_count</a>);    
+      <span class=K>else</span>
+<a name="156"></a>        <a  onClick="return qs(event,this)" class=SIT href="#53">bsy_low_cnt</a> = 0;
+
+     <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;fpu_debug&quot;</span>))
+     <span class=K>begin</span>
+       <span class=ST>$display</span>(<span class=S>&quot;\nclk:%d Operand1:%x Operand2:%x\n&quot;</span>,<a  onClick="return qs(event,this)" class=SIT href="#52">clk_count</a>,<a  onClick="return qs(event,this)" class=SI href="#38">fpain</a>,<a  onClick="return qs(event,this)" class=SI href="#38">fpbin</a>);
+     <span class=K>end</span>
+
+      <span class=K>if</span> (^<a  onClick="return qs(event,this)" class=SI href="#38">fpain</a> === 1'bx || ^<a  onClick="return qs(event,this)" class=SI href="#38">fpbin</a> === 1'bx)
+          <span class=ST>$display</span>(<span class=S>&quot;\nERROR: Input Data went to X's&quot;</span>);
+
+     <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#55">EXEC</a>; 
+
+   <span class=K>end</span>
+
+  #1;
+
+ <span class=K>end</span>
+
+ <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#55">EXEC</a>: <span class=K>begin</span>
+
+   	<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#40">fpkill</a> == 1'b1)
+	     <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#52">IN1</a>;
+   	<span class=K>else</span> <span class=K>begin</span>
+     		<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> != 4 &amp;&amp; <a  onClick="return qs(event,this)" class=SR href="#49">exec_state_reg</a> == 1'b0) <span class=K>begin</span>
+     
+      			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#44">fpbusyn</a> === 1'bx)
+			        <span class=ST>$display</span>(<span class=S>&quot;\n ERROR: PICO.FPU.FPBUSYN went to x in clk:%d&quot;</span>,<a  onClick="return qs(event,this)" class=SIT href="#52">clk_count</a>);
+		        <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#44">fpbusyn</a> != 1'b0) 
+       				<span class=ST>$display</span>(<span class=S>&quot;\nERROR: PICO.FPU.FPBUSYN did not go low in clk:%d&quot;</span>,<a  onClick="return qs(event,this)" class=SIT href="#52">clk_count</a>); 
+      			<span class=K>else</span>
+        			<a  onClick="return qs(event,this)" class=SIT href="#53">bsy_low_cnt</a> = 0; 
+
+      			<a  onClick="return qs(event,this)" class=SR href="#49">exec_state_reg</a> = 1'b1;  
+     		<span class=K>end</span>
+
+     		<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#44">fpbusyn</a> == 1'b1) <span class=K>begin</span>
+
+			-&gt; print_fpout;
+
+   			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> == 2)
+     				<a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#56">OUT1</a>;
+   			<span class=K>else</span> <span class=K>begin</span>
+
+			    <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#40">fphold</a>)
+			        <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#52">IN1</a>;
+			    <span class=K>else</span>
+			    <span class=K>begin</span>
+   				<span class=K>if</span> (^(<a  onClick="return qs(event,this)" class=SI href="#39">fpop</a>) === 1'bx &amp;&amp; <a  onClick="return qs(event,this)" class=SI href="#41">fpop_valid</a> == 1'b1) <span class=K>begin</span>
+      					<span class=ST>$display</span>(<span class=S>&quot;\nFPU getting the opcode as X's&quot;</span>);
+      						<a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#52">IN1</a>;
+   				<span class=K>end</span>
+   				<span class=K>else</span> <span class=K>begin</span>
+    					<a  onClick="return qs(event,this)" class=T href="#fpu_mon_Is_Valid_Opcode">Is_Valid_Opcode</a>(<a  onClick="return qs(event,this)" class=SR href="#49">opcode_valid</a>,<a  onClick="return qs(event,this)" class=SI href="#41">fpop_valid</a>,<a  onClick="return qs(event,this)" class=SI href="#39">fpop</a>);
+
+    					<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#49">opcode_valid</a> == 1'b1) <span class=K>begin</span>
+        					<a  onClick="return qs(event,this)" class=SR href="#51">fopcode</a> = <a  onClick="return qs(event,this)" class=SI href="#39">fpop</a>;
+        					<a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#53">IN2_OPR1</a>;
+				        <span class=K>end</span>
+					<span class=K>else</span>
+						<a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#52">IN1</a>;
+				<span class=K>end</span>
+			    <span class=K>end</span>
+
+   			<span class=K>end</span>
+    
+     		<span class=K>end</span>
+     		<span class=K>else</span> <span class=K>begin</span>
+       			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SIT href="#53">bsy_low_cnt</a> == <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#60">MAX_BSY_LENGTH</a>) <span class=K>begin</span>
+<span class=C>//	         		$display(&quot;\nERROR: PICO.FPU.FPBUSYN asserted for very long time&quot;);
+</span>         			<a  onClick="return qs(event,this)" class=SIT href="#53">bsy_low_cnt</a> = 1'b0;
+       			<span class=K>end</span>
+
+       			<a  onClick="return qs(event,this)" class=SIT href="#53">bsy_low_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#156">bsy_low_cnt</a> + 1;
+       			<a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#55">EXEC</a>;
+     		<span class=K>end</span>
+  	<span class=K>end</span>
+
+  #1;
+
+ <span class=K>end</span>
+
+ <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#56">OUT1</a>: <span class=K>begin</span>
+
+   <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#40">fpkill</a> == 1'b1)
+    <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#52">IN1</a>;
+   <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#40">fphold</a> == 1'b1)
+    <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#56">OUT1</a>;
+   <span class=K>else</span> <span class=K>begin</span>
+
+ <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;fpu_debug&quot;</span>))
+ <span class=K>begin</span>
+    <span class=ST>$display</span>(<span class=S>&quot;\nclk:%d fpout:%x\n&quot;</span>,<a  onClick="return qs(event,this)" class=SIT href="#52">clk_count</a>,<a  onClick="return qs(event,this)" class=SI href="#43">fpout</a>);
+ <span class=K>end</span>
+ 
+    <span class=K>if</span> (^(<a  onClick="return qs(event,this)" class=SI href="#43">fpout</a>) === 1'bx)
+     <span class=ST>$display</span>(<span class=S>&quot;\nFPU giving the output as X's&quot;</span>);
+
+<span class=C>//    if (no_outputs == 2) 
+</span><span class=C>//     -&gt; print_fpout;
+</span>
+   <span class=K>if</span> (^(<a  onClick="return qs(event,this)" class=SI href="#39">fpop</a>) === 1'bx &amp;&amp; <a  onClick="return qs(event,this)" class=SI href="#41">fpop_valid</a> == 1'b1) <span class=K>begin</span>
+      <span class=ST>$display</span>(<span class=S>&quot;\nFPU getting the opcode as X's&quot;</span>);
+      <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#52">IN1</a>;
+   <span class=K>end</span>
+   <span class=K>else</span> <span class=K>begin</span>
+    <a  onClick="return qs(event,this)" class=T href="#fpu_mon_Is_Valid_Opcode">Is_Valid_Opcode</a>(<a  onClick="return qs(event,this)" class=SR href="#49">opcode_valid</a>,<a  onClick="return qs(event,this)" class=SI href="#41">fpop_valid</a>,<a  onClick="return qs(event,this)" class=SI href="#39">fpop</a>);
+
+    <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SR href="#49">opcode_valid</a> == 1'b1) <span class=K>begin</span>
+        <a  onClick="return qs(event,this)" class=SR href="#51">fopcode</a> = <a  onClick="return qs(event,this)" class=SI href="#39">fpop</a>;
+        <a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#53">IN2_OPR1</a>;
+   <span class=K>end</span>
+   <span class=K>else</span>
+	<a  onClick="return qs(event,this)" class=SR href="#50">state</a> = <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#52">IN1</a>;
+   <span class=K>end</span>
+
+    
+   <span class=K>end</span>
+   
+ <span class=K>end</span>
+ 
+ <span class=K>endcase</span>
+
+  #1;
+
+<span class=K>end</span>       
+
+
+<span class=K>always</span> @(print_fpout) 
+<span class=K>begin</span>:OUT_BLK
+
+<span class=K>reg</span> lp;
+
+ lp = 1'b1;
+
+ <span class=K>while</span> (lp == 1'b1) <span class=K>begin</span>
+   <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#40">fpkill</a> == 1'b1)
+     <span class=K>disable</span> OUT_BLK;
+   <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#40">fphold</a> == 1'b0)
+    lp = 1'b0;
+   <span class=K>else</span>
+    @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#37">pj_clk</a>); 
+ <span class=K>end</span>
+ <span class=K>if</span> (<span class=ST>$test$plusargs</span>(<span class=S>&quot;fpu_debug&quot;</span>))
+ <span class=K>begin</span>
+    <span class=ST>$display</span>(<span class=S>&quot;\nclk:%d fpout:%x\n&quot;</span>,<a  onClick="return qs(event,this)" class=SIT href="#52">clk_count</a>,<a  onClick="return qs(event,this)" class=SI href="#43">fpout</a>);
+ <span class=K>end</span>
+
+ <span class=K>if</span> (^(<a  onClick="return qs(event,this)" class=SI href="#43">fpout</a>) === 1'bx) 
+    <span class=ST>$display</span>(<span class=S>&quot;\nFPU giving the output as X's&quot;</span>);
+
+<span class=K>end</span>
+
+    
+<a name="fpu_mon_Is_Valid_Opcode"></a><span class=K>task</span> <a  onClick="return qs(event,this)" class=T href="#fpu_mon_Is_Valid_Opcode">Is_Valid_Opcode</a>;
+
+<a name="311"></a> <span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#320">opcode_valid</a>;
+<a name="312"></a> <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="#312">fpop_valid</a>;
+<a name="313"></a> <span class=K>input</span> [7:0] <a  onClick="return qs(event,this)" class=SI href="#313">fpop</a>;
+
+ <span class=K>begin</span>
+
+<span class=C>//  $display(&quot;\nTask Is_valid activated fpop:%x&quot;,fpop);
+</span>
+  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#312">fpop_valid</a> == 1'b0)
+<a name="320"></a>    <a  onClick="return qs(event,this)" class=SO href="#311">opcode_valid</a> = 1'b0;
+  <span class=K>else</span> <span class=K>begin</span>
+    <a  onClick="return qs(event,this)" class=SO href="#311">opcode_valid</a> = 1'b1;
+
+  <span class=K>case</span> (<a  onClick="return qs(event,this)" class=SI href="#313">fpop</a>)
+ 
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#28">DCMPG</a>: <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 4; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 1; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#29">DCMPL</a>: <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 4; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 1; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#30">DADD</a>: <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 4; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 2; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#36">DSUB</a>: <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 4; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 2; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#31">DMUL</a>: <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 4; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 2; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#37">DDIV</a>: <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 4; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 2; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#38">DREM</a>: <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 4; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 2; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#26">FCMPG</a>: <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 2; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 1; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#27">FCMPL</a>: <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 2; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 1; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#32">FADD</a>: <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 2; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 1; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#39">FSUB</a>: <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 2; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 1; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#33">FMUL</a>: <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 2; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 1; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#34">FDIV</a>: <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 2; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 1; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#35">FREM</a>: <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 2; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 1; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#41">D2F</a> : <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 2; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 1; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#45">D2L</a> : <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 2; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 2; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#44">D2I</a> : <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 2; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 1; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#48">L2F</a> : <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 2; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 1; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#49">L2D</a> : <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 2; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 2; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#40">F2D</a> : <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 1; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 2; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#42">F2I</a> : <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 1; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 1; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#43">F2L</a> : <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 1; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 2; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#46">I2F</a> : <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 1; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 1; <span class=K>end</span>
+   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu_mon.h.html#47">I2D</a> : <span class=K>begin</span> <a  onClick="return qs(event,this)" class=SIT href="#48">no_inputs</a> = 1; <a  onClick="return qs(event,this)" class=SIT href="#48">no_outputs</a> = 2; <span class=K>end</span>
+ 
+   <span class=K>default</span>: <a  onClick="return qs(event,this)" class=SO href="#311">opcode_valid</a> = 1'b0;
+ 
+  <span class=K>endcase</span>
+ <span class=K>end</span>
+ <span class=K>end</span>
+
+<span class=K>endtask</span>
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:23 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/sim/env/fpu_mon.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

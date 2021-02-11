@@ -1,0 +1,83 @@
+BODY { 	   /* main_body */
+	background:#FFFFFF;
+	color:#000000; 
+}
+A { /* default link */
+	text-decoration:underline; 
+	color:#FF3399; 
+} 
+TABLE.NB { /* navbar table */
+    background:#FFFF00;
+    padding:5;
+    border:0;
+    spacing:2; 
+    width:100%;
+}
+TABLE.NB TD { /* navbar table text */
+  font-weight:bold;
+  text-decoration:none;
+}
+TABLE.NB A { /* navbar table links */
+  color:#FF0000;
+  text-decoration:none;
+}
+
+/* verilog language elements */
+SPAN.C       { color:#0000FF; }				/* comment (non-link) */
+A.C          { color:#0000FF; background:#FFFFCC; }	/* comment (link) */
+SPAN.M       { color:#9933FF; font-weight:bold; }	/* compiler (non-link) */
+SPAN.D       { color:#990099; }				/* define (non-link) */
+A.D          { color:#990099; }				/* define (link) */
+SPAN.F       { color:#CC0033; }				/* function (non-link) */
+A.F          { color:#CC0033; }				/* function (link) */
+SPAN.K       { color:#CC3300; }				/* keyword (non-link) */
+SPAN.MM      { color:#6600FF; }				/* module (non-link) */
+A.MM         { color:#6600FF; }				/* module (link) */
+SPAN.PA      { color:#CC0066; }				/* parameter (non-link) */
+A.PA         { color:#CC0066; }				/* parameter (link) */
+SPAN.P       { color:#999999; }				/* pre-processor ignore (non-link) */
+SPAN.S       { color:#009900; }				/* string (non-link) */
+A.S          { color:#009900; }				/* string (link) */
+SPAN.ST      { color:#9933FF; }				/* systemtask (non-link) */
+SPAN.T       { color:#660033; }				/* task (non-link) */
+A.T          { color:#660033; }				/* task (link) */
+
+SPAN.SIO     { color:#00CC99; }				/* signal inout (non-link) */
+A.SIO        { color:#00CC99; }				/* signal inout (link) */
+SPAN.SIOR    { color:#009999; }				/* signal inout_reg (non-link) */
+A.SIOR       { color:#009999; }				/* signal inout_reg (link) */
+SPAN.SI      { color:#006600; }				/* signal input (non-link) */
+A.SI         { color:#006600; }				/* signal input (link) */
+SPAN.SIT     { color:#663333; }				/* signal integer (non-link) */
+A.SIT        { color:#663333; }				/* signal integer (link) */
+SPAN.SO      { color:#000066; }				/* signal output (non-link) */
+A.SO         { color:#000066; }				/* signal output (link) */
+SPAN.SOR     { color:#0000CC; }				/* signal output_reg (non-link) */
+A.SOR        { color:#0000CC; }				/* signal output_reg (link) */
+SPAN.SR      { color:#663333; }				/* signal real (non-link) */
+A.SR         { color:#663333; }				/* signal real (link) */
+SPAN.SR      { color:#FF9933; }				/* signal reg (non-link) */
+A.SR         { color:#FF9933; }				/* signal reg (link) */
+SPAN.SS0     { color:#CC6600; }				/* signal supply0 (non-link) */
+A.SS0        { color:#CC6600; }				/* signal supply0 (link) */
+SPAN.SS1     { color:#CC6600; }				/* signal supply1 (non-link) */
+A.SS1        { color:#CC6600; }				/* signal supply1 (link) */
+SPAN.STM     { color:#CC3333; }				/* signal time (non-link) */
+A.STM        { color:#CC3333; }				/* signal time (link) */
+SPAN.ST      { color:#CC6600; }				/* signal tri (non-link) */
+A.ST         { color:#CC6600; }				/* signal tri (link) */
+SPAN.ST0     { color:#CC6600; }				/* signal tri0 (non-link) */
+A.ST0        { color:#CC6600; }				/* signal tri0 (link) */
+SPAN.ST1     { color:#CC6600; }				/* signal tri1 (non-link) */
+A.ST1        { color:#CC6600; }				/* signal tri1 (link) */
+SPAN.STA     { color:#CC6600; }				/* signal triand (non-link) */
+A.STA        { color:#CC6600; }				/* signal triand (link) */
+SPAN.STR     { color:#CC6600; }				/* signal trireg (non-link) */
+A.STR        { color:#CC6600; }				/* signal trireg (link) */
+SPAN.SWA     { color:#CC6600; }				/* signal wand (non-link) */
+A.SWA        { color:#CC6600; }				/* signal wand (link) */
+SPAN.SW      { color:#CC6600; }				/* signal wire (non-link) */
+A.SW         { color:#CC6600; }				/* signal wire (link) */
+SPAN.SWO     { color:#CC6600; }				/* signal wor (non-link) */
+A.SWO        { color:#CC6600; }				/* signal wor (link) */
+

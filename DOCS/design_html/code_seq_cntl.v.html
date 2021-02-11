@@ -1,0 +1,1053 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/fpu/rtl/code_seq_cntl.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "code_seq_cntl.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+<span class=M>`include</span> <a  onClick="return qs(event,this)" class=S href="fpu.h.html">&quot;fpu.h&quot;</a>
+
+<a name="code_seq_cntl"></a><a  href="code_seq.v.html#code_seq_p_code_seq_cntl"><IMG alt="[Up: code_seq p_code_seq_cntl]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>code_seq_cntl</span><a  href="hierarchy-m.html#code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> (	<a  onClick="return qs(event,this)" class=SI href="#73">reset_l</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#74">valid_opcode</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#75">fpuhold</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#101">fpu_state</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#102">opcode_look</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#102">nx_opcode_look</a>,
+                       	<a  onClick="return qs(event,this)" class=SO href="#103">fpbusyn</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#104">cyc1_rdy</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#76">fpkill</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#100">romsel</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#105">morethree_taken</a>,
+                       	<a  onClick="return qs(event,this)" class=SI href="#78">rsovfi</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#79">rsneg</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#80">amsb</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#81">incovf</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#82">rs2zero</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#83">rs32</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#84">rsge64</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#85">eadd</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#86">le</a>, 
+                       	<a  onClick="return qs(event,this)" class=SI href="#87">manzero</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#88">morethree</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#89">absign</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#90">fmulovf</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#91">cyc0_rdy_p</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#71">branch</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#92">qin</a>,
+                       	<a  onClick="return qs(event,this)" class=SI href="#93">qmsb</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#72">a2func</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#69">opcode</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#99">cyc0_type</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#94">top_fpbin</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#106">bsignin</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#107">dprec</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#107">nx_dprec</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#70">nxcode</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#97">so</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#96">sin</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#96">sm</a> 
+			);
+
+
+<a name="69"></a>  <span class=K>input</span>   [7:0] <a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#140">opcode</a><a  href="hierarchy-s.p13.html#opcode___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="70"></a>  <span class=K>input</span>   [7:0] <a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#147">nxcode</a><a  href="hierarchy-s.p12.html#nxcode___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="71"></a>  <span class=K>input</span>   [3:0] <a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#136">branch</a><a  href="hierarchy-s.p2.html#branch___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="72"></a>  <span class=K>input</span>   [2:0] <a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#139">a2func</a><a  href="hierarchy-s.html#a2func___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="73"></a>  <span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#110">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="74"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#111">valid_opcode</a><a  href="hierarchy-s.p19.html#valid_opcode___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="75"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#112">fpuhold</a><a  href="hierarchy-s.p6.html#fpuhold___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="76"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#118">fpkill</a><a  href="hierarchy-s.p6.html#fpkill___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="77"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#119">clk</a><a  href="hierarchy-s.p3.html#clk___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="78"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#122">rsovfi</a><a  href="hierarchy-s.p15.html#rsovfi___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="79"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#123">rsneg</a><a  href="hierarchy-s.p15.html#rsneg___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="80"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#124">amsb</a><a  href="hierarchy-s.html#amsb___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="81"></a>                <a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#125">incovf</a><a  href="hierarchy-s.p9.html#incovf___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="82"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#126">rs2zero</a><a  href="hierarchy-s.p15.html#rs2zero___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="83"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#127">rs32</a><a  href="hierarchy-s.p15.html#rs32___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="84"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#128">rsge64</a><a  href="hierarchy-s.p15.html#rsge64___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="85"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#129">eadd</a><a  href="hierarchy-s.p5.html#eadd___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="86"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#130">le</a><a  href="hierarchy-s.p10.html#le___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="87"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#131">manzero</a><a  href="hierarchy-s.p11.html#manzero___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="88"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#132">morethree</a><a  href="hierarchy-s.p11.html#morethree___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="89"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#133">absign</a><a  href="hierarchy-s.html#absign___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="90"></a>                <a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#134">fmulovf</a><a  href="hierarchy-s.p6.html#fmulovf___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="91"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#135">cyc0_rdy_p</a><a  href="hierarchy-s.p3.html#cyc0_rdy_p___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="92"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#137">qin</a><a  href="hierarchy-s.p15.html#qin___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="93"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#138">qmsb</a><a  href="hierarchy-s.p15.html#qmsb___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="94"></a>		<a  onClick="return qs(event,this)" class=SI href="code_seq.v.html#142">top_fpbin</a><a  href="hierarchy-s.p17.html#top_fpbin___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="96"></a>  <span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="#96">sm</a><a  href="hierarchy-s.p16.html#sm___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#96">sin</a><a  href="hierarchy-s.p16.html#sin___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="97"></a>  <span class=K>output</span>	<a  onClick="return qs(event,this)" class=SO href="#97">so</a><a  href="hierarchy-s.p16.html#so___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="99"></a>  <span class=K>output</span>  [2:0] <a  onClick="return qs(event,this)" class=SO href="#167">cyc0_type</a><a  href="hierarchy-s.p3.html#cyc0_type___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="100"></a>  <span class=K>output</span>  [1:0] <a  onClick="return qs(event,this)" class=SO href="#135">romsel</a><a  href="hierarchy-s.p15.html#romsel___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="101"></a>  <span class=K>output</span>  [7:0] <a  onClick="return qs(event,this)" class=SO href="#125">fpu_state</a><a  href="hierarchy-s.p6.html#fpu_state___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="102"></a>  <span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#126">opcode_look</a><a  href="hierarchy-s.p13.html#opcode_look___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#127">nx_opcode_look</a><a  href="hierarchy-s.p12.html#nx_opcode_look___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="103"></a>		<a  onClick="return qs(event,this)" class=SO href="#130">fpbusyn</a><a  href="hierarchy-s.p6.html#fpbusyn___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="104"></a>		<a  onClick="return qs(event,this)" class=SO href="#131">cyc1_rdy</a><a  href="hierarchy-s.p3.html#cyc1_rdy___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="105"></a>		<a  onClick="return qs(event,this)" class=SO href="#136">morethree_taken</a><a  href="hierarchy-s.p11.html#morethree_taken___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="106"></a>		<a  onClick="return qs(event,this)" class=SO href="#169">bsignin</a><a  href="hierarchy-s.p2.html#bsignin___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="107"></a>		<a  onClick="return qs(event,this)" class=SO href="#182">dprec</a><a  href="hierarchy-s.p4.html#dprec___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#180">nx_dprec</a><a  href="hierarchy-s.p12.html#nx_dprec___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>//  wire    [7:0] next_fpu_state;
+</span><a name="110"></a>  <span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#182">dp_out</a><a  href="hierarchy-s.p4.html#dp_out___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#115">mfinish</a><a  href="hierarchy-s.p11.html#mfinish___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#163">two_cycle_in</a><a  href="hierarchy-s.p17.html#two_cycle_in___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#182">int_out</a><a  href="hierarchy-s.p9.html#int_out___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="111"></a>		<a  onClick="return qs(event,this)" class=SW href="#182">long_out</a><a  href="hierarchy-s.p10.html#long_out___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#182">addsub</a><a  href="hierarchy-s.html#addsub___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#182">rem_op</a><a  href="hierarchy-s.p15.html#rem_op___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#161">dp_outp</a><a  href="hierarchy-s.p4.html#dp_outp___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#162">addsubp</a><a  href="hierarchy-s.html#addsubp___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="112"></a>		<a  onClick="return qs(event,this)" class=SW href="#164">dprecp</a><a  href="hierarchy-s.p4.html#dprecp___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#165">int_outp</a><a  href="hierarchy-s.p9.html#int_outp___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#166">long_outp</a><a  href="hierarchy-s.p10.html#long_outp___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#170">rem_opp</a><a  href="hierarchy-s.p15.html#rem_opp___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#174">conreg_enable</a><a  href="hierarchy-s.p3.html#conreg_enable___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+		<a  onClick="return qs(event,this)" class=SI href="#91">cyc0_rdy_p</a>;	
+
+<a name="115"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#110">mfinish</a> = ((<a  onClick="return qs(event,this)" class=SI href="#71">branch</a>==4'hb) &amp;&amp; (<a  onClick="return qs(event,this)" class=SI href="#70">nxcode</a>==8'h0));
+
+<a name="code_seq_cntl_fpud"></a><a name="117"></a>  <a  onClick="return qs(event,this)" class=MM href="#fpu_dec">fpu_dec</a> fpud(		<span class=SI>.dp_out</span>(<a  onClick="return qs(event,this)" class=SW href="#182">dp_out</a>),
+<a name="118"></a>			<span class=SI>.mfinish</span>(<a  onClick="return qs(event,this)" class=SW href="#115">mfinish</a>),
+<a name="119"></a>			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#73">reset_l</a>),
+<a name="120"></a>			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>),
+<a name="121"></a>			<span class=SI>.valid_opcode</span>(<a  onClick="return qs(event,this)" class=SI href="#74">valid_opcode</a>),
+<a name="122"></a>             		<span class=SI>.two_cycle_in</span>(<a  onClick="return qs(event,this)" class=SW href="#163">two_cycle_in</a>),
+<a name="123"></a>			<span class=SI>.fpuhold</span>(<a  onClick="return qs(event,this)" class=SI href="#75">fpuhold</a>),
+<a name="124"></a>			<span class=SI>.fpkill</span>(<a  onClick="return qs(event,this)" class=SI href="#76">fpkill</a>),
+<a name="125"></a>			<a  onClick="return qs(event,this)" class=SO href="#463">.fpu_state</a>(<a  onClick="return qs(event,this)" class=SO href="#101">fpu_state</a>),
+<a name="126"></a>			<a  onClick="return qs(event,this)" class=SO href="#538">.opcode_look</a>(<a  onClick="return qs(event,this)" class=SO href="#102">opcode_look</a>),
+<a name="127"></a>			<a  onClick="return qs(event,this)" class=SO href="#540">.nx_opcode_look</a>(<a  onClick="return qs(event,this)" class=SO href="#102">nx_opcode_look</a>),
+<a name="128"></a>             		<span class=SI>.int_out</span>(<a  onClick="return qs(event,this)" class=SW href="#182">int_out</a>),
+<a name="129"></a>			<span class=SI>.long_out</span>(<a  onClick="return qs(event,this)" class=SW href="#182">long_out</a>),
+<a name="130"></a>			<a  onClick="return qs(event,this)" class=SO href="#547">.fpbusyn</a>(<a  onClick="return qs(event,this)" class=SO href="#103">fpbusyn</a>),
+<a name="131"></a>			<a  onClick="return qs(event,this)" class=SO href="#550">.cyc1_rdy</a>(<a  onClick="return qs(event,this)" class=SO href="#104">cyc1_rdy</a>), 
+			<span class=SI>.sm</span>(),<span class=SI>.sin</span>(),<a  onClick="return qs(event,this)" class=SO href="#425">.so</a>());
+
+
+<a name="code_seq_cntl_branchd"></a><a name="135"></a>  <a  onClick="return qs(event,this)" class=MM href="#branch_dec">branch_dec</a> branchd(	<a  onClick="return qs(event,this)" class=SO href="#728">.romsel</a>(<a  onClick="return qs(event,this)" class=SO href="#100">romsel</a>),
+<a name="136"></a>			<a  onClick="return qs(event,this)" class=SO href="#719">.morethree_taken</a>(<a  onClick="return qs(event,this)" class=SO href="#105">morethree_taken</a>),
+<a name="137"></a>			<span class=SI>.rsovfi</span>(<a  onClick="return qs(event,this)" class=SI href="#78">rsovfi</a>),
+<a name="138"></a>             		<span class=SI>.rsneg</span>(<a  onClick="return qs(event,this)" class=SI href="#79">rsneg</a>),
+<a name="139"></a>			<span class=SI>.amsb</span>(<a  onClick="return qs(event,this)" class=SI href="#80">amsb</a>),
+<a name="140"></a>			<span class=SI>.incovf</span>(<a  onClick="return qs(event,this)" class=SI href="#81">incovf</a>),
+<a name="141"></a>			<span class=SI>.rs2zero</span>(<a  onClick="return qs(event,this)" class=SI href="#82">rs2zero</a>),
+<a name="142"></a>			<span class=SI>.rs32</span>(<a  onClick="return qs(event,this)" class=SI href="#83">rs32</a>),
+<a name="143"></a>             		<span class=SI>.rsge64</span>(<a  onClick="return qs(event,this)" class=SI href="#84">rsge64</a>),
+<a name="144"></a>			<span class=SI>.eadd</span>(<a  onClick="return qs(event,this)" class=SI href="#85">eadd</a>),
+<a name="145"></a>			<span class=SI>.le</span>(<a  onClick="return qs(event,this)" class=SI href="#86">le</a>),
+<a name="146"></a>			<span class=SI>.manzero</span>(<a  onClick="return qs(event,this)" class=SI href="#87">manzero</a>),
+<a name="147"></a>			<span class=SI>.morethree</span>(<a  onClick="return qs(event,this)" class=SI href="#88">morethree</a>),
+<a name="148"></a>             		<span class=SI>.absign</span>(<a  onClick="return qs(event,this)" class=SI href="#89">absign</a>),
+<a name="149"></a>			<span class=SI>.fmulovf</span>(<a  onClick="return qs(event,this)" class=SI href="#90">fmulovf</a>),
+<a name="150"></a>			<span class=SI>.fpkill</span>(<a  onClick="return qs(event,this)" class=SI href="#76">fpkill</a>),
+<a name="151"></a>			<span class=SI>.cyc0_rdy_p</span>(<a  onClick="return qs(event,this)" class=SI href="#91">cyc0_rdy_p</a>),
+<a name="152"></a>			<span class=SI>.addsub</span>(<a  onClick="return qs(event,this)" class=SW href="#182">addsub</a>),
+<a name="153"></a>			<span class=SI>.branch</span>(<a  onClick="return qs(event,this)" class=SI href="#71">branch</a>),
+<a name="154"></a>			<span class=SI>.qin</span>(<a  onClick="return qs(event,this)" class=SI href="#92">qin</a>),
+<a name="155"></a>			<span class=SI>.qmsb</span>(<a  onClick="return qs(event,this)" class=SI href="#93">qmsb</a>),
+<a name="156"></a>			<span class=SI>.rem_op</span>(<a  onClick="return qs(event,this)" class=SW href="#182">rem_op</a>),
+<a name="157"></a>			<span class=SI>.a2func</span>(<a  onClick="return qs(event,this)" class=SI href="#72">a2func</a>));
+
+
+<a name="code_seq_cntl_d8"></a><a name="160"></a>  <a  onClick="return qs(event,this)" class=MM href="#opcode_dec">opcode_dec</a> d8(	<span class=SI>.opcode</span>(<a  onClick="return qs(event,this)" class=SI href="#69">opcode</a>),
+<a name="161"></a>			<a  onClick="return qs(event,this)" class=SO href="#222">.dp_outp</a>(<a  onClick="return qs(event,this)" class=SW href="#111">dp_outp</a>),
+<a name="162"></a>			<a  onClick="return qs(event,this)" class=SO href="#221">.addsubp</a>(<a  onClick="return qs(event,this)" class=SW href="#111">addsubp</a>),
+<a name="163"></a>			<a  onClick="return qs(event,this)" class=SO href="#223">.two_cycle_in</a>(<a  onClick="return qs(event,this)" class=SW href="#110">two_cycle_in</a>),
+<a name="164"></a>               		<a  onClick="return qs(event,this)" class=SO href="#220">.dprecp</a>(<a  onClick="return qs(event,this)" class=SW href="#112">dprecp</a>),
+<a name="165"></a>			<a  onClick="return qs(event,this)" class=SO href="#388">.int_outp</a>(<a  onClick="return qs(event,this)" class=SW href="#112">int_outp</a>),
+<a name="166"></a>			<a  onClick="return qs(event,this)" class=SO href="#392">.long_outp</a>(<a  onClick="return qs(event,this)" class=SW href="#112">long_outp</a>),
+<a name="167"></a>			<a  onClick="return qs(event,this)" class=SO href="#344">.cyc0_type</a>(<a  onClick="return qs(event,this)" class=SO href="#99">cyc0_type</a>),
+<a name="168"></a>                	<span class=SI>.top_fpbin</span>(<a  onClick="return qs(event,this)" class=SI href="#94">top_fpbin</a>),
+<a name="169"></a>			<a  onClick="return qs(event,this)" class=SO href="#211">.bsignin</a>(<a  onClick="return qs(event,this)" class=SO href="#106">bsignin</a>),
+<a name="170"></a>			<a  onClick="return qs(event,this)" class=SO href="#213">.rem_opp</a>(<a  onClick="return qs(event,this)" class=SW href="#112">rem_opp</a>));
+
+<span class=C>//assign conreg_enable = (valid_opcode &amp;&amp; opcode_look &amp;&amp; !fpuhold);
+</span><a name="173"></a><span class=K>wire</span> [5:0] <a  onClick="return qs(event,this)" class=SW href="#175">conreg_din</a><a  href="hierarchy-s.p3.html#conreg_din___code_seq_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="174"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#112">conreg_enable</a> = (<a  onClick="return qs(event,this)" class=SI href="#74">valid_opcode</a> &amp;&amp; <a  onClick="return qs(event,this)" class=SO href="#126">opcode_look</a>);
+<a name="code_seq_cntl_fpumux"></a><a name="175"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p2.html#mj_s_mux2_d_6">mj_s_mux2_d_6</a> fpumux( <a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p2.html#1921">.mx_out</a>(<a  onClick="return qs(event,this)" class=SW href="#173">conreg_din</a>),
+<a name="176"></a>                        <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="#174">conreg_enable</a>),
+<a name="177"></a>                        <span class=SI>.in0</span>({<a  onClick="return qs(event,this)" class=SW href="#182">rem_op</a>,<a  onClick="return qs(event,this)" class=SW href="#182">long_out</a>,<a  onClick="return qs(event,this)" class=SW href="#182">int_out</a>,<a  onClick="return qs(event,this)" class=SW href="#182">dp_out</a>,<a  onClick="return qs(event,this)" class=SW href="#182">addsub</a>,<a  onClick="return qs(event,this)" class=SO href="#182">dprec</a>}),
+<a name="178"></a>                        <span class=SI>.in1</span>({<a  onClick="return qs(event,this)" class=SW href="#170">rem_opp</a>,<a  onClick="return qs(event,this)" class=SW href="#166">long_outp</a>,<a  onClick="return qs(event,this)" class=SW href="#165">int_outp</a>,<a  onClick="return qs(event,this)" class=SW href="#161">dp_outp</a>,<a  onClick="return qs(event,this)" class=SW href="#162">addsubp</a>,<a  onClick="return qs(event,this)" class=SW href="#164">dprecp</a>}));
+
+<a name="180"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#107">nx_dprec</a> = (<a  onClick="return qs(event,this)" class=SW href="#174">conreg_enable</a>) ? <a  onClick="return qs(event,this)" class=SW href="#164">dprecp</a>:<a  onClick="return qs(event,this)" class=SO href="#182">dprec</a>;
+
+<a name="code_seq_cntl_conreg"></a><a name="182"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p2.html#mj_s_ff_snre_d_6">mj_s_ff_snre_d_6</a> conreg (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p2.html#1771">.out</a>({<a  onClick="return qs(event,this)" class=SW href="#111">rem_op</a>,<a  onClick="return qs(event,this)" class=SW href="#111">long_out</a>,<a  onClick="return qs(event,this)" class=SW href="#110">int_out</a>,<a  onClick="return qs(event,this)" class=SW href="#110">dp_out</a>,<a  onClick="return qs(event,this)" class=SW href="#111">addsub</a>,<a  onClick="return qs(event,this)" class=SO href="#107">dprec</a>}),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#175">conreg_din</a>),
+			<span class=SI>.lenable</span>(!<a  onClick="return qs(event,this)" class=SI href="#75">fpuhold</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#73">reset_l</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#77">clk</a>));
+<span class=K>endmodule</span>
+
+
+<a name="opcode_dec"></a><a  href="code_seq_cntl.v.html#code_seq_cntl_d8"><IMG alt="[Up: code_seq_cntl d8]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>opcode_dec</span><a  href="hierarchy-m.p4.html#opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>(	<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>,
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>,
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>,
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>,<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#205">int_outp</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#205">long_outp</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#204">cyc0_type</a>,
+                  	<a  onClick="return qs(event,this)" class=SI href="#202">top_fpbin</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#205">bsignin</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#205">rem_opp</a> );
+ 
+<a name="201"></a>  <span class=K>input</span>  [7:0]   <a  onClick="return qs(event,this)" class=SI href="#160">opcode</a><a  href="hierarchy-s.p13.html#opcode___opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="202"></a>  <span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="#168">top_fpbin</a><a  href="hierarchy-s.p17.html#top_fpbin___opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;   <span class=C>// Msb of the FPBIN at cyc0_rdy
+</span>
+<a name="204"></a>  <span class=K>output</span> [2:0]   <a  onClick="return qs(event,this)" class=SO href="#344">cyc0_type</a><a  href="hierarchy-s.p3.html#cyc0_type___opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="205"></a>  <span class=K>output</span>         <a  onClick="return qs(event,this)" class=SOR href="#222">dp_outp</a><a  href="hierarchy-s.p4.html#dp_outp___opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SOR href="#221">addsubp</a><a  href="hierarchy-s.html#addsubp___opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SOR href="#223">two_cycle_in</a><a  href="hierarchy-s.p17.html#two_cycle_in___opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SOR href="#220">dprecp</a><a  href="hierarchy-s.p4.html#dprecp___opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#388">int_outp</a><a  href="hierarchy-s.p9.html#int_outp___opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#392">long_outp</a><a  href="hierarchy-s.p10.html#long_outp___opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#211">bsignin</a><a  href="hierarchy-s.p2.html#bsignin___opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#213">rem_opp</a><a  href="hierarchy-s.p15.html#rem_opp___opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+  <span class=K>reg</span>            <a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>,<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>, <a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>, <a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>;
+  <span class=K>wire</span>   [2:0]   <a  onClick="return qs(event,this)" class=SO href="#204">cyc0_type</a>;
+<a name="209"></a>  <span class=K>reg</span>		 <a  onClick="return qs(event,this)" class=SR href="#339">ncyc0_type0</a><a  href="hierarchy-s.p12.html#ncyc0_type0___opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#379">ncyc0_type2</a><a  href="hierarchy-s.p12.html#ncyc0_type2___opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SR href="#352">cyc0_type1</a><a  href="hierarchy-s.p3.html#cyc0_type1___opcode_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="211"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#205">bsignin</a> = ((<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>==<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#25">FSUB</a>) || (<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>==<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#26">DSUB</a>)) ? 
+					!<a  onClick="return qs(event,this)" class=SI href="#202">top_fpbin</a> : <a  onClick="return qs(event,this)" class=SI href="#202">top_fpbin</a>;
+<a name="213"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#205">rem_opp</a> = ((<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>==<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#31">FREM</a>) || (<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>==<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#32">DREM</a>));
+
+  <span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>) <span class=K>begin</span>
+     <span class=K>case</span>(<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>)      <span class=C>// synopsys parallel_case
+</span>           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#43">FCMPG</a>,
+	   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#25">FSUB</a>,
+	   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#23">FADD</a> : <span class=K>begin</span>
+<a name="220"></a>                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h0;  
+<a name="221"></a>		    	<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h1; 
+<a name="222"></a>			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h0; 
+<a name="223"></a>			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h0; 
+                  <span class=K>end</span>
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#44">FCMPL</a>,
+	   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#31">FREM</a>,
+	   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#27">FMUL</a>,
+	   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#29">FDIV</a> : <span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h0;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h0; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h0; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h0; 
+                  <span class=K>end</span>
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#45">DCMPG</a>: <span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h1;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h0; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h1; 
+                  <span class=K>end</span>
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#46">DCMPL</a>: <span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h1;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h0; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h0; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h1; 
+                  <span class=K>end</span>
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#26">DSUB</a>,
+	   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#24">DADD</a>,
+	   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#30">DDIV</a> :<span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h1;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h1; 
+                  <span class=K>end</span>
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#32">DREM</a>,
+	   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#28">DMUL</a> :  <span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h1;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h0; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h1; 
+                  <span class=K>end</span>
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#41">F2D</a>:   <span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h0;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h0; 
+                  <span class=K>end</span>
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#42">D2F</a>,
+	   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#39">D2I</a> : <span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h0;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h0; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h0; 
+                  <span class=K>end</span>
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#37">F2I</a>:   <span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h0;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h0; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h0; 
+                  <span class=K>end</span>
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#38">F2L</a>:   <span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h1;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h0; 
+                  <span class=K>end</span>
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#40">D2L</a>:   <span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h1;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h0; 
+                  <span class=K>end</span>
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#33">I2F</a>:   <span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h0;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h0; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h0; 
+                  <span class=K>end</span>
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#35">L2F</a>:   <span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h0;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h0; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h0; 
+                  <span class=K>end</span>
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#34">I2D</a>:   <span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h0;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h0; 
+                  <span class=K>end</span>
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#36">L2D</a>:   <span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h0;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h1; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h0; 
+                  <span class=K>end</span>
+      <span class=K>default</span>:    <span class=K>begin</span>
+                    	<a  onClick="return qs(event,this)" class=SOR href="#205">dprecp</a>=1'h0;  
+			<a  onClick="return qs(event,this)" class=SOR href="#205">addsubp</a>= 1'h0; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">dp_outp</a>= 1'h0; 
+			<a  onClick="return qs(event,this)" class=SOR href="#205">two_cycle_in</a>= 1'h0; 
+                  <span class=K>end</span>
+    <span class=K>endcase</span>
+  <span class=K>end</span>
+
+<span class=C>// Separated the cyc0_type generation from the above case statement
+</span>
+  <span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>) <span class=K>begin</span>
+      <span class=K>case</span>(<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>)      <span class=C>// synopsys parallel_case
+</span>	   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#45">DCMPG</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#46">DCMPL</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#26">DSUB</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#24">DADD</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#30">DDIV</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#32">DREM</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#28">DMUL</a>,
+	   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#33">I2F</a>, 
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#34">I2D</a>, 
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#35">L2F</a>,
+<a name="339"></a>           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#36">L2D</a>:  <a  onClick="return qs(event,this)" class=SR href="#209">ncyc0_type0</a> = 1'b1;
+	<span class=K>default</span>:  <a  onClick="return qs(event,this)" class=SR href="#209">ncyc0_type0</a> = 1'b0;
+	<span class=K>endcase</span>
+  <span class=K>end</span>
+
+<a name="344"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#204">cyc0_type</a>[0] = !<a  onClick="return qs(event,this)" class=SR href="#339">ncyc0_type0</a>;
+	 
+  <span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>) <span class=K>begin</span>
+     <span class=K>case</span>(<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>)      <span class=C>// synopsys parallel_case
+</span>	   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#42">D2F</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#39">D2I</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#40">D2L</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#35">L2F</a>,
+<a name="352"></a>           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#36">L2D</a>: <a  onClick="return qs(event,this)" class=SR href="#209">cyc0_type1</a> = 1'b1;
+	<span class=K>default</span>: <a  onClick="return qs(event,this)" class=SR href="#209">cyc0_type1</a> = 1'b0;
+      <span class=K>endcase</span>
+  <span class=K>end</span>
+
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#204">cyc0_type</a>[1] = <a  onClick="return qs(event,this)" class=SR href="#352">cyc0_type1</a>;
+
+  <span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>) <span class=K>begin</span>
+     <span class=K>case</span>(<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>)      <span class=C>// synopsys parallel_case
+</span>	   <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#43">FCMPG</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#25">FSUB</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#23">FADD</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#44">FCMPL</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#31">FREM</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#27">FMUL</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#29">FDIV</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#45">DCMPG</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#46">DCMPL</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#26">DSUB</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#24">DADD</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#30">DDIV</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#32">DREM</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#28">DMUL</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#42">D2F</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#39">D2I</a>,
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#40">D2L</a>, 
+           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#35">L2F</a>,
+<a name="379"></a>           <span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#36">L2D</a>: <a  onClick="return qs(event,this)" class=SR href="#209">ncyc0_type2</a> = 1'b1;
+	<span class=K>default</span>: <a  onClick="return qs(event,this)" class=SR href="#209">ncyc0_type2</a> = 1'b0;
+	<span class=K>endcase</span>
+  <span class=K>end</span> 
+
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#204">cyc0_type</a>[2] = !<a  onClick="return qs(event,this)" class=SR href="#379">ncyc0_type2</a>;
+
+
+
+<a name="388"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#205">int_outp</a>  = ((<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>==<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#37">F2I</a>) || (<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>==<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#39">D2I</a>) || (<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>==<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#44">FCMPL</a>)
+                      || (<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>==<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#43">FCMPG</a>) || (<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>==<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#46">DCMPL</a>) || 
+			 (<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>==<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#45">DCMPG</a>));
+
+<a name="392"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#205">long_outp</a> = ((<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>==<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#38">F2L</a>) || (<a  onClick="return qs(event,this)" class=SI href="#201">opcode</a>==<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="fpu.h.html#40">D2L</a>));
+
+<span class=K>endmodule</span>
+
+
+<span class=C>// triquest fsm_begin
+</span><a name="fpu_dec"></a><a  href="code_seq_cntl.v.html#code_seq_cntl_fpud"><IMG alt="[Up: code_seq_cntl fpud]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>fpu_dec</span><a  href="hierarchy-m.p2.html#fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>(		<a  onClick="return qs(event,this)" class=SI href="#418">dp_out</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#419">mfinish</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#422">reset_l</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#420">valid_opcode</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#421">two_cycle_in</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#422">fpuhold</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#422">fpkill</a>,
+               		<a  onClick="return qs(event,this)" class=SO href="#426">fpu_state</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#427">opcode_look</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#428">nx_opcode_look</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#423">int_out</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#423">long_out</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#427">fpbusyn</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#427">cyc1_rdy</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#417">clk</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#425">so</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#424">sin</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#424">sm</a>);
+
+<a name="417"></a>  <span class=K>input</span>		 <a  onClick="return qs(event,this)" class=SI href="#120">clk</a><a  href="hierarchy-s.p3.html#clk___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="418"></a>  <span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="#117">dp_out</a><a  href="hierarchy-s.p4.html#dp_out___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>//  Indicates that two output cycles are needed.
+</span><a name="419"></a>  <span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="#118">mfinish</a><a  href="hierarchy-s.p11.html#mfinish___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;        <span class=C>//  Indicates completion of microcoded calculation stages.
+</span><a name="420"></a>  <span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="#121">valid_opcode</a><a  href="hierarchy-s.p19.html#valid_opcode___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;   <span class=C>// Indicates Valid opcode input.
+</span><a name="421"></a>  <span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="#122">two_cycle_in</a><a  href="hierarchy-s.p17.html#two_cycle_in___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;   <span class=C>// Indicates that a two input cycle transaction is needed.
+</span><a name="422"></a>  <span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="#123">fpuhold</a><a  href="hierarchy-s.p6.html#fpuhold___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#124">fpkill</a><a  href="hierarchy-s.p6.html#fpkill___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#119">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="423"></a>  <span class=K>input</span>          <a  onClick="return qs(event,this)" class=SI href="#128">int_out</a><a  href="hierarchy-s.p9.html#int_out___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#129">long_out</a><a  href="hierarchy-s.p10.html#long_out___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  <span class=C>// Int and long signals.
+</span><a name="424"></a>  <span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="#424">sm</a><a  href="hierarchy-s.p16.html#sm___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#424">sin</a><a  href="hierarchy-s.p16.html#sin___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="425"></a>  <span class=K>output</span>	<a  onClick="return qs(event,this)" class=SO href="#425">so</a><a  href="hierarchy-s.p16.html#so___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="426"></a>  <span class=K>output</span>  [7:0]  <a  onClick="return qs(event,this)" class=SO href="#463">fpu_state</a><a  href="hierarchy-s.p6.html#fpu_state___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="427"></a>  <span class=K>output</span>         <a  onClick="return qs(event,this)" class=SO href="#538">opcode_look</a><a  href="hierarchy-s.p13.html#opcode_look___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#547">fpbusyn</a><a  href="hierarchy-s.p6.html#fpbusyn___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#550">cyc1_rdy</a><a  href="hierarchy-s.p3.html#cyc1_rdy___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="428"></a>  <span class=K>output</span>         <a  onClick="return qs(event,this)" class=SO href="#540">nx_opcode_look</a><a  href="hierarchy-s.p12.html#nx_opcode_look___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="430"></a>  <span class=K>reg</span>     [7:0]  <a  onClick="return qs(event,this)" class=SR href="#475">next_fpu_state</a><a  href="hierarchy-s.p12.html#next_fpu_state___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="431"></a>  <span class=K>wire</span>	  [7:0]  <a  onClick="return qs(event,this)" class=SW href="#457">next_fpu_statep</a><a  href="hierarchy-s.p12.html#next_fpu_statep___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#426">fpu_state</a>;
+
+<span class=C>//*********************************************************************
+</span><span class=C>// Access State Machine definition
+</span><span class=C>//*********************************************************************
+</span>
+<span class=K>parameter</span> [7:0]  <span class=C>// triquest enum FPU_STATE_ENUM
+</span><a name="438"></a>		<a  onClick="return qs(event,this)" class=SW href="#460">S0</a> =    8'b0000_0001,       <span class=C>// idle
+</span><a name="439"></a>                <a  onClick="return qs(event,this)" class=PA href="#439">S1</a> =    8'b0000_0010,       
+<a name="440"></a>                <a  onClick="return qs(event,this)" class=PA href="#440">S2</a> =    8'b0000_0100,     
+<a name="441"></a>                <a  onClick="return qs(event,this)" class=PA href="#441">S3</a> =    8'b0000_1000,    
+<a name="442"></a>                <a  onClick="return qs(event,this)" class=PA href="#442">S4</a> =    8'b0001_0000,
+<a name="443"></a>                <a  onClick="return qs(event,this)" class=PA href="#443">S5</a> =    8'b0010_0000,
+<a name="444"></a>                <a  onClick="return qs(event,this)" class=PA href="#444">S6</a> =    8'b0100_0000,
+<a name="445"></a>                <a  onClick="return qs(event,this)" class=PA href="#445">S7</a> =    8'b1000_0000;
+
+<a name="447"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#447">s0</a> 0
+<a name="448"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#448">s1</a> 1
+<a name="449"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#449">s2</a> 2
+<a name="450"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#450">s3</a> 3
+<a name="451"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#451">s4</a> 4
+<a name="452"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#452">s5</a> 5
+<a name="453"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#453">s6</a> 6
+<a name="454"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#454">s7</a> 7
+
+
+<a name="fpu_dec_fpumux"></a><a name="457"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p3.html#mj_s_mux2_d_8">mj_s_mux2_d_8</a> fpumux( <a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p3.html#2061">.mx_out</a>(<a  onClick="return qs(event,this)" class=SW href="#431">next_fpu_statep</a>),
+                        <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#422">fpkill</a>),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SR href="#475">next_fpu_state</a>),
+<a name="460"></a>                        <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#460">S0</a><a  href="hierarchy-s.p16.html#S0___fpu_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>));
+
+<span class=C>//triquest state_vector {fpu_state[7:0]} FPSTATE enum FPU_STATE_ENUM
+</span><a name="fpu_dec_ff_fpstate"></a><a name="463"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p2.html#mj_s_ff_snre_d_8">mj_s_ff_snre_d_8</a> ff_fpstate (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p2.html#1804">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#426">fpu_state</a>),
+                        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#457">next_fpu_statep</a>),
+                        <span class=SI>.lenable</span>(!<a  onClick="return qs(event,this)" class=SI href="#422">fpuhold</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#422">reset_l</a>),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#417">clk</a>));
+
+  <span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="#418">dp_out</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#419">mfinish</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#420">valid_opcode</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#421">two_cycle_in</a>
+           <span class=K>or</span> <a  onClick="return qs(event,this)" class=SO href="#426">fpu_state</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#423">int_out</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#423">long_out</a>) 
+    <span class=K>begin</span>
+     <span class=K>case</span>(1'b1)  	<span class=C>// synopsys full_case parallel_case
+</span>         <a  onClick="return qs(event,this)" class=SO href="#426">fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#447">s0</a>]:  <span class=K>begin</span>
+                     <span class=K>if</span>(!<a  onClick="return qs(event,this)" class=SI href="#420">valid_opcode</a>)              
+<a name="475"></a>			<a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=SW href="#460">S0</a>;
+                     <span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#421">two_cycle_in</a>)              
+			<a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=PA href="#439">S1</a>;
+                     <span class=K>else</span>                               
+			<a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=PA href="#440">S2</a>;
+         <span class=K>end</span>
+
+         <a  onClick="return qs(event,this)" class=SO href="#426">fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#448">s1</a>]:                      
+		     <a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=PA href="#440">S2</a>;
+
+         <a  onClick="return qs(event,this)" class=SO href="#426">fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#449">s2</a>]:  <span class=K>begin</span>
+                  <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#419">mfinish</a> &amp;&amp; <a  onClick="return qs(event,this)" class=SI href="#423">long_out</a>)  
+			<a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=PA href="#444">S6</a>;
+                  <span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#419">mfinish</a> &amp;&amp; <a  onClick="return qs(event,this)" class=SI href="#423">int_out</a>)   
+			<a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=PA href="#445">S7</a>;
+                  <span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#419">mfinish</a> &amp;&amp; <a  onClick="return qs(event,this)" class=SI href="#418">dp_out</a>)    
+			<a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=PA href="#442">S4</a>;
+                  <span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#419">mfinish</a>)              
+			<a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=PA href="#441">S3</a>;
+                  <span class=K>else</span>                          
+			<a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=PA href="#440">S2</a>;
+         <span class=K>end</span>
+
+         <a  onClick="return qs(event,this)" class=SO href="#426">fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#450">s3</a>]:  <span class=K>begin</span>
+<span class=C>//              if(valid_opcode &amp;&amp; !two_cycle_in)             
+</span><span class=C>//			next_fpu_state = S2;
+</span><span class=C>//              else if(valid_opcode &amp;&amp; two_cycle_in)              
+</span><span class=C>//			next_fpu_state = S1;
+</span><span class=C>//              else                               
+</span>			<a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=SW href="#460">S0</a>;
+         <span class=K>end</span>
+
+         <a  onClick="return qs(event,this)" class=SO href="#426">fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#451">s4</a>]: <a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=PA href="#443">S5</a>; 
+
+         <a  onClick="return qs(event,this)" class=SO href="#426">fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#452">s5</a>]:  <span class=K>begin</span>
+<span class=C>//                if(valid_opcode &amp;&amp; !two_cycle_in)             
+</span><span class=C>//			next_fpu_state = S2;
+</span><span class=C>//                else if(valid_opcode &amp;&amp; two_cycle_in)              
+</span><span class=C>//			next_fpu_state = S1;
+</span><span class=C>//                else                               
+</span>			<a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=SW href="#460">S0</a>;
+         <span class=K>end</span>
+
+         <a  onClick="return qs(event,this)" class=SO href="#426">fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#453">s6</a>]: <a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=PA href="#445">S7</a>;
+
+         <a  onClick="return qs(event,this)" class=SO href="#426">fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#454">s7</a>]:  <span class=K>begin</span>
+<span class=C>//               if(valid_opcode &amp;&amp; !two_cycle_in)             
+</span><span class=C>//			next_fpu_state = S2;
+</span><span class=C>//                else if(valid_opcode &amp;&amp; two_cycle_in)              
+</span><span class=C>//			next_fpu_state = S1;
+</span><span class=C>//                else                               
+</span>			<a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=SW href="#460">S0</a>;
+         <span class=K>end</span>
+
+         <span class=K>default</span>: <a  onClick="return qs(event,this)" class=SR href="#430">next_fpu_state</a> = <a  onClick="return qs(event,this)" class=SW href="#460">S0</a>;
+     <span class=K>endcase</span>
+   <span class=K>end</span>
+
+<span class=C>//   assign opcode_look =    fpu_state[`s0] || fpu_state[`s3] ||
+</span><span class=C>//                           fpu_state[`s5] || fpu_state[`s7];
+</span><span class=C>//   assign nx_opcode_look =    next_fpu_state[`s0] || next_fpu_state[`s3] ||
+</span><span class=C>//                           next_fpu_state[`s5] || next_fpu_state[`s7];
+</span>
+<a name="538"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#427">opcode_look</a> =    <a  onClick="return qs(event,this)" class=SO href="#463">fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#447">s0</a>];
+
+<a name="540"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#428">nx_opcode_look</a> =    <a  onClick="return qs(event,this)" class=SR href="#475">next_fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#447">s0</a>];
+
+
+<span class=C>//   assign fpbusyn     = !(next_fpu_state[`s1] || next_fpu_state[`s2] || 
+</span><span class=C>//			fpu_state[`s1] || (!mfinish &amp;&amp; fpu_state[`s2]));
+</span><span class=C>//   assign fpbusyn     = !(fpu_state[`s1] || (!mfinish &amp;&amp; fpu_state[`s2]));
+</span>
+<a name="547"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#427">fpbusyn</a>     = !(<a  onClick="return qs(event,this)" class=SR href="#475">next_fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#448">s1</a>] || <a  onClick="return qs(event,this)" class=SR href="#475">next_fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#449">s2</a>] || 
+			<a  onClick="return qs(event,this)" class=SO href="#463">fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#448">s1</a>] || (<a  onClick="return qs(event,this)" class=SO href="#463">fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#449">s2</a>]));
+
+<a name="550"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#427">cyc1_rdy</a>    = (<a  onClick="return qs(event,this)" class=SO href="#463">fpu_state</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#448">s1</a>]);
+             
+<span class=K>endmodule</span>
+<span class=C>// triquest fsm_end
+</span>
+
+<span class=C>//*********************************************************************
+</span>
+<a name="branch_dec"></a><a  href="code_seq_cntl.v.html#code_seq_cntl_branchd"><IMG alt="[Up: code_seq_cntl branchd]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>branch_dec</span><a  href="hierarchy-m.html#branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>(	<a  onClick="return qs(event,this)" class=SO href="#589">romsel</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#590">morethree_taken</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#582">rsovfi</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#582">rsneg</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#584">amsb</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#582">incovf</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#582">rs2zero</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#582">rs32</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#582">rsge64</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#582">eadd</a>,
+                  	<a  onClick="return qs(event,this)" class=SI href="#582">le</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#582">manzero</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#583">morethree</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#583">absign</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#583">fmulovf</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#584">fpkill</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#584">cyc0_rdy_p</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#584">addsub</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#587">branch</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#585">qin</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#585">qmsb</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#585">rem_op</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#586">a2func</a>);
+
+<a name="582"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="#137">rsovfi</a><a  href="hierarchy-s.p15.html#rsovfi___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#138">rsneg</a><a  href="hierarchy-s.p15.html#rsneg___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#140">incovf</a><a  href="hierarchy-s.p9.html#incovf___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#141">rs2zero</a><a  href="hierarchy-s.p15.html#rs2zero___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#142">rs32</a><a  href="hierarchy-s.p15.html#rs32___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#143">rsge64</a><a  href="hierarchy-s.p15.html#rsge64___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#144">eadd</a><a  href="hierarchy-s.p5.html#eadd___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#145">le</a><a  href="hierarchy-s.p10.html#le___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#146">manzero</a><a  href="hierarchy-s.p11.html#manzero___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="583"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="#147">morethree</a><a  href="hierarchy-s.p11.html#morethree___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#148">absign</a><a  href="hierarchy-s.html#absign___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#149">fmulovf</a><a  href="hierarchy-s.p6.html#fmulovf___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="584"></a><span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="#150">fpkill</a><a  href="hierarchy-s.p6.html#fpkill___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#152">addsub</a><a  href="hierarchy-s.html#addsub___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#139">amsb</a><a  href="hierarchy-s.html#amsb___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#151">cyc0_rdy_p</a><a  href="hierarchy-s.p3.html#cyc0_rdy_p___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>,  
+<a name="585"></a>	      <a  onClick="return qs(event,this)" class=SI href="#154">qin</a><a  href="hierarchy-s.p15.html#qin___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#155">qmsb</a><a  href="hierarchy-s.p15.html#qmsb___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#156">rem_op</a><a  href="hierarchy-s.p15.html#rem_op___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="586"></a><span class=K>input</span>  [2:0]  <a  onClick="return qs(event,this)" class=SI href="#157">a2func</a><a  href="hierarchy-s.html#a2func___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="587"></a><span class=K>input</span>  [3:0]  <a  onClick="return qs(event,this)" class=SI href="#153">branch</a><a  href="hierarchy-s.p2.html#branch___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="589"></a><span class=K>output</span> [1:0]  <a  onClick="return qs(event,this)" class=SO href="#728">romsel</a><a  href="hierarchy-s.p15.html#romsel___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;   <span class=C>//  Drives the ROM_MUX select--is the microcode branch taken indicator.
+</span><a name="590"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#719">morethree_taken</a><a  href="hierarchy-s.p11.html#morethree_taken___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  <span class=C>// Indicates that the MORETHREE branch was taken.
+</span>
+<span class=C>// reg           romselp_a, romselp_b;
+</span><a name="593"></a><span class=K>reg</span>   [1:0]   <a  onClick="return qs(event,this)" class=SR href="#674">final_sel</a><a  href="hierarchy-s.p6.html#final_sel___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>//wire  [3:0]   fast_selx, final_selx, romselx_sel;
+</span><a name="596"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#682">fastout</a><a  href="hierarchy-s.p6.html#fastout___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#690">romsel_a</a><a  href="hierarchy-s.p15.html#romsel_a___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#696">romsel_b</a><a  href="hierarchy-s.p15.html#romsel_b___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#702">romsel_c</a><a  href="hierarchy-s.p15.html#romsel_c___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#708">romsel_d</a><a  href="hierarchy-s.p15.html#romsel_d___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#599">romselp_a</a><a  href="hierarchy-s.p15.html#romselp_a___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#614">romselp_b</a><a  href="hierarchy-s.p15.html#romselp_b___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#629">romselp_c</a><a  href="hierarchy-s.p15.html#romselp_c___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#644">romselp_d</a><a  href="hierarchy-s.p15.html#romselp_d___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<a name="branch_dec_b1"></a><a name="599"></a><a  onClick="return qs(event,this)" class=MM href="#branch_decode1">branch_decode1</a> b1(	<a  onClick="return qs(event,this)" class=SO href="#767">.romselp_a</a>(<a  onClick="return qs(event,this)" class=SW href="#596">romselp_a</a>),
+<a name="600"></a>			<span class=SI>.branch</span>(<a  onClick="return qs(event,this)" class=SI href="#587">branch</a>),
+<a name="601"></a>			<span class=SI>.morethree</span>(<a  onClick="return qs(event,this)" class=SI href="#583">morethree</a>),
+<a name="602"></a>			<span class=SI>.fmulovf</span>(<a  onClick="return qs(event,this)" class=SI href="#583">fmulovf</a>),
+<a name="603"></a>			<span class=SI>.rsge64</span>(<a  onClick="return qs(event,this)" class=SI href="#582">rsge64</a>),
+<a name="604"></a>			<span class=SI>.absign</span>(<a  onClick="return qs(event,this)" class=SI href="#583">absign</a>),
+<a name="605"></a>			<span class=SI>.addsub</span>(<a  onClick="return qs(event,this)" class=SI href="#584">addsub</a>),
+<a name="606"></a>			<span class=SI>.manzero</span>(<a  onClick="return qs(event,this)" class=SI href="#582">manzero</a>),
+<a name="607"></a>			<span class=SI>.rs32</span>(<a  onClick="return qs(event,this)" class=SI href="#582">rs32</a>),
+<a name="608"></a>			<span class=SI>.eadd</span>(<a  onClick="return qs(event,this)" class=SI href="#582">eadd</a>),
+<a name="609"></a>			<span class=SI>.amsb</span>(<a  onClick="return qs(event,this)" class=SI href="#584">amsb</a>),
+<a name="610"></a>			<span class=SI>.rem_op</span>(<a  onClick="return qs(event,this)" class=SI href="#585">rem_op</a>),
+<a name="611"></a>			<span class=SI>.qmsb</span>(<a  onClick="return qs(event,this)" class=SI href="#585">qmsb</a>),
+<a name="612"></a>			<span class=SI>.a2func</span>(<a  onClick="return qs(event,this)" class=SI href="#586">a2func</a>));
+
+<a name="branch_dec_b2"></a><a name="614"></a><a  onClick="return qs(event,this)" class=MM href="#branch_decode2">branch_decode2</a> b2(      <a  onClick="return qs(event,this)" class=SO href="#816">.romselp_b</a>(<a  onClick="return qs(event,this)" class=SW href="#596">romselp_b</a>),
+<a name="615"></a>                        <span class=SI>.branch</span>(<a  onClick="return qs(event,this)" class=SI href="#587">branch</a>),
+<a name="616"></a>                        <span class=SI>.morethree</span>(<a  onClick="return qs(event,this)" class=SI href="#583">morethree</a>),
+<a name="617"></a>                        <span class=SI>.fmulovf</span>(<a  onClick="return qs(event,this)" class=SI href="#583">fmulovf</a>),
+<a name="618"></a>                        <span class=SI>.rsge64</span>(<a  onClick="return qs(event,this)" class=SI href="#582">rsge64</a>),
+<a name="619"></a>                        <span class=SI>.absign</span>(<a  onClick="return qs(event,this)" class=SI href="#583">absign</a>),
+<a name="620"></a>                        <span class=SI>.addsub</span>(<a  onClick="return qs(event,this)" class=SI href="#584">addsub</a>),
+<a name="621"></a>                        <span class=SI>.manzero</span>(<a  onClick="return qs(event,this)" class=SI href="#582">manzero</a>),
+<a name="622"></a>                        <span class=SI>.rs32</span>(<a  onClick="return qs(event,this)" class=SI href="#582">rs32</a>),
+<a name="623"></a>                        <span class=SI>.eadd</span>(<a  onClick="return qs(event,this)" class=SI href="#582">eadd</a>),
+<a name="624"></a>                        <span class=SI>.amsb</span>(<a  onClick="return qs(event,this)" class=SI href="#584">amsb</a>),
+<a name="625"></a>                        <span class=SI>.rem_op</span>(<a  onClick="return qs(event,this)" class=SI href="#585">rem_op</a>),
+<a name="626"></a>                        <span class=SI>.qmsb</span>(<a  onClick="return qs(event,this)" class=SI href="#585">qmsb</a>),
+<a name="627"></a>                        <span class=SI>.a2func</span>(<a  onClick="return qs(event,this)" class=SI href="#586">a2func</a>));
+
+<a name="branch_dec_b3"></a><a name="629"></a><a  onClick="return qs(event,this)" class=MM href="#branch_decode3">branch_decode3</a> b3(      <a  onClick="return qs(event,this)" class=SO href="#863">.romselp_c</a>(<a  onClick="return qs(event,this)" class=SW href="#596">romselp_c</a>),
+<a name="630"></a>                        <span class=SI>.branch</span>(<a  onClick="return qs(event,this)" class=SI href="#587">branch</a>),
+<a name="631"></a>                        <span class=SI>.morethree</span>(<a  onClick="return qs(event,this)" class=SI href="#583">morethree</a>),
+<a name="632"></a>                        <span class=SI>.fmulovf</span>(<a  onClick="return qs(event,this)" class=SI href="#583">fmulovf</a>),
+<a name="633"></a>                        <span class=SI>.rsge64</span>(<a  onClick="return qs(event,this)" class=SI href="#582">rsge64</a>),
+<a name="634"></a>                        <span class=SI>.absign</span>(<a  onClick="return qs(event,this)" class=SI href="#583">absign</a>),
+<a name="635"></a>                        <span class=SI>.addsub</span>(<a  onClick="return qs(event,this)" class=SI href="#584">addsub</a>),
+<a name="636"></a>                        <span class=SI>.manzero</span>(<a  onClick="return qs(event,this)" class=SI href="#582">manzero</a>),
+<a name="637"></a>                        <span class=SI>.rs32</span>(<a  onClick="return qs(event,this)" class=SI href="#582">rs32</a>),
+<a name="638"></a>                        <span class=SI>.eadd</span>(<a  onClick="return qs(event,this)" class=SI href="#582">eadd</a>),
+<a name="639"></a>                        <span class=SI>.amsb</span>(<a  onClick="return qs(event,this)" class=SI href="#584">amsb</a>),
+<a name="640"></a>                        <span class=SI>.rem_op</span>(<a  onClick="return qs(event,this)" class=SI href="#585">rem_op</a>),
+<a name="641"></a>                        <span class=SI>.qmsb</span>(<a  onClick="return qs(event,this)" class=SI href="#585">qmsb</a>),
+<a name="642"></a>                        <span class=SI>.a2func</span>(<a  onClick="return qs(event,this)" class=SI href="#586">a2func</a>));
+
+<a name="branch_dec_b4"></a><a name="644"></a><a  onClick="return qs(event,this)" class=MM href="#branch_decode4">branch_decode4</a> b4(      <a  onClick="return qs(event,this)" class=SO href="#911">.romselp_d</a>(<a  onClick="return qs(event,this)" class=SW href="#596">romselp_d</a>),
+<a name="645"></a>                        <span class=SI>.branch</span>(<a  onClick="return qs(event,this)" class=SI href="#587">branch</a>),
+<a name="646"></a>                        <span class=SI>.morethree</span>(<a  onClick="return qs(event,this)" class=SI href="#583">morethree</a>),
+<a name="647"></a>                        <span class=SI>.fmulovf</span>(<a  onClick="return qs(event,this)" class=SI href="#583">fmulovf</a>),
+<a name="648"></a>                        <span class=SI>.rsge64</span>(<a  onClick="return qs(event,this)" class=SI href="#582">rsge64</a>),
+<a name="649"></a>                        <span class=SI>.absign</span>(<a  onClick="return qs(event,this)" class=SI href="#583">absign</a>),
+<a name="650"></a>                        <span class=SI>.addsub</span>(<a  onClick="return qs(event,this)" class=SI href="#584">addsub</a>),
+<a name="651"></a>                        <span class=SI>.manzero</span>(<a  onClick="return qs(event,this)" class=SI href="#582">manzero</a>),
+<a name="652"></a>                        <span class=SI>.rs32</span>(<a  onClick="return qs(event,this)" class=SI href="#582">rs32</a>),
+<a name="653"></a>                        <span class=SI>.eadd</span>(<a  onClick="return qs(event,this)" class=SI href="#582">eadd</a>),
+<a name="654"></a>                        <span class=SI>.amsb</span>(<a  onClick="return qs(event,this)" class=SI href="#584">amsb</a>),
+<a name="655"></a>                        <span class=SI>.rem_op</span>(<a  onClick="return qs(event,this)" class=SI href="#585">rem_op</a>),
+<a name="656"></a>                        <span class=SI>.qmsb</span>(<a  onClick="return qs(event,this)" class=SI href="#585">qmsb</a>),
+<a name="657"></a>                        <span class=SI>.a2func</span>(<a  onClick="return qs(event,this)" class=SI href="#586">a2func</a>));
+
+
+<span class=C>//always @(cyc0_rdy_p or branch or fpuhold) 
+</span><span class=C>//	begin
+</span><span class=C>//   	  if(cyc0_rdy_p &amp; !fpuhold)         
+</span><span class=C>//		final_sel = 2'h3;
+</span><span class=C>//   	  else if(branch &gt;= 4'hc)   
+</span><span class=C>//		final_sel = 2'h0;
+</span><span class=C>//    	  else                      
+</span><span class=C>//		final_sel = 2'h1;
+</span><span class=C>//	end
+</span>
+
+ <span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="#584">cyc0_rdy_p</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#587">branch</a>) 
+	<span class=K>begin</span>
+   	  <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#584">cyc0_rdy_p</a>)         
+<a name="674"></a>		<a  onClick="return qs(event,this)" class=SR href="#593">final_sel</a> = 2'h3;
+    	  <span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#587">branch</a> &gt;= 4'hc)   
+		<a  onClick="return qs(event,this)" class=SR href="#674">final_sel</a> = 2'h0;
+    	  <span class=K>else</span>                      
+		<a  onClick="return qs(event,this)" class=SR href="#593">final_sel</a> = 2'h1;
+ 	<span class=K>end</span>
+
+
+<a name="branch_dec_m0"></a><a name="682"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p2.html#mj_s_mux4_d">mj_s_mux4_d</a> m0(	<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p2.html#1257">.mx_out</a>(<a  onClick="return qs(event,this)" class=SW href="#596">fastout</a>),
+		<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SI href="#587">branch</a>[1:0]),
+		<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#582">rsneg</a>),
+		<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#582">rsovfi</a>),
+		<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SI href="#582">rs2zero</a>),
+		<span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SI href="#582">le</a>));
+
+
+<a name="branch_dec_m1"></a><a name="690"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p2.html#mj_s_mux4_d">mj_s_mux4_d</a> m1(	<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p2.html#1257">.mx_out</a>(<a  onClick="return qs(event,this)" class=SW href="#596">romsel_a</a>),
+		<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SR href="#674">final_sel</a>),
+		<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#682">fastout</a>),
+		<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#599">romselp_a</a>),
+		<span class=SI>.in2</span>(1'h1),
+		<span class=SI>.in3</span>(1'h0));
+<a name="branch_dec_m2"></a><a name="696"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p2.html#mj_s_mux4_d">mj_s_mux4_d</a> m2(  <a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p2.html#1257">.mx_out</a>(<a  onClick="return qs(event,this)" class=SW href="#596">romsel_b</a>),
+                <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SR href="#674">final_sel</a>),
+                <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#682">fastout</a>),
+                <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#614">romselp_b</a>),
+                <span class=SI>.in2</span>(1'h1),
+                <span class=SI>.in3</span>(1'h0));
+<a name="branch_dec_m3"></a><a name="702"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p2.html#mj_s_mux4_d">mj_s_mux4_d</a> m3( <a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p2.html#1257">.mx_out</a>(<a  onClick="return qs(event,this)" class=SW href="#596">romsel_c</a>),
+                <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SR href="#674">final_sel</a>),
+                <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#682">fastout</a>),
+                <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#629">romselp_c</a>),
+                <span class=SI>.in2</span>(1'h1),
+                <span class=SI>.in3</span>(1'h0));
+<a name="branch_dec_m4"></a><a name="708"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p2.html#mj_s_mux4_d">mj_s_mux4_d</a> m4( <a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p2.html#1257">.mx_out</a>(<a  onClick="return qs(event,this)" class=SW href="#596">romsel_d</a>),
+                <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SR href="#674">final_sel</a>),
+                <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#682">fastout</a>),
+                <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#644">romselp_d</a>),
+                <span class=SI>.in2</span>(1'h1),
+                <span class=SI>.in3</span>(1'h0));
+
+
+
+
+
+<a name="719"></a> <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#590">morethree_taken</a> = ((<a  onClick="return qs(event,this)" class=SI href="#587">branch</a>==4'h1) &amp;&amp; <a  onClick="return qs(event,this)" class=SI href="#583">morethree</a>);
+
+
+<a name="722"></a> <span class=K>wire</span> [1:0] <a  onClick="return qs(event,this)" class=SW href="#722">romsel0</a><a  href="hierarchy-s.p15.html#romsel0___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a> = (<a  onClick="return qs(event,this)" class=SI href="#584">fpkill</a>) ? 2'b10 : {1'h0,<a  onClick="return qs(event,this)" class=SW href="#690">romsel_a</a>};
+<a name="723"></a> <span class=K>wire</span> [1:0] <a  onClick="return qs(event,this)" class=SW href="#723">romsel1</a><a  href="hierarchy-s.p15.html#romsel1___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a> = (<a  onClick="return qs(event,this)" class=SI href="#584">fpkill</a>) ? 2'b10 : {1'h0,<a  onClick="return qs(event,this)" class=SW href="#696">romsel_b</a>};
+<a name="724"></a> <span class=K>wire</span> [1:0] <a  onClick="return qs(event,this)" class=SW href="#724">romsel2</a><a  href="hierarchy-s.p15.html#romsel2___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a> = (<a  onClick="return qs(event,this)" class=SI href="#584">fpkill</a>) ? 2'b10 : {1'h0,<a  onClick="return qs(event,this)" class=SW href="#702">romsel_c</a>};
+<a name="725"></a> <span class=K>wire</span> [1:0] <a  onClick="return qs(event,this)" class=SW href="#725">romsel3</a><a  href="hierarchy-s.p15.html#romsel3___branch_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a> = (<a  onClick="return qs(event,this)" class=SI href="#584">fpkill</a>) ? 2'b10 : {1'h0,<a  onClick="return qs(event,this)" class=SW href="#708">romsel_d</a>};
+
+
+<a name="branch_dec_romsel_mux"></a><a name="728"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p2.html#mj_s_mux4_d_2">mj_s_mux4_d_2</a> romsel_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p2.html#1465">.mx_out</a>(<a  onClick="return qs(event,this)" class=SO href="#589">romsel</a>),
+<a name="729"></a>			<span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#585">qin</a>,<a  onClick="return qs(event,this)" class=SI href="#582">incovf</a>}),
+<a name="730"></a>			<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#722">romsel0</a>),
+<a name="731"></a>			<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#723">romsel1</a>),
+<a name="732"></a>			<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="#724">romsel2</a>),
+<a name="733"></a>			<span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SW href="#725">romsel3</a>));
+
+
+<span class=K>endmodule</span>
+
+<span class=C>//***************************************************************
+</span><span class=C>// qin=0, incovf=0
+</span>
+<a name="branch_decode1"></a><a  href="code_seq_cntl.v.html#branch_dec_b1"><IMG alt="[Up: branch_dec b1]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>branch_decode1</span><a  href="hierarchy-m.html#branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SI href="#746">branch</a>, <a  onClick="return qs(event,this)" class=SI href="#747">morethree</a>, <a  onClick="return qs(event,this)" class=SI href="#748">fmulovf</a>, <a  onClick="return qs(event,this)" class=SI href="#749">rsge64</a>, <a  onClick="return qs(event,this)" class=SI href="#750">absign</a>, <a  onClick="return qs(event,this)" class=SI href="#751">addsub</a>,
+		      <a  onClick="return qs(event,this)" class=SI href="#752">manzero</a>, <a  onClick="return qs(event,this)" class=SI href="#753">rs32</a>, <a  onClick="return qs(event,this)" class=SI href="#754">eadd</a>, <a  onClick="return qs(event,this)" class=SI href="#755">amsb</a>, <a  onClick="return qs(event,this)" class=SI href="#756">rem_op</a>, <a  onClick="return qs(event,this)" class=SI href="#757">qmsb</a>,
+		      <a  onClick="return qs(event,this)" class=SI href="#758">a2func</a>, <a  onClick="return qs(event,this)" class=SOR href="#745">romselp_a</a>);
+
+<a name="745"></a><span class=K>output</span> <a  onClick="return qs(event,this)" class=SOR href="#767">romselp_a</a><a  href="hierarchy-s.p15.html#romselp_a___branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="746"></a><span class=K>input</span> [3:0] <a  onClick="return qs(event,this)" class=SI href="#600">branch</a><a  href="hierarchy-s.p2.html#branch___branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="747"></a><span class=K>input</span> 	<a  onClick="return qs(event,this)" class=SI href="#601">morethree</a><a  href="hierarchy-s.p11.html#morethree___branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="748"></a>	<a  onClick="return qs(event,this)" class=SI href="#602">fmulovf</a><a  href="hierarchy-s.p6.html#fmulovf___branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="749"></a>	<a  onClick="return qs(event,this)" class=SI href="#603">rsge64</a><a  href="hierarchy-s.p15.html#rsge64___branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="750"></a>	<a  onClick="return qs(event,this)" class=SI href="#604">absign</a><a  href="hierarchy-s.html#absign___branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="751"></a>	<a  onClick="return qs(event,this)" class=SI href="#605">addsub</a><a  href="hierarchy-s.html#addsub___branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="752"></a>	<a  onClick="return qs(event,this)" class=SI href="#606">manzero</a><a  href="hierarchy-s.p11.html#manzero___branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="753"></a>	<a  onClick="return qs(event,this)" class=SI href="#607">rs32</a><a  href="hierarchy-s.p15.html#rs32___branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="754"></a>	<a  onClick="return qs(event,this)" class=SI href="#608">eadd</a><a  href="hierarchy-s.p5.html#eadd___branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="755"></a>	<a  onClick="return qs(event,this)" class=SI href="#609">amsb</a><a  href="hierarchy-s.html#amsb___branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="756"></a>	<a  onClick="return qs(event,this)" class=SI href="#610">rem_op</a><a  href="hierarchy-s.p15.html#rem_op___branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="757"></a>	<a  onClick="return qs(event,this)" class=SI href="#611">qmsb</a><a  href="hierarchy-s.p15.html#qmsb___branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="758"></a><span class=K>input</span> [2:0] <a  onClick="return qs(event,this)" class=SI href="#612">a2func</a><a  href="hierarchy-s.html#a2func___branch_decode1"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>reg</span> <a  onClick="return qs(event,this)" class=SOR href="#745">romselp_a</a>;
+	
+ <span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="#746">branch</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#747">morethree</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#748">fmulovf</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#749">rsge64</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#750">absign</a> <span class=K>or</span>
+          <a  onClick="return qs(event,this)" class=SI href="#751">addsub</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#752">manzero</a> <span class=K>or</span>
+          <a  onClick="return qs(event,this)" class=SI href="#753">rs32</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#754">eadd</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#755">amsb</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#756">rem_op</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#757">qmsb</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#758">a2func</a>)
+ <span class=K>begin</span>
+   <span class=K>case</span>(<a  onClick="return qs(event,this)" class=SI href="#746">branch</a>)    <span class=C>// synopsys parallel_case
+</span><a name="767"></a>       4'h0:  <a  onClick="return qs(event,this)" class=SOR href="#745">romselp_a</a> = 1'h1;
+       4'h1:  <a  onClick="return qs(event,this)" class=SOR href="#745">romselp_a</a> = <a  onClick="return qs(event,this)" class=SI href="#747">morethree</a>;
+       4'h3:  <a  onClick="return qs(event,this)" class=SOR href="#745">romselp_a</a> = <a  onClick="return qs(event,this)" class=SI href="#748">fmulovf</a>;
+       4'h4:  <a  onClick="return qs(event,this)" class=SOR href="#745">romselp_a</a> = <a  onClick="return qs(event,this)" class=SI href="#749">rsge64</a>;
+       4'h5:  <a  onClick="return qs(event,this)" class=SOR href="#745">romselp_a</a> = <a  onClick="return qs(event,this)" class=SI href="#750">absign</a>;
+       4'h6:  <a  onClick="return qs(event,this)" class=SOR href="#745">romselp_a</a> = <a  onClick="return qs(event,this)" class=SI href="#751">addsub</a>;
+       4'h7:  <a  onClick="return qs(event,this)" class=SOR href="#745">romselp_a</a> = <a  onClick="return qs(event,this)" class=SI href="#752">manzero</a>;
+       4'h8:  <a  onClick="return qs(event,this)" class=SOR href="#745">romselp_a</a> = <a  onClick="return qs(event,this)" class=SI href="#753">rs32</a>;
+       4'h9:  <a  onClick="return qs(event,this)" class=SOR href="#745">romselp_a</a> = <a  onClick="return qs(event,this)" class=SI href="#754">eadd</a>;
+       4'ha:  <span class=K>begin</span>
+                 <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#756">rem_op</a>) <a  onClick="return qs(event,this)" class=SOR href="#745">romselp_a</a> = (<a  onClick="return qs(event,this)" class=SI href="#758">a2func</a>==3'h6) ? 1'b0  : <a  onClick="return qs(event,this)" class=SI href="#755">amsb</a>;
+                 <span class=K>else</span>       <a  onClick="return qs(event,this)" class=SOR href="#745">romselp_a</a> = (<a  onClick="return qs(event,this)" class=SI href="#758">a2func</a>==3'h6) ? <a  onClick="return qs(event,this)" class=SI href="#757">qmsb</a> : <a  onClick="return qs(event,this)" class=SI href="#755">amsb</a>;
+              <span class=K>end</span>
+       <span class=K>default</span>: <a  onClick="return qs(event,this)" class=SOR href="#745">romselp_a</a> = 1'h0;
+   <span class=K>endcase</span>
+ <span class=K>end</span>
+
+<span class=K>endmodule</span>
+
+<span class=C>//***************************************************************
+</span><span class=C>//qin=0, incovf=1
+</span>
+<a name="branch_decode2"></a><a  href="code_seq_cntl.v.html#branch_dec_b2"><IMG alt="[Up: branch_dec b2]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>branch_decode2</span><a  href="hierarchy-m.html#branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SI href="#794">branch</a>, <a  onClick="return qs(event,this)" class=SI href="#795">morethree</a>, <a  onClick="return qs(event,this)" class=SI href="#796">fmulovf</a>, <a  onClick="return qs(event,this)" class=SI href="#797">rsge64</a>, <a  onClick="return qs(event,this)" class=SI href="#798">absign</a>, <a  onClick="return qs(event,this)" class=SI href="#799">addsub</a>,
+                      <a  onClick="return qs(event,this)" class=SI href="#800">manzero</a>, <a  onClick="return qs(event,this)" class=SI href="#801">rs32</a>, <a  onClick="return qs(event,this)" class=SI href="#802">eadd</a>, <a  onClick="return qs(event,this)" class=SI href="#803">amsb</a>, <a  onClick="return qs(event,this)" class=SI href="#804">rem_op</a>, <a  onClick="return qs(event,this)" class=SI href="#805">qmsb</a>,
+                      <a  onClick="return qs(event,this)" class=SI href="#806">a2func</a>, <a  onClick="return qs(event,this)" class=SOR href="#793">romselp_b</a>);
+
+<a name="793"></a><span class=K>output</span> <a  onClick="return qs(event,this)" class=SOR href="#816">romselp_b</a><a  href="hierarchy-s.p15.html#romselp_b___branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="794"></a><span class=K>input</span> [3:0] <a  onClick="return qs(event,this)" class=SI href="#615">branch</a><a  href="hierarchy-s.p2.html#branch___branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="795"></a><span class=K>input</span>   <a  onClick="return qs(event,this)" class=SI href="#616">morethree</a><a  href="hierarchy-s.p11.html#morethree___branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="796"></a>        <a  onClick="return qs(event,this)" class=SI href="#617">fmulovf</a><a  href="hierarchy-s.p6.html#fmulovf___branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="797"></a>        <a  onClick="return qs(event,this)" class=SI href="#618">rsge64</a><a  href="hierarchy-s.p15.html#rsge64___branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="798"></a>        <a  onClick="return qs(event,this)" class=SI href="#619">absign</a><a  href="hierarchy-s.html#absign___branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="799"></a>        <a  onClick="return qs(event,this)" class=SI href="#620">addsub</a><a  href="hierarchy-s.html#addsub___branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="800"></a>        <a  onClick="return qs(event,this)" class=SI href="#621">manzero</a><a  href="hierarchy-s.p11.html#manzero___branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="801"></a>        <a  onClick="return qs(event,this)" class=SI href="#622">rs32</a><a  href="hierarchy-s.p15.html#rs32___branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="802"></a>        <a  onClick="return qs(event,this)" class=SI href="#623">eadd</a><a  href="hierarchy-s.p5.html#eadd___branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="803"></a>        <a  onClick="return qs(event,this)" class=SI href="#624">amsb</a><a  href="hierarchy-s.html#amsb___branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="804"></a>        <a  onClick="return qs(event,this)" class=SI href="#625">rem_op</a><a  href="hierarchy-s.p15.html#rem_op___branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="805"></a>        <a  onClick="return qs(event,this)" class=SI href="#626">qmsb</a><a  href="hierarchy-s.p15.html#qmsb___branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="806"></a><span class=K>input</span> [2:0] <a  onClick="return qs(event,this)" class=SI href="#627">a2func</a><a  href="hierarchy-s.html#a2func___branch_decode2"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>reg</span> <a  onClick="return qs(event,this)" class=SOR href="#793">romselp_b</a>;
+
+ <span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="#794">branch</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#795">morethree</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#796">fmulovf</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#797">rsge64</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#798">absign</a> <span class=K>or</span>
+          <a  onClick="return qs(event,this)" class=SI href="#799">addsub</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#800">manzero</a> <span class=K>or</span>
+          <a  onClick="return qs(event,this)" class=SI href="#801">rs32</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#802">eadd</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#803">amsb</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#804">rem_op</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#805">qmsb</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#806">a2func</a>)
+ <span class=K>begin</span>
+   <span class=K>case</span>(<a  onClick="return qs(event,this)" class=SI href="#794">branch</a>)    <span class=C>// synopsys parallel_case
+</span>       4'h0,
+<a name="816"></a>       4'h2:  <a  onClick="return qs(event,this)" class=SOR href="#793">romselp_b</a> = 1'h1;
+       4'h1:  <a  onClick="return qs(event,this)" class=SOR href="#793">romselp_b</a> = <a  onClick="return qs(event,this)" class=SI href="#795">morethree</a>;
+       4'h3:  <a  onClick="return qs(event,this)" class=SOR href="#793">romselp_b</a> = <a  onClick="return qs(event,this)" class=SI href="#796">fmulovf</a>;
+       4'h4:  <a  onClick="return qs(event,this)" class=SOR href="#793">romselp_b</a> = <a  onClick="return qs(event,this)" class=SI href="#797">rsge64</a>;
+       4'h5:  <a  onClick="return qs(event,this)" class=SOR href="#793">romselp_b</a> = <a  onClick="return qs(event,this)" class=SI href="#798">absign</a>;
+       4'h6:  <a  onClick="return qs(event,this)" class=SOR href="#793">romselp_b</a> = <a  onClick="return qs(event,this)" class=SI href="#799">addsub</a>;
+       4'h7:  <a  onClick="return qs(event,this)" class=SOR href="#793">romselp_b</a> = <a  onClick="return qs(event,this)" class=SI href="#800">manzero</a>;
+       4'h8:  <a  onClick="return qs(event,this)" class=SOR href="#793">romselp_b</a> = <a  onClick="return qs(event,this)" class=SI href="#801">rs32</a>;
+       4'h9:  <a  onClick="return qs(event,this)" class=SOR href="#793">romselp_b</a> = <a  onClick="return qs(event,this)" class=SI href="#802">eadd</a>;
+       4'ha:  <span class=K>begin</span>
+                 <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#804">rem_op</a>) <a  onClick="return qs(event,this)" class=SOR href="#793">romselp_b</a> = (<a  onClick="return qs(event,this)" class=SI href="#806">a2func</a>==3'h6) ? 1'b0  : <a  onClick="return qs(event,this)" class=SI href="#803">amsb</a>;
+                 <span class=K>else</span>       <a  onClick="return qs(event,this)" class=SOR href="#793">romselp_b</a> = (<a  onClick="return qs(event,this)" class=SI href="#806">a2func</a>==3'h6) ? <a  onClick="return qs(event,this)" class=SI href="#805">qmsb</a> : <a  onClick="return qs(event,this)" class=SI href="#803">amsb</a>;
+              <span class=K>end</span>
+       <span class=K>default</span>: <a  onClick="return qs(event,this)" class=SOR href="#793">romselp_b</a> = 1'h0;
+   <span class=K>endcase</span>
+ <span class=K>end</span>
+<span class=K>endmodule</span>
+
+<span class=C>//***************************************************************
+</span><span class=C>//qin=1, incovf=0
+</span>
+<a name="branch_decode3"></a><a  href="code_seq_cntl.v.html#branch_dec_b3"><IMG alt="[Up: branch_dec b3]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>branch_decode3</span><a  href="hierarchy-m.html#branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SI href="#842">branch</a>, <a  onClick="return qs(event,this)" class=SI href="#843">morethree</a>, <a  onClick="return qs(event,this)" class=SI href="#844">fmulovf</a>, <a  onClick="return qs(event,this)" class=SI href="#845">rsge64</a>, <a  onClick="return qs(event,this)" class=SI href="#846">absign</a>, <a  onClick="return qs(event,this)" class=SI href="#847">addsub</a>,
+                      <a  onClick="return qs(event,this)" class=SI href="#848">manzero</a>, <a  onClick="return qs(event,this)" class=SI href="#849">rs32</a>, <a  onClick="return qs(event,this)" class=SI href="#850">eadd</a>, <a  onClick="return qs(event,this)" class=SI href="#851">amsb</a>, <a  onClick="return qs(event,this)" class=SI href="#852">rem_op</a>, <a  onClick="return qs(event,this)" class=SI href="#853">qmsb</a>,
+                      <a  onClick="return qs(event,this)" class=SI href="#854">a2func</a>, <a  onClick="return qs(event,this)" class=SOR href="#841">romselp_c</a>);
+
+<a name="841"></a><span class=K>output</span> <a  onClick="return qs(event,this)" class=SOR href="#863">romselp_c</a><a  href="hierarchy-s.p15.html#romselp_c___branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="842"></a><span class=K>input</span> [3:0] <a  onClick="return qs(event,this)" class=SI href="#630">branch</a><a  href="hierarchy-s.p2.html#branch___branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="843"></a><span class=K>input</span>   <a  onClick="return qs(event,this)" class=SI href="#631">morethree</a><a  href="hierarchy-s.p11.html#morethree___branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="844"></a>        <a  onClick="return qs(event,this)" class=SI href="#632">fmulovf</a><a  href="hierarchy-s.p6.html#fmulovf___branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="845"></a>        <a  onClick="return qs(event,this)" class=SI href="#633">rsge64</a><a  href="hierarchy-s.p15.html#rsge64___branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="846"></a>        <a  onClick="return qs(event,this)" class=SI href="#634">absign</a><a  href="hierarchy-s.html#absign___branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="847"></a>        <a  onClick="return qs(event,this)" class=SI href="#635">addsub</a><a  href="hierarchy-s.html#addsub___branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="848"></a>        <a  onClick="return qs(event,this)" class=SI href="#636">manzero</a><a  href="hierarchy-s.p11.html#manzero___branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="849"></a>        <a  onClick="return qs(event,this)" class=SI href="#637">rs32</a><a  href="hierarchy-s.p15.html#rs32___branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="850"></a>        <a  onClick="return qs(event,this)" class=SI href="#638">eadd</a><a  href="hierarchy-s.p5.html#eadd___branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="851"></a>        <a  onClick="return qs(event,this)" class=SI href="#639">amsb</a><a  href="hierarchy-s.html#amsb___branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="852"></a>        <a  onClick="return qs(event,this)" class=SI href="#640">rem_op</a><a  href="hierarchy-s.p15.html#rem_op___branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="853"></a>        <a  onClick="return qs(event,this)" class=SI href="#641">qmsb</a><a  href="hierarchy-s.p15.html#qmsb___branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="854"></a><span class=K>input</span> [2:0] <a  onClick="return qs(event,this)" class=SI href="#642">a2func</a><a  href="hierarchy-s.html#a2func___branch_decode3"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>reg</span> <a  onClick="return qs(event,this)" class=SOR href="#841">romselp_c</a>;
+
+ <span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="#842">branch</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#843">morethree</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#844">fmulovf</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#845">rsge64</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#846">absign</a> <span class=K>or</span>
+          <a  onClick="return qs(event,this)" class=SI href="#847">addsub</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#848">manzero</a> <span class=K>or</span>
+          <a  onClick="return qs(event,this)" class=SI href="#849">rs32</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#850">eadd</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#851">amsb</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#852">rem_op</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#853">qmsb</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#854">a2func</a>)
+ <span class=K>begin</span>
+   <span class=K>case</span>(<a  onClick="return qs(event,this)" class=SI href="#842">branch</a>)    <span class=C>// synopsys parallel_case
+</span><a name="863"></a>       4'h0:  <a  onClick="return qs(event,this)" class=SOR href="#841">romselp_c</a> = 1'h1;
+       4'h1:  <a  onClick="return qs(event,this)" class=SOR href="#841">romselp_c</a> = <a  onClick="return qs(event,this)" class=SI href="#843">morethree</a>;
+       4'h3:  <a  onClick="return qs(event,this)" class=SOR href="#841">romselp_c</a> = <a  onClick="return qs(event,this)" class=SI href="#844">fmulovf</a>;
+       4'h4:  <a  onClick="return qs(event,this)" class=SOR href="#841">romselp_c</a> = <a  onClick="return qs(event,this)" class=SI href="#845">rsge64</a>;
+       4'h5:  <a  onClick="return qs(event,this)" class=SOR href="#841">romselp_c</a> = <a  onClick="return qs(event,this)" class=SI href="#846">absign</a>;
+       4'h6:  <a  onClick="return qs(event,this)" class=SOR href="#841">romselp_c</a> = <a  onClick="return qs(event,this)" class=SI href="#847">addsub</a>;
+       4'h7:  <a  onClick="return qs(event,this)" class=SOR href="#841">romselp_c</a> = <a  onClick="return qs(event,this)" class=SI href="#848">manzero</a>;
+       4'h8:  <a  onClick="return qs(event,this)" class=SOR href="#841">romselp_c</a> = <a  onClick="return qs(event,this)" class=SI href="#849">rs32</a>;
+       4'h9:  <a  onClick="return qs(event,this)" class=SOR href="#841">romselp_c</a> = <a  onClick="return qs(event,this)" class=SI href="#850">eadd</a>;
+       4'ha:  <span class=K>begin</span>
+                 <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#852">rem_op</a>) <a  onClick="return qs(event,this)" class=SOR href="#841">romselp_c</a> = (<a  onClick="return qs(event,this)" class=SI href="#854">a2func</a>==3'h6) ? 1'b1  : <a  onClick="return qs(event,this)" class=SI href="#851">amsb</a>;
+                 <span class=K>else</span>       <a  onClick="return qs(event,this)" class=SOR href="#841">romselp_c</a> = (<a  onClick="return qs(event,this)" class=SI href="#854">a2func</a>==3'h6) ? <a  onClick="return qs(event,this)" class=SI href="#853">qmsb</a> : <a  onClick="return qs(event,this)" class=SI href="#851">amsb</a>;
+              <span class=K>end</span>
+       <span class=K>default</span>: <a  onClick="return qs(event,this)" class=SOR href="#841">romselp_c</a> = 1'h0;
+   <span class=K>endcase</span>
+ <span class=K>end</span>
+<span class=K>endmodule</span>
+
+<span class=C>//***************************************************************
+</span><span class=C>//qin=1, incovf=1
+</span>
+<a name="branch_decode4"></a><a  href="code_seq_cntl.v.html#branch_dec_b4"><IMG alt="[Up: branch_dec b4]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>branch_decode4</span><a  href="hierarchy-m.html#branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>(<a  onClick="return qs(event,this)" class=SI href="#889">branch</a>, <a  onClick="return qs(event,this)" class=SI href="#890">morethree</a>, <a  onClick="return qs(event,this)" class=SI href="#891">fmulovf</a>, <a  onClick="return qs(event,this)" class=SI href="#892">rsge64</a>, <a  onClick="return qs(event,this)" class=SI href="#893">absign</a>, <a  onClick="return qs(event,this)" class=SI href="#894">addsub</a>,
+                      <a  onClick="return qs(event,this)" class=SI href="#895">manzero</a>, <a  onClick="return qs(event,this)" class=SI href="#896">rs32</a>, <a  onClick="return qs(event,this)" class=SI href="#897">eadd</a>, <a  onClick="return qs(event,this)" class=SI href="#898">amsb</a>, <a  onClick="return qs(event,this)" class=SI href="#899">rem_op</a>, <a  onClick="return qs(event,this)" class=SI href="#900">qmsb</a>,
+                      <a  onClick="return qs(event,this)" class=SI href="#901">a2func</a>, <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a>);
+
+<a name="888"></a><span class=K>output</span> <a  onClick="return qs(event,this)" class=SOR href="#911">romselp_d</a><a  href="hierarchy-s.p15.html#romselp_d___branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="889"></a><span class=K>input</span> [3:0] <a  onClick="return qs(event,this)" class=SI href="#645">branch</a><a  href="hierarchy-s.p2.html#branch___branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="890"></a><span class=K>input</span>   <a  onClick="return qs(event,this)" class=SI href="#646">morethree</a><a  href="hierarchy-s.p11.html#morethree___branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="891"></a>        <a  onClick="return qs(event,this)" class=SI href="#647">fmulovf</a><a  href="hierarchy-s.p6.html#fmulovf___branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="892"></a>        <a  onClick="return qs(event,this)" class=SI href="#648">rsge64</a><a  href="hierarchy-s.p15.html#rsge64___branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="893"></a>        <a  onClick="return qs(event,this)" class=SI href="#649">absign</a><a  href="hierarchy-s.html#absign___branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="894"></a>        <a  onClick="return qs(event,this)" class=SI href="#650">addsub</a><a  href="hierarchy-s.html#addsub___branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="895"></a>        <a  onClick="return qs(event,this)" class=SI href="#651">manzero</a><a  href="hierarchy-s.p11.html#manzero___branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="896"></a>        <a  onClick="return qs(event,this)" class=SI href="#652">rs32</a><a  href="hierarchy-s.p15.html#rs32___branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="897"></a>        <a  onClick="return qs(event,this)" class=SI href="#653">eadd</a><a  href="hierarchy-s.p5.html#eadd___branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="898"></a>        <a  onClick="return qs(event,this)" class=SI href="#654">amsb</a><a  href="hierarchy-s.html#amsb___branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="899"></a>        <a  onClick="return qs(event,this)" class=SI href="#655">rem_op</a><a  href="hierarchy-s.p15.html#rem_op___branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>,
+<a name="900"></a>        <a  onClick="return qs(event,this)" class=SI href="#656">qmsb</a><a  href="hierarchy-s.p15.html#qmsb___branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="901"></a><span class=K>input</span> [2:0] <a  onClick="return qs(event,this)" class=SI href="#657">a2func</a><a  href="hierarchy-s.html#a2func___branch_decode4"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>reg</span> <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a>;
+
+ <span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="#889">branch</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#890">morethree</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#891">fmulovf</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#892">rsge64</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#893">absign</a> <span class=K>or</span>
+          <a  onClick="return qs(event,this)" class=SI href="#894">addsub</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#895">manzero</a> <span class=K>or</span>
+          <a  onClick="return qs(event,this)" class=SI href="#896">rs32</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#897">eadd</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#898">amsb</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#899">rem_op</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#900">qmsb</a> <span class=K>or</span> <a  onClick="return qs(event,this)" class=SI href="#901">a2func</a>)
+ <span class=K>begin</span>
+   <span class=K>case</span>(<a  onClick="return qs(event,this)" class=SI href="#889">branch</a>)    <span class=C>// synopsys parallel_case
+</span>       4'h0,
+<a name="911"></a>       4'h2:  <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a> = 1'h1;
+       4'h1:  <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a> = <a  onClick="return qs(event,this)" class=SI href="#890">morethree</a>;
+       4'h3:  <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a> = <a  onClick="return qs(event,this)" class=SI href="#891">fmulovf</a>;
+       4'h4:  <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a> = <a  onClick="return qs(event,this)" class=SI href="#892">rsge64</a>;
+       4'h5:  <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a> = <a  onClick="return qs(event,this)" class=SI href="#893">absign</a>;
+       4'h6:  <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a> = <a  onClick="return qs(event,this)" class=SI href="#894">addsub</a>;
+       4'h7:  <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a> = <a  onClick="return qs(event,this)" class=SI href="#895">manzero</a>;
+       4'h8:  <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a> = <a  onClick="return qs(event,this)" class=SI href="#896">rs32</a>;
+       4'h9:  <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a> = <a  onClick="return qs(event,this)" class=SI href="#897">eadd</a>;
+       4'h9:  <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a> = <a  onClick="return qs(event,this)" class=SI href="#897">eadd</a>;
+       4'ha:  <span class=K>begin</span>
+                 <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#899">rem_op</a>) <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a> = (<a  onClick="return qs(event,this)" class=SI href="#901">a2func</a>==3'h6) ? 1'b1  : <a  onClick="return qs(event,this)" class=SI href="#898">amsb</a>;
+                 <span class=K>else</span>       <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a> = (<a  onClick="return qs(event,this)" class=SI href="#901">a2func</a>==3'h6) ? <a  onClick="return qs(event,this)" class=SI href="#900">qmsb</a> : <a  onClick="return qs(event,this)" class=SI href="#898">amsb</a>;
+              <span class=K>end</span>
+       <span class=K>default</span>: <a  onClick="return qs(event,this)" class=SOR href="#888">romselp_d</a> = 1'h0;
+   <span class=K>endcase</span>
+ <span class=K>end</span>
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:45:57 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/fpu/rtl/code_seq_cntl.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

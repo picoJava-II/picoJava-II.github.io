@@ -1,0 +1,485 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/sim/env/io_pin_monitor.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "io_pin_monitor.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<a name="io_pin_monitor"></a><a  href="monitor.v.html#monitor_io_pin_monitor"><IMG alt="[Up: monitor io_pin_monitor]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>io_pin_monitor</span><a  href="hierarchy-m.p3.html#io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>(
+	<a  onClick="return qs(event,this)" class=SI href="#54">pj_reset</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#55">pj_reset_out</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#56">pj_clk</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#57">pj_clk_out</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#58">pj_irl</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#59">pj_nmi</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#60">pj_boot8</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#61">pj_su</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#62">pj_standby</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#63">pj_standby_out</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#64">pj_no_fpu</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#65">pj_scan_out</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#66">pj_scan_mode</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#67">pj_scan_in</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#68">pj_data_in</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#69">pj_data_out</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#70">pj_address</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#71">pj_size</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#72">pj_type</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#73">pj_tv</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#74">pj_ale</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#75">pj_ack</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#76">pj_halt</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#77">pj_resume</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#78">pj_brk1_sync</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#79">pj_brk2_sync</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#80">pj_in_halt</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#81">pj_inst_complete</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#82">end_of_simulation</a>
+);
+
+<a name="54"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#293">pj_reset</a><a  href="hierarchy-s.p14.html#pj_reset___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="55"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#294">pj_reset_out</a><a  href="hierarchy-s.p14.html#pj_reset_out___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="56"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#295">pj_clk</a><a  href="hierarchy-s.p14.html#pj_clk___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="57"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#296">pj_clk_out</a><a  href="hierarchy-s.p14.html#pj_clk_out___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="58"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#297">pj_irl</a><a  href="hierarchy-s.p14.html#pj_irl___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="59"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#298">pj_nmi</a><a  href="hierarchy-s.p14.html#pj_nmi___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="60"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#299">pj_boot8</a><a  href="hierarchy-s.p14.html#pj_boot8___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="61"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#300">pj_su</a><a  href="hierarchy-s.p14.html#pj_su___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="62"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#301">pj_standby</a><a  href="hierarchy-s.p14.html#pj_standby___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="63"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#302">pj_standby_out</a><a  href="hierarchy-s.p14.html#pj_standby_out___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="64"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#303">pj_no_fpu</a><a  href="hierarchy-s.p14.html#pj_no_fpu___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="65"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#304">pj_scan_out</a><a  href="hierarchy-s.p14.html#pj_scan_out___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="66"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#305">pj_scan_mode</a><a  href="hierarchy-s.p14.html#pj_scan_mode___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="67"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#306">pj_scan_in</a><a  href="hierarchy-s.p14.html#pj_scan_in___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="68"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#307">pj_data_in</a><a  href="hierarchy-s.p14.html#pj_data_in___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="69"></a><span class=K>input</span>	[31:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#308">pj_data_out</a><a  href="hierarchy-s.p14.html#pj_data_out___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="70"></a><span class=K>input</span>	[29:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#309">pj_address</a><a  href="hierarchy-s.p14.html#pj_address___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="71"></a><span class=K>input</span>	[1:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#310">pj_size</a><a  href="hierarchy-s.p14.html#pj_size___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="72"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#311">pj_type</a><a  href="hierarchy-s.p14.html#pj_type___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="73"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#312">pj_tv</a><a  href="hierarchy-s.p14.html#pj_tv___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="74"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#313">pj_ale</a><a  href="hierarchy-s.p14.html#pj_ale___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="75"></a><span class=K>input</span>	[1:0]	<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#314">pj_ack</a><a  href="hierarchy-s.p14.html#pj_ack___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="76"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#315">pj_halt</a><a  href="hierarchy-s.p14.html#pj_halt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="77"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#316">pj_resume</a><a  href="hierarchy-s.p14.html#pj_resume___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="78"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#317">pj_brk1_sync</a><a  href="hierarchy-s.p14.html#pj_brk1_sync___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="79"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#318">pj_brk2_sync</a><a  href="hierarchy-s.p14.html#pj_brk2_sync___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="80"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#319">pj_in_halt</a><a  href="hierarchy-s.p14.html#pj_in_halt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="81"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#320">pj_inst_complete</a><a  href="hierarchy-s.p14.html#pj_inst_complete___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="82"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="monitor.v.html#321">end_of_simulation</a><a  href="hierarchy-s.p5.html#end_of_simulation___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="84"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#134">pj_reset_cnt</a><a  href="hierarchy-s.p14.html#pj_reset_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="85"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#135">pj_reset_cnt2</a><a  href="hierarchy-s.p14.html#pj_reset_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="86"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#136">pj_reset_out_cnt</a><a  href="hierarchy-s.p14.html#pj_reset_out_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="87"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#137">pj_reset_out_cnt2</a><a  href="hierarchy-s.p14.html#pj_reset_out_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="88"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#138">pj_irl_cnt</a><a  href="hierarchy-s.p14.html#pj_irl_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="89"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#139">pj_irl_cnt2</a><a  href="hierarchy-s.p14.html#pj_irl_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="90"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#140">pj_nmi_cnt</a><a  href="hierarchy-s.p14.html#pj_nmi_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="91"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#141">pj_nmi_cnt2</a><a  href="hierarchy-s.p14.html#pj_nmi_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="92"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#142">pj_boot8_cnt</a><a  href="hierarchy-s.p14.html#pj_boot8_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="93"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#143">pj_su_cnt</a><a  href="hierarchy-s.p14.html#pj_su_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="94"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#144">pj_su_cnt2</a><a  href="hierarchy-s.p14.html#pj_su_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="95"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#145">pj_standby_cnt</a><a  href="hierarchy-s.p14.html#pj_standby_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="96"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#146">pj_standby_cnt2</a><a  href="hierarchy-s.p14.html#pj_standby_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="97"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#147">pj_standby_out_cnt</a><a  href="hierarchy-s.p14.html#pj_standby_out_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="98"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#148">pj_standby_out_cnt2</a><a  href="hierarchy-s.p14.html#pj_standby_out_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="99"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#149">pj_no_fpu_cnt</a><a  href="hierarchy-s.p14.html#pj_no_fpu_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="100"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#150">pj_scan_out_cnt</a><a  href="hierarchy-s.p14.html#pj_scan_out_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="101"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#151">pj_scan_out_cnt2</a><a  href="hierarchy-s.p14.html#pj_scan_out_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="102"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#152">pj_scan_mode_cnt</a><a  href="hierarchy-s.p14.html#pj_scan_mode_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="103"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#153">pj_scan_mode_cnt2</a><a  href="hierarchy-s.p14.html#pj_scan_mode_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="104"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#154">pj_scan_in_cnt</a><a  href="hierarchy-s.p14.html#pj_scan_in_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="105"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#155">pj_scan_in_cnt2</a><a  href="hierarchy-s.p14.html#pj_scan_in_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=C>// integer		pj_data_in_cnt;
+</span><span class=C>// integer		pj_data_out_cnt;
+</span><span class=C>// integer		pj_address_cnt;
+</span><span class=C>// integer		pj_size_cnt;
+</span><span class=C>// integer		pj_tv_cnt;
+</span><span class=C>// integer		pj_ale_cnt;
+</span><span class=C>// integer		pj_ack_cnt;
+</span><a name="113"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#163">pj_halt_cnt</a><a  href="hierarchy-s.p14.html#pj_halt_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="114"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#164">pj_halt_cnt2</a><a  href="hierarchy-s.p14.html#pj_halt_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="115"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#165">pj_resume_cnt</a><a  href="hierarchy-s.p14.html#pj_resume_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="116"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#166">pj_resume_cnt2</a><a  href="hierarchy-s.p14.html#pj_resume_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="117"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#167">pj_brk1_sync_cnt</a><a  href="hierarchy-s.p14.html#pj_brk1_sync_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="118"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#168">pj_brk1_sync_cnt2</a><a  href="hierarchy-s.p14.html#pj_brk1_sync_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="119"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#169">pj_brk2_sync_cnt</a><a  href="hierarchy-s.p14.html#pj_brk2_sync_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="120"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#170">pj_brk2_sync_cnt2</a><a  href="hierarchy-s.p14.html#pj_brk2_sync_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="121"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#171">pj_in_halt_cnt</a><a  href="hierarchy-s.p14.html#pj_in_halt_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="122"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#172">pj_in_halt_cnt2</a><a  href="hierarchy-s.p14.html#pj_in_halt_cnt2___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="123"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#173">pj_inst_complete_cnt</a><a  href="hierarchy-s.p14.html#pj_inst_complete_cnt___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// Add for halt mode checking
+</span><a name="126"></a><span class=K>integer</span>		<a  onClick="return qs(event,this)" class=SIT href="#174">halt_cond</a><a  href="hierarchy-s.p8.html#halt_cond___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="128"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#129">irl_any</a><a  href="hierarchy-s.p9.html#irl_any___io_pin_monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="129"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#128">irl_any</a> = |<a  onClick="return qs(event,this)" class=SI href="#58">pj_irl</a>;
+
+<span class=K>initial</span> <span class=K>begin</span>
+  #10;
+  <span class=K>wait</span>(<a  onClick="return qs(event,this)" class=SI href="#54">pj_reset</a> == 1'b0);
+<a name="134"></a>  <a  onClick="return qs(event,this)" class=SIT href="#84">pj_reset_cnt</a> = 0;
+<a name="135"></a>  <a  onClick="return qs(event,this)" class=SIT href="#85">pj_reset_cnt2</a> = 0;
+<a name="136"></a>  <a  onClick="return qs(event,this)" class=SIT href="#86">pj_reset_out_cnt</a> = 0;
+<a name="137"></a>  <a  onClick="return qs(event,this)" class=SIT href="#87">pj_reset_out_cnt2</a> = 0;
+<a name="138"></a>  <a  onClick="return qs(event,this)" class=SIT href="#88">pj_irl_cnt</a> = 0;
+<a name="139"></a>  <a  onClick="return qs(event,this)" class=SIT href="#89">pj_irl_cnt2</a> = 0;
+<a name="140"></a>  <a  onClick="return qs(event,this)" class=SIT href="#90">pj_nmi_cnt</a> = 0;
+<a name="141"></a>  <a  onClick="return qs(event,this)" class=SIT href="#91">pj_nmi_cnt2</a> = 0;
+<a name="142"></a>  <a  onClick="return qs(event,this)" class=SIT href="#92">pj_boot8_cnt</a> = 0;
+<a name="143"></a>  <a  onClick="return qs(event,this)" class=SIT href="#93">pj_su_cnt</a> = 0;
+<a name="144"></a>  <a  onClick="return qs(event,this)" class=SIT href="#94">pj_su_cnt2</a> = 0;
+<a name="145"></a>  <a  onClick="return qs(event,this)" class=SIT href="#95">pj_standby_cnt</a> = 0;
+<a name="146"></a>  <a  onClick="return qs(event,this)" class=SIT href="#96">pj_standby_cnt2</a> = 0;
+<a name="147"></a>  <a  onClick="return qs(event,this)" class=SIT href="#97">pj_standby_out_cnt</a> = 0;
+<a name="148"></a>  <a  onClick="return qs(event,this)" class=SIT href="#98">pj_standby_out_cnt2</a> = 0;
+<a name="149"></a>  <a  onClick="return qs(event,this)" class=SIT href="#99">pj_no_fpu_cnt</a> = 0;
+<a name="150"></a>  <a  onClick="return qs(event,this)" class=SIT href="#100">pj_scan_out_cnt</a> = 0;
+<a name="151"></a>  <a  onClick="return qs(event,this)" class=SIT href="#101">pj_scan_out_cnt2</a> = 0;
+<a name="152"></a>  <a  onClick="return qs(event,this)" class=SIT href="#102">pj_scan_mode_cnt</a> = 0;
+<a name="153"></a>  <a  onClick="return qs(event,this)" class=SIT href="#103">pj_scan_mode_cnt2</a> = 0;
+<a name="154"></a>  <a  onClick="return qs(event,this)" class=SIT href="#104">pj_scan_in_cnt</a> = 0;
+<a name="155"></a>  <a  onClick="return qs(event,this)" class=SIT href="#105">pj_scan_in_cnt2</a> = 0;
+  <span class=C>// pj_data_in_cnt = 0;
+</span>  <span class=C>// pj_data_out_cnt = 0;
+</span>  <span class=C>// pj_address_cnt = 0;
+</span>  <span class=C>// pj_size_cnt = 0;
+</span>  <span class=C>// pj_tv_cnt = 0;
+</span>  <span class=C>// pj_ale_cnt = 0;
+</span>  <span class=C>// pj_ack_cnt = 0;
+</span><a name="163"></a>  <a  onClick="return qs(event,this)" class=SIT href="#113">pj_halt_cnt</a> = 0;
+<a name="164"></a>  <a  onClick="return qs(event,this)" class=SIT href="#114">pj_halt_cnt2</a> = 0;
+<a name="165"></a>  <a  onClick="return qs(event,this)" class=SIT href="#115">pj_resume_cnt</a> = 0;
+<a name="166"></a>  <a  onClick="return qs(event,this)" class=SIT href="#116">pj_resume_cnt2</a> = 0;
+<a name="167"></a>  <a  onClick="return qs(event,this)" class=SIT href="#117">pj_brk1_sync_cnt</a> = 0;
+<a name="168"></a>  <a  onClick="return qs(event,this)" class=SIT href="#118">pj_brk1_sync_cnt2</a> = 0;
+<a name="169"></a>  <a  onClick="return qs(event,this)" class=SIT href="#119">pj_brk2_sync_cnt</a> = 0;
+<a name="170"></a>  <a  onClick="return qs(event,this)" class=SIT href="#120">pj_brk2_sync_cnt2</a> = 0;
+<a name="171"></a>  <a  onClick="return qs(event,this)" class=SIT href="#121">pj_in_halt_cnt</a> = 0;
+<a name="172"></a>  <a  onClick="return qs(event,this)" class=SIT href="#122">pj_in_halt_cnt2</a> = 0;
+<a name="173"></a>  <a  onClick="return qs(event,this)" class=SIT href="#123">pj_inst_complete_cnt</a> = 0;
+<a name="174"></a>  <span class=K>if</span>(<span class=ST>$test$plusargs</span>(<span class=S>&quot;halt_check&quot;</span>)) <a  onClick="return qs(event,this)" class=SIT href="#126">halt_cond</a> = 1'b1 ;
+  <span class=K>else</span> <a  onClick="return qs(event,this)" class=SIT href="#126">halt_cond</a> = 0;
+<span class=K>end</span>
+
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#54">pj_reset</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_reset asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#84">pj_reset_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#134">pj_reset_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#54">pj_reset</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_reset deasserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#85">pj_reset_cnt2</a> = <a  onClick="return qs(event,this)" class=SIT href="#135">pj_reset_cnt2</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#55">pj_reset_out</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_reset_out asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#86">pj_reset_out_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#136">pj_reset_out_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#55">pj_reset_out</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_reset_out deasserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#87">pj_reset_out_cnt2</a> = <a  onClick="return qs(event,this)" class=SIT href="#137">pj_reset_out_cnt2</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SW href="#128">irl_any</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;irl is nonzero.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#88">pj_irl_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#138">pj_irl_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SW href="#128">irl_any</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;irl is zero.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#89">pj_irl_cnt2</a> = <a  onClick="return qs(event,this)" class=SIT href="#139">pj_irl_cnt2</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#59">pj_nmi</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_nmi is asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#90">pj_nmi_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#140">pj_nmi_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#59">pj_nmi</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_nmi is deasserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#91">pj_nmi_cnt2</a> = <a  onClick="return qs(event,this)" class=SIT href="#141">pj_nmi_cnt2</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#60">pj_boot8</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_boot8 is asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#92">pj_boot8_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#142">pj_boot8_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#61">pj_su</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_su is asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#93">pj_su_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#143">pj_su_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#61">pj_su</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_su is asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#93">pj_su_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#143">pj_su_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#62">pj_standby</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_standby asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#95">pj_standby_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#145">pj_standby_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#62">pj_standby</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_standby deasserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#96">pj_standby_cnt2</a> = <a  onClick="return qs(event,this)" class=SIT href="#146">pj_standby_cnt2</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#63">pj_standby_out</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_standby_out asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#97">pj_standby_out_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#147">pj_standby_out_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#63">pj_standby_out</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_standby_out deasserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#98">pj_standby_out_cnt2</a> = <a  onClick="return qs(event,this)" class=SIT href="#148">pj_standby_out_cnt2</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#64">pj_no_fpu</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_no_fpu asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#99">pj_no_fpu_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#149">pj_no_fpu_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#65">pj_scan_out</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_scan_out asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#100">pj_scan_out_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#150">pj_scan_out_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#65">pj_scan_out</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_scan_out deasserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#101">pj_scan_out_cnt2</a> = <a  onClick="return qs(event,this)" class=SIT href="#151">pj_scan_out_cnt2</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#66">pj_scan_mode</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_scan_mode asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#102">pj_scan_mode_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#152">pj_scan_mode_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#66">pj_scan_mode</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_scan_mode deasserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#103">pj_scan_mode_cnt2</a> = <a  onClick="return qs(event,this)" class=SIT href="#153">pj_scan_mode_cnt2</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#67">pj_scan_in</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_scan_in asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#104">pj_scan_in_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#154">pj_scan_in_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#67">pj_scan_in</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_scan_in deasserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#105">pj_scan_in_cnt2</a> = <a  onClick="return qs(event,this)" class=SIT href="#155">pj_scan_in_cnt2</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#76">pj_halt</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_halt asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#113">pj_halt_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#163">pj_halt_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#76">pj_halt</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_halt deasserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#114">pj_halt_cnt2</a> = <a  onClick="return qs(event,this)" class=SIT href="#164">pj_halt_cnt2</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#77">pj_resume</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_resume asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#115">pj_resume_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#165">pj_resume_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#77">pj_resume</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_resume deasserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#116">pj_resume_cnt2</a> = <a  onClick="return qs(event,this)" class=SIT href="#166">pj_resume_cnt2</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#78">pj_brk1_sync</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_brk1_sync asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#117">pj_brk1_sync_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#167">pj_brk1_sync_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#78">pj_brk1_sync</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_brk1_sync deasserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#118">pj_brk1_sync_cnt2</a> = <a  onClick="return qs(event,this)" class=SIT href="#168">pj_brk1_sync_cnt2</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#79">pj_brk2_sync</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_brk2_sync asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#119">pj_brk2_sync_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#169">pj_brk2_sync_cnt</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#79">pj_brk2_sync</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_brk2_sync deasserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#120">pj_brk2_sync_cnt2</a> = <a  onClick="return qs(event,this)" class=SIT href="#170">pj_brk2_sync_cnt2</a> + 1;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#80">pj_in_halt</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_in_halt asserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#121">pj_in_halt_cnt</a> = <a  onClick="return qs(event,this)" class=SIT href="#171">pj_in_halt_cnt</a> + 1;
+  <a  onClick="return qs(event,this)" class=SIT href="#126">halt_cond</a> = 0;
+<span class=K>end</span>
+<span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SI href="#80">pj_in_halt</a>) <span class=K>begin</span>
+  <span class=ST>$display</span>(<span class=S>&quot;pj_in_halt deasserted.&quot;</span>);
+  <a  onClick="return qs(event,this)" class=SIT href="#122">pj_in_halt_cnt2</a> = <a  onClick="return qs(event,this)" class=SIT href="#172">pj_in_halt_cnt2</a> + 1;
+<span class=K>end</span>
+<span class=C>//always @(posedge pj_inst_complete) begin
+</span><span class=C>//  $display(&quot;pj_inst_complete asserted.&quot;);
+</span><span class=C>//  pj_inst_complete_cnt = pj_inst_complete_cnt + 1;
+</span><span class=C>//end
+</span>
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#82">end_of_simulation</a>) <span class=K>begin</span>
+  <span class=C>//pj_reset_out_cnt = pj_reset_out_cnt - 1;
+</span>  <span class=C>//pj_reset_out_cnt2 = pj_reset_out_cnt2 - 1;
+</span>  <span class=K>if</span> (!(<span class=ST>$test$plusargs</span>(<span class=S>&quot;no_io_pin_stats&quot;</span>))) <span class=K>begin</span>
+    <span class=ST>$display</span>(<span class=S>&quot;i/o pin assert/deassert statistics&quot;</span>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_reset assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#84">pj_reset_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_reset deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#85">pj_reset_cnt2</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_reset_out assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#86">pj_reset_out_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_reset_out deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#87">pj_reset_out_cnt2</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_irl assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#88">pj_irl_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_irl deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#89">pj_irl_cnt2</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_nmi assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#90">pj_nmi_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_nmi deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#91">pj_nmi_cnt2</a>);
+    <span class=C>// $display(&quot;%d pj_boot8 assertions.&quot;, pj_boot8_cnt);
+</span>    <span class=ST>$display</span>(<span class=S>&quot;%d pj_su assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#93">pj_su_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_su deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#94">pj_su_cnt2</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_standby assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#95">pj_standby_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_standby deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#96">pj_standby_cnt2</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_standby_out assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#97">pj_standby_out_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_standby_out deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#98">pj_standby_out_cnt2</a>);
+    <span class=C>// $display(&quot;%d pj_no_fpu assertions.&quot;, pj_no_fpu_cnt);
+</span>    <span class=ST>$display</span>(<span class=S>&quot;%d pj_scan_out assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#100">pj_scan_out_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_scan_out deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#101">pj_scan_out_cnt2</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_scan_mode assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#102">pj_scan_mode_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_scan_mode deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#103">pj_scan_mode_cnt2</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_scan_in assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#104">pj_scan_in_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_scan_in deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#105">pj_scan_in_cnt2</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_halt assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#113">pj_halt_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_halt deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#114">pj_halt_cnt2</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_resume assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#115">pj_resume_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_resume deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#116">pj_resume_cnt2</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_brk1_sync assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#117">pj_brk1_sync_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_brk1_sync deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#118">pj_brk1_sync_cnt2</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_brk2_sync assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#119">pj_brk2_sync_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_brk2_sync deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#120">pj_brk2_sync_cnt2</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_in_halt assertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#121">pj_in_halt_cnt</a>);
+    <span class=ST>$display</span>(<span class=S>&quot;%d pj_in_halt deassertions.&quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#122">pj_in_halt_cnt2</a>);
+    <span class=C>//$display(&quot;%d pj_inst_complete assertions.&quot;, pj_inst_complete_cnt);
+</span>    <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SIT href="#126">halt_cond</a>) <span class=ST>$display</span>(<span class=S>&quot;ERROR: pj_in_halt never go 1 with -halt_check option\n&quot;</span>);
+    <span class=K>else</span> <span class=ST>$display</span>(<span class=S>&quot;%d halt_cond &quot;</span>, <a  onClick="return qs(event,this)" class=SIT href="#126">halt_cond</a>);
+  <span class=K>end</span>
+  <span class=ST>$display</span>(<span class=S>&quot;COVERAGE: io_pins %d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d&quot;</span>,
+	(<a  onClick="return qs(event,this)" class=SIT href="#84">pj_reset_cnt</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#85">pj_reset_cnt2</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#86">pj_reset_out_cnt</a>!=0),
+	(<a  onClick="return qs(event,this)" class=SIT href="#87">pj_reset_out_cnt2</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#88">pj_irl_cnt</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#89">pj_irl_cnt2</a>!=0),
+	(<a  onClick="return qs(event,this)" class=SIT href="#90">pj_nmi_cnt</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#91">pj_nmi_cnt2</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#93">pj_su_cnt</a>!=0),
+	(<a  onClick="return qs(event,this)" class=SIT href="#94">pj_su_cnt2</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#95">pj_standby_cnt</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#96">pj_standby_cnt2</a>!=0),
+	(<a  onClick="return qs(event,this)" class=SIT href="#97">pj_standby_out_cnt</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#98">pj_standby_out_cnt2</a>!=0),
+	(<a  onClick="return qs(event,this)" class=SIT href="#100">pj_scan_out_cnt</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#101">pj_scan_out_cnt2</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#102">pj_scan_mode_cnt</a>!=0),
+	(<a  onClick="return qs(event,this)" class=SIT href="#103">pj_scan_mode_cnt2</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#104">pj_scan_in_cnt</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#105">pj_scan_in_cnt2</a>!=0),
+	(<a  onClick="return qs(event,this)" class=SIT href="#113">pj_halt_cnt</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#114">pj_halt_cnt2</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#115">pj_resume_cnt</a>!=0),
+	(<a  onClick="return qs(event,this)" class=SIT href="#116">pj_resume_cnt2</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#117">pj_brk1_sync_cnt</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#118">pj_brk1_sync_cnt2</a>!=0),
+	(<a  onClick="return qs(event,this)" class=SIT href="#119">pj_brk2_sync_cnt</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#120">pj_brk2_sync_cnt2</a>!=0), (<a  onClick="return qs(event,this)" class=SIT href="#121">pj_in_halt_cnt</a>!=0),
+	(<a  onClick="return qs(event,this)" class=SIT href="#122">pj_in_halt_cnt2</a>!=0) );
+<span class=K>end</span>
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:46:05 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/sim/env/io_pin_monitor.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

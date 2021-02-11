@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/biu/rtl/biu_dpath.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "biu_dpath.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+
+
+<a name="biu_dpath"></a><a  href="biu.v.html#biu_biu_dpath"><IMG alt="[Up: biu biu_dpath]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>biu_dpath</span><a  href="hierarchy-m.html#biu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+	<a  onClick="return qs(event,this)" class=SI href="#37">icu_addr</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#38">dcu_addr</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#39">dcu_dataout</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#40">biu_data</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#41">pj_addr</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#42">pj_data_in</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#43">pj_data_out</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#44">arb_select</a>
+	);
+
+<a name="37"></a><span class=K>input</span>     [31:0]    <a  onClick="return qs(event,this)" class=SI href="biu.v.html#105">icu_addr</a><a  href="hierarchy-s.p9.html#icu_addr___biu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="38"></a><span class=K>input</span>     [31:0]    <a  onClick="return qs(event,this)" class=SI href="biu.v.html#106">dcu_addr</a><a  href="hierarchy-s.p4.html#dcu_addr___biu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="39"></a><span class=K>input</span>   	[31:0]    <a  onClick="return qs(event,this)" class=SI href="biu.v.html#107">dcu_dataout</a><a  href="hierarchy-s.p4.html#dcu_dataout___biu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="40"></a><span class=K>output</span>  	[31:0]    <a  onClick="return qs(event,this)" class=SO href="#53">biu_data</a><a  href="hierarchy-s.p2.html#biu_data___biu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="41"></a><span class=K>output</span>  	[31:0]    <a  onClick="return qs(event,this)" class=SO href="#46">pj_addr</a><a  href="hierarchy-s.p14.html#pj_addr___biu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="42"></a><span class=K>input</span>   	[31:0]    <a  onClick="return qs(event,this)" class=SI href="biu.v.html#110">pj_data_in</a><a  href="hierarchy-s.p14.html#pj_data_in___biu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="43"></a><span class=K>output</span>  	[31:0]    <a  onClick="return qs(event,this)" class=SO href="#52">pj_data_out</a><a  href="hierarchy-s.p14.html#pj_data_out___biu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="44"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="biu.v.html#112">arb_select</a><a  href="hierarchy-s.html#arb_select___biu_dpath"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="biu_dpath_biu_addr_mux"></a><a name="46"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p7.html#mux2_32">mux2_32</a>   biu_addr_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p7.html#6113">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#41">pj_addr</a>[31:0]),
+          <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#37">icu_addr</a>[31:0]),
+          <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#38">dcu_addr</a>[31:0]),
+          <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SI href="#44">arb_select</a>,!<a  onClick="return qs(event,this)" class=SI href="#44">arb_select</a>}));
+
+
+<a name="52"></a><span class=K>assign</span>    <a  onClick="return qs(event,this)" class=SO href="#43">pj_data_out</a>[31:0] = <a  onClick="return qs(event,this)" class=SI href="#39">dcu_dataout</a>[31:0];
+<a name="53"></a><span class=K>assign</span>    <a  onClick="return qs(event,this)" class=SO href="#40">biu_data</a>  = <a  onClick="return qs(event,this)" class=SI href="#42">pj_data_in</a> ;
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:45:55 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/biu/rtl/biu_dpath.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

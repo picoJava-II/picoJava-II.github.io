@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/fpu/rtl/code_seq.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "code_seq.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+
+<a name="code_seq"></a><a  href="f_fpu.v.html#fpu_cs"><IMG alt="[Up: fpu cs]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>code_seq</span><a  href="hierarchy-m.html#code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a> (	<a  onClick="return qs(event,this)" class=SI href="#82">rsovfi</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#82">rsneg</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#82">amsb</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#82">incovf</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#82">rs2zero</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#82">rs32</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#83">rsge64</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#83">eadd</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#83">le</a>, 
+                 	<a  onClick="return qs(event,this)" class=SI href="#83">manzero</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#83">morethree</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#94">morethree_taken</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#83">absign</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#83">fmulovf</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#81">nx_opcode</a>,
+                  	<a  onClick="return qs(event,this)" class=SI href="#85">reset_l</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#85">fpkill</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#95">cyc0_rdy</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#95">nx_cyc0_rdy</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#95">cyc1_rdy</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#92">cyc0_type</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#95">dprec</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#95">nx_dprec</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#91">mword</a>, 
+                  	<a  onClick="return qs(event,this)" class=SI href="#85">fpuhold</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#93">fpu_state</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#86">clk</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#94">fpbusyn</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#84">top_fpbin</a>,
+                  	<a  onClick="return qs(event,this)" class=SO href="#94">bsignin</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#84">nx_fpop_valid</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#84">qin</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#84">qmsb</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#87">powerdown</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#95">erop</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#96">nx_multfunc_rom1</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#96">nx_multfunc_rom0</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#96">nx_incfunc_rom1</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#97">nx_incfunc_rom0</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#92">nx_rsfunc_rom0</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#92">nx_rsfunc_rom1</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#97">nx_expfunc_rom0</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#97">nx_expfunc_rom1</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#98">nx_prifunc_rom0</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#98">nx_prifunc_rom1</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#99">nx_mconfunc_rom0</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#99">nx_mconfunc_rom1</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#100">nx_exconfunc_rom0</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#100">nx_exconfunc_rom1</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#104">romsel</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#87">test_mode</a>,
+			<a  onClick="return qs(event,this)" class=SO href="#89">so</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#88">sin</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#88">sm</a>
+			);
+
+<a name="81"></a>  <span class=K>input</span>   [7:0] <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#219">nx_opcode</a><a  href="hierarchy-s.p12.html#nx_opcode___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="82"></a>  <span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#204">rsovfi</a><a  href="hierarchy-s.p15.html#rsovfi___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#205">rsneg</a><a  href="hierarchy-s.p15.html#rsneg___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#206">amsb</a><a  href="hierarchy-s.html#amsb___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#207">incovf</a><a  href="hierarchy-s.p9.html#incovf___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#208">rs2zero</a><a  href="hierarchy-s.p15.html#rs2zero___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#209">rs32</a><a  href="hierarchy-s.p15.html#rs32___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="83"></a>  <span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#210">rsge64</a><a  href="hierarchy-s.p15.html#rsge64___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#211">eadd</a><a  href="hierarchy-s.p5.html#eadd___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#212">le</a><a  href="hierarchy-s.p10.html#le___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#213">manzero</a><a  href="hierarchy-s.p11.html#manzero___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#215">morethree</a><a  href="hierarchy-s.p11.html#morethree___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#217">absign</a><a  href="hierarchy-s.html#absign___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#218">fmulovf</a><a  href="hierarchy-s.p6.html#fmulovf___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  <span class=C>// Branch inputs
+</span><a name="84"></a>  <span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#235">top_fpbin</a><a  href="hierarchy-s.p17.html#top_fpbin___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#237">nx_fpop_valid</a><a  href="hierarchy-s.p12.html#nx_fpop_valid___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#238">qin</a><a  href="hierarchy-s.p15.html#qin___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#239">qmsb</a><a  href="hierarchy-s.p15.html#qmsb___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="85"></a>  <span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#220">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#221">fpkill</a><a  href="hierarchy-s.p6.html#fpkill___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#228">fpuhold</a><a  href="hierarchy-s.p6.html#fpuhold___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                    <span class=C>// state control inputs.
+</span><a name="86"></a>  <span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#230">clk</a><a  href="hierarchy-s.p3.html#clk___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="87"></a>  <span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#257">test_mode</a><a  href="hierarchy-s.p17.html#test_mode___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#214">powerdown</a><a  href="hierarchy-s.p14.html#powerdown___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="88"></a>  <span class=K>input</span>         <a  onClick="return qs(event,this)" class=SI href="#88">sm</a><a  href="hierarchy-s.p16.html#sm___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#88">sin</a><a  href="hierarchy-s.p16.html#sin___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="89"></a>  <span class=K>output</span>	<a  onClick="return qs(event,this)" class=SO href="#89">so</a><a  href="hierarchy-s.p16.html#so___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="91"></a>  <span class=K>output</span> [41:0] <a  onClick="return qs(event,this)" class=SO href="#152">mword</a><a  href="hierarchy-s.p11.html#mword___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="92"></a>  <span class=K>output</span>  [2:0] <a  onClick="return qs(event,this)" class=SO href="#141">cyc0_type</a><a  href="hierarchy-s.p3.html#cyc0_type___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#172">nx_rsfunc_rom0</a><a  href="hierarchy-s.p12.html#nx_rsfunc_rom0___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#173">nx_rsfunc_rom1</a><a  href="hierarchy-s.p12.html#nx_rsfunc_rom1___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="93"></a>  <span class=K>output</span>  [7:0] <a  onClick="return qs(event,this)" class=SO href="#113">fpu_state</a><a  href="hierarchy-s.p6.html#fpu_state___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="94"></a>  <span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#121">morethree_taken</a><a  href="hierarchy-s.p11.html#morethree_taken___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#116">fpbusyn</a><a  href="hierarchy-s.p6.html#fpbusyn___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#143">bsignin</a><a  href="hierarchy-s.p2.html#bsignin___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="95"></a>  <span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#162">cyc0_rdy</a><a  href="hierarchy-s.p3.html#cyc0_rdy___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#163">nx_cyc0_rdy</a><a  href="hierarchy-s.p12.html#nx_cyc0_rdy___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#117">cyc1_rdy</a><a  href="hierarchy-s.p3.html#cyc1_rdy___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#144">dprec</a><a  href="hierarchy-s.p4.html#dprec___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#145">nx_dprec</a><a  href="hierarchy-s.p12.html#nx_dprec___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#165">erop</a><a  href="hierarchy-s.p5.html#erop___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="96"></a>  <span class=K>output</span> [3:0]  <a  onClick="return qs(event,this)" class=SO href="#168">nx_multfunc_rom1</a><a  href="hierarchy-s.p12.html#nx_multfunc_rom1___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#169">nx_multfunc_rom0</a><a  href="hierarchy-s.p12.html#nx_multfunc_rom0___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#170">nx_incfunc_rom1</a><a  href="hierarchy-s.p12.html#nx_incfunc_rom1___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, 
+<a name="97"></a>		<a  onClick="return qs(event,this)" class=SO href="#171">nx_incfunc_rom0</a><a  href="hierarchy-s.p12.html#nx_incfunc_rom0___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#174">nx_expfunc_rom0</a><a  href="hierarchy-s.p12.html#nx_expfunc_rom0___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#175">nx_expfunc_rom1</a><a  href="hierarchy-s.p12.html#nx_expfunc_rom1___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="98"></a>  <span class=K>output</span> [2:0]  <a  onClick="return qs(event,this)" class=SO href="#176">nx_prifunc_rom0</a><a  href="hierarchy-s.p12.html#nx_prifunc_rom0___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#177">nx_prifunc_rom1</a><a  href="hierarchy-s.p12.html#nx_prifunc_rom1___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="99"></a><span class=K>output</span>	[1:0]	<a  onClick="return qs(event,this)" class=SO href="#178">nx_mconfunc_rom0</a><a  href="hierarchy-s.p12.html#nx_mconfunc_rom0___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#179">nx_mconfunc_rom1</a><a  href="hierarchy-s.p12.html#nx_mconfunc_rom1___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="100"></a><span class=K>output</span>	[3:0]	<a  onClick="return qs(event,this)" class=SO href="#180">nx_exconfunc_rom0</a><a  href="hierarchy-s.p12.html#nx_exconfunc_rom0___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#181">nx_exconfunc_rom1</a><a  href="hierarchy-s.p12.html#nx_exconfunc_rom1___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;    <span class=C>// EXCON func.
+</span>
+<a name="102"></a>  <span class=K>wire</span>    [7:0] <a  onClick="return qs(event,this)" class=SW href="#151">nxcode</a><a  href="hierarchy-s.p12.html#nxcode___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="103"></a>  <span class=K>wire</span>    [3:0] <a  onClick="return qs(event,this)" class=SW href="#150">branch</a><a  href="hierarchy-s.p2.html#branch___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="104"></a>  <span class=K>output</span>  [1:0] <a  onClick="return qs(event,this)" class=SO href="#120">romsel</a><a  href="hierarchy-s.p15.html#romsel___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="105"></a>  <span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#154">valid_opcode</a><a  href="hierarchy-s.p19.html#valid_opcode___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#114">opcode_look</a><a  href="hierarchy-s.p13.html#opcode_look___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#115">nx_opcode_look</a><a  href="hierarchy-s.p12.html#nx_opcode_look___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#164">cyc0_rdy_p</a><a  href="hierarchy-s.p3.html#cyc0_rdy_p___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="106"></a>  <span class=K>wire</span>    [7:0] <a  onClick="return qs(event,this)" class=SW href="#156">opcode</a><a  href="hierarchy-s.p13.html#opcode___code_seq"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+  
+
+
+<a name="code_seq_p_code_seq_cntl"></a><a name="110"></a>  <a  onClick="return qs(event,this)" class=MM href="code_seq_cntl.v.html#code_seq_cntl">code_seq_cntl</a> p_code_seq_cntl ( 	<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#85">reset_l</a>), 
+<a name="111"></a>					<span class=SI>.valid_opcode</span>(<a  onClick="return qs(event,this)" class=SW href="#154">valid_opcode</a>), 
+<a name="112"></a>        				<span class=SI>.fpuhold</span>(<a  onClick="return qs(event,this)" class=SI href="#85">fpuhold</a>), 
+<a name="113"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_cntl.v.html#125">.fpu_state</a>(<a  onClick="return qs(event,this)" class=SO href="#93">fpu_state</a>), 
+<a name="114"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_cntl.v.html#126">.opcode_look</a>(<a  onClick="return qs(event,this)" class=SW href="#105">opcode_look</a>), 
+<a name="115"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_cntl.v.html#127">.nx_opcode_look</a>(<a  onClick="return qs(event,this)" class=SW href="#105">nx_opcode_look</a>), 
+<a name="116"></a>        				<a  onClick="return qs(event,this)" class=SO href="code_seq_cntl.v.html#130">.fpbusyn</a>(<a  onClick="return qs(event,this)" class=SO href="#94">fpbusyn</a>), 
+<a name="117"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_cntl.v.html#131">.cyc1_rdy</a>(<a  onClick="return qs(event,this)" class=SO href="#95">cyc1_rdy</a>), 
+<a name="118"></a>					<span class=SI>.fpkill</span>(<a  onClick="return qs(event,this)" class=SI href="#85">fpkill</a>), 
+<a name="119"></a>					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#86">clk</a>), 
+<a name="120"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_cntl.v.html#135">.romsel</a>(<a  onClick="return qs(event,this)" class=SO href="#104">romsel</a>), 
+<a name="121"></a>        				<a  onClick="return qs(event,this)" class=SO href="code_seq_cntl.v.html#136">.morethree_taken</a>(<a  onClick="return qs(event,this)" class=SO href="#94">morethree_taken</a>), 
+<a name="122"></a>					<span class=SI>.rsovfi</span>(<a  onClick="return qs(event,this)" class=SI href="#82">rsovfi</a>), 
+<a name="123"></a>					<span class=SI>.rsneg</span>(<a  onClick="return qs(event,this)" class=SI href="#82">rsneg</a>), 
+<a name="124"></a>        				<span class=SI>.amsb</span>(<a  onClick="return qs(event,this)" class=SI href="#82">amsb</a>), 
+<a name="125"></a>					<span class=SI>.incovf</span>(<a  onClick="return qs(event,this)" class=SI href="#82">incovf</a>), 
+<a name="126"></a>					<span class=SI>.rs2zero</span>(<a  onClick="return qs(event,this)" class=SI href="#82">rs2zero</a>), 
+<a name="127"></a>					<span class=SI>.rs32</span>(<a  onClick="return qs(event,this)" class=SI href="#82">rs32</a>), 
+<a name="128"></a>					<span class=SI>.rsge64</span>(<a  onClick="return qs(event,this)" class=SI href="#83">rsge64</a>), 
+<a name="129"></a>					<span class=SI>.eadd</span>(<a  onClick="return qs(event,this)" class=SI href="#83">eadd</a>), 
+<a name="130"></a>					<span class=SI>.le</span>(<a  onClick="return qs(event,this)" class=SI href="#83">le</a>), 
+<a name="131"></a>					<span class=SI>.manzero</span>(<a  onClick="return qs(event,this)" class=SI href="#83">manzero</a>), 
+<a name="132"></a>					<span class=SI>.morethree</span>(<a  onClick="return qs(event,this)" class=SI href="#83">morethree</a>), 
+<a name="133"></a>					<span class=SI>.absign</span>(<a  onClick="return qs(event,this)" class=SI href="#83">absign</a>), 
+<a name="134"></a>					<span class=SI>.fmulovf</span>(<a  onClick="return qs(event,this)" class=SI href="#83">fmulovf</a>), 
+<a name="135"></a>					<span class=SI>.cyc0_rdy_p</span>(<a  onClick="return qs(event,this)" class=SW href="#164">cyc0_rdy_p</a>), 
+<a name="136"></a>					<span class=SI>.branch</span>(<a  onClick="return qs(event,this)" class=SW href="#150">branch</a>), 
+<a name="137"></a>					<span class=SI>.qin</span>(<a  onClick="return qs(event,this)" class=SI href="#84">qin</a>), 
+<a name="138"></a>        				<span class=SI>.qmsb</span>(<a  onClick="return qs(event,this)" class=SI href="#84">qmsb</a>), 
+<a name="139"></a>					<span class=SI>.a2func</span>(<a  onClick="return qs(event,this)" class=SO href="#152">mword</a>[31:29]),
+<a name="140"></a>					<span class=SI>.opcode</span>(<a  onClick="return qs(event,this)" class=SW href="#156">opcode</a>), 
+<a name="141"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_cntl.v.html#167">.cyc0_type</a>(<a  onClick="return qs(event,this)" class=SO href="#92">cyc0_type</a>), 
+<a name="142"></a>					<span class=SI>.top_fpbin</span>(<a  onClick="return qs(event,this)" class=SI href="#84">top_fpbin</a>), 
+<a name="143"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_cntl.v.html#169">.bsignin</a>(<a  onClick="return qs(event,this)" class=SO href="#94">bsignin</a>), 
+<a name="144"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_cntl.v.html#182">.dprec</a>(<a  onClick="return qs(event,this)" class=SO href="#95">dprec</a>), 
+<a name="145"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_cntl.v.html#180">.nx_dprec</a>(<a  onClick="return qs(event,this)" class=SO href="#95">nx_dprec</a>),
+					<span class=SI>.sm</span>(),<span class=SI>.sin</span>(),<a  onClick="return qs(event,this)" class=SO href="code_seq_cntl.v.html#97">.so</a>(),
+<a name="147"></a>        				<span class=SI>.nxcode</span>(<a  onClick="return qs(event,this)" class=SW href="#151">nxcode</a>) );
+
+<a name="code_seq_p_code_seq_dp"></a><a name="149"></a>  <a  onClick="return qs(event,this)" class=MM href="code_seq_dp.v.html#code_seq_dp">code_seq_dp</a> p_code_seq_dp ( 		<span class=SI>.romsel</span>(<a  onClick="return qs(event,this)" class=SO href="#120">romsel</a>), 
+<a name="150"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#199">.branch</a>(<a  onClick="return qs(event,this)" class=SW href="#103">branch</a>), 
+<a name="151"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#199">.nxcode</a>(<a  onClick="return qs(event,this)" class=SW href="#102">nxcode</a>), 
+<a name="152"></a>        				<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#199">.mword</a>(<a  onClick="return qs(event,this)" class=SO href="#91">mword</a>), 
+<a name="153"></a>					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#86">clk</a>), 
+<a name="154"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#288">.valid_opcode</a>(<a  onClick="return qs(event,this)" class=SW href="#105">valid_opcode</a>), 
+<a name="155"></a>					<span class=SI>.fpkill</span>(<a  onClick="return qs(event,this)" class=SI href="#85">fpkill</a>), 
+<a name="156"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#276">.opcode</a>(<a  onClick="return qs(event,this)" class=SW href="#106">opcode</a>), 
+<a name="157"></a>					<span class=SI>.nx_opcode</span>(<a  onClick="return qs(event,this)" class=SI href="#81">nx_opcode</a>), 
+<a name="158"></a>					<span class=SI>.nx_fpop_valid</span>(<a  onClick="return qs(event,this)" class=SI href="#84">nx_fpop_valid</a>), 
+<a name="159"></a>					<span class=SI>.opcode_look</span>(<a  onClick="return qs(event,this)" class=SW href="#114">opcode_look</a>), 
+<a name="160"></a>					<span class=SI>.nx_opcode_look</span>(<a  onClick="return qs(event,this)" class=SW href="#115">nx_opcode_look</a>), 
+<a name="161"></a>					<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#85">reset_l</a>), 
+<a name="162"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#242">.cyc0_rdy</a>(<a  onClick="return qs(event,this)" class=SO href="#95">cyc0_rdy</a>), 
+<a name="163"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#236">.nx_cyc0_rdy</a>(<a  onClick="return qs(event,this)" class=SO href="#95">nx_cyc0_rdy</a>), 
+<a name="164"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#233">.cyc0_rdy_p</a>(<a  onClick="return qs(event,this)" class=SW href="#105">cyc0_rdy_p</a>), 
+<a name="165"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#234">.erop</a>(<a  onClick="return qs(event,this)" class=SO href="#95">erop</a>),
+<a name="166"></a>					<span class=SI>.fpuhold</span>(<a  onClick="return qs(event,this)" class=SI href="#85">fpuhold</a>),
+<a name="167"></a>					<span class=SI>.powerdown</span>(<a  onClick="return qs(event,this)" class=SI href="#87">powerdown</a>),
+<a name="168"></a>                                        <a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#184">.nx_multfunc_rom1</a>(<a  onClick="return qs(event,this)" class=SO href="#96">nx_multfunc_rom1</a>),
+<a name="169"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#183">.nx_multfunc_rom0</a>(<a  onClick="return qs(event,this)" class=SO href="#96">nx_multfunc_rom0</a>),
+<a name="170"></a>                                        <a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#186">.nx_incfunc_rom1</a>(<a  onClick="return qs(event,this)" class=SO href="#96">nx_incfunc_rom1</a>),
+<a name="171"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#185">.nx_incfunc_rom0</a>(<a  onClick="return qs(event,this)" class=SO href="#97">nx_incfunc_rom0</a>),
+<a name="172"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#187">.nx_rsfunc_rom0</a>(<a  onClick="return qs(event,this)" class=SO href="#92">nx_rsfunc_rom0</a>),
+<a name="173"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#188">.nx_rsfunc_rom1</a>(<a  onClick="return qs(event,this)" class=SO href="#92">nx_rsfunc_rom1</a>),
+<a name="174"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#189">.nx_expfunc_rom0</a>(<a  onClick="return qs(event,this)" class=SO href="#97">nx_expfunc_rom0</a>),
+<a name="175"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#190">.nx_expfunc_rom1</a>(<a  onClick="return qs(event,this)" class=SO href="#97">nx_expfunc_rom1</a>),
+<a name="176"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#191">.nx_prifunc_rom0</a>(<a  onClick="return qs(event,this)" class=SO href="#98">nx_prifunc_rom0</a>),
+<a name="177"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#192">.nx_prifunc_rom1</a>(<a  onClick="return qs(event,this)" class=SO href="#98">nx_prifunc_rom1</a>),
+<a name="178"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#195">.nx_mconfunc_rom0</a>(<a  onClick="return qs(event,this)" class=SO href="#99">nx_mconfunc_rom0</a>),
+<a name="179"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#196">.nx_mconfunc_rom1</a>(<a  onClick="return qs(event,this)" class=SO href="#99">nx_mconfunc_rom1</a>),
+<a name="180"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#193">.nx_exconfunc_rom0</a>(<a  onClick="return qs(event,this)" class=SO href="#100">nx_exconfunc_rom0</a>),
+<a name="181"></a>					<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#194">.nx_exconfunc_rom1</a>(<a  onClick="return qs(event,this)" class=SO href="#100">nx_exconfunc_rom1</a>),
+					<span class=SI>.sm</span>(),<span class=SI>.sin</span>(), 
+<a name="183"></a>					<span class=SI>.test_mode</span>(<a  onClick="return qs(event,this)" class=SI href="#87">test_mode</a>),<a  onClick="return qs(event,this)" class=SO href="code_seq_dp.v.html#67">.so</a>());
+
+<span class=K>endmodule</span>
+
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:56 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/fpu/rtl/code_seq.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

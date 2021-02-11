@@ -1,0 +1,325 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/biu/rtl/biu_ctl.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "biu_ctl.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+
+
+
+<a name="biu_ctl"></a><a  href="biu.v.html#biu_biu_ctl"><IMG alt="[Up: biu biu_ctl]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span>	<span class=MM>biu_ctl</span><a  href="hierarchy-m.html#biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+	<a  onClick="return qs(event,this)" class=SI href="#50">icu_req</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#51">icu_type</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#52">icu_size</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#53">biu_icu_ack</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#54">dcu_req</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#55">dcu_type</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#56">dcu_size</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#57">biu_dcu_ack</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#58">clk</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#59">reset_l</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#60">pj_tv</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#62">pj_type</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#63">pj_size</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#61">pj_ack</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#64">sm</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#65">sin</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#66">so</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#67">arb_select</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#68">pj_ale</a>
+	);
+
+
+<a name="50"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="biu.v.html#83">icu_req</a><a  href="hierarchy-s.p9.html#icu_req___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="51"></a><span class=K>input</span>   [3:0]   <a  onClick="return qs(event,this)" class=SI href="biu.v.html#84">icu_type</a><a  href="hierarchy-s.p9.html#icu_type___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="52"></a><span class=K>input</span>   [1:0]   <a  onClick="return qs(event,this)" class=SI href="biu.v.html#85">icu_size</a><a  href="hierarchy-s.p9.html#icu_size___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="53"></a><span class=K>output</span>	[1:0]	<a  onClick="return qs(event,this)" class=SO href="#87">biu_icu_ack</a><a  href="hierarchy-s.p2.html#biu_icu_ack___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		
+<a name="54"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="biu.v.html#87">dcu_req</a><a  href="hierarchy-s.p4.html#dcu_req___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="55"></a><span class=K>input</span>	[3:0]	<a  onClick="return qs(event,this)" class=SI href="biu.v.html#88">dcu_type</a><a  href="hierarchy-s.p4.html#dcu_type___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="56"></a><span class=K>input</span>	[1:0]	<a  onClick="return qs(event,this)" class=SI href="biu.v.html#89">dcu_size</a><a  href="hierarchy-s.p4.html#dcu_size___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="57"></a><span class=K>output</span>	[1:0]	<a  onClick="return qs(event,this)" class=SO href="#86">biu_dcu_ack</a><a  href="hierarchy-s.p2.html#biu_dcu_ack___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		
+<a name="58"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="biu.v.html#91">clk</a><a  href="hierarchy-s.p3.html#clk___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="59"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="biu.v.html#92">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="60"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#83">pj_tv</a><a  href="hierarchy-s.p14.html#pj_tv___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="61"></a><span class=K>input</span>	[1:0]	<a  onClick="return qs(event,this)" class=SI href="biu.v.html#96">pj_ack</a><a  href="hierarchy-s.p14.html#pj_ack___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="62"></a><span class=K>output</span>	[3:0]	<a  onClick="return qs(event,this)" class=SO href="#96">pj_type</a><a  href="hierarchy-s.p14.html#pj_type___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="63"></a><span class=K>output</span>  [1:0]   <a  onClick="return qs(event,this)" class=SO href="#91">pj_size</a><a  href="hierarchy-s.p14.html#pj_size___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="64"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#64">sm</a><a  href="hierarchy-s.p16.html#sm___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="65"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#65">sin</a><a  href="hierarchy-s.p16.html#sin___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="66"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#66">so</a><a  href="hierarchy-s.p16.html#so___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="67"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#110">arb_select</a><a  href="hierarchy-s.html#arb_select___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="68"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#88">pj_ale</a><a  href="hierarchy-s.p14.html#pj_ale___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<a name="71"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#102">arbiter_sel</a><a  href="hierarchy-s.html#arbiter_sel___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="72"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#104">temp_arb_sel</a><a  href="hierarchy-s.p17.html#temp_arb_sel___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SO href="#67">arb_select</a>;
+<a name="74"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#141">arb_idle</a><a  href="hierarchy-s.html#arb_idle___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="75"></a><span class=K>wire</span>	[4:0]	<a  onClick="return qs(event,this)" class=SW href="#118">arb_next_state</a><a  href="hierarchy-s.html#arb_next_state___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="76"></a><span class=K>wire</span>	[4:0]	<a  onClick="return qs(event,this)" class=SW href="#124">arb_state</a><a  href="hierarchy-s.html#arb_state___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="77"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#84">icu_tx</a><a  href="hierarchy-s.p9.html#icu_tx___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="78"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#85">dcu_tx</a><a  href="hierarchy-s.p4.html#dcu_tx___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="79"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="#142">num_acks</a><a  href="hierarchy-s.p12.html#num_acks___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="80"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="#135">type_state</a><a  href="hierarchy-s.p17.html#type_state___biu_ctl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<a name="83"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#60">pj_tv</a> = ((<a  onClick="return qs(event,this)" class=SI href="#50">icu_req</a> | <a  onClick="return qs(event,this)" class=SI href="#54">dcu_req</a>) &amp; <a  onClick="return qs(event,this)" class=SW href="#124">arb_state</a>[0]) | <a  onClick="return qs(event,this)" class=SW href="#124">arb_state</a>[1] ;
+<a name="84"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#77">icu_tx</a> = !<a  onClick="return qs(event,this)" class=SW href="#135">type_state</a>[2];		
+<a name="85"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#78">dcu_tx</a> = <a  onClick="return qs(event,this)" class=SW href="#135">type_state</a>[2];
+<a name="86"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#57">biu_dcu_ack</a> = {<a  onClick="return qs(event,this)" class=SW href="#85">dcu_tx</a>,<a  onClick="return qs(event,this)" class=SW href="#85">dcu_tx</a>} &amp; <a  onClick="return qs(event,this)" class=SI href="#61">pj_ack</a>;	<span class=C>//2{dcu_tx}
+</span><a name="87"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#53">biu_icu_ack</a> = {<a  onClick="return qs(event,this)" class=SW href="#84">icu_tx</a>,<a  onClick="return qs(event,this)" class=SW href="#84">icu_tx</a>} &amp; <a  onClick="return qs(event,this)" class=SI href="#61">pj_ack</a>;
+<a name="88"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#68">pj_ale</a> = ~(<a  onClick="return qs(event,this)" class=SO href="#83">pj_tv</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#124">arb_state</a>[0]);
+
+<span class=C>/* muxes for pj_type and pj_size */</span>
+<a name="biu_ctl_biu_size_mux"></a><a name="91"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux2_2">mux2_2</a>    biu_size_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4675">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#63">pj_size</a>[1:0]),
+          <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#52">icu_size</a>[1:0]),
+          <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#56">dcu_size</a>[1:0]),
+          <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SO href="#110">arb_select</a>,!<a  onClick="return qs(event,this)" class=SO href="#110">arb_select</a>}));
+
+<a name="biu_ctl_biu_type_mux"></a><a name="96"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux2_4">mux2_4</a>    biu_type_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4946">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#62">pj_type</a>[3:0]),
+          <span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SI href="#51">icu_type</a>[3:0]),
+          <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="#55">dcu_type</a>[3:0]),
+          <span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SO href="#110">arb_select</a>,!<a  onClick="return qs(event,this)" class=SO href="#110">arb_select</a>}));
+
+<span class=C>/*	Generation of select for pj_addr,pj_type and pj_size muxes */</span>
+<a name="102"></a><span class=K>assign</span>    <a  onClick="return qs(event,this)" class=SW href="#71">arbiter_sel</a> = <a  onClick="return qs(event,this)" class=SI href="#50">icu_req</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#54">dcu_req</a>;
+
+<a name="biu_ctl_arb_select_state"></a><a name="104"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	arb_select_state(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#72">temp_arb_sel</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#102">arbiter_sel</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#58">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#59">reset_l</a>),
+			<span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SW href="#141">arb_idle</a>));
+
+<a name="biu_ctl_arb_select_mux"></a><a name="110"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux2">mux2</a>		arb_select_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4203">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#67">arb_select</a>),
+			<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#102">arbiter_sel</a>),
+			<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#104">temp_arb_sel</a>),
+			<span class=SI>.sel</span>({<a  onClick="return qs(event,this)" class=SW href="#141">arb_idle</a>,!<a  onClick="return qs(event,this)" class=SW href="#141">arb_idle</a>}));
+	
+
+<span class=C>/*	State machine for Arbiter */</span>
+
+<a name="118"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#75">arb_next_state</a>[4:0] =	<a  onClick="return qs(event,this)" class=F href="#biu_ctl_arbiter">arbiter</a>(<a  onClick="return qs(event,this)" class=SW href="#124">arb_state</a>[4:0],
+					<a  onClick="return qs(event,this)" class=SI href="#61">pj_ack</a>[0],
+					<a  onClick="return qs(event,this)" class=SI href="#61">pj_ack</a>[1],
+					<a  onClick="return qs(event,this)" class=SO href="#83">pj_tv</a>,
+					<a  onClick="return qs(event,this)" class=SW href="#142">num_acks</a>);
+
+<a name="biu_ctl_arb_state_reg"></a><a name="124"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_4">ff_sre_4</a>	arb_state_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4704">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#76">arb_state</a>[4:1]),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#118">arb_next_state</a>[4:1]),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#58">clk</a>),
+					<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#59">reset_l</a>),
+					<span class=SI>.enable</span>(1'b1));
+
+<a name="biu_ctl_arb_state_reg_0"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s">ff_s</a>			arb_state_reg_0(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2137">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#76">arb_state</a>[0]),
+			<span class=SI>.din</span>(~<a  onClick="return qs(event,this)" class=SI href="#59">reset_l</a> | <a  onClick="return qs(event,this)" class=SW href="#118">arb_next_state</a>[0]),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#58">clk</a>));
+
+<span class=C>//latch pj_type
+</span><a name="biu_ctl_type_state_reg"></a><a name="135"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_4">ff_se_4</a>	type_state_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3027">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#80">type_state</a>[3:0]), <span class=C>//change
+</span>				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SO href="#96">pj_type</a>[3:0]),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#58">clk</a>),
+				<span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SW href="#141">arb_idle</a>));
+
+
+<a name="141"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#74">arb_idle</a> = <a  onClick="return qs(event,this)" class=SW href="#124">arb_state</a>[0];
+<a name="142"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#79">num_acks</a>[0] = <a  onClick="return qs(event,this)" class=SW href="#135">type_state</a>[1];
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#79">num_acks</a>[1] = 1'b0;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#79">num_acks</a>[2] = (<a  onClick="return qs(event,this)" class=SW href="#135">type_state</a>[3] | (<a  onClick="return qs(event,this)" class=SW href="#135">type_state</a>[2] &amp; (!<a  onClick="return qs(event,this)" class=SW href="#135">type_state</a>[1])))|
+                      !(<a  onClick="return qs(event,this)" class=SW href="#135">type_state</a>[1] | <a  onClick="return qs(event,this)" class=SW href="#135">type_state</a>[2] | <a  onClick="return qs(event,this)" class=SW href="#135">type_state</a>[3]);
+
+<a name="biu_ctl_arbiter"></a><span class=K>function</span>	[4:0] <a  onClick="return qs(event,this)" class=F href="#biu_ctl_arbiter">arbiter</a>;
+
+<a name="149"></a><span class=K>input</span>	[4:0]	<a  onClick="return qs(event,this)" class=SI href="#149">cur_state</a>;
+<a name="150"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#150">normal_ack</a>;
+<a name="151"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#151">error_ack</a>;
+<a name="152"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#152">pj_tv</a>;
+<a name="153"></a><span class=K>input</span>	[2:0]	<a  onClick="return qs(event,this)" class=SI href="#153">num_acks</a>;
+		
+<a name="155"></a><span class=K>reg</span>	[4:0]	<a  onClick="return qs(event,this)" class=SR href="#167">next_state</a>;
+<span class=K>parameter</span>
+<a name="157"></a>	<a  onClick="return qs(event,this)" class=PA href="#157">IDLE</a>		=	5'b00001,
+<a name="158"></a>	<a  onClick="return qs(event,this)" class=PA href="#158">REQ_ACTIVE</a>	=	5'b00010,
+<a name="159"></a>	<a  onClick="return qs(event,this)" class=PA href="#159">FILL3</a>		=	5'b00100,
+<a name="160"></a>	<a  onClick="return qs(event,this)" class=PA href="#160">FILL2</a>		=	5'b01000,
+<a name="161"></a>	<a  onClick="return qs(event,this)" class=PA href="#161">FILL1</a>		=	5'b10000;
+<span class=K>begin</span>
+
+	<span class=K>case</span> (<a  onClick="return qs(event,this)" class=SI href="#149">cur_state</a>)
+	<a  onClick="return qs(event,this)" class=PA href="#157">IDLE</a>: <span class=K>begin</span>
+		<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#152">pj_tv</a>) <span class=K>begin</span>
+<a name="167"></a>			<a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#158">REQ_ACTIVE</a>;
+		<span class=K>end</span>
+		<span class=K>else</span>	<a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#149">cur_state</a>;
+		<span class=K>end</span>
+	<a  onClick="return qs(event,this)" class=PA href="#158">REQ_ACTIVE</a>: <span class=K>begin</span>
+		<span class=K>if</span> ( <a  onClick="return qs(event,this)" class=SI href="#151">error_ack</a> | (<a  onClick="return qs(event,this)" class=SI href="#150">normal_ack</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#153">num_acks</a>[0]))
+			<a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#157">IDLE</a>;
+		<span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#150">normal_ack</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#153">num_acks</a>[2])
+			<a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#159">FILL3</a>; 
+		<span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#150">normal_ack</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#153">num_acks</a>[1])
+			<a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#161">FILL1</a>;
+		<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#149">cur_state</a>;
+		<span class=K>end</span>
+	<a  onClick="return qs(event,this)" class=PA href="#159">FILL3</a>:<span class=K>begin</span>	
+		<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#151">error_ack</a> )  
+               <a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#157">IDLE</a>;
+		<span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#150">normal_ack</a>)
+			<a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#160">FILL2</a>;	
+		<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#149">cur_state</a>;
+		<span class=K>end</span>
+	<a  onClick="return qs(event,this)" class=PA href="#160">FILL2</a>: <span class=K>begin</span>
+		<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#151">error_ack</a> )    
+               <a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#157">IDLE</a>;
+		<span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#150">normal_ack</a>)
+			<a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#161">FILL1</a>;
+		<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#149">cur_state</a>;
+		<span class=K>end</span>
+	<a  onClick="return qs(event,this)" class=PA href="#161">FILL1</a>:<span class=K>begin</span>
+		<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#150">normal_ack</a> | <a  onClick="return qs(event,this)" class=SI href="#151">error_ack</a>)
+		 <a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#157">IDLE</a>;
+		<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#149">cur_state</a>;
+		<span class=K>end</span>
+	<span class=K>default</span>:<span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#155">next_state</a> = 5'bx;
+		<span class=K>end</span>
+	<span class=K>endcase</span>
+<a  onClick="return qs(event,this)" class=F href="#biu_ctl_arbiter">arbiter</a>[4:0] = <a  onClick="return qs(event,this)" class=SR href="#167">next_state</a>[4:0];
+<span class=K>end</span>	
+<span class=K>endfunction</span>
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:53 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/biu/rtl/biu_ctl.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

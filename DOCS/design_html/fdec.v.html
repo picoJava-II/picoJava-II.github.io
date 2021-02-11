@@ -1,0 +1,546 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ifu/rtl/fdec.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "fdec.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<a name="fdec"></a><a  href="fold_dec.v.html#fold_dec_fdec_0"><IMG alt="[Up: fold_dec fdec_0]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="fold_dec.v.html#fold_dec_fdec_1"><IMG alt="[Up: fold_dec fdec_1]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="fold_dec.v.html#fold_dec_fdec_2"><IMG alt="[Up: fold_dec fdec_2]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="fold_dec.v.html#fold_dec_fdec_3"><IMG alt="[Up: fold_dec fdec_3]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="fold_dec.v.html#fold_dec_fdec_4"><IMG alt="[Up: fold_dec fdec_4]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="fold_dec.v.html#fold_dec_fdec_5"><IMG alt="[Up: fold_dec fdec_5]" align=bottom border=0 SRC="v2html-up.gif"></a><a  href="fold_dec.v.html#fold_dec_fdec_6"><IMG alt="[Up: fold_dec fdec_6]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>fdec</span><a  href="hierarchy-m.p2.html#fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+<a  onClick="return qs(event,this)" class=SI href="#27">opcode</a>,
+<a  onClick="return qs(event,this)" class=SO href="#28">type</a>
+);
+
+<a name="27"></a><span class=K>input</span>	[15:0]	<a  onClick="return qs(event,this)" class=SI href="#27">opcode</a><a  href="hierarchy-s.p13.html#opcode___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="28"></a><span class=K>output</span>	[5:0]	<a  onClick="return qs(event,this)" class=SO href="#424">type</a><a  href="hierarchy-s.p17.html#type___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="30"></a><span class=K>reg</span>		<a  onClick="return qs(event,this)" class=SR href="#53">type5</a><a  href="hierarchy-s.p17.html#type5___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="31"></a><span class=K>reg</span>		<a  onClick="return qs(event,this)" class=SR href="#53">type4</a><a  href="hierarchy-s.p17.html#type4___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="32"></a><span class=K>reg</span>		<a  onClick="return qs(event,this)" class=SR href="#53">type3</a><a  href="hierarchy-s.p17.html#type3___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="33"></a><span class=K>reg</span>		<a  onClick="return qs(event,this)" class=SR href="#53">type2</a><a  href="hierarchy-s.p17.html#type2___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="34"></a><span class=K>reg</span>		<a  onClick="return qs(event,this)" class=SR href="#53">type1</a><a  href="hierarchy-s.p17.html#type1___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="35"></a><span class=K>reg</span>		<a  onClick="return qs(event,this)" class=SR href="#53">type0</a><a  href="hierarchy-s.p17.html#type0___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="36"></a><span class=K>reg</span>		<a  onClick="return qs(event,this)" class=SR href="#313">ext_type5</a><a  href="hierarchy-s.p5.html#ext_type5___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="37"></a><span class=K>reg</span>		<a  onClick="return qs(event,this)" class=SR href="#313">ext_type4</a><a  href="hierarchy-s.p5.html#ext_type4___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="38"></a><span class=K>reg</span>		<a  onClick="return qs(event,this)" class=SR href="#313">ext_type3</a><a  href="hierarchy-s.p5.html#ext_type3___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="39"></a><span class=K>reg</span>		<a  onClick="return qs(event,this)" class=SR href="#313">ext_type2</a><a  href="hierarchy-s.p5.html#ext_type2___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="40"></a><span class=K>reg</span>		<a  onClick="return qs(event,this)" class=SR href="#313">ext_type1</a><a  href="hierarchy-s.p5.html#ext_type1___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="41"></a><span class=K>reg</span>		<a  onClick="return qs(event,this)" class=SR href="#313">ext_type0</a><a  href="hierarchy-s.p5.html#ext_type0___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="42"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="#421">type_sel</a><a  href="hierarchy-s.p17.html#type_sel___fdec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// type0 =  Non Foldable
+</span><span class=C>// type1 =  Local Variable
+</span><span class=C>// type2 =  Operation
+</span><span class=C>// type3 =  Break Group2
+</span><span class=C>// type4 =  Break Group1
+</span><span class=C>// type5 =  Memory Store
+</span>
+<span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="#27">opcode</a>) <span class=K>begin</span>
+
+<a name="53"></a>	{<a  onClick="return qs(event,this)" class=SR href="#35">type0</a>,<a  onClick="return qs(event,this)" class=SR href="#34">type1</a>,<a  onClick="return qs(event,this)" class=SR href="#33">type2</a>,<a  onClick="return qs(event,this)" class=SR href="#32">type3</a>,<a  onClick="return qs(event,this)" class=SR href="#31">type4</a>,<a  onClick="return qs(event,this)" class=SR href="#30">type5</a>} = 6'b000000;
+
+	<span class=K>case</span> (<a  onClick="return qs(event,this)" class=SI href="#27">opcode</a>[15:8])
+
+		8'd0:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// nop
+</span>		8'd1:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// aconst_null
+</span>		8'd2:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// iconst_m1
+</span>		8'd3:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// iconst_0
+</span>		8'd4:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// iconst_1
+</span>		8'd5:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// iconst_2
+</span>		8'd6:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// iconst_3
+</span>		8'd7:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// iconst_4
+</span>		8'd8:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// iconst_5
+</span>		8'd9:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lconst_0
+</span>		8'd10:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lconst_1
+</span>		8'd11:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// fconst_0
+</span>		8'd12:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// fconst_1
+</span>		8'd13:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// fconst_2
+</span>		8'd14:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dconst_0
+</span>		8'd15:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dconst_1
+</span>		8'd16:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// bipush
+</span>		8'd17:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// sipush
+</span>		8'd18:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// ldc
+</span>		8'd19:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// ldc_w
+</span>		8'd20:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// ldc2_w
+</span>		8'd21:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// iload
+</span>		8'd22:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lload
+</span>		8'd23:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// fload
+</span>		8'd24:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dload
+</span>		8'd25:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// aload
+</span>		8'd26:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// iload_0
+</span>		8'd27:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// iload_1
+</span>		8'd28:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// iload_2
+</span>		8'd29:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// iload_3
+</span>		8'd30:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lload_0
+</span>		8'd31:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lload_1
+</span>		8'd32:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lload_2
+</span>		8'd33:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lload_3
+</span>		8'd34:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// fload_0
+</span>		8'd35:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// fload_1
+</span>		8'd36:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// fload_2
+</span>		8'd37:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// fload_3
+</span>		8'd38:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dload_0
+</span>		8'd39:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dload_1
+</span>		8'd40:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dload_2
+</span>		8'd41:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dload_3
+</span>		8'd42:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// aload_0
+</span>		8'd43:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// aload_1
+</span>		8'd44:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// aload_2
+</span>		8'd45:	<a  onClick="return qs(event,this)" class=SR href="#34">type1</a> = 1'b1;	<span class=C>// aload_3
+</span>		8'd46:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// iaload 
+</span>		8'd47:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// laload
+</span>		8'd48:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// faload
+</span>		8'd49:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// daload
+</span>		8'd50:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// aaload
+</span>		8'd51:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// baload
+</span>		8'd52:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// caload
+</span>		8'd53:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// saload
+</span>		8'd54:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// istore
+</span>		8'd55:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lstore
+</span>		8'd56:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// fstore
+</span>		8'd57:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dstore
+</span>		8'd58:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// astore
+</span>		8'd59:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// istore_0
+</span>		8'd60:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// istore_1
+</span>		8'd61:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// istore_2
+</span>		8'd62:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// istore_3
+</span>		8'd63:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lstore_0
+</span>		8'd64:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lstore_1
+</span>		8'd65:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lstore_2
+</span>		8'd66:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lstore_3
+</span>		8'd67:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// fstore_0
+</span>		8'd68:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// fstore_1
+</span>		8'd69:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// fstore_2
+</span>		8'd70:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// fstore_3
+</span>		8'd71:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dstore_0
+</span>		8'd72:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dstore_1
+</span>		8'd73:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dstore_2
+</span>		8'd74:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dstore_3
+</span>		8'd75:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// astore_0
+</span>		8'd76:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// astore_1
+</span>		8'd77:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// astore_2
+</span>		8'd78:	<a  onClick="return qs(event,this)" class=SR href="#30">type5</a> = 1'b1;	<span class=C>// astore_3
+</span>		8'd79:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// iastore
+</span>		8'd80:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// lastore
+</span>		8'd81:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// fastore
+</span>		8'd82:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// dastore
+</span>		8'd83:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// aastore
+</span>		8'd84:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// bastore
+</span>		8'd85:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// castore
+</span>		8'd86:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// sastore
+</span>		8'd87:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// pop
+</span>		8'd88:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// pop2
+</span>		8'd89:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dup
+</span>		8'd90:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// dup_x1
+</span>		8'd91:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// dup_x2
+</span>		8'd92:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dup2
+</span>		8'd93:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// dup2_x1
+</span>		8'd94:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// dup2_x2
+</span>		8'd95:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// swap
+</span>		8'd96:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// iadd
+</span>		8'd97:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// ladd
+</span>		8'd98:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// fadd
+</span>		8'd99:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dadd
+</span>		8'd100:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// isub
+</span>		8'd101:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lsub
+</span>		8'd102:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// fsub
+</span>		8'd103:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dsub
+</span>		8'd104:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// imul
+</span>		8'd105:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lmul
+</span>		8'd106:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// fmul
+</span>		8'd107:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dmul
+</span>		8'd108:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// idiv
+</span>		8'd109:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// ldiv
+</span>		8'd110:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// fdiv
+</span>		8'd111:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// ddiv
+</span>		8'd112:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// irem
+</span>		8'd113:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lrem
+</span>		8'd114:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// frem
+</span>		8'd115:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// drem
+</span>		8'd116:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// ineg
+</span>		8'd117:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lneg
+</span>		8'd118:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// fneg
+</span>		8'd119:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dneg
+</span>		8'd120:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// ishl
+</span>		8'd121:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lshl
+</span>		8'd122:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// ishr
+</span>		8'd123:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lshr
+</span>		8'd124:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// iushr
+</span>		8'd125:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lushr
+</span>		8'd126:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// iand
+</span>		8'd127:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// land
+</span>		8'd128:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// ior
+</span>		8'd129:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lor
+</span>		8'd130:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// ixor
+</span>		8'd131:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lxor
+</span>		8'd132:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// iinc
+</span>		8'd133:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// i2l
+</span>		8'd134:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// i2f
+</span>		8'd135:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// i2d
+</span>		8'd136:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// l2i
+</span>		8'd137:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// l2f
+</span>		8'd138:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// l2d
+</span>		8'd139:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// f2i
+</span>		8'd140:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// f2l
+</span>		8'd141:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// f2d
+</span>		8'd142:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// d2i
+</span>		8'd143:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// d2l
+</span>		8'd144:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// d2f
+</span>		8'd145:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// i2b
+</span>		8'd146:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// i2c
+</span>		8'd147:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// i2s
+</span>		8'd148:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lcmp
+</span>		8'd149:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// fcmpl
+</span>		8'd150:	<a  onClick="return qs(event,this)" class=SR href="#33">type2</a> = 1'b1;	<span class=C>// fcmpg
+</span>		8'd151:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dcmpl
+</span>		8'd152:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dcmpg
+</span>		8'd153:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// ifeq
+</span>		8'd154:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// ifne
+</span>		8'd155:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// iflt
+</span>		8'd156:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// ifge
+</span>		8'd157:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// ifgt
+</span>		8'd158:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// ifle
+</span>		8'd159:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// if_icmpeq
+</span>		8'd160:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// if_icmpne
+</span>		8'd161:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// if_icmplt
+</span>		8'd162:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// if_icmpge
+</span>		8'd163:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// if_icmpgt
+</span>		8'd164:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// if_icmple
+</span>		8'd165:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// if_acmpeq
+</span>		8'd166:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// if_acmpne
+</span>		8'd167:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// goto
+</span>		8'd168:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// jsr
+</span>		8'd169:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// ret
+</span>		8'd170:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// tableswitch
+</span>		8'd171:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lookupswitch
+</span>		8'd172:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// ireturn
+</span>		8'd173:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// lreturn
+</span>		8'd174:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// freturn
+</span>		8'd175:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// dreturn
+</span>		8'd176:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// areturn
+</span>		8'd177:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// return
+</span>		8'd178:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// getstatic
+</span>		8'd179:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// putstatic
+</span>		8'd180:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// getfield
+</span>		8'd181:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// putfield
+</span>		8'd182:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// invokevirtual
+</span>		8'd183:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// invokespecial
+</span>		8'd184:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// invokestatic
+</span>		8'd185:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// invokeinterface
+</span>		8'd186:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// Undefined
+</span>		8'd187:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// new
+</span>		8'd188:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// newarray
+</span>		8'd189:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// anewarray
+</span>		8'd190:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// arraylength
+</span>		8'd191:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// athrow
+</span>		8'd192:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// checkcast
+</span>		8'd193:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// instanceof
+</span>		8'd194:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// monitorenter
+</span>		8'd195:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// monitorexit
+</span>		8'd196:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// wide
+</span>		8'd197:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// multianewarray
+</span>		8'd198:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// ifnull
+</span>		8'd199:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// ifnonnull
+</span>		8'd200:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// goto_w
+</span>		8'd201:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// jsr_w
+</span>		8'd202:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// breakpoint
+</span>		8'd203:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// ldc_quick
+</span>		8'd204:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// ldc_w_quick
+</span>		8'd205:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// ldc2_w_quick
+</span>		8'd206:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// getfield_quick
+</span>		8'd207:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// putfield_quick
+</span>		8'd208:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// getfield2_quick
+</span>		8'd209:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// putfield2_quick
+</span>		8'd210:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// getstatic_quick
+</span>		8'd211:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// putstatic_quick
+</span>		8'd212:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// getstatic2_quick
+</span>		8'd213:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// putstatic2_quick
+</span>		8'd214:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// invokevirtual_quick
+</span>		8'd215:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// invokenonvirtual_quick
+</span>		8'd216:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// invokesuper_quick
+</span>		8'd217:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// invokestatic_quick
+</span>		8'd218:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// invokeinterface_quick
+</span>		8'd219:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// invokevirtualobject_quick
+</span>		8'd220:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// aastore_quick
+</span>		8'd221:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// new_quick
+</span>		8'd222:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// anewarray_quick
+</span>		8'd223:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// multianewarray_quick
+</span>		8'd224:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// checkcast_quick
+</span>		8'd225:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// instanceof_quick
+</span>		8'd226:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// invokevirtual_quick_w
+</span>		8'd227:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// getfield_quick_w
+</span>		8'd228:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// putfield_quick_w
+</span>		8'd229:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// nonnull_quick
+</span>		8'd230:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// agetfield_quick
+</span>		8'd231:	<a  onClick="return qs(event,this)" class=SR href="#32">type3</a> = 1'b1;	<span class=C>// aputfield_quick
+</span>		8'd232:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// agetstatic_quick
+</span>		8'd233:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// aputstatic_quick
+</span>		8'd234:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// aldc_quick
+</span>		8'd235:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// aldc_w_quick
+</span>		8'd236:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// exit_sync_method
+</span>		8'd237:	<a  onClick="return qs(event,this)" class=SR href="#31">type4</a> = 1'b1;	<span class=C>// sethi
+</span>		8'd238:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// load_word_index
+</span>		8'd239:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// load_short_index
+</span>		8'd240:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// load_char_index
+</span>		8'd241:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// load_byte_index
+</span>		8'd242:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// load_ubyte_index
+</span>		8'd243:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// store_word_index
+</span>		8'd244:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// nastore_word_index
+</span>		8'd245:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// store_hort_index
+</span>		8'd246:	<a  onClick="return qs(event,this)" class=SR href="#35">type0</a> = 1'b1;	<span class=C>// store_byte_index
+</span>
+		<span class=K>default</span>: {<a  onClick="return qs(event,this)" class=SR href="#30">type5</a>,<a  onClick="return qs(event,this)" class=SR href="#31">type4</a>,<a  onClick="return qs(event,this)" class=SR href="#32">type3</a>,<a  onClick="return qs(event,this)" class=SR href="#33">type2</a>,<a  onClick="return qs(event,this)" class=SR href="#34">type1</a>,<a  onClick="return qs(event,this)" class=SR href="#35">type0</a>} = 6'b000001;
+		
+	<span class=K>endcase</span>
+
+<span class=K>end</span>
+
+<span class=K>always</span> @(<a  onClick="return qs(event,this)" class=SI href="#27">opcode</a>) <span class=K>begin</span>
+
+<a name="313"></a>	{<a  onClick="return qs(event,this)" class=SR href="#36">ext_type5</a>,<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a>,<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a>,<a  onClick="return qs(event,this)" class=SR href="#39">ext_type2</a>,<a  onClick="return qs(event,this)" class=SR href="#40">ext_type1</a>,<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a>} = 6'b000000;
+
+	<span class=K>case</span> (<a  onClick="return qs(event,this)" class=SI href="#27">opcode</a>[7:0])
+
+		8'd0:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// load_ubyte
+</span>		8'd1:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// load_byte
+</span>		8'd2:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// load_char
+</span>		8'd3:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// load_short
+</span>		8'd4:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// load_word
+</span>		8'd5:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_ret_from_trap
+</span>		8'd6:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_dcache_tag
+</span>		8'd7:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_dcache_data
+</span>		8'd10:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// load_char_oe
+</span>		8'd11:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// load_short_oe
+</span>		8'd12:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// load_word_oe
+</span>		8'd13:	<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a> = 1'b1;	<span class=C>// return0
+</span>		8'd14:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_icache_tag
+</span>		8'd15:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_icache_data
+</span>		8'd16:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// ncload_ubyte
+</span>		8'd17:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// ncload_byte
+</span>		8'd18:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// ncload_char
+</span>		8'd19:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// ncload_short
+</span>		8'd20:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// ncload_word
+</span>		8'd21:	<a  onClick="return qs(event,this)" class=SR href="#39">ext_type2</a> = 1'b1;	<span class=C>// iucmp
+</span>		8'd22:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_powerdown
+</span>		8'd23:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// cache_invalidate
+</span>		8'd26:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// ncload_char_oe
+</span>		8'd27:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// ncload_short_oe
+</span>		8'd28:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// ncload_word_oe
+</span>		8'd29:	<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a> = 1'b1;	<span class=C>// return1
+</span>		8'd30:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// cache_flush
+</span>		8'd31:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// cache_index_flush
+</span>		8'd32:	<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a> = 1'b1;	<span class=C>// store_byte
+</span>		8'd34:	<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a> = 1'b1;	<span class=C>// store_short
+</span>		8'd36:	<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a> = 1'b1;	<span class=C>// store_word
+</span>		8'd37:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// soft_trap
+</span>		8'd38:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_dcache_tag
+</span>		8'd39:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_dcache_data
+</span>		8'd42:	<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a> = 1'b1;	<span class=C>// store_short_oe
+</span>		8'd44:	<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a> = 1'b1;	<span class=C>// store_word_oe
+</span>		8'd45:	<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a> = 1'b1;	<span class=C>// return2
+</span>		8'd46:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_icache_tag
+</span>		8'd47:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_icache_data
+</span>		8'd48:	<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a> = 1'b1;	<span class=C>// ncstore_byte
+</span>		8'd50:	<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a> = 1'b1;	<span class=C>// ncstore_short
+</span>		8'd52:	<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a> = 1'b1;	<span class=C>// ncstore_word
+</span>		8'd53:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// Undefined
+</span>		8'd54:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_reset
+</span>		8'd55:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// get_current_class
+</span>		8'd58:	<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a> = 1'b1;	<span class=C>// ncstore_short_oe
+</span>		8'd60:	<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a> = 1'b1;	<span class=C>// ncstore_word_oe
+</span>		8'd61:	<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a> = 1'b1;	<span class=C>// call
+</span>		8'd62:	<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a> = 1'b1;	<span class=C>// zero_line
+</span>		8'd63:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_update_optop
+</span>		8'd64:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// read_pc
+</span>		8'd65:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// read_vars
+</span>		8'd66:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// read_frame
+</span>		8'd67:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// read_optop
+</span>		8'd68:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_oplim
+</span>		8'd69:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// read_const_pool
+</span>		8'd70:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_psr
+</span>		8'd71:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_trapbase
+</span>		8'd72:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_lockcount0
+</span>		8'd73:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_lockcount1
+</span>		8'd76:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_lockaddr0
+</span>		8'd77:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_lockaddr1
+</span>		8'd80:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_userrange1
+</span>		8'd81:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_gc_config
+</span>		8'd82:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_brk1a
+</span>		8'd83:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_brk2a
+</span>		8'd84:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_brk12c
+</span>		8'd85:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_userrange2
+</span>		8'd87:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_versionid
+</span>		8'd88:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_hcr
+</span>		8'd89:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_read_sc_bottom
+</span>		8'd90:	<a  onClick="return qs(event,this)" class=SR href="#40">ext_type1</a> = 1'b1;	<span class=C>// read_global0
+</span>		8'd91:	<a  onClick="return qs(event,this)" class=SR href="#40">ext_type1</a> = 1'b1;	<span class=C>// read_global1
+</span>		8'd92:	<a  onClick="return qs(event,this)" class=SR href="#40">ext_type1</a> = 1'b1;	<span class=C>// read_global2
+</span>		8'd93:	<a  onClick="return qs(event,this)" class=SR href="#40">ext_type1</a> = 1'b1;	<span class=C>// read_global3
+</span>		8'd96:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// write_pc,ret_from_sub
+</span>		8'd97:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// write_vars
+</span>		8'd98:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// write_frame
+</span>		8'd99:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// write_optop
+</span>		8'd100:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_oplim
+</span>		8'd101:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// write_const_pool
+</span>		8'd102:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_psr
+</span>		8'd103:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_trapbase
+</span>		8'd104:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_lockcount0
+</span>		8'd105:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_lockcount1
+</span>		8'd108:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_lockaddr0
+</span>		8'd109:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_lockaddr1
+</span>		8'd112:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_userrange1
+</span>		8'd113:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_gc_config
+</span>		8'd114:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_brk1a
+</span>		8'd115:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_brk1a
+</span>		8'd116:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_brk12c
+</span>		8'd117:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_userrange2
+</span>		8'd121:	<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a> = 1'b1;	<span class=C>// priv_write_sc_bottom
+</span>		8'd122:	<a  onClick="return qs(event,this)" class=SR href="#36">ext_type5</a> = 1'b1;	<span class=C>// write_global0
+</span>		8'd123:	<a  onClick="return qs(event,this)" class=SR href="#36">ext_type5</a> = 1'b1;	<span class=C>// write_global1
+</span>		8'd124:	<a  onClick="return qs(event,this)" class=SR href="#36">ext_type5</a> = 1'b1;	<span class=C>// write_global2
+</span>		8'd125:	<a  onClick="return qs(event,this)" class=SR href="#36">ext_type5</a> = 1'b1;	<span class=C>// write_global3
+</span>		<span class=K>default</span>: {<a  onClick="return qs(event,this)" class=SR href="#36">ext_type5</a>,<a  onClick="return qs(event,this)" class=SR href="#37">ext_type4</a>,<a  onClick="return qs(event,this)" class=SR href="#38">ext_type3</a>,<a  onClick="return qs(event,this)" class=SR href="#39">ext_type2</a>,<a  onClick="return qs(event,this)" class=SR href="#40">ext_type1</a>,
+					<a  onClick="return qs(event,this)" class=SR href="#41">ext_type0</a>} = 6'b000001;
+
+	<span class=K>endcase</span>
+<span class=K>end</span>
+
+<a name="421"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#42">type_sel</a>[1] = &amp;(<a  onClick="return qs(event,this)" class=SI href="#27">opcode</a>[15:8]); <span class=C>// if this is an extended opcode
+</span><span class=K>assign</span> 	<a  onClick="return qs(event,this)" class=SW href="#42">type_sel</a>[0] = !(<a  onClick="return qs(event,this)" class=SW href="#421">type_sel</a>[1]);
+
+<a name="fdec_mux_type"></a><a name="424"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux2_6">mux2_6</a>	mux_type (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5246">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#28">type</a>),
+		<span class=SI>.in0</span> ({<a  onClick="return qs(event,this)" class=SR href="#53">type5</a>,<a  onClick="return qs(event,this)" class=SR href="#53">type4</a>,<a  onClick="return qs(event,this)" class=SR href="#53">type3</a>,<a  onClick="return qs(event,this)" class=SR href="#53">type2</a>,<a  onClick="return qs(event,this)" class=SR href="#53">type1</a>,<a  onClick="return qs(event,this)" class=SR href="#53">type0</a>}),
+		<span class=SI>.in1</span> ({<a  onClick="return qs(event,this)" class=SR href="#313">ext_type5</a>,<a  onClick="return qs(event,this)" class=SR href="#313">ext_type4</a>,<a  onClick="return qs(event,this)" class=SR href="#313">ext_type3</a>,<a  onClick="return qs(event,this)" class=SR href="#313">ext_type2</a>,<a  onClick="return qs(event,this)" class=SR href="#313">ext_type1</a>,<a  onClick="return qs(event,this)" class=SR href="#313">ext_type0</a>}),
+		<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="#421">type_sel</a>) );
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:01 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ifu/rtl/fdec.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

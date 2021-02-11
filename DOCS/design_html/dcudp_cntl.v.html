@@ -1,0 +1,783 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/dcu/rtl/dcudp_cntl.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "dcudp_cntl.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+<a name="dcudp_cntl"></a><a  href="dcctl.v.html#dcctl_dcudp_cntl"><IMG alt="[Up: dcctl dcudp_cntl]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>dcudp_cntl</span><a  href="hierarchy-m.html#dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+		<a  onClick="return qs(event,this)" class=SO href="#101">word_addr</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#102">dcu_tag_we</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#103">dcu_stat_we</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#104">dcu_stat_out</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#124">dcu_tag_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#105">arbiter_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#110">dcu_miss_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#111">dcu_hit_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#112">dc_addr_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#107">flush_inst_c2</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#108">flush_inst_c_or_c1</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#109">flush_set_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#113">stat_addr_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#114">latch_cf_addr</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#115">req_addr_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#116">latch_wb_addr</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#106">latch_addr_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#117">repl_start</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#118">latch_wr_data</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#119">dc_data_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#120">dcu_dout_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#121">dcu_set_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#122">wb_set_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#123">dcu_bank_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#125">diag_stat_bits</a>,
+		
+
+<span class=C>//		INPUTS
+</span>		<a  onClick="return qs(event,this)" class=SI href="#142">iu_req_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#143">smu_req_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#129">iu_valid_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#163">store_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#160">diagnostic_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#137">iu_flush_inv_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#136">iu_flush_cmp_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#138">iu_flush_index_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#132">req_outstanding</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#133">non_cacheable_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#134">zeroline_cyc</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#135">zeroline_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#139">dc_req</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#140">wb_req</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#147">miss_store</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#148">nc_xaction</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#149">dc_idle</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#152">special_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#151">iu_ld_st_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#153">tag_st_rdy_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#154">diag_rdy_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#155">first_fill_cyc</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#156">fill_cyc_active</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#158">nc_write_cyc</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#157">last_fill_cyc</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#159">dc_wr_cyc123</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#161">dtg_stat_out</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#150">stall_valid</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#131">repl_busy</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#168">dcu_hit0</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#169">dcu_hit1</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#165">misc_din</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#141">dc_inst_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#144">iu_na_st_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#164">iu_addr_e_31</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#167">dcu_addr_c_2</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#126">dcu_addr_c_31</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#166">iu_addr_e_2</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#130">cf_addr</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#170">clk</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#171">reset_l</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#174">sm</a>,	
+		<a  onClick="return qs(event,this)" class=SO href="#172">so</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#173">sin</a>
+		);
+
+
+<a name="101"></a><span class=K>output</span>		[1:0]	<a  onClick="return qs(event,this)" class=SO href="#571">word_addr</a><a  href="hierarchy-s.p20.html#word_addr___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Selects 32 bit word out of the cache line
+</span><a name="102"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#540">dcu_tag_we</a><a  href="hierarchy-s.p4.html#dcu_tag_we___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;	<span class=C>// Write Enable to the tags
+</span><a name="103"></a><span class=K>output</span>		[4:0]	<a  onClick="return qs(event,this)" class=SO href="#460">dcu_stat_we</a><a  href="hierarchy-s.p4.html#dcu_stat_we___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Write Enable for status bits
+</span><a name="104"></a><span class=K>output</span>		[4:0]	<a  onClick="return qs(event,this)" class=SO href="#503">dcu_stat_out</a><a  href="hierarchy-s.p4.html#dcu_stat_out___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Status bits to be written into ram
+</span><a name="105"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#224">arbiter_sel</a><a  href="hierarchy-s.html#arbiter_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// arbitrates requests from smu and iu.
+</span><a name="106"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#226">latch_addr_c</a><a  href="hierarchy-s.p10.html#latch_addr_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// latch addr/data in C on a cache miss/replacing dirty line.
+</span><a name="107"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#212">flush_inst_c2</a><a  href="hierarchy-s.p6.html#flush_inst_c2___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// flush inst was in C stage 2 cycles back (used for starting wb)
+</span><a name="108"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#211">flush_inst_c_or_c1</a><a  href="hierarchy-s.p6.html#flush_inst_c_or_c1___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// flush inst in C or C1 stage
+</span><a name="109"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#417">flush_set_sel</a><a  href="hierarchy-s.p6.html#flush_set_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// set that needs to be flushed.
+</span><a name="110"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#330">dcu_miss_c</a><a  href="hierarchy-s.p4.html#dcu_miss_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Cache miss due to tag mismatch in C stage
+</span><a name="111"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#323">dcu_hit_c</a><a  href="hierarchy-s.p4.html#dcu_hit_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// cache  hit due to tag match - should not match for NC insts ?
+</span><a name="112"></a><span class=K>output</span>		[3:0]	<a  onClick="return qs(event,this)" class=SO href="#241">dc_addr_sel</a><a  href="hierarchy-s.p4.html#dc_addr_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// select addr input to the dcache ram
+</span><a name="113"></a><span class=K>output</span>	                <a  onClick="return qs(event,this)" class=SO href="#252">stat_addr_sel</a><a  href="hierarchy-s.p16.html#stat_addr_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// select status reg addr input 
+</span><a name="114"></a><span class=K>output</span>	                <a  onClick="return qs(event,this)" class=SO href="#257">latch_cf_addr</a><a  href="hierarchy-s.p10.html#latch_cf_addr___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// latch cache fill addr 
+</span><a name="115"></a><span class=K>output</span>	                <a  onClick="return qs(event,this)" class=SO href="#264">req_addr_sel</a><a  href="hierarchy-s.p15.html#req_addr_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// select address for memory request
+</span><a name="116"></a><span class=K>output</span>	                <a  onClick="return qs(event,this)" class=SO href="#281">latch_wb_addr</a><a  href="hierarchy-s.p10.html#latch_wb_addr___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Clock enable to latch writeback addr
+</span><a name="117"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#274">repl_start</a><a  href="hierarchy-s.p15.html#repl_start___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// start the replace dirty line state machine
+</span><a name="118"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#293">latch_wr_data</a><a  href="hierarchy-s.p10.html#latch_wr_data___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// latch data in C stage into write miss reg on cache miss
+</span><a name="119"></a><span class=K>output</span>         [3:0]    <a  onClick="return qs(event,this)" class=SO href="#297">dc_data_sel</a><a  href="hierarchy-s.p4.html#dc_data_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// select data input to the dc ram.
+</span><a name="120"></a><span class=K>output</span>               	<a  onClick="return qs(event,this)" class=SO href="#304">dcu_dout_sel</a><a  href="hierarchy-s.p4.html#dcu_dout_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// select data to be sent to memory for write transactions.
+</span><a name="121"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#382">dcu_set_sel</a><a  href="hierarchy-s.p4.html#dcu_set_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// select set for writes into tag
+</span><a name="122"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#284">wb_set_sel</a><a  href="hierarchy-s.p20.html#wb_set_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// select tag of address to be written back to memory
+</span><a name="123"></a><span class=K>output</span>	       [1:0]	<a  onClick="return qs(event,this)" class=SO href="#429">dcu_bank_sel</a><a  href="hierarchy-s.p4.html#dcu_bank_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// select bank for writes into dcram
+</span><a name="124"></a><span class=K>output</span>	       		<a  onClick="return qs(event,this)" class=SO href="#260">dcu_tag_sel</a><a  href="hierarchy-s.p4.html#dcu_tag_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// select input to tag ram
+</span><a name="125"></a><span class=K>output</span>	  	[2:0]	<a  onClick="return qs(event,this)" class=SO href="#440">diag_stat_bits</a><a  href="hierarchy-s.p4.html#diag_stat_bits___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Status bits for a diagnostic read access of tag ram
+</span><a name="126"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#402">dcu_addr_c_31</a><a  href="hierarchy-s.p4.html#dcu_addr_c_31___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	
+
+
+<a name="129"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#356">iu_valid_c</a><a  href="hierarchy-s.p9.html#iu_valid_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// iu valid instruction at c stage,if any.
+</span><a name="130"></a><span class=K>input</span>		[1:0]	<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#358">cf_addr</a><a  href="hierarchy-s.p3.html#cf_addr___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Part of address used to access word out of cache line
+</span><a name="131"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#359">repl_busy</a><a  href="hierarchy-s.p15.html#repl_busy___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// currently replacing dirty line into writebuffer
+</span><a name="132"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#360">req_outstanding</a><a  href="hierarchy-s.p15.html#req_outstanding___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// there is a memory request outstanding
+</span><a name="133"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#361">non_cacheable_c</a><a  href="hierarchy-s.p12.html#non_cacheable_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// Non cacheable inst in C stage
+</span><a name="134"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#362">zeroline_cyc</a><a  href="hierarchy-s.p21.html#zeroline_cyc___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Zeroline inst last cycle
+</span><a name="135"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#363">zeroline_c</a><a  href="hierarchy-s.p21.html#zeroline_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// zeroline inst in C stage
+</span><a name="136"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#364">iu_flush_cmp_c</a><a  href="hierarchy-s.p9.html#iu_flush_cmp_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// flush inst in C stage
+</span><a name="137"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#365">iu_flush_inv_c</a><a  href="hierarchy-s.p9.html#iu_flush_inv_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// flush invalidate inst in C stage
+</span><a name="138"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#366">iu_flush_index_c</a><a  href="hierarchy-s.p9.html#iu_flush_index_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// flush inst in C stage
+</span><a name="139"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#367">dc_req</a><a  href="hierarchy-s.p4.html#dc_req___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// cache miss request sent to memory
+</span><a name="140"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#368">wb_req</a><a  href="hierarchy-s.p20.html#wb_req___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// writeback request
+</span><a name="141"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#369">dc_inst_c</a><a  href="hierarchy-s.p4.html#dc_inst_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// valid instruction in C stage
+</span><a name="142"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#354">iu_req_c</a><a  href="hierarchy-s.p9.html#iu_req_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="143"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#355">smu_req_c</a><a  href="hierarchy-s.p16.html#smu_req_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="144"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#334">iu_na_st_c</a><a  href="hierarchy-s.p9.html#iu_na_st_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Nonallocating IU store
+</span><a name="145"></a><span class=K>input</span> 			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#357">smu_na_st_fill</a><a  href="hierarchy-s.p16.html#smu_na_st_fill___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; <span class=C>// smu na_store  missed cache. this cycle
+</span>					 <span class=C>// the store data is written into the $line.
+</span><a name="147"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#370">miss_store</a><a  href="hierarchy-s.p11.html#miss_store___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Missed instruction is a store
+</span><a name="148"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#371">nc_xaction</a><a  href="hierarchy-s.p12.html#nc_xaction___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// current transaction is a noncacheable one
+</span><a name="149"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#372">dc_idle</a><a  href="hierarchy-s.p4.html#dc_idle___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Miss state machine is in idle state
+</span><a name="150"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#374">stall_valid</a><a  href="hierarchy-s.p16.html#stall_valid___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// miss occurred while processing another miss
+</span><a name="151"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#375">iu_ld_st_e</a><a  href="hierarchy-s.p9.html#iu_ld_st_e___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;	<span class=C>// Valid iu Load/store in E stage
+</span><a name="152"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#376">special_e</a><a  href="hierarchy-s.p16.html#special_e___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// valid special inst like zeroline,diag,flush in E stage
+</span><a name="153"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#377">tag_st_rdy_e</a><a  href="hierarchy-s.p17.html#tag_st_rdy_e___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// diagnostic tag store ready to be executed in E 
+</span><a name="154"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#378">diag_rdy_e</a><a  href="hierarchy-s.p4.html#diag_rdy_e___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// diagnostic inst ready to be executed in E 
+</span><a name="155"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#379">first_fill_cyc</a><a  href="hierarchy-s.p6.html#first_fill_cyc___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// First word to be filled into the cache
+</span><a name="156"></a><span class=K>input</span>	                <a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#380">fill_cyc_active</a><a  href="hierarchy-s.p6.html#fill_cyc_active___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// currently filling up the cache with cache fill data
+</span><a name="157"></a><span class=K>input</span>	                <a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#381">last_fill_cyc</a><a  href="hierarchy-s.p10.html#last_fill_cyc___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Last word of the file line being written into cache
+</span><a name="158"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#382">nc_write_cyc</a><a  href="hierarchy-s.p12.html#nc_write_cyc___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Noncacheable write transaction
+</span><a name="159"></a><span class=K>input</span>	                <a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#383">dc_wr_cyc123</a><a  href="hierarchy-s.p4.html#dc_wr_cyc123___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// first 3 cycles of fill data being written into cache 
+</span><a name="160"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#384">diagnostic_c</a><a  href="hierarchy-s.p4.html#diagnostic_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="161"></a><span class=K>input</span>	[4:0]		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#385">dtg_stat_out</a><a  href="hierarchy-s.p4.html#dtg_stat_out___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// status bits from the tag ram
+</span>
+<a name="163"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#386">store_c</a><a  href="hierarchy-s.p16.html#store_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Store instruction in C stage
+</span><a name="164"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#387">iu_addr_e_31</a><a  href="hierarchy-s.p9.html#iu_addr_e_31___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// for diagnostic writes into status register
+</span><a name="165"></a><span class=K>input</span>	[2:0]		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#388">misc_din</a><a  href="hierarchy-s.p11.html#misc_din___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// for diagnostic writes into status register
+</span><a name="166"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#389">iu_addr_e_2</a><a  href="hierarchy-s.p9.html#iu_addr_e_2___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// for selecting set
+</span><a name="167"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#390">dcu_addr_c_2</a><a  href="hierarchy-s.p4.html#dcu_addr_c_2___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// for selecting set
+</span><a name="168"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#391">dcu_hit0</a><a  href="hierarchy-s.p4.html#dcu_hit0___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// line in set 0 -- noncacheable inst should not generate hit*****
+</span><a name="169"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#392">dcu_hit1</a><a  href="hierarchy-s.p4.html#dcu_hit1___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// line in set 1
+</span><a name="170"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#393">clk</a><a  href="hierarchy-s.p3.html#clk___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// clock
+</span><a name="171"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#394">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Reset
+</span><a name="172"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#172">so</a><a  href="hierarchy-s.p16.html#so___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;		<span class=C>// Scan Out
+</span><a name="173"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#173">sin</a><a  href="hierarchy-s.p16.html#sin___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;		<span class=C>// Scan In
+</span><a name="174"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#174">sm</a><a  href="hierarchy-s.p16.html#sm___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Scan Enable
+</span>
+
+<a name="177"></a><span class=K>wire</span>	[4:0]	<a  onClick="return qs(event,this)" class=SW href="#559">addr</a><a  href="hierarchy-s.html#addr___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="178"></a><span class=K>wire</span>	[4:0]	<a  onClick="return qs(event,this)" class=SW href="#552">addr_next</a><a  href="hierarchy-s.html#addr_next___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="179"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#278">valid_flush</a><a  href="hierarchy-s.p19.html#valid_flush___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="180"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#397">dcu_set_sel_d1</a><a  href="hierarchy-s.p4.html#dcu_set_sel_d1___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="181"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#210">flush_inst_c</a><a  href="hierarchy-s.p6.html#flush_inst_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#212">flush_inst_c1</a><a  href="hierarchy-s.p6.html#flush_inst_c1___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SO href="#107">flush_inst_c2</a>;
+<span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SO href="#108">flush_inst_c_or_c1</a>;
+<a name="183"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#317">valid0</a><a  href="hierarchy-s.p19.html#valid0___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#315">valid1</a><a  href="hierarchy-s.p19.html#valid1___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#316">dirty0</a><a  href="hierarchy-s.p4.html#dirty0___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#314">dirty1</a><a  href="hierarchy-s.p4.html#dirty1___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#313">lru_bit</a><a  href="hierarchy-s.p10.html#lru_bit___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="184"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#324">dcu_hit0_c</a><a  href="hierarchy-s.p4.html#dcu_hit0_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#325">dcu_hit1_c</a><a  href="hierarchy-s.p4.html#dcu_hit1_c___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="185"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#426">write_set_sel</a><a  href="hierarchy-s.p20.html#write_set_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="186"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#425">diag_bank_sel</a><a  href="hierarchy-s.p4.html#diag_bank_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="187"></a><span class=K>wire</span>	[4:0]	<a  onClick="return qs(event,this)" class=SW href="#391">set_mux_sel</a><a  href="hierarchy-s.p16.html#set_mux_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="188"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#371">fill_set_sel</a><a  href="hierarchy-s.p6.html#fill_set_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#372">fill_set_sel_d1</a><a  href="hierarchy-s.p6.html#fill_set_sel_d1___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#424">fill_bank_sel</a><a  href="hierarchy-s.p6.html#fill_bank_sel___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="189"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#551">last_cyc</a><a  href="hierarchy-s.p10.html#last_cyc___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SO href="#109">flush_set_sel</a>;
+<a name="191"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#412">flush_set_sel_d1</a><a  href="hierarchy-s.p6.html#flush_set_sel_d1___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="192"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#411">flush_set</a><a  href="hierarchy-s.p6.html#flush_set___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="193"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#378">diag_set</a><a  href="hierarchy-s.p4.html#diag_set___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="194"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#379">flush_index_set</a><a  href="hierarchy-s.p6.html#flush_index_set___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="195"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#380">default_set</a><a  href="hierarchy-s.p4.html#default_set___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="196"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#365">repl_line_inv</a><a  href="hierarchy-s.p15.html#repl_line_inv___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="198"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#329">qualify_miss</a><a  href="hierarchy-s.p15.html#qualify_miss___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="#328">cache_miss</a><a  href="hierarchy-s.p3.html#cache_miss___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="199"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#333">qualify_miss_int</a><a  href="hierarchy-s.p15.html#qualify_miss_int___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="200"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#334">dcu_miss_c_int</a><a  href="hierarchy-s.p4.html#dcu_miss_c_int___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<a name="203"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#321">dcu_hit</a><a  href="hierarchy-s.p4.html#dcu_hit___dcudp_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// invalidate the line immediately follow the miss so that
+</span><span class=C>// subsequent store/load will not asynchrously use it as a hit line
+</span>
+
+
+<a name="210"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#181">flush_inst_c</a>	=  <a  onClick="return qs(event,this)" class=SI href="#137">iu_flush_inv_c</a> | <a  onClick="return qs(event,this)" class=SI href="#136">iu_flush_cmp_c</a> | <a  onClick="return qs(event,this)" class=SI href="#138">iu_flush_index_c</a> ;
+<a name="211"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#108">flush_inst_c_or_c1</a> = <a  onClick="return qs(event,this)" class=SW href="#210">flush_inst_c</a> | <a  onClick="return qs(event,this)" class=SW href="#212">flush_inst_c1</a> ;
+<a name="dcudp_cntl_flush_inst_c2_reg"></a><a name="212"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_2">ff_sr_2</a>		flush_inst_c2_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3839">.out</a>({<a  onClick="return qs(event,this)" class=SO href="#107">flush_inst_c2</a>,<a  onClick="return qs(event,this)" class=SW href="#181">flush_inst_c1</a>}),
+				<span class=SI>.din</span>({<a  onClick="return qs(event,this)" class=SW href="#212">flush_inst_c1</a>,<a  onClick="return qs(event,this)" class=SW href="#210">flush_inst_c</a>}),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#170">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#171">reset_l</a>));
+
+<span class=C>//**** Generation of Mux Selects for Addr datapath ***/
+</span>
+<span class=C>// Recirculate dcu_addr if there is a miss, or dirty line needs to be replaced or there is a ack in the 2nd cycle of
+</span><span class=C>// of a store hit. (store takes 2 cycles to complete)
+</span><span class=C>// Select smu  if there no iu ld/st requests and no cache fill ack returned or no cache miss in C stage
+</span><span class=C>// For flush instructions, we take 2 cycles if there  is a dirty line even it is not a hit. 
+</span> 
+<a name="224"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#105">arbiter_sel</a> =     <a  onClick="return qs(event,this)" class=SI href="#151">iu_ld_st_e</a> | <a  onClick="return qs(event,this)" class=SI href="#152">special_e</a>  ;
+
+<a name="226"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#106">latch_addr_c</a> =   !( <a  onClick="return qs(event,this)" class=SO href="#330">dcu_miss_c</a> | <a  onClick="return qs(event,this)" class=SI href="#131">repl_busy</a> | <a  onClick="return qs(event,this)" class=SI href="#150">stall_valid</a> |  <a  onClick="return qs(event,this)" class=SW href="#210">flush_inst_c</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#129">iu_valid_c</a> ) ;
+
+
+<span class=C>// if there is a cache miss or dirty line needs to be replaced or a miss occurs while there is a mem req outstanding 
+</span><span class=C>// select the dcu_addr_c. For cache line fills, use  cf_addr. else in normal cases use dcu_addr_e
+</span><span class=C>// select addr_c for first cycle of replacing old line since it is not yet latched into the cf addr reg.
+</span>
+
+<span class=C>// stalled store writing to incorrect address. smu store in C coincides with fillcycactive.
+</span><span class=C>// thus stall_valid is high. after fill_cyc, we reissue the store. But the address used to access the
+</span><span class=C>// tags was incorrect because we squashed stall_valid with req_outstanding. we should use fill_cyc_active.
+</span><span class=C>// We didnt catch this because in most cases, the incorrect tag addr gives tag outputs which cause cache miss
+</span><span class=C>// and we wait till outstanding mem operation is complete before reissuing the store. In this case, the
+</span><span class=C>// incorrect tag addr had the same tag as this store.
+</span>
+<a name="241"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#112">dc_addr_sel</a>[3] 	   = 	   (<a  onClick="return qs(event,this)" class=SW href="#334">dcu_miss_c_int</a> | <a  onClick="return qs(event,this)" class=SI href="#150">stall_valid</a> )&amp;!<a  onClick="return qs(event,this)" class=SI href="#156">fill_cyc_active</a> | <a  onClick="return qs(event,this)" class=SW href="#210">flush_inst_c</a> |
+				   <a  onClick="return qs(event,this)" class=SI href="#131">repl_busy</a> ;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#112">dc_addr_sel</a>[2]     =       <a  onClick="return qs(event,this)" class=SI href="#156">fill_cyc_active</a> |<a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#112">dc_addr_sel</a>[1]	   =	   !<a  onClick="return qs(event,this)" class=SO href="#241">dc_addr_sel</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SO href="#241">dc_addr_sel</a>[3] &amp; <a  onClick="return qs(event,this)" class=SO href="#224">arbiter_sel</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#112">dc_addr_sel</a>[0]	   =	   !<a  onClick="return qs(event,this)" class=SO href="#241">dc_addr_sel</a>[3] &amp; !<a  onClick="return qs(event,this)" class=SO href="#241">dc_addr_sel</a>[2] &amp;!<a  onClick="return qs(event,this)" class=SO href="#224">arbiter_sel</a>;
+ 
+
+<span class=C>// select immed or delayed  addr for  accessing status ram and data ram
+</span><span class=C>// select immed addr for diagnostic stores and cache fill cycles
+</span><span class=C>// select delayed addr for write hits. in case of fill cycle , use
+</span><span class=C>// the immed addr.
+</span><a name="252"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#113">stat_addr_sel</a>    =       <a  onClick="return qs(event,this)" class=SI href="#163">store_c</a> &amp; <a  onClick="return qs(event,this)" class=SO href="#323">dcu_hit_c</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="#156">fill_cyc_active</a> ;
+ 
+<span class=C>// Latch dcu_addr_c into the cf addr reg when there is cache miss/NC instructions
+</span><span class=C>// Also latch it for zeroline instructions
+</span><span class=C>// 
+</span><a name="257"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#114">latch_cf_addr</a>  =       (<a  onClick="return qs(event,this)" class=SI href="#135">zeroline_c</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#129">iu_valid_c</a> ) | <a  onClick="return qs(event,this)" class=SO href="#330">dcu_miss_c</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#132">req_outstanding</a> ;
+ 
+<span class=C>// select tag to be written into the ram
+</span><a name="260"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#124">dcu_tag_sel</a>     =       <a  onClick="return qs(event,this)" class=SI href="#155">first_fill_cyc</a> | <a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a>;
+
+<span class=C>// Select address to be sent for memory request
+</span><span class=C>// selects cachefill addr during cache fill process/noncacheable request
+</span><a name="264"></a> <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#115">req_addr_sel</a>     =       !<a  onClick="return qs(event,this)" class=SI href="#149">dc_idle</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#140">wb_req</a> ;
+<span class=C>// assign req_addr_sel     =       !dc_idle ;
+</span>
+<span class=C>// The clock enable determines if there is a line to be replaced.
+</span><span class=C>// replace line if both entries of a set are valid and the least recently
+</span><span class=C>// used entry is a dirty entry.
+</span><span class=C>// Start replacing dirty line if there is a flush to a line which is dirty
+</span><span class=C>// Two kinds of flush: flush_cmp : flush a line only if there is a tag hit.
+</span><span class=C>// flush_index: flush a line based on index. no need to check tags.
+</span>
+<a name="274"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#117">repl_start</a> = <a  onClick="return qs(event,this)" class=SO href="#330">dcu_miss_c</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#132">req_outstanding</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#133">non_cacheable_c</a> &amp;!<a  onClick="return qs(event,this)" class=SI href="#144">iu_na_st_c</a>&amp;
+                    ( <a  onClick="return qs(event,this)" class=SW href="#317">valid0</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#316">dirty0</a> &amp;!<a  onClick="return qs(event,this)" class=SW href="#313">lru_bit</a>| <a  onClick="return qs(event,this)" class=SW href="#315">valid1</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#314">dirty1</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#313">lru_bit</a>) |
+			<a  onClick="return qs(event,this)" class=SW href="#278">valid_flush</a> ;
+
+<a name="278"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#179">valid_flush</a> = 	<a  onClick="return qs(event,this)" class=SI href="#136">iu_flush_cmp_c</a>&amp; (<a  onClick="return qs(event,this)" class=SW href="#314">dirty1</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#169">dcu_hit1</a> | <a  onClick="return qs(event,this)" class=SW href="#316">dirty0</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#168">dcu_hit0</a>) | 
+		<a  onClick="return qs(event,this)" class=SI href="#138">iu_flush_index_c</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="#314">dirty1</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#315">valid1</a>&amp;<a  onClick="return qs(event,this)" class=SO href="#402">dcu_addr_c_31</a> | <a  onClick="return qs(event,this)" class=SW href="#316">dirty0</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#317">valid0</a>&amp;!<a  onClick="return qs(event,this)" class=SO href="#402">dcu_addr_c_31</a>);
+
+<a name="281"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#116">latch_wb_addr</a> = <a  onClick="return qs(event,this)" class=SI href="#131">repl_busy</a>; 
+<span class=C>// in case of diagnostic read outs, select set depending on bit 31 of address bus. for flush
+</span><span class=C>// instruction
+</span><a name="284"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#122">wb_set_sel</a>	= (<a  onClick="return qs(event,this)" class=SI href="#160">diagnostic_c</a>| <a  onClick="return qs(event,this)" class=SW href="#212">flush_inst_c1</a>)?<a  onClick="return qs(event,this)" class=SW href="#397">dcu_set_sel_d1</a>:<a  onClick="return qs(event,this)" class=SW href="#372">fill_set_sel_d1</a>;
+ 
+
+<span class=C>/*******Generation of Mux selects and clock enables for Data path ******/</span>
+ 
+<span class=C>// arbiter selects are same for addr path and data path
+</span>
+<span class=C>// Clock enable to latch data on write miss
+</span>
+<a name="293"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#118">latch_wr_data</a> =   <a  onClick="return qs(event,this)" class=SO href="#330">dcu_miss_c</a> &amp; ! <a  onClick="return qs(event,this)" class=SI href="#132">req_outstanding</a> ;
+
+ 
+<span class=C>// Mux select for selecting $fill, write data, zeroes or diagnostic bus
+</span><a name="297"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#119">dc_data_sel</a>[3]  =       <a  onClick="return qs(event,this)" class=SI href="#134">zeroline_cyc</a> ;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#119">dc_data_sel</a>[2]  =       <a  onClick="return qs(event,this)" class=SI href="#154">diag_rdy_e</a>  ;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#119">dc_data_sel</a>[1]  =       <a  onClick="return qs(event,this)" class=SI href="#156">fill_cyc_active</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="#134">zeroline_cyc</a> | <a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#119">dc_data_sel</a>[0]  =       !<a  onClick="return qs(event,this)" class=SO href="#297">dc_data_sel</a>[3] &amp; !<a  onClick="return qs(event,this)" class=SO href="#297">dc_data_sel</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SO href="#297">dc_data_sel</a>[1] ;
+ 
+<span class=C>// select data to be sent out to memory
+</span><span class=C>// for noncacheable insts, send directly to memory. for wb transactions send data from write buffer
+</span><a name="304"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#120">dcu_dout_sel</a>    =  <a  onClick="return qs(event,this)" class=SI href="#158">nc_write_cyc</a> ;
+
+<span class=C>/**************************************************************************/</span>
+
+
+<span class=C>// Status Register -    _________________________________________
+</span><span class=C>//                      | LRU   |  D1   |  V1   |  D0   |  V0   |
+</span><span class=C>//                      |_______|_______|_______|_______|_______|
+</span> 
+<a name="313"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#183">lru_bit</a>  = <a  onClick="return qs(event,this)" class=SI href="#161">dtg_stat_out</a>[4] ;
+<a name="314"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">dirty1</a>  = <a  onClick="return qs(event,this)" class=SI href="#161">dtg_stat_out</a>[3] ;
+<a name="315"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">valid1</a>  = <a  onClick="return qs(event,this)" class=SI href="#161">dtg_stat_out</a>[2] ;
+<a name="316"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">dirty0</a>  = <a  onClick="return qs(event,this)" class=SI href="#161">dtg_stat_out</a>[1] ;
+<a name="317"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#183">valid0</a>  = <a  onClick="return qs(event,this)" class=SI href="#161">dtg_stat_out</a>[0] ;
+
+
+<span class=C>// Cache hit Calculation
+</span><a name="321"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#203">dcu_hit</a>   = <a  onClick="return qs(event,this)" class=SI href="#168">dcu_hit0</a> | <a  onClick="return qs(event,this)" class=SI href="#169">dcu_hit1</a>;
+ 
+<a name="323"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#111">dcu_hit_c</a> = <a  onClick="return qs(event,this)" class=SI href="#141">dc_inst_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#321">dcu_hit</a>;
+<a name="324"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#184">dcu_hit0_c</a> = <a  onClick="return qs(event,this)" class=SI href="#168">dcu_hit0</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#141">dc_inst_c</a> ;
+<a name="325"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#184">dcu_hit1_c</a> = <a  onClick="return qs(event,this)" class=SI href="#169">dcu_hit1</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#141">dc_inst_c</a> ;
+
+
+<a name="328"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#198">cache_miss</a> = !(<a  onClick="return qs(event,this)" class=SI href="#168">dcu_hit0</a>|<a  onClick="return qs(event,this)" class=SI href="#169">dcu_hit1</a>);
+<a name="329"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#198">qualify_miss</a> = <a  onClick="return qs(event,this)" class=SI href="#142">iu_req_c</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="#210">flush_inst_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#129">iu_valid_c</a>| <a  onClick="return qs(event,this)" class=SI href="#143">smu_req_c</a> ;
+<a name="330"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#110">dcu_miss_c</a> =  (<a  onClick="return qs(event,this)" class=SW href="#328">cache_miss</a>| <a  onClick="return qs(event,this)" class=SI href="#133">non_cacheable_c</a>)&amp;<a  onClick="return qs(event,this)" class=SW href="#329">qualify_miss</a> ;
+
+
+<a name="333"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#199">qualify_miss_int</a> = <a  onClick="return qs(event,this)" class=SI href="#142">iu_req_c</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="#210">flush_inst_c</a> | <a  onClick="return qs(event,this)" class=SI href="#143">smu_req_c</a> ;
+<a name="334"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#200">dcu_miss_c_int</a> = (<a  onClick="return qs(event,this)" class=SW href="#328">cache_miss</a> | <a  onClick="return qs(event,this)" class=SI href="#133">non_cacheable_c</a>)&amp;<a  onClick="return qs(event,this)" class=SW href="#333">qualify_miss_int</a>;
+
+
+<span class=C>// select set into which data is to be written into for cache fill operation
+</span><span class=C>// or during replacing dirty line or during diagnostic writes
+</span><span class=C>// new set_sel value is loaded when  there is a  cache miss and no outstanding
+</span><span class=C>// transaction
+</span><span class=C>// lru bit indicates the most recently written set. so, to replace we use 
+</span><span class=C>// value of lru.
+</span>
+<span class=C>// Since we are using interleaving sets, we need to change set selection as
+</span><span class=C>// shown below.
+</span>
+<span class=C>//  Set 1 and 0 are interleaved between two banks as shown below.
+</span><span class=C>//		________________
+</span><span class=C>//		|  S1_O	|  S0_0	|
+</span><span class=C>//		|_______|_______|
+</span><span class=C>//		|  S0_1	|  S1_1	|
+</span><span class=C>//		|______	|_______|
+</span><span class=C>//		|  S1_2	|  S0_2	|
+</span><span class=C>//		|_______|_______|
+</span><span class=C>//		|  S0_3	|  S1_3	|
+</span><span class=C>//		|_______|_______|
+</span><span class=C>//
+</span>
+<span class=C>// if there is a d$ miss and one of the valid,non-dirty lines is being
+</span><span class=C>// replaced, that line needs to be invalidated immediately. this prevents a following
+</span><span class=C>// store to write to that location.
+</span><span class=C>// Thus, whenever there is a d$ miss on a cacheable transaction and a valid line needs to
+</span><span class=C>// be replaced , invalidate the line immediately.
+</span> 
+<a name="365"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#196">repl_line_inv</a>   = <a  onClick="return qs(event,this)" class=SO href="#330">dcu_miss_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#132">req_outstanding</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#133">non_cacheable_c</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#210">flush_inst_c</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#144">iu_na_st_c</a>;
+ 
+
+<span class=C>///***  Tag Set Selects   ****/
+</span>
+<span class=C>// Tag select - For cache fill operations (zeroline and normal cache fill cycles )
+</span><a name="371"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#188">fill_set_sel</a> =	(<a  onClick="return qs(event,this)" class=SI href="#135">zeroline_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#321">dcu_hit</a>)?<a  onClick="return qs(event,this)" class=SI href="#169">dcu_hit1</a>:<a  onClick="return qs(event,this)" class=SW href="#313">lru_bit</a> ;
+<a name="dcudp_cntl_tag_set_reg"></a><a name="372"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>		tag_set_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#188">fill_set_sel_d1</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#371">fill_set_sel</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#170">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#171">reset_l</a>),
+			<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="#132">req_outstanding</a> ) );	
+
+<a name="378"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#193">diag_set</a>	= <a  onClick="return qs(event,this)" class=SI href="#164">iu_addr_e_31</a> ;
+<a name="379"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#194">flush_index_set</a>	= <a  onClick="return qs(event,this)" class=SO href="#402">dcu_addr_c_31</a>;
+<a name="380"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#195">default_set</a>	= <a  onClick="return qs(event,this)" class=SI href="#169">dcu_hit1</a>  	;
+
+<a name="dcudp_cntl_dcu_set_sel_mux"></a><a name="382"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux5">mux5</a>		dcu_set_sel_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4300">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#121">dcu_set_sel</a>),
+				<span class=SI>.in4</span>(<a  onClick="return qs(event,this)" class=SW href="#313">lru_bit</a>),
+				<span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SW href="#372">fill_set_sel_d1</a>),
+				<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="#378">diag_set</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="#379">flush_index_set</a>),
+				<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#380">default_set</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="#391">set_mux_sel</a>[4:0]));
+
+ 
+<a name="391"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#187">set_mux_sel</a>[4]	=	<a  onClick="return qs(event,this)" class=SW href="#365">repl_line_inv</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#187">set_mux_sel</a>[3]  =       <a  onClick="return qs(event,this)" class=SI href="#156">fill_cyc_active</a> | <a  onClick="return qs(event,this)" class=SI href="#131">repl_busy</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="#212">flush_inst_c1</a> |<a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#187">set_mux_sel</a>[2]  =       <a  onClick="return qs(event,this)" class=SI href="#154">diag_rdy_e</a>  ;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#187">set_mux_sel</a>[1]	=	<a  onClick="return qs(event,this)" class=SI href="#138">iu_flush_index_c</a>;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#187">set_mux_sel</a>[0]  =       !<a  onClick="return qs(event,this)" class=SW href="#391">set_mux_sel</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SW href="#391">set_mux_sel</a>[1]&amp; !<a  onClick="return qs(event,this)" class=SW href="#391">set_mux_sel</a>[3] &amp; !<a  onClick="return qs(event,this)" class=SW href="#391">set_mux_sel</a>[4] ;
+
+<a name="dcudp_cntl_diag_set_sel_reg"></a><a name="397"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		diag_set_sel_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#180">dcu_set_sel_d1</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SO href="#382">dcu_set_sel</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#170">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#171">reset_l</a>));
+
+<a name="dcudp_cntl_dcu_addr_c_31_reg"></a><a name="402"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>           dcu_addr_c_31_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#126">dcu_addr_c_31</a>),
+                                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#164">iu_addr_e_31</a>),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#170">clk</a>),
+                                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#171">reset_l</a>));
+
+
+
+<span class=C>// For replacing dirty lines, we usually use lrubit except for flush instructions.
+</span><span class=C>// for flush instructions, the set used to flush is ...
+</span><a name="411"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#192">flush_set</a>	=	<a  onClick="return qs(event,this)" class=SI href="#136">iu_flush_cmp_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#169">dcu_hit1</a> | <a  onClick="return qs(event,this)" class=SI href="#138">iu_flush_index_c</a>&amp;<a  onClick="return qs(event,this)" class=SO href="#402">dcu_addr_c_31</a> ;
+<a name="dcudp_cntl_flush_set_sel_reg"></a><a name="412"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		flush_set_sel_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#191">flush_set_sel_d1</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#411">flush_set</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#170">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#171">reset_l</a>));
+
+<a name="417"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#109">flush_set_sel</a> = <a  onClick="return qs(event,this)" class=SW href="#411">flush_set</a> | <a  onClick="return qs(event,this)" class=SW href="#412">flush_set_sel_d1</a> ;
+
+
+<span class=C>/**** Select Bank of the DCRAM ******/</span>
+<span class=C>// due to set interleaving, bank selects are different from set selects ...
+</span><span class=C>// need to update this mechanism for zeroline inst
+</span>
+<a name="424"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#188">fill_bank_sel</a> = (<a  onClick="return qs(event,this)" class=SO href="#571">word_addr</a>[0])?!<a  onClick="return qs(event,this)" class=SW href="#372">fill_set_sel_d1</a>:<a  onClick="return qs(event,this)" class=SW href="#372">fill_set_sel_d1</a> ;
+<a name="425"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#186">diag_bank_sel</a>  = <a  onClick="return qs(event,this)" class=SI href="#164">iu_addr_e_31</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="#166">iu_addr_e_2</a> | !<a  onClick="return qs(event,this)" class=SI href="#164">iu_addr_e_31</a>&amp; <a  onClick="return qs(event,this)" class=SI href="#166">iu_addr_e_2</a> ;
+<a name="426"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#185">write_set_sel</a> = <a  onClick="return qs(event,this)" class=SI href="#169">dcu_hit1</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="#167">dcu_addr_c_2</a> | <a  onClick="return qs(event,this)" class=SI href="#168">dcu_hit0</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#167">dcu_addr_c_2</a> ;
+
+
+<a name="429"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#123">dcu_bank_sel</a>[0] = !<a  onClick="return qs(event,this)" class=SO href="#429">dcu_bank_sel</a>[1];
+
+<a name="dcudp_cntl_dcu_bank_sel_mux"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux4">mux4</a>    dcu_bank_sel_mux(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4264">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#123">dcu_bank_sel</a>[1]),
+                        <span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SW href="#424">fill_bank_sel</a>),
+                        <span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="#425">diag_bank_sel</a>),
+			<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SO href="#417">flush_set_sel</a>),
+                        <span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SW href="#426">write_set_sel</a>),
+                        <span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="#391">set_mux_sel</a>[3:0]));
+
+
+<span class=C>// ** Generation of Status bits for diagnostic read access of tags **/
+</span><a name="440"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#125">diag_stat_bits</a>[2]=	<a  onClick="return qs(event,this)" class=SW href="#313">lru_bit</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#125">diag_stat_bits</a>[1:0] = (<a  onClick="return qs(event,this)" class=SO href="#402">dcu_addr_c_31</a>)?<a  onClick="return qs(event,this)" class=SI href="#161">dtg_stat_out</a>[3:2]:<a  onClick="return qs(event,this)" class=SI href="#161">dtg_stat_out</a>[1:0] ;
+
+<span class=C>//************* Write Enables for Status Bits ************************/
+</span><span class=C>// a. Normal write Hit (next cycle)
+</span><span class=C>// b. Cache fill cycle (last cycle)
+</span><span class=C>// c. Cache Invalidate (diagnostic) (same cycle)
+</span><span class=C>// d. Zero line        (last cycle)
+</span><span class=C>// e. cache flush hit  (next cycle)
+</span><span class=C>// f. on a cache miss  (after 2 cycles -- timing reason)
+</span>
+<span class=C>// instead of invalidating a cache line during replacing dirty line,
+</span><span class=C>// we could to invalidate when the first fill data comes in.
+</span><span class=C>// but , due to this there can be a store to the same location which
+</span><span class=C>// would not be stored back to memory.
+</span>
+<span class=C>// Valid of Set 0
+</span><span class=C>// last cycle of cache fill or diagnostic store or last cycle of
+</span><span class=C>// zeroline inst or 2 cycles after dcu_miss or flush hit 
+</span> 
+<a name="460"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#103">dcu_stat_we</a>[0] 	=  <a  onClick="return qs(event,this)" class=SI href="#157">last_fill_cyc</a> |
+			   <a  onClick="return qs(event,this)" class=SI href="#153">tag_st_rdy_e</a> |
+			   <a  onClick="return qs(event,this)" class=SW href="#365">repl_line_inv</a> |
+			   <a  onClick="return qs(event,this)" class=SI href="#155">first_fill_cyc</a>&amp; !<a  onClick="return qs(event,this)" class=SI href="#148">nc_xaction</a> |
+			   <a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a> |
+			   <a  onClick="return qs(event,this)" class=SI href="#168">dcu_hit0</a>&amp; (<a  onClick="return qs(event,this)" class=SI href="#136">iu_flush_cmp_c</a> | <a  onClick="return qs(event,this)" class=SI href="#137">iu_flush_inv_c</a>) |
+                           !<a  onClick="return qs(event,this)" class=SO href="#402">dcu_addr_c_31</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#138">iu_flush_index_c</a>;
+
+
+<span class=C>// Dirty bit of set 0
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#103">dcu_stat_we</a>[1] =   <a  onClick="return qs(event,this)" class=SW href="#324">dcu_hit0_c</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#163">store_c</a>&amp;(<a  onClick="return qs(event,this)" class=SI href="#142">iu_req_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#129">iu_valid_c</a>|<a  onClick="return qs(event,this)" class=SI href="#143">smu_req_c</a>)  | 	<span class=C>//2nd cycle of store hit 
+</span>			   <a  onClick="return qs(event,this)" class=SI href="#157">last_fill_cyc</a>  |	<span class=C>// last cycle of cache fill or zeroline
+</span>			   <a  onClick="return qs(event,this)" class=SI href="#153">tag_st_rdy_e</a> |	<span class=C>// diag store
+</span>			   <a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a>  ;	<span class=C>// non_allocating store		
+</span>
+<span class=C>// Valid bit of Set 1
+</span><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#103">dcu_stat_we</a>[2]   =  <a  onClick="return qs(event,this)" class=SI href="#157">last_fill_cyc</a> |
+                           <a  onClick="return qs(event,this)" class=SI href="#153">tag_st_rdy_e</a> |
+			   <a  onClick="return qs(event,this)" class=SI href="#155">first_fill_cyc</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#148">nc_xaction</a> |
+                           <a  onClick="return qs(event,this)" class=SW href="#365">repl_line_inv</a> |
+                           <a  onClick="return qs(event,this)" class=SI href="#169">dcu_hit1</a> &amp;( <a  onClick="return qs(event,this)" class=SI href="#136">iu_flush_cmp_c</a> | <a  onClick="return qs(event,this)" class=SI href="#137">iu_flush_inv_c</a>) |
+			   <a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a> |
+			   <a  onClick="return qs(event,this)" class=SO href="#402">dcu_addr_c_31</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#138">iu_flush_index_c</a>;
+
+<span class=C>// Dirty bit of Set 1
+</span><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#103">dcu_stat_we</a>[3] =   <a  onClick="return qs(event,this)" class=SW href="#325">dcu_hit1_c</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#163">store_c</a>&amp;(<a  onClick="return qs(event,this)" class=SI href="#142">iu_req_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#129">iu_valid_c</a>|<a  onClick="return qs(event,this)" class=SI href="#143">smu_req_c</a>)  | 	<span class=C>// 2nd cycle of store hit
+</span>			   <a  onClick="return qs(event,this)" class=SI href="#157">last_fill_cyc</a> |		<span class=C>// last cycle of cache fill or zeroline inst
+</span>                           <a  onClick="return qs(event,this)" class=SI href="#153">tag_st_rdy_e</a> |		<span class=C>// diag store
+</span>			   <a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a> ;		<span class=C>// non_allocating store
+</span>
+
+<span class=C>// LRU Bit of the set
+</span><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#103">dcu_stat_we</a>[4] =    <a  onClick="return qs(event,this)" class=SW href="#321">dcu_hit</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#163">store_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#129">iu_valid_c</a> | 
+			   <a  onClick="return qs(event,this)" class=SI href="#157">last_fill_cyc</a> |
+			   <a  onClick="return qs(event,this)" class=SW href="#321">dcu_hit</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="#136">iu_flush_cmp_c</a> | <a  onClick="return qs(event,this)" class=SI href="#137">iu_flush_inv_c</a>) |
+                           <a  onClick="return qs(event,this)" class=SI href="#138">iu_flush_index_c</a> |
+			   <a  onClick="return qs(event,this)" class=SI href="#153">tag_st_rdy_e</a> |
+			   <a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a> ;
+
+
+<span class=C>/**************Generate Status bits for the status RAM ***************************/</span>
+
+<span class=C>//Valid Bit for Set 0
+</span><a name="503"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#104">dcu_stat_out</a>[0] = <a  onClick="return qs(event,this)" class=SI href="#157">last_fill_cyc</a>  		<span class=C>// set valid for last cyc of cache fill
+</span>			| <a  onClick="return qs(event,this)" class=SI href="#153">tag_st_rdy_e</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#165">misc_din</a>[0]  <span class=C>// and zeroline inst. also for diag store set 0 bit
+</span>			| <a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a>;          <span class=C>// non_allocating store
+</span>			
+
+<span class=C>//Dirty bit of Set 0
+</span><span class=C>//set for last cycle of write miss fill,last cycle of zeroline inst,
+</span><span class=C>//write hit in C , diagnostic write with bit 1 of datapath 
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#104">dcu_stat_out</a>[1] = <a  onClick="return qs(event,this)" class=SI href="#157">last_fill_cyc</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="#147">miss_store</a> | <a  onClick="return qs(event,this)" class=SI href="#134">zeroline_cyc</a>)| 
+			<a  onClick="return qs(event,this)" class=SI href="#163">store_c</a> |
+			<a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a>  | 
+			<a  onClick="return qs(event,this)" class=SI href="#153">tag_st_rdy_e</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#165">misc_din</a>[1] ;
+
+<span class=C>//Valid bit of set 1
+</span><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#104">dcu_stat_out</a>[2] = <a  onClick="return qs(event,this)" class=SI href="#157">last_fill_cyc</a>  |
+			 <a  onClick="return qs(event,this)" class=SI href="#153">tag_st_rdy_e</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#165">misc_din</a>[0] |
+			<a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a> ;
+
+<span class=C>//Dirty bit of set 1
+</span><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#104">dcu_stat_out</a>[3] = <a  onClick="return qs(event,this)" class=SI href="#157">last_fill_cyc</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="#147">miss_store</a> | <a  onClick="return qs(event,this)" class=SI href="#134">zeroline_cyc</a>)| 
+			<a  onClick="return qs(event,this)" class=SI href="#163">store_c</a> |
+			<a  onClick="return qs(event,this)" class=SI href="#153">tag_st_rdy_e</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#165">misc_din</a>[1] |
+			<a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a>;
+
+<span class=C>// LRU bit of set
+</span><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#104">dcu_stat_out</a>[4] = (<a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a> |<a  onClick="return qs(event,this)" class=SI href="#157">last_fill_cyc</a> )&amp; !<a  onClick="return qs(event,this)" class=SW href="#372">fill_set_sel_d1</a> | <a  onClick="return qs(event,this)" class=SW href="#324">dcu_hit0_c</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#163">store_c</a> |
+			 <a  onClick="return qs(event,this)" class=SI href="#153">tag_st_rdy_e</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#165">misc_din</a>[2] | <a  onClick="return qs(event,this)" class=SW href="#325">dcu_hit1_c</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="#136">iu_flush_cmp_c</a> | <a  onClick="return qs(event,this)" class=SI href="#137">iu_flush_inv_c</a>) |
+                         <a  onClick="return qs(event,this)" class=SI href="#138">iu_flush_index_c</a> &amp; <a  onClick="return qs(event,this)" class=SO href="#402">dcu_addr_c_31</a>  ;
+
+			  
+
+<span class=C>/*********** Generate Tag write Enable --&gt; for tag addr ************************/</span>
+<span class=C>// write into tags when
+</span><span class=C>// a. Cache fill cycle (first cycle data is returned)
+</span><span class=C>// b. diagnostic writes bit 31 = 1 --&gt; write to tag1. bit 31=0 write to tag0
+</span><span class=C>// c. zeroline inst (last cyc of zeroline operation) 
+</span>			
+<a name="540"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#102">dcu_tag_we</a>  = <a  onClick="return qs(event,this)" class=SI href="#155">first_fill_cyc</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#148">nc_xaction</a> |  
+			<a  onClick="return qs(event,this)" class=SI href="#153">tag_st_rdy_e</a> | 
+			 <a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a> ; 		 <span class=C>// for na store
+</span>
+
+<span class=C>/**********Generate word offset in a cache line during a fill operation ******/</span>
+
+
+<span class=C>//note: what happens if a error ack is returned inbetween.
+</span><span class=C>// by including dc_idle, we thus allow state m/c to come back to idle state
+</span>
+<a name="551"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#189">last_cyc</a> = <a  onClick="return qs(event,this)" class=SI href="#149">dc_idle</a> | <a  onClick="return qs(event,this)" class=SI href="#157">last_fill_cyc</a>; 
+<a name="552"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#178">addr_next</a>[4:0]	=  <a  onClick="return qs(event,this)" class=F href="#dcudp_cntl_addr_state">addr_state</a>( <a  onClick="return qs(event,this)" class=SW href="#559">addr</a>[4:0],
+					<a  onClick="return qs(event,this)" class=SI href="#130">cf_addr</a>[1:0],
+					<a  onClick="return qs(event,this)" class=SI href="#139">dc_req</a>,
+					<a  onClick="return qs(event,this)" class=SI href="#135">zeroline_c</a>,
+					<a  onClick="return qs(event,this)" class=SI href="#159">dc_wr_cyc123</a>,
+					<a  onClick="return qs(event,this)" class=SW href="#551">last_cyc</a> );
+
+<a name="dcudp_cntl_cf_word_addr_reg"></a><a name="559"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_4">ff_sre_4</a>	cf_word_addr_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4704">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#177">addr</a>[4:1]),
+		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#552">addr_next</a>[4:1]),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#170">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#171">reset_l</a>),
+		<span class=SI>.enable</span>(1'b1));
+
+<a name="dcudp_cntl_cf_word_addr_0_reg"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s">ff_s</a>		cf_word_addr_0_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2137">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#177">addr</a>[0]),
+				<span class=SI>.din</span>(!<a  onClick="return qs(event,this)" class=SI href="#171">reset_l</a> | <a  onClick="return qs(event,this)" class=SW href="#552">addr_next</a>[0]),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#170">clk</a>));
+
+<span class=C>// Since we use cf_addr for smu na store, we force the word to be C 
+</span><span class=C>// instead of using the state machine output
+</span><a name="571"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#101">word_addr</a>[1]	=      (<a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a>)? 1'b1:(<a  onClick="return qs(event,this)" class=SW href="#559">addr</a>[4] | <a  onClick="return qs(event,this)" class=SW href="#559">addr</a>[3]);
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#101">word_addr</a>[0]	=      (<a  onClick="return qs(event,this)" class=SI href="#145">smu_na_st_fill</a>)? 1'b1:(<a  onClick="return qs(event,this)" class=SW href="#559">addr</a>[2] | <a  onClick="return qs(event,this)" class=SW href="#559">addr</a>[4]);
+
+
+<a name="dcudp_cntl_addr_state"></a><span class=K>function</span> [4:0]	<a  onClick="return qs(event,this)" class=F href="#dcudp_cntl_addr_state">addr_state</a>;
+
+<a name="577"></a><span class=K>input</span>	[4:0]	<a  onClick="return qs(event,this)" class=SI href="#577">cur_state</a>;
+<a name="578"></a><span class=K>input</span>	[1:0]	<a  onClick="return qs(event,this)" class=SI href="#578">cf_addr</a>;
+<a name="579"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#579">dc_req</a>;
+<a name="580"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#580">zeroline_c</a>;
+<a name="581"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#581">dc_wr_cyc123</a>;
+<a name="582"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#582">last_cyc</a> ;
+
+<a name="584"></a><span class=K>reg</span> 	[4:0]	<a  onClick="return qs(event,this)" class=SR href="#598">next_state</a>;
+
+<span class=K>parameter</span> <span class=C>// triquest enum DCUDP_CNTL_ENUM
+</span><a name="587"></a>	<a  onClick="return qs(event,this)" class=PA href="#587">IDLE</a>		= 5'b00001,
+<a name="588"></a>	<a  onClick="return qs(event,this)" class=PA href="#588">WORD0_STATE</a> 	= 5'b00010,
+<a name="589"></a>	<a  onClick="return qs(event,this)" class=PA href="#589">WORD1_STATE</a>     = 5'b00100,
+<a name="590"></a>	<a  onClick="return qs(event,this)" class=PA href="#590">WORD2_STATE</a>     = 5'b01000,
+<a name="591"></a>	<a  onClick="return qs(event,this)" class=PA href="#591">WORD3_STATE</a>     = 5'b10000;
+
+<span class=K>begin</span>
+<span class=K>case</span> (<a  onClick="return qs(event,this)" class=SI href="#577">cur_state</a>)  <span class=C>// synopsys full_case parallel_case
+</span>
+	<a  onClick="return qs(event,this)" class=PA href="#587">IDLE</a>:		<span class=K>begin</span>
+			<span class=K>if</span> (!<a  onClick="return qs(event,this)" class=SI href="#578">cf_addr</a>[1] &amp; !<a  onClick="return qs(event,this)" class=SI href="#578">cf_addr</a>[0] &amp; <a  onClick="return qs(event,this)" class=SI href="#579">dc_req</a> | <a  onClick="return qs(event,this)" class=SI href="#580">zeroline_c</a>) <span class=K>begin</span>
+<a name="598"></a>			<a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#588">WORD0_STATE</a> ;
+			<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span>( !<a  onClick="return qs(event,this)" class=SI href="#578">cf_addr</a>[1] &amp; <a  onClick="return qs(event,this)" class=SI href="#578">cf_addr</a>[0] &amp; <a  onClick="return qs(event,this)" class=SI href="#579">dc_req</a>) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#589">WORD1_STATE</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span>( <a  onClick="return qs(event,this)" class=SI href="#578">cf_addr</a>[1] &amp; !<a  onClick="return qs(event,this)" class=SI href="#578">cf_addr</a>[0] &amp; <a  onClick="return qs(event,this)" class=SI href="#579">dc_req</a>) <span class=K>begin</span>
+                        <a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#590">WORD2_STATE</a>;
+                        <span class=K>end</span>   
+			<span class=K>else</span> <span class=K>if</span>( <a  onClick="return qs(event,this)" class=SI href="#578">cf_addr</a>[1] &amp; <a  onClick="return qs(event,this)" class=SI href="#578">cf_addr</a>[0] &amp; <a  onClick="return qs(event,this)" class=SI href="#579">dc_req</a>) <span class=K>begin</span>
+                        <a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#591">WORD3_STATE</a>;
+                        <span class=K>end</span>   
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#577">cur_state</a> ;
+			<span class=K>end</span>
+			
+	<a  onClick="return qs(event,this)" class=PA href="#588">WORD0_STATE</a>:	<span class=K>begin</span>
+			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#581">dc_wr_cyc123</a> ) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#589">WORD1_STATE</a>;
+			<span class=K>end</span>
+			<span class=K>else</span> <span class=K>if</span> ( <a  onClick="return qs(event,this)" class=SI href="#582">last_cyc</a>) <span class=K>begin</span>
+			<a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#587">IDLE</a> ;
+			<span class=K>end</span>
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#577">cur_state</a>;
+			<span class=K>end</span>
+
+
+	 <a  onClick="return qs(event,this)" class=PA href="#589">WORD1_STATE</a>:    <span class=K>begin</span>
+                        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#581">dc_wr_cyc123</a> ) <span class=K>begin</span>
+                        <a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#590">WORD2_STATE</a>;
+			<span class=K>end</span>
+                        <span class=K>else</span> <span class=K>if</span> ( <a  onClick="return qs(event,this)" class=SI href="#582">last_cyc</a>) <span class=K>begin</span>
+                        <a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#587">IDLE</a> ;
+                        <span class=K>end</span>
+                        <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#577">cur_state</a>;
+                        <span class=K>end</span>
+ 
+
+	 <a  onClick="return qs(event,this)" class=PA href="#590">WORD2_STATE</a>:    <span class=K>begin</span>
+                        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#581">dc_wr_cyc123</a> ) <span class=K>begin</span>
+                        <a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#591">WORD3_STATE</a>;
+			<span class=K>end</span>
+                        <span class=K>else</span> <span class=K>if</span> ( <a  onClick="return qs(event,this)" class=SI href="#582">last_cyc</a>) <span class=K>begin</span>
+                        <a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#587">IDLE</a> ;
+                        <span class=K>end</span>
+                        <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#577">cur_state</a>;
+                        <span class=K>end</span>
+ 
+
+	 <a  onClick="return qs(event,this)" class=PA href="#591">WORD3_STATE</a>:    <span class=K>begin</span>
+                        <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#581">dc_wr_cyc123</a> ) <span class=K>begin</span>
+                        <a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#588">WORD0_STATE</a>;
+			<span class=K>end</span>
+                        <span class=K>else</span> <span class=K>if</span> ( <a  onClick="return qs(event,this)" class=SI href="#582">last_cyc</a>) <span class=K>begin</span>
+                        <a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#587">IDLE</a> ;
+                        <span class=K>end</span>
+                        <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#577">cur_state</a>;
+                        <span class=K>end</span>
+
+	<span class=K>default</span>:	<a  onClick="return qs(event,this)" class=SR href="#584">next_state</a> = 5'bx;
+
+<span class=K>endcase</span>
+<a  onClick="return qs(event,this)" class=F href="#dcudp_cntl_addr_state">addr_state</a>[4:0]	= <a  onClick="return qs(event,this)" class=SR href="#598">next_state</a>[4:0] ;
+<span class=K>end</span>
+<span class=K>endfunction</span>
+
+<a name="dcudp_cntl_spare"></a><a  onClick="return qs(event,this)" class=MM href="spare.v.html#mj_spare">mj_spare</a> spare(	<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#170">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#171">reset_l</a>));
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:13 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/dcu/rtl/dcudp_cntl.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

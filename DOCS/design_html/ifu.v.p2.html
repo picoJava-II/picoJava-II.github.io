@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ifu/rtl/ifu.v page 2</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return "ifu.v.html"; }
+function last_page() { return ""; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<center><table class=NB cols=3 nosave><tr><td align="center"><a  href="ifu.v.html#bottom_of_page">Prev</a></td><td align="center"><a  href="ifu.v.html">1</a></td><td align="center"><font color="#808080">2</font></td></tr></table></center>
+<pre>
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#303">opcode_sel_rsd</a>[1] = (<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#481">group_8</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#482">group_9</a>);
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#303">opcode_sel_rsd</a>[0] = !(|<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#999">opcode_sel_rsd</a>[3:1]);
+
+<a name="ifu_mux_op_4"></a><a name="1004"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux8_24">mux8_24</a>		mux_op_4 (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5899">.out</a>({<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#292">opcode_inst4_1</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#293">opcode_inst4_2</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#294">opcode_inst4_3</a>}),
+				<span class=SI>.in0</span>(24'b0),
+				<span class=SI>.in1</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#116">ibuff_1</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>}),
+				<span class=SI>.in2</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#119">ibuff_4</a>}),
+				<span class=SI>.in3</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#118">ibuff_3</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#119">ibuff_4</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#120">ibuff_5</a>}),
+				<span class=SI>.in4</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#119">ibuff_4</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#120">ibuff_5</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#121">ibuff_6</a>}),
+				<span class=SI>.in5</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#120">ibuff_5</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#121">ibuff_6</a>,8'b0}),
+				<span class=SI>.in6</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#121">ibuff_6</a>,16'b0}),
+				<span class=SI>.in7</span>({24'b0}),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#359">accum_len2</a>) );
+
+<a name="ifu_mux_op_rsd"></a><a name="1015"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux4_24">mux4_24</a>		mux_op_rsd (<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5854">.out</a>({<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#304">opcode_1_rsd</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#305">opcode_2_rsd</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#306">opcode_3_rsd</a>}),
+				<span class=SI>.in0</span>({<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#115">ibuff_0</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#116">ibuff_1</a>,<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#117">ibuff_2</a>}),
+				<span class=SI>.in1</span>({<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#861">opcode_inst2_1</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#861">opcode_inst2_2</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#861">opcode_inst2_3</a>}),
+				<span class=SI>.in2</span>({<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#870">opcode_inst3_1</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#870">opcode_inst3_2</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#870">opcode_inst3_3</a>}),
+				<span class=SI>.in3</span>({<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1004">opcode_inst4_1</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1004">opcode_inst4_2</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1004">opcode_inst4_3</a>}),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#999">opcode_sel_rsd</a>) );
+
+<a name="ifu_flop_opcode_1_rsd"></a><a name="1022"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_opcode_1_rsd (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#206">opcode_1_rsd_r</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1015">opcode_1_rsd</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>));
+
+<a name="ifu_flop_opcode_2_rsd"></a><a name="1027"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_opcode_2_rsd (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#207">opcode_2_rsd_r</a>),
+					<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1015">opcode_2_rsd</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+					<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>));
+
+
+<span class=C>// Generate offset_rsd_ctl
+</span><span class=C>// This is used to select appropriate offset_sel_rsd
+</span><span class=C>// Essentially this will tell which Instruction should be used
+</span><span class=C>// to derive offset_sel_rsd. The same signal is used to derive
+</span><span class=C>// the 1 byte offset for rsd stage
+</span>
+<a name="1039"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#309">offset_rsd_ctl</a>[1] = <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#481">group_8</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#482">group_9</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#309">offset_rsd_ctl</a>[2] = <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#477">group_4</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#309">offset_rsd_ctl</a>[3] = <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#474">group_1</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#309">offset_rsd_ctl</a>[0] = !(|<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1039">offset_rsd_ctl</a>[3:1]);
+
+<span class=C>// valid for RSd
+</span>
+<span class=C>// Whenever there's a mem op in the fisrt inst or if it is any of the following
+</span><span class=C>// groups, valid for rsd should be high
+</span>
+<span class=C>// Whenever there's a kill_vld_d signal is there, kill all valids
+</span><span class=C>// Also propogate these valids even in presence of hold_r
+</span><a name="1051"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#299">valid_rsd</a> = (<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#572">mem_op_rs1</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#474">group_1</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#477">group_4</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#481">group_8</a> | <a  onClick="return qs(event,this)" class=SW href="ifu.v.html#482">group_9</a>) &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>;
+
+<a name="ifu_flop_vld_rsd"></a><a name="1053"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_vld_rsd (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#209">valid_rsd_r</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1051">valid_rsd</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>));
+
+<span class=C>// rsd offset logic
+</span>
+<span class=C>// Select the 2nd byte of the appropriate instruction for
+</span><span class=C>// determining the offset
+</span>
+<a name="ifu_mux_offset_rsd_int"></a><a name="1064"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux4_8">mux4_8</a>		mux_offset_rsd_int(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5621">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#307">offset_rsd_int</a>),
+				<span class=SI>.in0</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#116">ibuff_1</a>),
+				<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#861">opcode_inst2_2</a>),
+				<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#870">opcode_inst3_2</a>),
+				<span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1004">opcode_inst4_2</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1039">offset_rsd_ctl</a>) );
+
+<a name="ifu_mux_offset_rsd"></a><a name="1071"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p6.html#mux5_8">mux5_8</a>		mux_offset_rsd(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p6.html#5647">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#308">offset_rsd</a>),
+				<span class=SI>.in0</span>(8'd0),
+				<span class=SI>.in1</span>(8'd1),
+				<span class=SI>.in2</span>(8'd2),
+				<span class=SI>.in3</span>(8'd3),
+				<span class=SI>.in4</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1064">offset_rsd_int</a>),
+				<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#583">offset_sel_rsd</a>) );
+		
+<a name="ifu_flop_offset_rsd"></a><a name="1079"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_se_8">ff_se_8</a>		flop_offset_rsd(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3089">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#208">offset_rsd_r</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1071">offset_rsd</a>),
+				<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>) );
+
+<span class=C>// Whenever there's a dirty bit in the first instruction, assert drty_inst_r
+</span>
+<a name="1086"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#315">drty_inst_1</a> = <a  onClick="return qs(event,this)" class=SI href="ifu.v.html#122">fetch_drty</a>[0];
+<a name="1087"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#316">drty_inst_2</a> = |(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#122">fetch_drty</a>[1:0]);
+<a name="1088"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#317">drty_inst_3</a> = |(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#122">fetch_drty</a>[2:0]);
+<a name="1089"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#318">drty_inst_4</a> = |(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#122">fetch_drty</a>[3:0]);
+<a name="1090"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#319">drty_inst_5</a> = |(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#122">fetch_drty</a>[4:0]);
+
+<a name="ifu_mux_drty_inst"></a><a name="1092"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux6">mux6</a>	mux_drty_inst(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4340">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#314">drty_inst</a>),
+			<span class=SI>.in0</span>(1'b0),
+<a name="1094"></a>			<span class=SI>.in1</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1086">drty_inst_1</a>),
+<a name="1095"></a>			<span class=SI>.in2</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1087">drty_inst_2</a>),
+<a name="1096"></a>			<span class=SI>.in3</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1088">drty_inst_3</a>),
+<a name="1097"></a>			<span class=SI>.in4</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1089">drty_inst_4</a>),
+<a name="1098"></a>			<span class=SI>.in5</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1090">drty_inst_5</a>),
+<a name="1099"></a>			<span class=SI>.sel</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#329">ex_len_first_inst</a>) );
+
+<a name="ifu_flop_drty_inst"></a><a name="1101"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_drty_inst(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#211">drty_inst_r</a>),
+			<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1092">drty_inst</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+				
+<span class=C>// Whenever there's putfield2_quick,we need to provide top3 item 
+</span><span class=C>// from scache for RS2 instead of teh default top2
+</span>
+<a name="1110"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#243">put_field2_quick</a> = (<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#115">ibuff_0</a> == 8'd209) &amp; <a  onClick="return qs(event,this)" class=SI href="ifu.v.html#123">fetch_valid</a>[0] ;
+
+<a name="ifu_flop_putfield"></a><a name="1112"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>	flop_putfield(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ifu.v.html#212">put_field2_quick_r</a>),
+			<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1110">put_field2_quick</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+			<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+				
+
+<a name="ifu_spare1"></a><a  onClick="return qs(event,this)" class=MM href="spare.v.html#mj_spare">mj_spare</a> spare1( <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+
+<a name="ifu_spare2"></a><a  onClick="return qs(event,this)" class=MM href="spare.v.html#mj_spare">mj_spare</a> spare2( <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+ 
+
+
+<span class=C>// Misc. Logic
+</span><span class=C>// COSIM SIGNALS
+</span><span class=C>// synopsys translate_off
+</span><span class=C>// Provide number of instructions folded info.  to cosim
+</span><a name="ifu_mux_inst_fold"></a><a name="1131"></a><a  onClick="return qs(event,this)" class=MM href="mj_muxes_behv.v.p5.html#mux5_3">mux5_3</a>		mux_inst_fold(<a  onClick="return qs(event,this)" class=SO href="mj_muxes_behv.v.p5.html#4866">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#235">instrs_folded</a>),
+			<span class=SI>.in0</span>(3'd0),
+			<span class=SI>.in1</span>(3'd1),
+			<span class=SI>.in2</span>(3'd2),
+			<span class=SI>.in3</span>(3'd3),
+			<span class=SI>.in4</span>(3'd4),
+<a name="1137"></a>			<span class=SI>.sel</span>( {<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#473">fold_4_inst</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#472">fold_3_inst</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#471">fold_2_inst</a>,
+				<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#470">fold_1_inst</a>,<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#469">not_valid</a>}) );
+
+<a name="ifu_flop_inst_fold_r"></a><a name="1140"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_3">ff_sre_3</a>	flop_inst_fold_r(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4690">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#236">instrs_folded_r</a>),
+				<span class=SI>.din</span>((<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1131">instrs_folded</a> &amp; {3{!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>}})),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+				<span class=SI>.enable</span>(!(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#139">hold_r</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#136">kill_vld_d</a>)));
+
+<a name="ifu_flop_inst_fold_e"></a><a name="1146"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_3">ff_sre_3</a>	flop_inst_fold_e(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4690">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#237">instrs_folded_e</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1140">instrs_folded_r</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+				<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#140">hold_e</a>));
+
+<a name="ifu_flop_inst_fold_c"></a><a name="1152"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_3">ff_sre_3</a>	flop_inst_fold_c(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4690">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#238">instrs_folded_c</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1146">instrs_folded_e</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>),
+				<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#141">hold_c</a>));
+
+<a name="ifu_flop_inst_fold_w"></a><a name="1158"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_3">ff_sr_3</a>		flop_inst_fold_w(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3851">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.html#239">instrs_folded_w</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ifu.v.p2.html#1152">instrs_folded_c</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#146">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ifu.v.html#145">reset_l</a>));
+
+<span class=C>// synopsys translate_on
+</span><span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=2 nosave><tr><td align="center"><a  href="ifu.v.html">1</a></td><td align="center"><font color="#808080">2</font></td></tr></table></center>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return "ifu.v.html"; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:45:07 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ifu/rtl/ifu.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

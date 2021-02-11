@@ -1,0 +1,315 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ex/rtl/ex_ctl.v page 4</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return "ex_ctl.v.p3.html"; }
+function last_page() { return ""; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<center><table class=NB cols=5 nosave><tr><td align="center"><a  href="ex_ctl.v.p3.html#bottom_of_page">Prev</a></td><td align="center"><a  href="ex_ctl.v.html">1</a></td><td align="center"><a  href="ex_ctl.v.p2.html">2</a></td><td align="center"><a  href="ex_ctl.v.p3.html">3</a></td><td align="center"><font color="#808080">4</font></td></tr></table></center>
+<pre>
+			      <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#550">clk</a>),
+			      <span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#230">hold_e</a>),
+			      <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#549">reset_l</a>));
+
+<span class=C>// Mux select for scr1 of data adder
+</span><a name="3006"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#929">adder_src1_mux_sel_r</a>[1] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2005">isub</a> | <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2021">ineg</a> | 
+				   (<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2006">lsub</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#228">first_cyc_r</a> | <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#229">second_cyc_r</a>)) | 
+				   (<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2022">lneg</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#228">first_cyc_r</a> | <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#229">second_cyc_r</a>));
+  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#929">adder_src1_mux_sel_r</a>[0] = ~<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3006">adder_src1_mux_sel_r</a>[1]; 
+
+<a name="ex_ctl_adder_src1_mux_sel_raw_ereg"></a><a name="3011"></a>  <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_2">ff_sre_2</a>   adder_src1_mux_sel_raw_ereg (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4677">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#930">adder_src1_mux_sel_raw_e</a>[1:0]),
+				          <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3006">adder_src1_mux_sel_r</a>[1:0]),
+				          <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#550">clk</a>),
+				          <span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#230">hold_e</a>),
+				          <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#549">reset_l</a>));
+
+<a name="3017"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#482">adder_src1_mux_sel</a>[1] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3011">adder_src1_mux_sel_raw_e</a>[1] |
+				 (~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#255">alu_adder_fn</a>[1] &amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#255">alu_adder_fn</a>[0]);
+  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#482">adder_src1_mux_sel</a>[0] = ~(<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3017">adder_src1_mux_sel</a>[1]);
+
+<span class=C>// Mux select for scr2 of data adder
+</span><a name="ex_ctl_adder_src2_mux_sel_reg"></a><a name="3022"></a>  <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>   adder_src2_mux_sel_reg (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#931">adder_src2_mux_sel_r</a>),
+				     <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2022">lneg</a>|<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2021">ineg</a>),
+				     <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#550">clk</a>),
+				     <span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#230">hold_e</a>),
+				     <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#549">reset_l</a>));
+<a name="3027"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#485">adder_src2_mux_sel</a>[2]	=	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3022">adder_src2_mux_sel_r</a>&amp;~<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3032">ucode_busy_e</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#485">adder_src2_mux_sel</a>[1]	=	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3032">ucode_busy_e</a>&amp;<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#255">alu_adder_fn</a>[1] &amp; ~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#255">alu_adder_fn</a>[0];
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#485">adder_src2_mux_sel</a>[0] 	=	~<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3027">adder_src2_mux_sel</a>[2]&amp;~<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3027">adder_src2_mux_sel</a>[1];
+
+<span class=C>// Ucode busy pipe.
+</span><a name="ex_ctl_ucode_busy_e_reg"></a><a name="3032"></a>  <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>   ucode_busy_e_reg (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#325">ucode_busy_e</a>),
+			     <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p2.html#1767">ucode_busy_r</a>),
+			     <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#550">clk</a>),
+			     <span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#230">hold_e</a>),
+			     <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#549">reset_l</a>));
+
+<a name="ex_ctl_ucode_busy_c_reg"></a><a name="3038"></a> <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>   ucode_busy_c_reg (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#941">ucode_busy_c</a>),
+                             <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3032">ucode_busy_e</a>),
+                             <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#550">clk</a>),
+                             <span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#231">hold_c</a>),
+                             <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#549">reset_l</a>));
+
+<span class=C>// Mux select for branch address 
+</span><a name="3045"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#520">iu_br_pc_mux_sel</a>[2] = <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3032">ucode_busy_e</a> &amp; ~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#232">reissue_c</a>;
+  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#520">iu_br_pc_mux_sel</a>[1] = <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#232">reissue_c</a>;
+  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#520">iu_br_pc_mux_sel</a>[0] = ~(<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3045">iu_br_pc_mux_sel</a>[2] | <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3045">iu_br_pc_mux_sel</a>[1]);
+
+   <span class=C>// Bit logic control
+</span><a name="3050"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#932">bit_mux_sel_r</a>[4] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2023">fneg</a> | <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2024">dneg</a>;
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#932">bit_mux_sel_r</a>[3] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2073">jsr</a>  | <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2106">jsr_w</a>;
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#932">bit_mux_sel_r</a>[2] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2035">ixor</a> | (<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2036">lxor</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#228">first_cyc_r</a> | <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#229">second_cyc_r</a>));
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#932">bit_mux_sel_r</a>[1] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2031">iand</a> | <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2032">land</a> &amp; (<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#228">first_cyc_r</a> | <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#229">second_cyc_r</a>);
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#932">bit_mux_sel_r</a>[0] = ~(|<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3050">bit_mux_sel_r</a>[4:1]);
+
+<a name="ex_ctl_bit_mux_sel_reg"></a><a name="3056"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_5">ff_sre_5</a> bit_mux_sel_reg (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4719">.out</a>    (<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#489">bit_mux_sel</a>[4:0]),
+			     <span class=SI>.din</span>    (<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3050">bit_mux_sel_r</a>[4:0]),
+			     <span class=SI>.enable</span> (~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#230">hold_e</a>),
+			     <span class=SI>.reset_l</span> (<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#549">reset_l</a>),
+			     <span class=SI>.clk</span>    (<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#550">clk</a>)
+			     );
+
+<span class=C>// Convert logic control
+</span><a name="3064"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#933">cvt_mux_sel_r</a>[4] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2052">int2short</a>; 
+  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#933">cvt_mux_sel_r</a>[3] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2051">int2char</a>; 
+  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#933">cvt_mux_sel_r</a>[2] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2050">int2byte</a>; 
+  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#933">cvt_mux_sel_r</a>[1] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2038">i2l</a>; 
+  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#933">cvt_mux_sel_r</a>[0] = ~(<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3064">cvt_mux_sel_r</a>[4] | <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3064">cvt_mux_sel_r</a>[3] |
+				<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3064">cvt_mux_sel_r</a>[2] | <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3064">cvt_mux_sel_r</a>[1]); 
+
+<a name="ex_ctl_cvt_mux_sel_reg"></a><a name="3071"></a>  <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_5">ff_sre_5</a>   cvt_mux_sel_reg (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4719">.out</a>(<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#496">cvt_mux_sel</a>[4:0]),
+			     <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3064">cvt_mux_sel_r</a>[4:0]),
+			     <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#550">clk</a>),
+			     <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#549">reset_l</a>),
+			     <span class=SI>.enable</span>(~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#230">hold_e</a>)
+			      );
+
+   <span class=C>// Mux select for scr1 of shifter
+</span><a name="3079"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#935">shifter_src1_mux_sel_r</a>[4] = (<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2028">lshr</a> | <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2030">lushr</a>) &amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#229">second_cyc_r</a>;
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#935">shifter_src1_mux_sel_r</a>[3] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2027">ishr</a>;
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#935">shifter_src1_mux_sel_r</a>[2] = (<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2028">lshr</a> | <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2030">lushr</a>) &amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#228">first_cyc_r</a>;
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#935">shifter_src1_mux_sel_r</a>[1] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2026">lshl</a> &amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#229">second_cyc_r</a>;
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#935">shifter_src1_mux_sel_r</a>[0] = ~(|<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3079">shifter_src1_mux_sel_r</a>[4:1]);
+<a name="ex_ctl_shifter_src1_mux_sel_reg"></a><a name="3084"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_5">ff_sre_5</a> shifter_src1_mux_sel_reg (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4719">.out</a>    (<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#503">shifter_src1_mux_sel</a>[4:0]),
+				      <span class=SI>.din</span>    (<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3079">shifter_src1_mux_sel_r</a>[4:0]),
+				      <span class=SI>.enable</span> (~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#230">hold_e</a>),
+				      <span class=SI>.reset_l</span> (<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#549">reset_l</a>),
+				      <span class=SI>.clk</span>    (<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#550">clk</a>)
+				      );
+
+   <span class=C>// Mux select for scr2 of shifter
+</span><a name="3092"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#936">shifter_src2_mux_sel_r</a>[2] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2026">lshl</a> &amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#229">second_cyc_r</a>;
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#936">shifter_src2_mux_sel_r</a>[1] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2025">ishl</a> | (<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2026">lshl</a> &amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#228">first_cyc_r</a>) |
+				      <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2027">ishr</a> | <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2029">iushr</a> | (<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2028">lshr</a> &amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#229">second_cyc_r</a>) |
+				      (<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2030">lushr</a> &amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#229">second_cyc_r</a>);
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#936">shifter_src2_mux_sel_r</a>[0] = ~(|<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3092">shifter_src2_mux_sel_r</a>[2:1]);
+<a name="ex_ctl_shifter_src2_mux_sel_reg"></a><a name="3097"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_3">ff_sre_3</a> shifter_src2_mux_sel_reg (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4690">.out</a>    (<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#509">shifter_src2_mux_sel</a>[2:0]),
+				      <span class=SI>.din</span>    (<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3092">shifter_src2_mux_sel_r</a>[2:0]),
+				      <span class=SI>.enable</span> (~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#230">hold_e</a>),
+				      <span class=SI>.reset_l</span> (<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#549">reset_l</a>),
+				      <span class=SI>.clk</span>    (<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#550">clk</a>)
+				      );
+
+<span class=C>// Shifter word select MSW LSW 
+</span><a name="3105"></a>  <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#940">shifter_word_sel_r</a> = (<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2026">lshl</a> &amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#229">second_cyc_r</a>) | (<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2028">lshr</a> &amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#228">first_cyc_r</a>) | 
+			      (<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2030">lushr</a> &amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#228">first_cyc_r</a>); 
+
+<a name="ex_ctl_shifter_word_sel_flop"></a><a name="3108"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a> shifter_word_sel_flop(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>	(<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#513">shifter_word_sel</a>),
+				<span class=SI>.din</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3105">shifter_word_sel_r</a>),
+				<span class=SI>.enable</span>	(~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#230">hold_e</a>),
+				<span class=SI>.reset_l</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#549">reset_l</a>),
+				<span class=SI>.clk</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#550">clk</a>)
+				);
+
+   <span class=C>// Mux select for a 32 bits or 16 bits PC offset
+</span><a name="3116"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#918">offset_mux_sel_r</a>[4] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2144">load_word_index</a> | <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2149">store_word_index</a> |
+				<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2150">nastore_word_index</a>;
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#918">offset_mux_sel_r</a>[3] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2145">load_short_index</a> | <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2146">load_char_index</a> |
+				<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2151">store_short_index</a>;
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#918">offset_mux_sel_r</a>[2] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2147">load_byte_index</a> | <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2148">load_ubyte_index</a> |
+				<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2152">store_byte_index</a>; 
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#918">offset_mux_sel_r</a>[1] = <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2105">goto_w</a> | <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p3.html#2106">jsr_w</a>; 
+   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.html#918">offset_mux_sel_r</a>[0] = ~(|<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3116">offset_mux_sel_r</a>[4:1]);
+
+<a name="ex_ctl_offset_mux_sel_reg"></a><a name="3125"></a>   <a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_5">ff_sre_5</a> offset_mux_sel_reg (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4719">.out</a>	(<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.html#524">offset_mux_sel</a>[4:0]),
+				<span class=SI>.din</span>	(<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3116">offset_mux_sel_r</a>[4:0]),
+				<span class=SI>.enable</span>	(~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#230">hold_e</a>),
+				<span class=SI>.reset_l</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#549">reset_l</a>),
+				<span class=SI>.clk</span>	(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#550">clk</a>)
+				);
+
+
+<a name="ex_ctl_spare1"></a><a  onClick="return qs(event,this)" class=MM href="spare.v.html#mj_spare">mj_spare</a> spare1( <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#550">clk</a>),
+                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#549">reset_l</a>));
+
+<a name="ex_ctl_spare2"></a><a  onClick="return qs(event,this)" class=MM href="spare.v.html#mj_spare">mj_spare</a> spare2( <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#550">clk</a>),
+                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.html#549">reset_l</a>));
+
+ 
+<span class=K>endmodule</span>
+
+
+<a name="branch_logic"></a><a  href="ex_ctl.v.p2.html#ex_ctl_branch_logic"><IMG alt="[Up: ex_ctl branch_logic]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>branch_logic</span><a  href="hierarchy-m.html#branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a> 
+		(	
+		 <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3163">branch_qual</a>,
+		 <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3164">cmp_eq_e</a>,
+		 <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3165">cmp_gt_e</a>,
+	         <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3166">cmp_lt_e</a>,
+		 <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3167">reissue_c</a>,
+		 <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3168">sc_dcache_req</a>,
+		 <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3169">kill_inst_e</a>,
+		 <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3170">iu_inst_raw_e</a>,
+		 <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3171">inst_valid</a>,
+		 <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3172">ucode_dcu_req</a>,
+		 <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3173">ucode_busy_e</a>,
+		 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3175">iu_brtaken_e</a>,
+		 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3176">branch_taken_e</a>,
+		 <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3177">iu_inst_e</a>
+
+);
+
+
+<a name="3163"></a><span class=K>input</span>	[4:0]	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p2.html#1345">branch_qual</a><a  href="hierarchy-s.p2.html#branch_qual___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="3164"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p2.html#1346">cmp_eq_e</a><a  href="hierarchy-s.p3.html#cmp_eq_e___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="3165"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p2.html#1347">cmp_gt_e</a><a  href="hierarchy-s.p3.html#cmp_gt_e___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="3166"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p2.html#1348">cmp_lt_e</a><a  href="hierarchy-s.p3.html#cmp_lt_e___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="3167"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p2.html#1349">reissue_c</a><a  href="hierarchy-s.p15.html#reissue_c___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="3168"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p2.html#1350">sc_dcache_req</a><a  href="hierarchy-s.p16.html#sc_dcache_req___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="3169"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p2.html#1351">kill_inst_e</a><a  href="hierarchy-s.p10.html#kill_inst_e___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="3170"></a><span class=K>input</span>	[3:2]	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p2.html#1352">iu_inst_raw_e</a><a  href="hierarchy-s.p9.html#iu_inst_raw_e___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="3171"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p2.html#1353">inst_valid</a><a  href="hierarchy-s.p9.html#inst_valid___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="3172"></a><span class=K>input</span>	[1:0]	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p2.html#1355">ucode_dcu_req</a><a  href="hierarchy-s.p18.html#ucode_dcu_req___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="3173"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p2.html#1354">ucode_busy_e</a><a  href="hierarchy-s.p18.html#ucode_busy_e___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="3175"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3183">iu_brtaken_e</a><a  href="hierarchy-s.p9.html#iu_brtaken_e___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="3176"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3189">branch_taken_e</a><a  href="hierarchy-s.p2.html#branch_taken_e___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="3177"></a><span class=K>output</span>	[3:2]	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3191">iu_inst_e</a><a  href="hierarchy-s.p9.html#iu_inst_e___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="3179"></a><span class=K>wire</span>	[3:2]	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3179">iu_inst_raw</a><a  href="hierarchy-s.p9.html#iu_inst_raw___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="3180"></a><span class=K>wire</span>	[3:2]	<a  onClick="return qs(event,this)" class=SW href="ex_ctl.v.p4.html#3180">ucode_inst_e</a><a  href="hierarchy-s.p18.html#ucode_inst_e___branch_logic"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<a name="3183"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3175">iu_brtaken_e</a> 	=	<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3163">branch_qual</a>[4]&amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3164">cmp_eq_e</a> |
+				<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3163">branch_qual</a>[3]&amp;!<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3164">cmp_eq_e</a> |
+				<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3163">branch_qual</a>[2]&amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3165">cmp_gt_e</a> |
+				<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3163">branch_qual</a>[1]&amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3166">cmp_lt_e</a> |
+				<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3163">branch_qual</a>[0] |<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3167">reissue_c</a>;
+
+<a name="3189"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3176">branch_taken_e</a>	 =      <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3183">iu_brtaken_e</a>;
+
+<a name="3191"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3177">iu_inst_e</a>[3]	=  (<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3172">ucode_dcu_req</a>[1] &amp; ~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3172">ucode_dcu_req</a>[0]|<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3170">iu_inst_raw_e</a>[3])&amp; ~<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3168">sc_dcache_req</a> &amp; <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3171">inst_valid</a>;
+<span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="ex_ctl.v.p4.html#3177">iu_inst_e</a>[2]	=  (<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3172">ucode_dcu_req</a>[0]| <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3170">iu_inst_raw_e</a>[2] | <a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3168">sc_dcache_req</a> )
+	  	           &amp;<a  onClick="return qs(event,this)" class=SI href="ex_ctl.v.p4.html#3171">inst_valid</a>;
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=4 nosave><tr><td align="center"><a  href="ex_ctl.v.html">1</a></td><td align="center"><a  href="ex_ctl.v.p2.html">2</a></td><td align="center"><a  href="ex_ctl.v.p3.html">3</a></td><td align="center"><font color="#808080">4</font></td></tr></table></center>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return "ex_ctl.v.html"; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:45:03 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/ex/rtl/ex_ctl.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

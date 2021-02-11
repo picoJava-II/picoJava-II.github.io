@@ -1,0 +1,837 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/icu/rtl/ic_cntl.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "ic_cntl.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+
+<span class=C>// triquest fsm_begin
+</span><a name="ic_cntl"></a><a  href="icctl.v.html#icctl_ic_cntl"><IMG alt="[Up: icctl ic_cntl]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span>  <span class=MM>ic_cntl</span><a  href="hierarchy-m.p3.html#ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>(
+	<a  onClick="return qs(event,this)" class=SO href="#77">icu_addr_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#78">next_addr_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#79">addr_reg_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#80">addr_reg_enable</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#81">biu_addr_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#83">icu_tag_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#82">ic_data_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#74">icu_req</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#75">icu_type</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#76">icu_size</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#84">ic_drty</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#85">icu_stall</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#86">icu_tag_vld</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#87">icu_itag_we</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#88">icu_ram_we</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#89">icu_bypass_q</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#90">latch_biu_addr</a>,
+        <a  onClick="return qs(event,this)" class=SO href="#91">diag_ld_cache_c</a>,
+  	<a  onClick="return qs(event,this)" class=SO href="#92">fill_word_addr</a>,
+        <a  onClick="return qs(event,this)" class=SO href="#93">icu_in_powerdown</a>,
+        <a  onClick="return qs(event,this)" class=SO href="#94">icram_powerdown</a>,
+        <a  onClick="return qs(event,this)" class=SO href="#95">next_fetch_inc</a>, 
+
+	<span class=C>// INPUTS
+</span>	<a  onClick="return qs(event,this)" class=SI href="#99">iu_psr_bm8</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#102">iu_psr_ice</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#104">iu_flush_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#100">iu_ic_diag_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#103">iu_brtaken_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#105">ibuf_full</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#107">iu_data_e_0</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#106">icu_hit</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#101">biu_icu_ack</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#108">pcsu_powerdown</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#97">icu_hold</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#109">misc_wrd_sel</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#110">ice_line_align</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#111">bypass_ack</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#114">sin</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#115">sm</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#116">so</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#113">reset_l</a>
+	);
+	
+
+
+<a name="74"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#509">icu_req</a><a  href="hierarchy-s.p9.html#icu_req___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// request memory on a cache miss
+</span><a name="75"></a><span class=K>output</span>	[3:0]		<a  onClick="return qs(event,this)" class=SO href="#525">icu_type</a><a  href="hierarchy-s.p9.html#icu_type___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// type of transaction
+</span><a name="76"></a><span class=K>output</span>	[1:0]		<a  onClick="return qs(event,this)" class=SO href="#530">icu_size</a><a  href="hierarchy-s.p9.html#icu_size___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// size of transaction
+</span><a name="77"></a><span class=K>output</span>	[1:0]		<a  onClick="return qs(event,this)" class=SO href="#366">icu_addr_sel</a><a  href="hierarchy-s.p9.html#icu_addr_sel___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// select addr input to the tags/data
+</span><a name="78"></a><span class=K>output</span>	[3:0]		<a  onClick="return qs(event,this)" class=SO href="#387">next_addr_sel</a><a  href="hierarchy-s.p12.html#next_addr_sel___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// select the correct next_addr to access cache
+</span><a name="79"></a><span class=K>output</span>	[1:0]		<a  onClick="return qs(event,this)" class=SO href="#370">addr_reg_sel</a><a  href="hierarchy-s.html#addr_reg_sel___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// select the correct next_addr to access cache
+</span><a name="80"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#377">addr_reg_enable</a><a  href="hierarchy-s.html#addr_reg_enable___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// enable to icu_addr_d1 latch
+</span><a name="81"></a><span class=K>output</span>  [1:0]           <a  onClick="return qs(event,this)" class=SO href="#393">biu_addr_sel</a><a  href="hierarchy-s.p2.html#biu_addr_sel___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="82"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#436">ic_data_sel</a><a  href="hierarchy-s.p9.html#ic_data_sel___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// select cache fill data or misc data for instruction ram
+</span><a name="83"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#432">icu_tag_sel</a><a  href="hierarchy-s.p9.html#icu_tag_sel___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// To select input to the tag ram. either mar or misc store.
+</span><a name="84"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#328">ic_drty</a><a  href="hierarchy-s.p9.html#ic_drty___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Error acknowledge returned by memory
+</span><a name="85"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#483">icu_stall</a><a  href="hierarchy-s.p9.html#icu_stall___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Stall to iu pipe for diagnostic rd/writes
+</span><a name="86"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#461">icu_tag_vld</a><a  href="hierarchy-s.p9.html#icu_tag_vld___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// valid bit of the tag - to be written into tagram
+</span><a name="87"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#446">icu_itag_we</a><a  href="hierarchy-s.p9.html#icu_itag_we___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Write enable to the tags
+</span><a name="88"></a><span class=K>output</span>	[1:0]		<a  onClick="return qs(event,this)" class=SO href="#447">icu_ram_we</a><a  href="hierarchy-s.p9.html#icu_ram_we___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// write enable to the inst ram
+</span><a name="89"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#453">icu_bypass_q</a><a  href="hierarchy-s.p9.html#icu_bypass_q___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// bypass data from the cache
+</span><a name="90"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#320">latch_biu_addr</a><a  href="hierarchy-s.p10.html#latch_biu_addr___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; <span class=C>// latch the memory addr (in case of cache miss)
+</span><a name="91"></a><span class=K>output</span>                  <a  onClick="return qs(event,this)" class=SO href="#336">diag_ld_cache_c</a><a  href="hierarchy-s.p4.html#diag_ld_cache_c___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// diagnostic rd to ram
+</span><a name="92"></a><span class=K>output</span>	[1:0]		<a  onClick="return qs(event,this)" class=SO href="#317">fill_word_addr</a><a  href="hierarchy-s.p6.html#fill_word_addr___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; <span class=C>//  word addr during fill
+</span><a name="93"></a><span class=K>output</span>                  <a  onClick="return qs(event,this)" class=SO href="#614">icu_in_powerdown</a><a  href="hierarchy-s.p9.html#icu_in_powerdown___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// ICU notifies PCSU it is ready for clock shut off.
+</span><a name="94"></a><span class=K>output</span>                  <a  onClick="return qs(event,this)" class=SO href="#613">icram_powerdown</a><a  href="hierarchy-s.p9.html#icram_powerdown___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// powerdown signal to RAM and TAG
+</span><a name="95"></a><span class=K>output</span>  [3:0]           <a  onClick="return qs(event,this)" class=SO href="#271">next_fetch_inc</a><a  href="hierarchy-s.p12.html#next_fetch_inc___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; <span class=C>// next_fetch_inc = 1, if iu_psr_bm8 is asserted,
+</span>                                        <span class=C>// otherwise next_fetch_inc = 4, if bypass, 8, if hit
+</span><a name="97"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#203">icu_hold</a><a  href="hierarchy-s.p9.html#icu_hold___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       <span class=C>// hold iu pipe for diagnostic access when
+</span>					<span class=C>// there is outstanding transaction in ICU 
+</span><a name="99"></a><span class=K>input</span>           	<a  onClick="return qs(event,this)" class=SI href="icctl.v.html#163">iu_psr_bm8</a><a  href="hierarchy-s.p9.html#iu_psr_bm8___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// 8 bit boot code enable from IU
+</span><a name="100"></a><span class=K>input</span>	[3:0]		<a  onClick="return qs(event,this)" class=SI href="icctl.v.html#153">iu_ic_diag_e</a><a  href="hierarchy-s.p9.html#iu_ic_diag_e___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// diagnostic rd/wr to tags/ram
+</span><a name="101"></a><span class=K>input</span>	[1:0]		<a  onClick="return qs(event,this)" class=SI href="icctl.v.html#154">biu_icu_ack</a><a  href="hierarchy-s.p2.html#biu_icu_ack___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Acknowledge from biu that data from memory is available
+</span><a name="102"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="icctl.v.html#155">iu_psr_ice</a><a  href="hierarchy-s.p9.html#iu_psr_ice___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Icache Enable in the PSR 
+</span><a name="103"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="icctl.v.html#156">iu_brtaken_e</a><a  href="hierarchy-s.p9.html#iu_brtaken_e___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// branch taken in E stage
+</span><a name="104"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="icctl.v.html#157">iu_flush_e</a><a  href="hierarchy-s.p9.html#iu_flush_e___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// flush instruction in E stage
+</span><a name="105"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="icctl.v.html#158">ibuf_full</a><a  href="hierarchy-s.p9.html#ibuf_full___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Ibuffer is full. (icache should go idle)
+</span><a name="106"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="icctl.v.html#159">icu_hit</a><a  href="hierarchy-s.p9.html#icu_hit___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Icache Hit
+</span><a name="107"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="icctl.v.html#160">iu_data_e_0</a><a  href="hierarchy-s.p9.html#iu_data_e_0___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// bit 0 of iu data bus used for diagnostic writes
+</span><a name="108"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="icctl.v.html#161">pcsu_powerdown</a><a  href="hierarchy-s.p14.html#pcsu_powerdown___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; <span class=C>// PCSU request for powerdown
+</span><a name="109"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="icctl.v.html#164">misc_wrd_sel</a><a  href="hierarchy-s.p11.html#misc_wrd_sel___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="110"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="icctl.v.html#166">ice_line_align</a><a  href="hierarchy-s.p9.html#ice_line_align___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="111"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#324">bypass_ack</a><a  href="hierarchy-s.p2.html#bypass_ack___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="112"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="icctl.v.html#168">clk</a><a  href="hierarchy-s.p3.html#clk___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="113"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="icctl.v.html#169">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="114"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#114">sin</a><a  href="hierarchy-s.p16.html#sin___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// scan input
+</span><a name="115"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#115">sm</a><a  href="hierarchy-s.p16.html#sm___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// scan enable
+</span><a name="116"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#116">so</a><a  href="hierarchy-s.p16.html#so___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// scan output
+</span>
+<a name="118"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#322">normal_ack</a><a  href="hierarchy-s.p12.html#normal_ack___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="119"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#514">second_fill_cyc</a><a  href="hierarchy-s.p16.html#second_fill_cyc___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="120"></a><span class=K>wire</span> 			<a  onClick="return qs(event,this)" class=SW href="#516">third_fill_cyc</a><a  href="hierarchy-s.p17.html#third_fill_cyc___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="121"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#518">fourth_fill_cyc</a><a  href="hierarchy-s.p6.html#fourth_fill_cyc___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="122"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#520">nc_fill_cyc</a><a  href="hierarchy-s.p12.html#nc_fill_cyc___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="123"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#323">error_ack</a><a  href="hierarchy-s.p5.html#error_ack___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="124"></a><span class=K>wire</span>	[6:0]		<a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a><a  href="hierarchy-s.p9.html#ic_miss_state___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="125"></a><span class=K>wire</span>	[6:0]		<a  onClick="return qs(event,this)" class=SW href="#536">next_miss_state</a><a  href="hierarchy-s.p12.html#next_miss_state___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="126"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#275">valid_diag_e</a><a  href="hierarchy-s.p19.html#valid_diag_e___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="127"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#342">valid_diag_c</a><a  href="hierarchy-s.p19.html#valid_diag_c___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="128"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#307">icu_miss</a><a  href="hierarchy-s.p9.html#icu_miss___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="129"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a><a  href="hierarchy-s.p9.html#ic_idle___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="130"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#287">diag_st_cache_e</a><a  href="hierarchy-s.p4.html#diag_st_cache_e___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="131"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#288">diag_ld_cache_e</a><a  href="hierarchy-s.p4.html#diag_ld_cache_e___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="132"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#289">diag_st_tag_e</a><a  href="hierarchy-s.p4.html#diag_st_tag_e___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="133"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#290">diag_ld_tag_e</a><a  href="hierarchy-s.p4.html#diag_ld_tag_e___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="134"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#417">set_stall</a><a  href="hierarchy-s.p16.html#set_stall___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="135"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#522">cache_fill_cyc</a><a  href="hierarchy-s.p3.html#cache_fill_cyc___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="136"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#422">stall_valid</a><a  href="hierarchy-s.p16.html#stall_valid___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="137"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#348">reset_d1_l</a><a  href="hierarchy-s.p15.html#reset_d1_l___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="138"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#428">jmp_e</a><a  href="hierarchy-s.p10.html#jmp_e___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="139"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#499">fourth_fill_cyc_d1</a><a  href="hierarchy-s.p6.html#fourth_fill_cyc_d1___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="140"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#493">nc_fill_cyc_d1</a><a  href="hierarchy-s.p12.html#nc_fill_cyc_d1___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="141"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#558">ic_idle_d1</a><a  href="hierarchy-s.p9.html#ic_idle_d1___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SO href="#94">icram_powerdown</a>;
+<span class=K>wire</span> 	[3:0]		<a  onClick="return qs(event,this)" class=SO href="#95">next_fetch_inc</a>;
+<a name="144"></a><span class=K>wire</span> 			<a  onClick="return qs(event,this)" class=SW href="#217">qual_iu_flush_e</a><a  href="hierarchy-s.p15.html#qual_iu_flush_e___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SO href="#97">icu_hold</a>;
+<a name="146"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#508">nc_req</a><a  href="hierarchy-s.p12.html#nc_req___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="147"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#510">ic_req</a><a  href="hierarchy-s.p9.html#ic_req___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="148"></a><span class=K>wire</span> 			<a  onClick="return qs(event,this)" class=SW href="#533">cacheable</a><a  href="hierarchy-s.p3.html#cacheable___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="149"></a><span class=K>wire</span> 			<a  onClick="return qs(event,this)" class=SW href="#177">qual_iu_psr_ice</a><a  href="hierarchy-s.p15.html#qual_iu_psr_ice___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="150"></a><span class=K>wire</span> 			<a  onClick="return qs(event,this)" class=SW href="#187">qual_iu_psr_ice_q</a><a  href="hierarchy-s.p15.html#qual_iu_psr_ice_q___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SO href="#89">icu_bypass_q</a>;
+<a name="152"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#412">standby_d1</a><a  href="hierarchy-s.p16.html#standby_d1___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="153"></a><span class=K>wire</span>			<a  onClick="return qs(event,this)" class=SW href="#180">new_psr_ice</a><a  href="hierarchy-s.p12.html#new_psr_ice___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// *****************************************************************************
+</span><span class=C>// 
+</span><span class=C>// iu_psr_ice does not become effective until the subsequent icu_addr_d1 
+</span><span class=C>// becomes aligned on line boundary( ice_line_align=(icu_addr_d1[3:0] == 4'h0) ).
+</span><span class=C>// This simplifies the ibuffer new_valid equations because with ice_line_align  
+</span><span class=C>// used to qualify iu_psr_ice there should be no need to align the cached data 
+</span><span class=C>// to fill the ibuffer in the middle. This corner case occurs in a scenario:
+</span><span class=C>//
+</span><span class=C>// The cache is on while ibuf's PC is on 2nd or 4th word. After the line has been 
+</span><span class=C>// filled to I$, the 2nd or 4th word needs to be aligned and filled to Ibuffer.    
+</span><span class=C>// This kind of alignment complicates the new_valid equations and verification
+</span><span class=C>// work.  
+</span><span class=C>// 
+</span><span class=C>// With qual_iu_psr_ice, if there is any alignment, it must be caused by branch
+</span><span class=C>// or trap and the data always fill from the first byte of the ibuffer. 
+</span><span class=C>//
+</span><span class=C>// ******************************************************************************
+</span>
+
+<span class=C>// qual_iu_psr_ice changes only when there is a fetch address in cache access
+</span><span class=C>// stage along a cache line boundary.
+</span><a name="176"></a><span class=K>wire</span>    <a  onClick="return qs(event,this)" class=SW href="#176">qual_iu_psr_ice_sel</a><a  href="hierarchy-s.p15.html#qual_iu_psr_ice_sel___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a> = <a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>&amp; <a  onClick="return qs(event,this)" class=SI href="#110">ice_line_align</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#342">valid_diag_c</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="#493">nc_fill_cyc_d1</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="#499">fourth_fill_cyc_d1</a>;
+<a name="177"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#149">qual_iu_psr_ice</a> = <a  onClick="return qs(event,this)" class=SW href="#176">qual_iu_psr_ice_sel</a> ? <a  onClick="return qs(event,this)" class=SW href="#180">new_psr_ice</a> : <a  onClick="return qs(event,this)" class=SW href="#187">qual_iu_psr_ice_q</a>;
+ 
+<span class=C>// Latch the new PSR bit only when in idle.
+</span><a name="ic_cntl_iu_psr_ice_reg"></a><a name="180"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>  iu_psr_ice_reg (    		<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#153">new_psr_ice</a>),
+                                        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#102">iu_psr_ice</a>),
+                                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>),
+					<span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>),
+                                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#113">reset_l</a>)
+                                        );
+
+<a name="ic_cntl_qual_iu_psr_ice_reg"></a><a name="187"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_snr_d">mj_s_ff_snr_d</a>  qual_iu_psr_ice_reg (    <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#63">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#150">qual_iu_psr_ice_q</a>),
+                                        <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="#177">qual_iu_psr_ice</a>),
+                                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>),
+                                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#113">reset_l</a>)
+                                        );
+ 
+
+<a name="194"></a><span class=K>wire</span>    <a  onClick="return qs(event,this)" class=SW href="#194">valid_diag_window</a><a  href="hierarchy-s.p19.html#valid_diag_window___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>  = <a  onClick="return qs(event,this)" class=SW href="#275">valid_diag_e</a> | <a  onClick="return qs(event,this)" class=SW href="#342">valid_diag_c</a>;
+
+<span class=C>// **************************************************************
+</span><span class=C>//
+</span><span class=C>// Icu_hold is generated to hold iu pipe for diagnostic access 
+</span><span class=C>// when there is outstanding transaction in ICU.
+</span><span class=C>// 
+</span><span class=C>// **************************************************************
+</span>
+<a name="203"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#97">icu_hold</a> = (|<a  onClick="return qs(event,this)" class=SI href="#100">iu_ic_diag_e</a>[3:0] | (<a  onClick="return qs(event,this)" class=SI href="#104">iu_flush_e</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#102">iu_psr_ice</a> ))
+                    &amp; !<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>;
+
+
+<span class=C>// **************************************************************
+</span><span class=C>//
+</span><span class=C>// iu_flush_e needs to be qualified by iu_psr_ice
+</span><span class=C>// iu_flush_e is treated as a nop if iu_psr_ice is set to zero
+</span><span class=C>// iu_flush_e also needs to be qualified by ic_idle since the 
+</span><span class=C>// Icache flush can only be carried out when there is no 
+</span><span class=C>// outstanding ICU transaction.
+</span><span class=C>//
+</span><span class=C>// **************************************************************
+</span>
+<a name="217"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#144">qual_iu_flush_e</a>= <a  onClick="return qs(event,this)" class=SI href="#104">iu_flush_e</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#102">iu_psr_ice</a> &amp; <a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>;
+
+<span class=C>// temp connection
+</span><span class=C>// assign pcsu_powerdown = 1'b0;
+</span>
+<span class=C>// **************************************************************
+</span><span class=C>//
+</span><span class=C>// 8 Bit Boot Code Mode: 
+</span><span class=C>//
+</span><span class=C>// To perform boot mode correctly you need to be 
+</span><span class=C>// aware of the following pitfalls:
+</span><span class=C>// 
+</span><span class=C>// 1. The execution of the priv_write_prs instruction 
+</span><span class=C>//    disables the boot mode. So, do NOT use the priv_write_prs 
+</span><span class=C>//    instruction until after the branch to non-boot memory 
+</span><span class=C>//    location occurs.
+</span><span class=C>//
+</span><span class=C>// 2. To execute the priv_write_prs without modifing the 
+</span><span class=C>//    content, you need issue priv_read_prs before 
+</span><span class=C>//    priv_write_prs. So, use these two instructions as a pair   
+</span><span class=C>//    to perform disabling Boot Mode.
+</span><span class=C>//
+</span><span class=C>// 3. The pair MUST start at word boundary.
+</span><span class=C>//
+</span><span class=C>// 4. Four Nops are required to inserted after the priv_write_prs
+</span><span class=C>//    in order to recover from boot mode to word acccess.   
+</span><span class=C>//
+</span><span class=C>// 5. The pj_boot8 pin needs to tied to HIGH.
+</span><span class=C>//    
+</span><span class=C>// To summarize the usage, the boot code should be written in the 
+</span><span class=C>// style shown as below:
+</span><span class=C>//
+</span><span class=C>// (8 bit PROM)
+</span><span class=C>// Boot_Start:  Instruction_1
+</span><span class=C>//              Instruction_2
+</span><span class=C>//              ...
+</span><span class=C>//              goto Application  // Application program must
+</span><span class=C>//                                // begin at word boundary
+</span><span class=C>//
+</span><span class=C>// (Non-boot Memory)
+</span><span class=C>// Application: priv_read_reg_psr  // To avoid modifing psr,the
+</span><span class=C>//                                 // content of psr is pushed
+</span><span class=C>//		sipush 0xBFFF      // Zero the bit 14 (PSR.BM8)
+</span><span class=C>//    		iand		   //
+</span><span class=C>//              priv_write_reg_psr // Then disable boot mode by
+</span><span class=C>//                                 // poping the content to psr
+</span><span class=C>//
+</span><span class=C>//              nop                // 4 nops are inserted to
+</span><span class=C>//              nop                // recover from boot mode to 
+</span><span class=C>//	        nop		   // word acccess
+</span><span class=C>//              nop
+</span><span class=C>//
+</span><span class=C>// **************************************************************
+</span>
+<a name="271"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#95">next_fetch_inc</a> =  <a  onClick="return qs(event,this)" class=SI href="#99">iu_psr_bm8</a>     ? 4'b0001: 
+                         !<a  onClick="return qs(event,this)" class=SW href="#177">qual_iu_psr_ice</a> ? 4'b0100 : 4'b1000;  
+
+<span class=C>// Decode of Various signals
+</span><a name="275"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#126">valid_diag_e</a> = <a  onClick="return qs(event,this)" class=SW href="#217">qual_iu_flush_e</a> | <a  onClick="return qs(event,this)" class=SI href="#100">iu_ic_diag_e</a>[3] | <a  onClick="return qs(event,this)" class=SI href="#100">iu_ic_diag_e</a>[2] | 
+                       <a  onClick="return qs(event,this)" class=SI href="#100">iu_ic_diag_e</a>[1] | <a  onClick="return qs(event,this)" class=SI href="#100">iu_ic_diag_e</a>[0] ;
+
+<span class=C>// **************************************************************
+</span><span class=C>// diag_xx_xxx_e 
+</span><span class=C>//
+</span><span class=C>// The following diag_xx_xxx_e signals need to be qualified by 
+</span><span class=C>// ic_idle because the diagnostic access can only be carried out 
+</span><span class=C>// when there is no outstanding ICU transaction.
+</span><span class=C>// **************************************************************
+</span>
+<a name="286"></a><span class=K>wire</span>    <a  onClick="return qs(event,this)" class=SW href="#292">diag_ld_c</a><a  href="hierarchy-s.p4.html#diag_ld_c___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="287"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#130">diag_st_cache_e</a> = <a  onClick="return qs(event,this)" class=SI href="#100">iu_ic_diag_e</a>[3]&amp; <a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>;
+<a name="288"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#131">diag_ld_cache_e</a> = <a  onClick="return qs(event,this)" class=SI href="#100">iu_ic_diag_e</a>[2]&amp; <a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>;
+<a name="289"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#132">diag_st_tag_e</a>   = <a  onClick="return qs(event,this)" class=SI href="#100">iu_ic_diag_e</a>[1]&amp; <a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>;
+<a name="290"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#133">diag_ld_tag_e</a>   = <a  onClick="return qs(event,this)" class=SI href="#100">iu_ic_diag_e</a>[0]&amp; <a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>;
+
+<a name="ic_cntl_diag_ld_c_reg"></a><a name="292"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_snr_d">mj_s_ff_snr_d</a>  diag_ld_c_reg (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#63">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#286">diag_ld_c</a>),
+				<span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="#288">diag_ld_cache_e</a>|<a  onClick="return qs(event,this)" class=SW href="#290">diag_ld_tag_e</a>),
+		                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>),
+                      		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#113">reset_l</a>)
+				);
+
+<span class=C>// Generate a miss only if in idle state and no diagnostic rd/wr in C stage.
+</span><span class=C>// diagnostics should not generate any misses. but , at the same time they
+</span><span class=C>// should generate a stall for ibuffer, so that it ignores data on the bus to 
+</span><span class=C>// ibuffer.
+</span>
+<span class=C>// *** NOTE ***
+</span><span class=C>// To suppress cache enable during the boot mode qual_iu_psr_ice needs to be
+</span><span class=C>// negated by iu_psr_bm8.
+</span>
+<a name="307"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#128">icu_miss</a> =  (!<a  onClick="return qs(event,this)" class=SW href="#177">qual_iu_psr_ice</a> |<a  onClick="return qs(event,this)" class=SI href="#99">iu_psr_bm8</a> | (!<a  onClick="return qs(event,this)" class=SI href="#106">icu_hit</a>) )
+		    &amp; <a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#342">valid_diag_c</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="#499">fourth_fill_cyc_d1</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="#493">nc_fill_cyc_d1</a>&amp;!<a  onClick="return qs(event,this)" class=SO href="#328">ic_drty</a>;
+
+<span class=C>// we latch on a miss or if there is a diagnostic rd/wr in c stage. we dont
+</span><span class=C>// want to latch that address, as it is not in the instruction code flow.
+</span>
+<span class=C>// Note: latch_biu_addr means close biu_addr register. We use !latch_biu_addr
+</span><span class=C>//       to latch the new icu_addr. So icu_miss is removed.
+</span>
+
+<a name="317"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#92">fill_word_addr</a>[1] = <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[4] | <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[5];
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#92">fill_word_addr</a>[0] = <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[3] | <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[5];
+
+<a name="320"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#90">latch_biu_addr</a> =   <a  onClick="return qs(event,this)" class=SW href="#342">valid_diag_c</a> | !<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>  ;
+
+<a name="322"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#118">normal_ack</a> = <a  onClick="return qs(event,this)" class=SI href="#101">biu_icu_ack</a>[0] &amp; !<a  onClick="return qs(event,this)" class=SI href="#101">biu_icu_ack</a>[1] ;
+<a name="323"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#123">error_ack</a>  = <a  onClick="return qs(event,this)" class=SI href="#101">biu_icu_ack</a>[1] ;
+<a name="324"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#111">bypass_ack</a> = <a  onClick="return qs(event,this)" class=SW href="#322">normal_ack</a> | <a  onClick="return qs(event,this)" class=SW href="#323">error_ack</a>;
+
+<span class=C>// Delay ic_drty by one clock, as data
+</span>
+<a name="ic_cntl_ic_drty_reg"></a><a name="328"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_s_d">mj_s_ff_s_d</a>  ic_drty_reg (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#32">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#84">ic_drty</a>),
+				<span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SI href="#101">biu_icu_ack</a>[1]),
+                      		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>)
+				);
+
+<span class=C>// Delay ic_miss_state[2] by one clock to qualify icu_req 
+</span>
+
+<a name="ic_cntl_diag_ld_cache_c_reg"></a><a name="336"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_snr_d">mj_s_ff_snr_d</a>  diag_ld_cache_c_reg (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#63">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#91">diag_ld_cache_c</a>),
+                        		<span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="#288">diag_ld_cache_e</a>),
+                        		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>),
+                        		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#113">reset_l</a>)
+					);
+
+<a name="ic_cntl_valid_diag_c_reg"></a><a name="342"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_snr_d">mj_s_ff_snr_d</a>  valid_diag_c_reg (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#63">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#127">valid_diag_c</a>),
+					<span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="#275">valid_diag_e</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>),
+					<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#113">reset_l</a>)
+					);
+
+<a name="ic_cntl_reset_reg"></a><a name="348"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_s_d">mj_s_ff_s_d</a>  reset_reg (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#32">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#137">reset_d1_l</a>),
+	                        <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SI href="#113">reset_l</a>),
+	                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>)
+				);
+
+
+<span class=C>// Generation of Mux selects
+</span><span class=C>// Decreasing Priority for address buses
+</span><span class=C>// 1. Reset 
+</span><span class=C>// 2. Cache fill
+</span><span class=C>// 3. Valid Diagnostic in E stage
+</span><span class=C>// 4. Stalled branch/Trap pc
+</span><span class=C>// 5. trap/branch 
+</span><span class=C>// 6. ibuffer full
+</span><span class=C>// 7. next sequential pc
+</span>
+<span class=C>// Select br_pc or next_addr. if I$ miss handling in progress, branch gets
+</span><span class=C>// lower priority.
+</span><a name="366"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#77">icu_addr_sel</a>[1]	=  <a  onClick="return qs(event,this)" class=SW href="#428">jmp_e</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#348">reset_d1_l</a>);
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#77">icu_addr_sel</a>[0]	= ~<a  onClick="return qs(event,this)" class=SO href="#366">icu_addr_sel</a>[1];
+
+<span class=C>// Mux used to latch the next sequential addr or branch addr.
+</span><a name="370"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#79">addr_reg_sel</a>[1]	=  <a  onClick="return qs(event,this)" class=SW href="#428">jmp_e</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#79">addr_reg_sel</a>[0]	=  ~<a  onClick="return qs(event,this)" class=SW href="#428">jmp_e</a>;	
+
+<span class=C>// used to latch branch addr or next sequential addr.
+</span><span class=C>// latch contents if standby,ibuffer is full or diagnostic ld/st or I$ miss when I$ is On.
+</span><span class=C>// we reissue the addr after fill is done. For noncacheable, the data is directly given to
+</span><span class=C>// ibuffer.
+</span><a name="377"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#80">addr_reg_enable</a> =  <a  onClick="return qs(event,this)" class=SW href="#428">jmp_e</a> | !( <a  onClick="return qs(event,this)" class=SW href="#412">standby_d1</a>|<a  onClick="return qs(event,this)" class=SI href="#105">ibuf_full</a>|<a  onClick="return qs(event,this)" class=SW href="#194">valid_diag_window</a> | !<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a> |<a  onClick="return qs(event,this)" class=SW href="#307">icu_miss</a> |
+				<a  onClick="return qs(event,this)" class=SW href="#422">stall_valid</a> | <a  onClick="return qs(event,this)" class=SW href="#499">fourth_fill_cyc_d1</a>);
+
+<span class=C>// select cache fill address for reset or when not in idle mode
+</span><span class=C>// select iu_addr_e for diagnostic rd/wr
+</span><span class=C>// reissue addr for branch pending,ibuffer full, for cycle after cache misses,or valid diagnostic.
+</span><span class=C>// else next addr.
+</span><span class=C>// note: diagnostics in E and C freeze the fetch pipe.once the diagnostic rd/wr is done,we continue
+</span><span class=C>// with the same fetch in C
+</span>
+<a name="387"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#78">next_addr_sel</a>[3] = ~<a  onClick="return qs(event,this)" class=SW href="#348">reset_d1_l</a> | !<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a> ;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#78">next_addr_sel</a>[2] = <a  onClick="return qs(event,this)" class=SW href="#275">valid_diag_e</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#348">reset_d1_l</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#78">next_addr_sel</a>[1] = (<a  onClick="return qs(event,this)" class=SW href="#422">stall_valid</a>|<a  onClick="return qs(event,this)" class=SI href="#105">ibuf_full</a>| <a  onClick="return qs(event,this)" class=SW href="#499">fourth_fill_cyc_d1</a>|<a  onClick="return qs(event,this)" class=SW href="#342">valid_diag_c</a>)&amp;<a  onClick="return qs(event,this)" class=SW href="#348">reset_d1_l</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#275">valid_diag_e</a>;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#78">next_addr_sel</a>[0] = ~<a  onClick="return qs(event,this)" class=SW href="#422">stall_valid</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#105">ibuf_full</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#348">reset_d1_l</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#275">valid_diag_e</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#499">fourth_fill_cyc_d1</a>;
+
+
+<a name="393"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#81">biu_addr_sel</a>[1]  = <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[2]|(<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>&amp;<a  onClick="return qs(event,this)" class=SW href="#533">cacheable</a>);
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#81">biu_addr_sel</a>[0]  = !<a  onClick="return qs(event,this)" class=SO href="#393">biu_addr_sel</a>[1];
+
+<span class=C>// Generation of Stall valid 
+</span><span class=C>// When a branch is taken or trap occurs and icache is busy doing a cache fill,
+</span><span class=C>// we stall the branch till the fill is done and then the branch is taken.
+</span><span class=C>// to keep track of the jump, we use signal stall_valid
+</span>
+<span class=C>// Generation of standby_d1:
+</span><span class=C>// If Powerdown occurs at idle state, after powerdown ends 
+</span><span class=C>// the state machine enters idle state again, The assertion of !icu_stall 
+</span><span class=C>// should be inhibited by asserting set_stall because no valid data is available.   
+</span><span class=C>// 
+</span><span class=C>// However if powerdown occurs on executing goto within a line , then
+</span><span class=C>// after powerdown ends the state machine enters idle state and generates 
+</span><span class=C>// !icu_stall because the pending goto has a hit. 
+</span><span class=C>// The assertion of !icu_stall should NOT be inhibited for this case.   
+</span>
+
+<a name="ic_cntl_standby_d1_reg"></a><a name="412"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_s_d">mj_s_ff_s_d</a>  standby_d1_reg (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#32">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#152">standby_d1</a>),
+                                <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SO href="#614">icu_in_powerdown</a>),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>)
+				);
+
+<a name="417"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#134">set_stall</a> =  (<a  onClick="return qs(event,this)" class=SI href="#103">iu_brtaken_e</a>) &amp; !<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a> | 
+                     (<a  onClick="return qs(event,this)" class=SW href="#422">stall_valid</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>);
+
+<span class=C>// Generation of miss due to branch or trap
+</span>
+<a name="ic_cntl_set_stall_reg"></a><a name="422"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_snr_d">mj_s_ff_snr_d</a>  set_stall_reg (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#63">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#136">stall_valid</a>),
+			        <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="#417">set_stall</a>),
+			        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>),
+			        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#113">reset_l</a>)
+				);
+
+<a name="428"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="#138">jmp_e</a>	= <a  onClick="return qs(event,this)" class=SI href="#103">iu_brtaken_e</a>;
+
+<span class=C>// Select input to tag ram
+</span><span class=C>// when there is data coming back from memory, select MAR for tag input
+</span><a name="432"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#83">icu_tag_sel</a> = <a  onClick="return qs(event,this)" class=SW href="#322">normal_ack</a> | (<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#275">valid_diag_e</a>) ;
+
+<span class=C>// select input to inst ram
+</span><span class=C>// when there is data coming back from memory, select biu data from data input
+</span><a name="436"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#82">ic_data_sel</a> = <a  onClick="return qs(event,this)" class=SW href="#322">normal_ack</a> | <a  onClick="return qs(event,this)" class=SW href="#323">error_ack</a> ;
+
+
+<span class=C>// Generation of Write Enables for RAMs/TAGs
+</span><span class=C>// write to tags during the last cycle of cache fill or during diagnostic writes to tags
+</span><span class=C>// we write to the tags in both the cycles. in the first cycle, we invalidate the
+</span><span class=C>// tag. In the second cycle , we validate the tag. This way  we avoid wierd
+</span><span class=C>// corner cases when part of new data has been written into and the transaction
+</span><span class=C>// is cancelled due to diagnostic wr/rd or error acks.
+</span>
+<a name="446"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#87">icu_itag_we</a>	=  <a  onClick="return qs(event,this)" class=SW href="#522">cache_fill_cyc</a> |  <a  onClick="return qs(event,this)" class=SW href="#289">diag_st_tag_e</a> | <a  onClick="return qs(event,this)" class=SW href="#217">qual_iu_flush_e</a>;
+<a name="447"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#88">icu_ram_we</a>[1]	=  ((<a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[2]|<a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[4]) &amp; <a  onClick="return qs(event,this)" class=SW href="#322">normal_ack</a>) |
+                           (<a  onClick="return qs(event,this)" class=SW href="#287">diag_st_cache_e</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#109">misc_wrd_sel</a>);
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#88">icu_ram_we</a>[0]	=  ((<a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[3]|<a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[5]) &amp; <a  onClick="return qs(event,this)" class=SW href="#322">normal_ack</a>) |
+			   (<a  onClick="return qs(event,this)" class=SW href="#287">diag_st_cache_e</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#109">misc_wrd_sel</a>);
+<a name="451"></a><span class=K>wire</span>    <a  onClick="return qs(event,this)" class=SW href="#451">icu_bypass</a><a  href="hierarchy-s.p9.html#icu_bypass___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>      =  <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[1] | <a  onClick="return qs(event,this)" class=SW href="#323">error_ack</a>;
+
+<a name="ic_cntl_icu_bypass_reg"></a><a name="453"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_s_d">mj_s_ff_s_d</a>  icu_bypass_reg (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#32">.out</a>(<a  onClick="return qs(event,this)" class=SO href="#89">icu_bypass_q</a>),
+                                <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="#451">icu_bypass</a>),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>)
+				);
+
+
+<span class=C>// Generation of Valid bit for Tags
+</span><span class=C>// valid bit set whenever cache fill is done or during a diagnostic write .
+</span><a name="461"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#86">icu_tag_vld</a> 	=  ((<a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[5] &amp; <a  onClick="return qs(event,this)" class=SW href="#322">normal_ack</a>) | <a  onClick="return qs(event,this)" class=SW href="#289">diag_st_tag_e</a> &amp; <a  onClick="return qs(event,this)" class=SI href="#107">iu_data_e_0</a>)&amp; !<a  onClick="return qs(event,this)" class=SW href="#217">qual_iu_flush_e</a> ;
+
+<span class=C>// Generation of icu_stall signal
+</span><span class=C>// icu_stall becomes high if
+</span><span class=C>//   . or if there's an i$ miss 
+</span><span class=C>//   . or if i$ is not idle and the first fill data is not back yet
+</span><span class=C>// * or if there is an outstanding branch/trap and
+</span><span class=C>// 	or if there is a valid diagnostic in C stage and 1 clock after reset.(no valid data)
+</span>
+
+<a name="471"></a><span class=K>wire</span>           <a  onClick="return qs(event,this)" class=SW href="#473">valid_diag_window_d1</a><a  href="hierarchy-s.p19.html#valid_diag_window_d1___ic_cntl"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="ic_cntl_valid_diag_window_flop"></a><a name="473"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_s_d">mj_s_ff_s_d</a>  valid_diag_window_flop (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#32">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#471">valid_diag_window_d1</a>),
+		                        <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="#194">valid_diag_window</a>),
+		                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>)
+					);
+
+<span class=C>// no valid data on cache miss or during cache miss transaction. but,during nc accesses, when data
+</span><span class=C>// is back, we accept it even if cache miss is indicated. Also, for cache misses when the Icache is
+</span><span class=C>// ON, when the data is written into the I$, the last cycle is ignored(fourth_fill_cyc_d1).bcos,
+</span><span class=C>// the addr is issued again and the correct data is available a cycle later.
+</span>
+<a name="483"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#85">icu_stall</a> = (<a  onClick="return qs(event,this)" class=SW href="#307">icu_miss</a> )| (!<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>| <a  onClick="return qs(event,this)" class=SW href="#194">valid_diag_window</a> | <a  onClick="return qs(event,this)" class=SW href="#422">stall_valid</a> | <a  onClick="return qs(event,this)" class=SI href="#105">ibuf_full</a> | <a  onClick="return qs(event,this)" class=SW href="#412">standby_d1</a> 
+			|!<a  onClick="return qs(event,this)" class=SW href="#348">reset_d1_l</a> | <a  onClick="return qs(event,this)" class=SW href="#499">fourth_fill_cyc_d1</a>);
+			
+
+
+<span class=C>// For generation of icu_stall (signal which informs ibuffer that data on bus to ibuffer is invalid)
+</span><span class=C>// we need to generate a signal fourth_fill_cyc_d1 which indicates that the  fourth word being 
+</span><span class=C>// written into the icache in this cycle. Thus, any hit obtained due to this 
+</span><span class=C>// new write is nullified and thus icu_stall remains valid.
+</span>
+<a name="ic_cntl_nc_fill_cyc_flop"></a><a name="493"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_snr_d">mj_s_ff_snr_d</a>  nc_fill_cyc_flop (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#63">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#140">nc_fill_cyc_d1</a>),
+					<span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="#520">nc_fill_cyc</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#422">stall_valid</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>),
+					<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#113">reset_l</a>)
+					);
+
+<a name="ic_cntl_fourth_fill_cyc_flop"></a><a name="499"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_snr_d">mj_s_ff_snr_d</a>  fourth_fill_cyc_flop (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#63">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#139">fourth_fill_cyc_d1</a>),
+					<span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="#518">fourth_fill_cyc</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="#422">stall_valid</a>),
+					<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>),
+					<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#113">reset_l</a>)
+					);
+
+<span class=C>/************** ICACHE  MISS STATE MACHINE ******************/</span>
+
+<a name="507"></a><span class=K>assign</span>          <a  onClick="return qs(event,this)" class=SW href="#129">ic_idle</a>         = <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[0];
+<a name="508"></a><span class=K>assign</span>          <a  onClick="return qs(event,this)" class=SW href="#146">nc_req</a>          = <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[1];
+<a name="509"></a><span class=K>assign</span>          <a  onClick="return qs(event,this)" class=SO href="#74">icu_req</a>         = <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[1] | <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[2];
+<a name="510"></a><span class=K>assign</span>          <a  onClick="return qs(event,this)" class=SW href="#147">ic_req</a>          = <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[2]|<a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[3]|<a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[4]|
+				  <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[5];
+
+
+<a name="514"></a><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SW href="#119">second_fill_cyc</a>	= (<a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[3] &amp; (<a  onClick="return qs(event,this)" class=SW href="#322">normal_ack</a> | <a  onClick="return qs(event,this)" class=SW href="#323">error_ack</a>));
+
+<a name="516"></a><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SW href="#120">third_fill_cyc</a>	= (<a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[4] &amp; (<a  onClick="return qs(event,this)" class=SW href="#322">normal_ack</a> | <a  onClick="return qs(event,this)" class=SW href="#323">error_ack</a>));
+
+<a name="518"></a><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SW href="#121">fourth_fill_cyc</a>	= (<a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[5] &amp; (<a  onClick="return qs(event,this)" class=SW href="#322">normal_ack</a> | <a  onClick="return qs(event,this)" class=SW href="#323">error_ack</a>));
+
+<a name="520"></a><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SW href="#122">nc_fill_cyc</a>	= <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[1] &amp; (<a  onClick="return qs(event,this)" class=SW href="#322">normal_ack</a> | <a  onClick="return qs(event,this)" class=SW href="#323">error_ack</a>) ;
+
+<a name="522"></a><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SW href="#135">cache_fill_cyc</a>  = (<a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[2]|<a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[3]|<a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[4]|
+                                   <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[5]) &amp; (<a  onClick="return qs(event,this)" class=SW href="#322">normal_ack</a> | <a  onClick="return qs(event,this)" class=SW href="#323">error_ack</a>);
+
+<a name="525"></a><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SO href="#75">icu_type</a>[0]	= 1'b0;	<span class=C>// always a load
+</span><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SO href="#75">icu_type</a>[1]	= <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[1];<span class=C>// noncacheable if icache turned off
+</span><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SO href="#75">icu_type</a>[2]	= 1'b0;		<span class=C>// for icache req - 0
+</span><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SO href="#75">icu_type</a>[3]     = 1'b0;		<span class=C>// for icache req = 0
+</span>
+<a name="530"></a><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SO href="#76">icu_size</a>[0]     = 1'b0;
+<span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SO href="#76">icu_size</a>[1]     = !<a  onClick="return qs(event,this)" class=SI href="#99">iu_psr_bm8</a>;
+
+<a name="533"></a><span class=K>assign</span> 		<a  onClick="return qs(event,this)" class=SW href="#148">cacheable</a>       = <a  onClick="return qs(event,this)" class=SW href="#177">qual_iu_psr_ice</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#99">iu_psr_bm8</a>;
+
+   
+<a name="536"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#125">next_miss_state</a>[6:0]    =       <a  onClick="return qs(event,this)" class=F href="#ic_cntl_miss_state">miss_state</a>( <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[6:0],
+					<a  onClick="return qs(event,this)" class=SW href="#194">valid_diag_window</a>,
+                                        <a  onClick="return qs(event,this)" class=SW href="#307">icu_miss</a>,
+                                        <a  onClick="return qs(event,this)" class=SW href="#322">normal_ack</a>,
+                                        <a  onClick="return qs(event,this)" class=SW href="#533">cacheable</a>,
+                                        <a  onClick="return qs(event,this)" class=SW href="#323">error_ack</a>,
+					<a  onClick="return qs(event,this)" class=SI href="#108">pcsu_powerdown</a>,
+					<a  onClick="return qs(event,this)" class=SW href="#428">jmp_e</a>,
+                                        <a  onClick="return qs(event,this)" class=SI href="#105">ibuf_full</a>);
+
+<span class=C>// triquest state_vector {ic_miss_state[6:1] ic_miss_state[0]} ICU_MISS_STATE enum ICU_MISS_STATE_ENUM
+</span><a name="ic_cntl_miss_state_reg"></a><a name="547"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p2.html#mj_s_ff_snr_d_6">mj_s_ff_snr_d_6</a>  miss_state_reg (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p2.html#1013">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#124">ic_miss_state</a>[6:1]),
+<a name="548"></a>	                                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#536">next_miss_state</a>[6:1]),
+<a name="549"></a>                               		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>),
+<a name="550"></a>                               		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#113">reset_l</a>)
+					);
+ 
+<a name="ic_cntl_miss_state_reg_0"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_s_d">mj_s_ff_s_d</a>  miss_state_reg_0 (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#32">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#124">ic_miss_state</a>[0]),
+                                <span class=SI>.in</span>((!<a  onClick="return qs(event,this)" class=SI href="#113">reset_l</a>) | <a  onClick="return qs(event,this)" class=SW href="#536">next_miss_state</a>[0]),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>)
+				);
+
+<a name="ic_cntl_ic_idle_d1_reg"></a><a name="558"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_s_d">mj_s_ff_s_d</a>  ic_idle_d1_reg (	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#32">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#141">ic_idle_d1</a>),
+			        <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a>),
+			        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#112">clk</a>)
+				);
+
+<span class=C>// **************************************************************
+</span><span class=C>//
+</span><span class=C>// Power Down Feature for ICU: 
+</span><span class=C>//
+</span><span class=C>// Most RAM cells have a pin to disable all functions
+</span><span class=C>// except for the retaining of data in order to reduce
+</span><span class=C>// power consumption.
+</span><span class=C>//
+</span><span class=C>// Normal Power Down Mode:
+</span><span class=C>//
+</span><span class=C>// ICU enters the normal power down state
+</span><span class=C>// when ICU is waiting for NC data or the missed data.
+</span><span class=C>// A signal, icram_powerdown is asserted in this state and
+</span><span class=C>// the state remains unchanged until normal_ack returns or
+</span><span class=C>// valid_diag_e occurs.
+</span><span class=C>//
+</span><span class=C>// As an option, the signal, icram_powerdown can be
+</span><span class=C>// connected to a powerdown pin of the RAM megacell.
+</span><span class=C>//
+</span><span class=C>// Standby Power Down Mode:
+</span><span class=C>//
+</span><span class=C>// State machine enters the standby power down state
+</span><span class=C>// after PCSU asserts pcsu_powerdown signals and ICU
+</span><span class=C>// completes the pending access.
+</span><span class=C>// In this state,  a signal, icu_in_powerdown will be
+</span><span class=C>// asserted to PCSU. Then PCSU shuts off the clock to ICU.
+</span><span class=C>//
+</span><span class=C>// Notes:
+</span><span class=C>//
+</span><span class=C>//   1. The powerdown pin is a registered input to RAM cell.
+</span><span class=C>//
+</span><span class=C>//   2. The powerdown signal should be set up before the 
+</span><span class=C>//      rising edge of the clock.
+</span><span class=C>//          
+</span><span class=C>//   3. All inputs except powerdown signal are ignored during
+</span><span class=C>//      the powerdown mode.
+</span><span class=C>// Diagram:
+</span><span class=C>//                    ______        ______        ______
+</span><span class=C>//   clk       ______/      \______/      \______/      \_
+</span><span class=C>//                                             
+</span><span class=C>//                                        Tsetup | Thold
+</span><span class=C>//                  _________________________    | 
+</span><span class=C>//   powerdown ____/                         \____________
+</span><span class=C>//				                 |
+</span><span class=C>//   inputs    _____________________________  _____  ____
+</span><span class=C>//                     Ignored              \/valid\/
+</span><span class=C>//             _____________________________/\_____/\____
+</span><span class=C>//
+</span><span class=C>// **************************************************************
+</span>
+<a name="613"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#94">icram_powerdown</a> = !<a  onClick="return qs(event,this)" class=SW href="#507">ic_idle</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#322">normal_ack</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#194">valid_diag_window</a>;
+<a name="614"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#93">icu_in_powerdown</a> = <a  onClick="return qs(event,this)" class=SW href="#547">ic_miss_state</a>[6] &amp; !<a  onClick="return qs(event,this)" class=SW href="#428">jmp_e</a>;
+
+
+<a name="ic_cntl_miss_state"></a><span class=K>function</span> [6:0] 	<a  onClick="return qs(event,this)" class=F href="#ic_cntl_miss_state">miss_state</a> ;
+ 
+<a name="619"></a><span class=K>input</span>   [6:0]  	<a  onClick="return qs(event,this)" class=SI href="#619">cur_state</a> ;
+<a name="620"></a><span class=K>input</span>		<a  onClick="return qs(event,this)" class=SI href="#620">valid_diag_window</a>;
+<a name="621"></a><span class=K>input</span>          	<a  onClick="return qs(event,this)" class=SI href="#621">icu_miss</a> ;
+<a name="622"></a><span class=K>input</span>          	<a  onClick="return qs(event,this)" class=SI href="#622">normal_ack</a>;
+<a name="623"></a><span class=K>input</span>          	<a  onClick="return qs(event,this)" class=SI href="#623">cacheable</a> ;
+<a name="624"></a><span class=K>input</span>          	<a  onClick="return qs(event,this)" class=SI href="#624">error_ack</a> ;
+<a name="625"></a><span class=K>input</span>          	<a  onClick="return qs(event,this)" class=SI href="#625">pcsu_powerdown</a>;
+<a name="626"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="#626">jmp_e</a>;
+<a name="627"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="#627">ibuf_full</a>;
+ 
+<a name="629"></a><span class=K>reg</span>     [6:0]  	<a  onClick="return qs(event,this)" class=SR href="#645">next_state</a>;
+
+<span class=C>// State Encoding
+</span><span class=K>parameter</span> <span class=C>// triquest enum ICU_MISS_STATE_ENUM
+</span><a name="633"></a>        <a  onClick="return qs(event,this)" class=PA href="#633">IDLE</a>            = 7'b0000001,
+<a name="634"></a>	<a  onClick="return qs(event,this)" class=PA href="#634">NC_REQ_STATE</a>	= 7'b0000010,
+<a name="635"></a>        <a  onClick="return qs(event,this)" class=PA href="#635">REQ_STATE</a>       = 7'b0000100,
+<a name="636"></a>        <a  onClick="return qs(event,this)" class=PA href="#636">FILL_2ND_WD</a>     = 7'b0001000,
+<a name="637"></a>        <a  onClick="return qs(event,this)" class=PA href="#637">REQ_STATE2</a>      = 7'b0010000,
+<a name="638"></a>        <a  onClick="return qs(event,this)" class=PA href="#638">FILL_4TH_WD</a>     = 7'b0100000,
+<a name="639"></a>        <a  onClick="return qs(event,this)" class=PA href="#639">STANDBY_PWR_DN</a>  = 7'b1000000; 
+<span class=K>begin</span>
+ 
+<span class=K>case</span>    (<a  onClick="return qs(event,this)" class=SI href="#619">cur_state</a>)     <span class=C>// synopsys parallel_case
+</span>        <a  onClick="return qs(event,this)" class=PA href="#633">IDLE</a>:   <span class=K>begin</span>
+                <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#625">pcsu_powerdown</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#626">jmp_e</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="#620">valid_diag_window</a>) <span class=K>begin</span>
+<a name="645"></a>                <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#639">STANDBY_PWR_DN</a>;
+                <span class=K>end</span>
+                <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#620">valid_diag_window</a> | <a  onClick="return qs(event,this)" class=SI href="#627">ibuf_full</a> | <a  onClick="return qs(event,this)" class=SI href="#626">jmp_e</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#619">cur_state</a>;
+                <span class=K>end</span>
+                <span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#621">icu_miss</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="#623">cacheable</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#634">NC_REQ_STATE</a> ;
+                <span class=K>end</span>
+		<span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#621">icu_miss</a>&amp;<a  onClick="return qs(event,this)" class=SI href="#623">cacheable</a>) <span class=K>begin</span>
+		<a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#635">REQ_STATE</a>;
+		<span class=K>end</span>
+                <span class=K>else</span>    <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#619">cur_state</a> ;
+        <span class=K>end</span>
+
+	<a  onClick="return qs(event,this)" class=PA href="#634">NC_REQ_STATE</a>: <span class=K>begin</span>
+                <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#622">normal_ack</a>| <a  onClick="return qs(event,this)" class=SI href="#624">error_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#633">IDLE</a> ;
+                <span class=K>end</span>
+                <span class=K>else</span>    <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#619">cur_state</a> ;
+        <span class=K>end</span>
+
+        <a  onClick="return qs(event,this)" class=PA href="#635">REQ_STATE</a>: <span class=K>begin</span>
+                <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#622">normal_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#636">FILL_2ND_WD</a>;
+                <span class=K>end</span>
+                <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#624">error_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#633">IDLE</a> ;
+                <span class=K>end</span>
+                <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#619">cur_state</a> ;
+ 	<span class=K>end</span>
+ 
+        <a  onClick="return qs(event,this)" class=PA href="#636">FILL_2ND_WD</a>: <span class=K>begin</span>
+                <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#622">normal_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#637">REQ_STATE2</a>;
+                <span class=K>end</span>
+                <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#624">error_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#633">IDLE</a> ;
+                <span class=K>end</span>
+                <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#619">cur_state</a> ;
+        <span class=K>end</span>
+
+        <a  onClick="return qs(event,this)" class=PA href="#637">REQ_STATE2</a>: <span class=K>begin</span>
+                <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#622">normal_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#638">FILL_4TH_WD</a>;
+                <span class=K>end</span>
+                <span class=K>else</span> <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#624">error_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#633">IDLE</a> ;
+                <span class=K>end</span>
+                <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#619">cur_state</a> ;
+        <span class=K>end</span>
+
+        <a  onClick="return qs(event,this)" class=PA href="#638">FILL_4TH_WD</a>: <span class=K>begin</span>
+                <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#622">normal_ack</a>| <a  onClick="return qs(event,this)" class=SI href="#624">error_ack</a>) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#633">IDLE</a>;
+                <span class=K>end</span>
+                <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#619">cur_state</a> ;
+        <span class=K>end</span>
+
+        <a  onClick="return qs(event,this)" class=PA href="#639">STANDBY_PWR_DN</a>: <span class=K>begin</span>
+                <span class=K>if</span>(!<a  onClick="return qs(event,this)" class=SI href="#625">pcsu_powerdown</a> | <a  onClick="return qs(event,this)" class=SI href="#626">jmp_e</a> ) <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#633">IDLE</a>;
+                <span class=K>end</span>
+                <span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#639">STANDBY_PWR_DN</a>;
+        <span class=K>end</span>
+
+        <span class=K>default</span>:        <a  onClick="return qs(event,this)" class=SR href="#629">next_state</a> = 7'bx;
+
+<span class=K>endcase</span>
+<a  onClick="return qs(event,this)" class=F href="#ic_cntl_miss_state">miss_state</a> = <a  onClick="return qs(event,this)" class=SR href="#645">next_state</a> ;
+<span class=K>end</span>
+<span class=K>endfunction</span>
+
+<span class=K>endmodule</span>
+
+<span class=C>// triquest fsm_end
+</span>
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:16 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/icu/rtl/ic_cntl.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

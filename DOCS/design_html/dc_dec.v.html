@@ -1,0 +1,1119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/dcu/rtl/dc_dec.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "dc_dec.v.p2.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<center><table class=NB cols=2 nosave><tr><td align="center"><font color="#808080">1</font></td><td align="center"><a  href="dc_dec.v.p2.html">2</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+<a name="dc_dec"></a><a  href="dcctl.v.html#dcctl_dc_dec"><IMG alt="[Up: dcctl dc_dec]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>dc_dec</span><a  href="hierarchy-m.html#dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a> ( 
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#116">iu_valid_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#117">iu_stall</a>,	
+    		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#118">iu_data_vld</a>,
+    		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#119">smu_data_vld</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#120">smu_stall</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#154">dcu_type</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#155">dcu_size</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#153">dcu_req</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#121">iu_ld_st_e</a>, 
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#122">normal_ack</a>, 
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#123">error_ack</a>, 
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#124">store_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#125">miss_store</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#126">dc_inst_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#127">smu_na_st_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#128">iu_na_st_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#132">non_cacheable_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#130">nc_xaction</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#134">stall_valid</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#138">swap_sel_7_0</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#139">swap_sel_15_8</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#140">swap_sel_23_16</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#141">swap_sel_31_24</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#142">merge_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#136">iu_flush_inv_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#135">iu_flush_cmp_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#137">iu_flush_index_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#143">dcu_ram_we</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#144">dcu_bypass</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#145">algn_sign_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#146">algn_sel_7_0</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#147">algn_sel_15_8</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#148">algn_sel_23_16</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#149">algn_sel_31_24</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#150">algn_size_sel</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#151">req_outstanding</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#133">diagnostic_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#152">dtag_rd_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#157">special_raw_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#158">diag_rdy_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#159">tag_st_rdy_e</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#160">nc_write_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#131">zeroline_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#161">fill_byte</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#165">dcu_pwrdown</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#166">dcu_in_powerdown</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#163">dcu_err_ack</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#164">smu_na_st_fill</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#167">iu_req_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#168">smu_req_c</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#169">dcu_perf_sgnl</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#156">iu_special_e</a>,
+
+		<span class=C>// INPUTS
+</span>		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#171">dcu_hit0</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#172">dcu_hit1</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#188">biu_dcu_ack</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#178">cf_addr</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#179">dcu_addr_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#187">dcu_hit_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#174">pcsu_powerdown</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#177">iu_psr_dce_raw</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#180">wb_idle</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#181">dc_idle</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#185">zeroline_busy</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#182">repl_busy</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#183">first_fill_cyc</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#184">fill_cyc_active</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#186">dcu_miss_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#175">dc_req</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#176">wb_req</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#189">miss_wait</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#190">iu_trap_c</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#191">kill_inst_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#192">iu_raw_inst_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#193">iu_raw_zero_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#195">iu_raw_flush_inv_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#196">iu_raw_flush_cmp_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#197">iu_raw_flush_index_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#194">iu_raw_diag_e</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#198">smu_raw_ld</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#199">smu_raw_st</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#200">smu_na_st</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#201">smu_prty</a>,
+	  	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#162">dcu_smu_st</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>,	
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#205">sin</a>,
+		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#204">so</a>,
+		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#206">sm</a>	
+	);
+<a name="116"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#511">iu_valid_c</a><a  href="hierarchy-s.p9.html#iu_valid_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="117"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.p2.html#1013">iu_stall</a><a  href="hierarchy-s.p9.html#iu_stall___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Stall the IU pipe due to dcache busy,miss
+</span><a name="118"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.p2.html#1030">iu_data_vld</a><a  href="hierarchy-s.p9.html#iu_data_vld___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data on the dcu_data bus is valid
+</span><a name="119"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.p2.html#1031">smu_data_vld</a><a  href="hierarchy-s.p16.html#smu_data_vld___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data on the dcu_data bus is valid
+</span><a name="120"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.p2.html#1033">smu_stall</a><a  href="hierarchy-s.p16.html#smu_stall___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// stall the smu pipe due to dcahe busy,miss
+</span><a name="121"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#379">iu_ld_st_e</a><a  href="hierarchy-s.p9.html#iu_ld_st_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// valid ld/st inst in E stage
+</span><a name="122"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#382">normal_ack</a><a  href="hierarchy-s.p12.html#normal_ack___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// transaction is a valid one
+</span><a name="123"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#383">error_ack</a><a  href="hierarchy-s.p5.html#error_ack___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// transaction is an error one
+</span><a name="124"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#384">store_c</a><a  href="hierarchy-s.p16.html#store_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Valid store in C stage 
+</span><a name="125"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#386">miss_store</a><a  href="hierarchy-s.p11.html#miss_store___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// current miss is a store
+</span><a name="126"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#398">dc_inst_c</a><a  href="hierarchy-s.p4.html#dc_inst_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Valid dcache related inst in C stage
+</span><a name="127"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#541">smu_na_st_c</a><a  href="hierarchy-s.p16.html#smu_na_st_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// dcu non_allocated store in c (smu )
+</span><a name="128"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#503">iu_na_st_c</a><a  href="hierarchy-s.p9.html#iu_na_st_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Non allocating IU store
+</span>
+<a name="130"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#387">nc_xaction</a><a  href="hierarchy-s.p12.html#nc_xaction___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// NC transcation
+</span><a name="131"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#562">zeroline_c</a><a  href="hierarchy-s.p21.html#zeroline_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Zeroline instruction in C stage
+</span><a name="132"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#391">non_cacheable_c</a><a  href="hierarchy-s.p12.html#non_cacheable_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// NC inst in C stage
+</span><a name="133"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#420">diagnostic_c</a><a  href="hierarchy-s.p4.html#diagnostic_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// diagnostic access in C stage
+</span><a name="134"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#532">stall_valid</a><a  href="hierarchy-s.p16.html#stall_valid___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// recirculate the address/data reg in C stage
+</span><a name="135"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#573">iu_flush_cmp_c</a><a  href="hierarchy-s.p9.html#iu_flush_cmp_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// flush cmp in C stage
+</span><a name="136"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#572">iu_flush_inv_c</a><a  href="hierarchy-s.p9.html#iu_flush_inv_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// flush invalidate in C stage
+</span><a name="137"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#574">iu_flush_index_c</a><a  href="hierarchy-s.p9.html#iu_flush_index_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// flush index in C stage
+</span><a name="138"></a><span class=K>output</span>	[2:0]		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#798">swap_sel_7_0</a><a  href="hierarchy-s.p16.html#swap_sel_7_0___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// mux selects to swap write data[7:0]
+</span><a name="139"></a><span class=K>output</span>  [2:0]           <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#793">swap_sel_15_8</a><a  href="hierarchy-s.p16.html#swap_sel_15_8___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// mux selects to swap write data[15:8]
+</span><a name="140"></a><span class=K>output</span>  [2:0]           <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#788">swap_sel_23_16</a><a  href="hierarchy-s.p16.html#swap_sel_23_16___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// mux selects to swap write data[23:16]
+</span><a name="141"></a><span class=K>output</span>  [2:0]          	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#783">swap_sel_31_24</a><a  href="hierarchy-s.p16.html#swap_sel_31_24___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// mux selects to swap write data[31:24]
+</span><a name="142"></a><span class=K>output</span>	[3:0]		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#813">merge_sel</a><a  href="hierarchy-s.p11.html#merge_sel___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// mux select to sel fill data or writedata
+</span><a name="143"></a><span class=K>output</span>	[3:0]		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#841">dcu_ram_we</a><a  href="hierarchy-s.p4.html#dcu_ram_we___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Write enables to the dcram
+</span><a name="144"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#844">dcu_bypass</a><a  href="hierarchy-s.p4.html#dcu_bypass___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// bypass data from the dcram
+</span><a name="145"></a><span class=K>output</span>	[4:0]		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#877">algn_sign_sel</a><a  href="hierarchy-s.html#algn_sign_sel___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Aligner mux select - selects sign extn
+</span><a name="146"></a><span class=K>output</span>	[3:0]		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#910">algn_sel_7_0</a><a  href="hierarchy-s.html#algn_sel_7_0___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// aligner mux select - select data[7:0]
+</span><a name="147"></a><span class=K>output</span>	[3:0]		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#923">algn_sel_15_8</a><a  href="hierarchy-s.html#algn_sel_15_8___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// aligner mux select - select data[15:8]
+</span><a name="148"></a><span class=K>output</span>  	        <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#933">algn_sel_23_16</a><a  href="hierarchy-s.html#algn_sel_23_16___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// aligner mux select - select data[23:16]
+</span><a name="149"></a><span class=K>output</span>             	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#936">algn_sel_31_24</a><a  href="hierarchy-s.html#algn_sel_31_24___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;         <span class=C>// aligner mux select - select data[31:24]
+</span><a name="150"></a><span class=K>output</span>	[1:0]		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#939">algn_size_sel</a><a  href="hierarchy-s.html#algn_size_sel___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// aligner mux select
+</span><a name="151"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a><a  href="hierarchy-s.p15.html#req_outstanding___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// there is a memory request outstanding
+</span><a name="152"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#584">dtag_rd_c</a><a  href="hierarchy-s.p4.html#dtag_rd_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Diagnostic read access of tags in C stage
+</span><a name="153"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#754">dcu_req</a><a  href="hierarchy-s.p4.html#dcu_req___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Request memory on cache miss
+</span><a name="154"></a><span class=K>output</span>	[3:0]		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#746">dcu_type</a><a  href="hierarchy-s.p4.html#dcu_type___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Type of transaction requested from memory
+</span><a name="155"></a><span class=K>output</span>	[1:0]		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#757">dcu_size</a><a  href="hierarchy-s.p4.html#dcu_size___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Size of transaction requested from memory
+</span><a name="156"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#356">iu_special_e</a><a  href="hierarchy-s.p9.html#iu_special_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// special inst in E
+</span><a name="157"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#277">special_raw_e</a><a  href="hierarchy-s.p16.html#special_raw_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// RAW special inst in E
+</span><a name="158"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#444">diag_rdy_e</a><a  href="hierarchy-s.p4.html#diag_rdy_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// diagnostic inst ready to be executed  in E
+</span><a name="159"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#440">tag_st_rdy_e</a><a  href="hierarchy-s.p17.html#tag_st_rdy_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// diagnostic tag store ready to be executed in E
+</span><a name="160"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#418">nc_write_c</a><a  href="hierarchy-s.p12.html#nc_write_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// noncacheable write in C stage
+</span><a name="161"></a><span class=K>output</span>	[1:0]		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#713">fill_byte</a><a  href="hierarchy-s.p6.html#fill_byte___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// fill word offset sent to memory
+</span><a name="162"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#547">dcu_smu_st</a><a  href="hierarchy-s.p4.html#dcu_smu_st___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// smu store in c stage
+</span><a name="163"></a><span class=K>output</span>	[2:0]		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#952">dcu_err_ack</a><a  href="hierarchy-s.p4.html#dcu_err_ack___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Data access Exception
+</span><a name="164"></a><span class=K>output</span> 		        <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#636">smu_na_st_fill</a><a  href="hierarchy-s.p16.html#smu_na_st_fill___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;        <span class=C>// fill cycle for nonallocate smu store miss 
+</span><a name="165"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#973">dcu_pwrdown</a><a  href="hierarchy-s.p4.html#dcu_pwrdown___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Dcache in powerdown mode (includes internal &amp; pscu powerdown)
+</span><a name="166"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#981">dcu_in_powerdown</a><a  href="hierarchy-s.p4.html#dcu_in_powerdown___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Inform pcsu that dcu is in powerdown mode.
+</span><a name="167"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#396">iu_req_c</a><a  href="hierarchy-s.p9.html#iu_req_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="168"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#397">smu_req_c</a><a  href="hierarchy-s.p16.html#smu_req_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="169"></a><span class=K>output</span>	[2:0]		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.p2.html#1053">dcu_perf_sgnl</a><a  href="hierarchy-s.p4.html#dcu_perf_sgnl___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="171"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#290">dcu_hit0</a><a  href="hierarchy-s.p4.html#dcu_hit0___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="172"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#291">dcu_hit1</a><a  href="hierarchy-s.p4.html#dcu_hit1___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="174"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#293">pcsu_powerdown</a><a  href="hierarchy-s.p14.html#pcsu_powerdown___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Go into powerdown mode
+</span><a name="175"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#294">dc_req</a><a  href="hierarchy-s.p4.html#dc_req___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// Load requested from memory
+</span><a name="176"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#295">wb_req</a><a  href="hierarchy-s.p20.html#wb_req___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// write requested from memory
+</span><a name="177"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#296">iu_psr_dce_raw</a><a  href="hierarchy-s.p9.html#iu_psr_dce_raw___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Dcache is disable in PSR
+</span><a name="178"></a><span class=K>input</span>	[1:0]		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#297">cf_addr</a><a  href="hierarchy-s.p3.html#cf_addr___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// word offset of cache fill line
+</span><a name="179"></a><span class=K>input</span>	[1:0]		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#298">dcu_addr_c</a><a  href="hierarchy-s.p4.html#dcu_addr_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// word offset of inst in C stage
+</span><a name="180"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#299">wb_idle</a><a  href="hierarchy-s.p20.html#wb_idle___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;		<span class=C>// Writeback state m/c is in idle state
+</span><a name="181"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#300">dc_idle</a><a  href="hierarchy-s.p4.html#dc_idle___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Miss state m/c is in idle state
+</span><a name="182"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#301">repl_busy</a><a  href="hierarchy-s.p15.html#repl_busy___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Replacing 1st half line in progress
+</span><a name="183"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#302">first_fill_cyc</a><a  href="hierarchy-s.p6.html#first_fill_cyc___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// first cache fill cycle
+</span><a name="184"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#303">fill_cyc_active</a><a  href="hierarchy-s.p6.html#fill_cyc_active___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// current cycle is a cache fill cycle
+</span><a name="185"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#304">zeroline_busy</a><a  href="hierarchy-s.p21.html#zeroline_busy___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// zeroline instruction in progress
+</span><a name="186"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#305">dcu_miss_c</a><a  href="hierarchy-s.p4.html#dcu_miss_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Cache miss in C stage
+</span><a name="187"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#306">dcu_hit_c</a><a  href="hierarchy-s.p4.html#dcu_hit_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="188"></a><span class=K>input</span>	[1:0]		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#307">biu_dcu_ack</a><a  href="hierarchy-s.p2.html#biu_dcu_ack___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Ack bus from Biu
+</span><a name="189"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#308">miss_wait</a><a  href="hierarchy-s.p11.html#miss_wait___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// the state in which pipe needs to wait till it gets data
+</span><a name="190"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#309">iu_trap_c</a><a  href="hierarchy-s.p9.html#iu_trap_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Trap in C stage
+</span><a name="191"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#310">kill_inst_e</a><a  href="hierarchy-s.p10.html#kill_inst_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// kill the instruction in e stage
+</span><a name="192"></a><span class=K>input</span>	[7:0]		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#311">iu_raw_inst_e</a><a  href="hierarchy-s.p9.html#iu_raw_inst_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;		<span class=C>// Normal ld/st instruction in E stage
+</span><a name="193"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#312">iu_raw_zero_e</a><a  href="hierarchy-s.p9.html#iu_raw_zero_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Zero line instruction in E stage
+</span><a name="194"></a><span class=K>input</span>	[3:0]		<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#313">iu_raw_diag_e</a><a  href="hierarchy-s.p9.html#iu_raw_diag_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// diagnostic read in E stage
+</span><a name="195"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#315">iu_raw_flush_inv_e</a><a  href="hierarchy-s.p9.html#iu_raw_flush_inv_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="196"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#314">iu_raw_flush_cmp_e</a><a  href="hierarchy-s.p9.html#iu_raw_flush_cmp_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Compare flush inst in E stage
+</span><a name="197"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#316">iu_raw_flush_index_e</a><a  href="hierarchy-s.p9.html#iu_raw_flush_index_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Indexed flush inst in E stage
+</span><a name="198"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#317">smu_raw_ld</a><a  href="hierarchy-s.p16.html#smu_raw_ld___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;		<span class=C>// ld request from smu
+</span><a name="199"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#318">smu_raw_st</a><a  href="hierarchy-s.p16.html#smu_raw_st___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;		<span class=C>// st request from smu
+</span><a name="200"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#292">smu_na_st</a><a  href="hierarchy-s.p16.html#smu_na_st___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Non allocating store from smu
+</span><a name="201"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#319">smu_prty</a><a  href="hierarchy-s.p16.html#smu_prty___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// higher priority to smu. mask off iu request
+</span><a name="202"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#320">clk</a><a  href="hierarchy-s.p3.html#clk___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;
+<a name="203"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dcctl.v.html#321">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="204"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#204">so</a><a  href="hierarchy-s.p16.html#so___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="205"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#205">sin</a><a  href="hierarchy-s.p16.html#sin___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="206"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#206">sm</a><a  href="hierarchy-s.p16.html#sm___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+
+
+<span class=C>// Local Variables
+</span><a name="210"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a><a  href="hierarchy-s.p9.html#iu_miss_inst___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="211"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a><a  href="hierarchy-s.p9.html#iu_inst_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="212"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#602">iu_miss_stall_inst</a><a  href="hierarchy-s.p9.html#iu_miss_stall_inst___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="213"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a><a  href="hierarchy-s.p16.html#smu_miss_inst___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="214"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#616">smu_miss_stall_inst</a><a  href="hierarchy-s.p16.html#smu_miss_stall_inst___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="215"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#534">smu_inst_c</a><a  href="hierarchy-s.p16.html#smu_inst_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="216"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#580">iu_diag_c</a><a  href="hierarchy-s.p9.html#iu_diag_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="217"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#371">squash_iu_inst</a><a  href="hierarchy-s.p16.html#squash_iu_inst___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="218"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#358">iu_flush_index_e</a><a  href="hierarchy-s.p9.html#iu_flush_index_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="219"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#359">iu_flush_cmp_e</a><a  href="hierarchy-s.p9.html#iu_flush_cmp_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="220"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#360">iu_flush_inv_e</a><a  href="hierarchy-s.p9.html#iu_flush_inv_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="221"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#434">dcu_no_inst</a><a  href="hierarchy-s.p4.html#dcu_no_inst___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="222"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#351">iu_diag_e</a><a  href="hierarchy-s.p9.html#iu_diag_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="223"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#362">smu_ld</a><a  href="hierarchy-s.p16.html#smu_ld___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="224"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#363">smu_st</a><a  href="hierarchy-s.p16.html#smu_st___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="225"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#380">ld_st_e</a><a  href="hierarchy-s.p10.html#ld_st_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="226"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#381">ld_st_c</a><a  href="hierarchy-s.p10.html#ld_st_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="227"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#508">iu_ld_c</a><a  href="hierarchy-s.p9.html#iu_ld_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="228"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a><a  href="hierarchy-s.p9.html#iu_st_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="229"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#538">smu_ld_c</a><a  href="hierarchy-s.p16.html#smu_ld_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="230"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a><a  href="hierarchy-s.p16.html#smu_st_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="231"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#506">iu_nc_c</a><a  href="hierarchy-s.p9.html#iu_nc_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="232"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#392">non_cacheable_e</a><a  href="hierarchy-s.p12.html#non_cacheable_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#131">zeroline_c</a>;
+<a name="234"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#568">iu_flush_c</a><a  href="hierarchy-s.p9.html#iu_flush_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="235"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#402">iu_ld_st_c</a><a  href="hierarchy-s.p9.html#iu_ld_st_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="236"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#403">smu_ld_st_c</a><a  href="hierarchy-s.p16.html#smu_ld_st_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="237"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#404">smu_ld_st</a><a  href="hierarchy-s.p16.html#smu_ld_st___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="238"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#405">iu_anyinst_e</a><a  href="hierarchy-s.p9.html#iu_anyinst_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="239"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#409">iu_anyinst_e_smu</a><a  href="hierarchy-s.p9.html#iu_anyinst_e_smu___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="240"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#350">iu_inst_e</a><a  href="hierarchy-s.p9.html#iu_inst_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="241"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#447">smu_inst_e</a><a  href="hierarchy-s.p16.html#smu_inst_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="242"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#488">iu_ready</a><a  href="hierarchy-s.p9.html#iu_ready___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="243"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#526">smu_ready</a><a  href="hierarchy-s.p16.html#smu_ready___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="244"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#597">iu_miss_stall_valid</a><a  href="hierarchy-s.p9.html#iu_miss_stall_valid___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="245"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#611">smu_miss_stall_valid</a><a  href="hierarchy-s.p16.html#smu_miss_stall_valid___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="246"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#596">iu_miss_stall_set</a><a  href="hierarchy-s.p9.html#iu_miss_stall_set___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="247"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#610">smu_miss_stall_set</a><a  href="hierarchy-s.p16.html#smu_miss_stall_set___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="248"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#718">iu_miss_sustain</a><a  href="hierarchy-s.p9.html#iu_miss_sustain___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="249"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#489">new_iu_inst_e</a><a  href="hierarchy-s.p12.html#new_iu_inst_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="250"></a><span class=K>wire</span>	[7:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#491">iu_inst_valid_e</a><a  href="hierarchy-s.p9.html#iu_inst_valid_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="251"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#504">iu_oppend_c</a><a  href="hierarchy-s.p9.html#iu_oppend_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="252"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#505">iu_sign_c</a><a  href="hierarchy-s.p9.html#iu_sign_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="253"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#509">iu_size_c</a><a  href="hierarchy-s.p9.html#iu_size_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="254"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#429">iu_size_e</a><a  href="hierarchy-s.p9.html#iu_size_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="255"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#719">smu_miss_sustain</a><a  href="hierarchy-s.p16.html#smu_miss_sustain___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="256"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#527">new_smu_inst</a><a  href="hierarchy-s.p12.html#new_smu_inst___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="257"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#529">smu_inst_valid_e</a><a  href="hierarchy-s.p16.html#smu_inst_valid_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="258"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#558">new_zeroline_e</a><a  href="hierarchy-s.p12.html#new_zeroline_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="259"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#567">new_flush_e</a><a  href="hierarchy-s.p12.html#new_flush_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="260"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#579">new_diag_e</a><a  href="hierarchy-s.p12.html#new_diag_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="261"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#777">wr_byte</a><a  href="hierarchy-s.p20.html#wr_byte___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="262"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#779">wr_word</a><a  href="hierarchy-s.p20.html#wr_word___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="263"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#778">wr_short</a><a  href="hierarchy-s.p20.html#wr_short___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="264"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#780">wr_oppend</a><a  href="hierarchy-s.p20.html#wr_oppend___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="265"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#806">smu_wr_miss</a><a  href="hierarchy-s.p16.html#smu_wr_miss___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="266"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#807">iu_wr_miss</a><a  href="hierarchy-s.p9.html#iu_wr_miss___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="267"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#830">word_we</a><a  href="hierarchy-s.p20.html#word_we___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="268"></a><span class=K>wire</span>	[3:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#832">hit_we</a><a  href="hierarchy-s.p8.html#hit_we___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="269"></a><span class=K>wire</span>	[6:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#864">align_inst</a><a  href="hierarchy-s.html#align_inst___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="270"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#865">align_smu_inst</a><a  href="hierarchy-s.html#align_smu_inst___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="271"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a><a  href="hierarchy-s.html#algn_addr___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="272"></a><span class=K>wire</span>	[1:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#868">algn_size</a><a  href="hierarchy-s.html#algn_size___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="273"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#869">algn_sign</a><a  href="hierarchy-s.html#algn_sign___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="274"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a><a  href="hierarchy-s.html#algn_oppend___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="275"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a><a  href="hierarchy-s.html#algn_iu_ld___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="276"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#872">algn_byte</a><a  href="hierarchy-s.html#algn_byte___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="277"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#873">algn_short</a><a  href="hierarchy-s.html#algn_short___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="278"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#669">iu_miss_ld</a><a  href="hierarchy-s.p9.html#iu_miss_ld___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="279"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#670">smu_miss_ld</a><a  href="hierarchy-s.p16.html#smu_miss_ld___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="280"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#874">algn_word</a><a  href="hierarchy-s.html#algn_word___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="281"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#691">iu_st_pending</a><a  href="hierarchy-s.p9.html#iu_st_pending___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="282"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#700">smu_st_pending</a><a  href="hierarchy-s.p16.html#smu_st_pending___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="283"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#689">iu_st_pending_set</a><a  href="hierarchy-s.p9.html#iu_st_pending_set___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="284"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#697">smu_st_pending_set</a><a  href="hierarchy-s.p16.html#smu_st_pending_set___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="285"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#875">algn_smu_ld</a><a  href="hierarchy-s.html#algn_smu_ld___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#135">iu_flush_cmp_c</a>;
+<span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#137">iu_flush_index_c</a>;
+<span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#136">iu_flush_inv_c</a>;
+<a name="289"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#424">iu_ld_e</a><a  href="hierarchy-s.p9.html#iu_ld_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="290"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#425">iu_st_e</a><a  href="hierarchy-s.p9.html#iu_st_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="291"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#426">iu_nc_e</a><a  href="hierarchy-s.p9.html#iu_nc_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="292"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#427">iu_oppend_e</a><a  href="hierarchy-s.p9.html#iu_oppend_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="293"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#430">iu_sign_e</a><a  href="hierarchy-s.p9.html#iu_sign_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#159">tag_st_rdy_e</a>;
+<a name="295"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#437">tag_st_rdy_e_in</a><a  href="hierarchy-s.p17.html#tag_st_rdy_e_in___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="296"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#443">tag_ld_rdy_e</a><a  href="hierarchy-s.p17.html#tag_ld_rdy_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="297"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#441">ram_st_rdy_e</a><a  href="hierarchy-s.p15.html#ram_st_rdy_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="298"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#436">ram_ld_rdy_e</a><a  href="hierarchy-s.p15.html#ram_ld_rdy_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="299"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#421">iu_flush_e</a><a  href="hierarchy-s.p9.html#iu_flush_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="300"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#858">first_fill_cyc_d1</a><a  href="hierarchy-s.p6.html#first_fill_cyc_d1___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="301"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#808">ms_byte</a><a  href="hierarchy-s.p11.html#ms_byte___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="302"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#810">ms_word</a><a  href="hierarchy-s.p11.html#ms_word___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="303"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#349">iu_nc_e_raw</a><a  href="hierarchy-s.p9.html#iu_nc_e_raw___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="304"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#364">smu_nc_e</a><a  href="hierarchy-s.p16.html#smu_nc_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="305"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#540">smu_nc_c</a><a  href="hierarchy-s.p16.html#smu_nc_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="306"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#707">noncacheable_c2</a><a  href="hierarchy-s.p12.html#noncacheable_c2___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="307"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#809">ms_short</a><a  href="hierarchy-s.p11.html#ms_short___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#133">diagnostic_c</a>;
+<a name="309"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#355">diagnostic_e</a><a  href="hierarchy-s.p4.html#diagnostic_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="310"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#423">diag_ld_c</a><a  href="hierarchy-s.p4.html#diag_ld_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="311"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#401">iu_inst_c_vld</a><a  href="hierarchy-s.p9.html#iu_inst_c_vld___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="312"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#721">iu_miss_sustain_d1</a><a  href="hierarchy-s.p9.html#iu_miss_sustain_d1___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="313"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#357">iu_zero_e</a><a  href="hierarchy-s.p9.html#iu_zero_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="314"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#385">any_store_c</a><a  href="hierarchy-s.html#any_store_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="315"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#549">smu_stall_st</a><a  href="hierarchy-s.p16.html#smu_stall_st___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="316"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#608">iu_miss_stall_ld</a><a  href="hierarchy-s.p9.html#iu_miss_stall_ld___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="317"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#968">int_pwrdown</a><a  href="hierarchy-s.p9.html#int_pwrdown___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="318"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#978">set_pwrdown</a><a  href="hierarchy-s.p16.html#set_pwrdown___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="319"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#948">mem_error</a><a  href="hierarchy-s.p11.html#mem_error___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="320"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#949">io_error</a><a  href="hierarchy-s.p9.html#io_error___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="321"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#950">async_err</a><a  href="hierarchy-s.html#async_err___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="322"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#448">raw_iu_ld_e</a><a  href="hierarchy-s.p15.html#raw_iu_ld_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="323"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#642">smu_na_st_miss_cyc</a><a  href="hierarchy-s.p16.html#smu_na_st_miss_cyc___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#128">iu_na_st_c</a>;
+<a name="325"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#428">iu_na_st_e</a><a  href="hierarchy-s.p9.html#iu_na_st_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="326"></a><span class=K>wire</span>  		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#628">smu_na_st_miss_c</a><a  href="hierarchy-s.p16.html#smu_na_st_miss_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#630">smu_na_st_miss_c1</a><a  href="hierarchy-s.p16.html#smu_na_st_miss_c1___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="327"></a><span class=K>wire</span> 		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#116">iu_valid_c</a>,<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#528">smu_miss_stall_sel</a><a  href="hierarchy-s.p16.html#smu_miss_stall_sel___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#654">smu_recirculating_c</a><a  href="hierarchy-s.p16.html#smu_recirculating_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="328"></a><span class=K>wire</span>	[2:0]	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.p2.html#1049">dcu_perf_mon</a><a  href="hierarchy-s.p4.html#dcu_perf_mon___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="329"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#490">iu_miss_stall_sel</a><a  href="hierarchy-s.p9.html#iu_miss_stall_sel___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="330"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#494">iu_recirculating_e</a><a  href="hierarchy-s.p9.html#iu_recirculating_e___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="331"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#648">iu_recirculating_c</a><a  href="hierarchy-s.p9.html#iu_recirculating_c___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="332"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#435">ram_st_rdy_e_in</a><a  href="hierarchy-s.p15.html#ram_st_rdy_e_in___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="333"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#559">zeroline_c_raw</a><a  href="hierarchy-s.p21.html#zeroline_c_raw___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#390">non_cacheable_c_vld</a><a  href="hierarchy-s.p12.html#non_cacheable_c_vld___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.p2.html#1012">cache_miss</a><a  href="hierarchy-s.p3.html#cache_miss___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.p2.html#1014">qualify_miss</a><a  href="hierarchy-s.p15.html#qualify_miss___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.p2.html#1027">stall_pipe</a><a  href="hierarchy-s.p16.html#stall_pipe___dc_dec"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+
+
+<span class=C>// Need to store cache enable/disable for a transaction.
+</span><span class=C>// This way, we take care of situation when iu_psr_dce changes
+</span><span class=C>// in betwn transaction.
+</span><span class=C>// We can merge hardware and software noncacheables.
+</span><span class=C>// ie: iu_psr_dce and nc instructions. that way, both
+</span><span class=C>// will flow thru the control pipe in similar fashion.
+</span>
+<span class=C>// Filtering of Incoming Instructions
+</span><span class=C>// Control signals needed to be squashed when there is an
+</span><span class=C>// outstanding request from the same requestor. 
+</span>
+<a name="349"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#303">iu_nc_e_raw</a>     =       <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#192">iu_raw_inst_e</a>[4] | !<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#177">iu_psr_dce_raw</a> ;
+<a name="350"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#240">iu_inst_e</a>[7:0]	={<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#192">iu_raw_inst_e</a>[7:5],<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#349">iu_nc_e_raw</a>,<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#192">iu_raw_inst_e</a>[3:0]}&amp;{8{~<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#371">squash_iu_inst</a>}}; 
+<a name="351"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#222">iu_diag_e</a>[3:0]	=	<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#194">iu_raw_diag_e</a>[3:0]&amp;{4{~<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#371">squash_iu_inst</a>}};
+
+<span class=C>// nop zeroline inst,flush insts if cache is turned off
+</span>
+<a name="355"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#309">diagnostic_e</a>	= <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#351">iu_diag_e</a>[0] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#351">iu_diag_e</a>[1] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#351">iu_diag_e</a>[2] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#351">iu_diag_e</a>[3] ;
+<a name="356"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#156">iu_special_e</a>	=	<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#157">special_raw_e</a>&amp; (<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#177">iu_psr_dce_raw</a>|<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#355">diagnostic_e</a>)&amp;~<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#371">squash_iu_inst</a>; 
+<a name="357"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#313">iu_zero_e</a>	=	<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#193">iu_raw_zero_e</a>&amp; <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#177">iu_psr_dce_raw</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#371">squash_iu_inst</a>; 
+<a name="358"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#218">iu_flush_index_e</a> =  	<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#197">iu_raw_flush_index_e</a> &amp; <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#177">iu_psr_dce_raw</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#371">squash_iu_inst</a>;
+<a name="359"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#219">iu_flush_cmp_e</a> =  	<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#196">iu_raw_flush_cmp_e</a> &amp; <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#177">iu_psr_dce_raw</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#371">squash_iu_inst</a>; 
+<a name="360"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#220">iu_flush_inv_e</a>	=	<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#195">iu_raw_flush_inv_e</a> &amp; <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#177">iu_psr_dce_raw</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#371">squash_iu_inst</a>;
+
+<a name="362"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#223">smu_ld</a>		=	<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#198">smu_raw_ld</a>  ;
+<a name="363"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#224">smu_st</a>		=	<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#199">smu_raw_st</a>  ;
+<a name="364"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#304">smu_nc_e</a>	=      !<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#177">iu_psr_dce_raw</a> ;
+
+
+<span class=C>// IU requests are squashed if there is a smu_prty signal. Because, whenever
+</span><span class=C>// smu gets priority, we ignore IU requests.
+</span><span class=C>// since smu_prty is timing critical, we only disable ram,tag and stat we .
+</span><span class=C>// we also dont allow the instruction to move into C stage.
+</span><a name="dc_dec_squash_inst_reg"></a><a name="371"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	squash_inst_reg	(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#217">squash_iu_inst</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#201">smu_prty</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>));
+
+
+<span class=C>// Decoding of Instructions
+</span>
+<a name="379"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#121">iu_ld_st_e</a>	=  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#424">iu_ld_e</a>  | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#425">iu_st_e</a> 	;
+<a name="380"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#225">ld_st_e</a>		=  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#424">iu_ld_e</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#425">iu_st_e</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#362">smu_ld</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#363">smu_st</a>   ;
+<a name="381"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#226">ld_st_c</a>		=  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#508">iu_ld_c</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a> |  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#538">smu_ld_c</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a> ;
+<a name="382"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#122">normal_ack</a>	=  !<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#188">biu_dcu_ack</a>[1] &amp; <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#188">biu_dcu_ack</a>[0];
+<a name="383"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#123">error_ack</a>	=   <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#188">biu_dcu_ack</a>[1] ;
+<a name="384"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#124">store_c</a>		=  (<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#540">smu_nc_c</a>| <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a>&amp; !<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#506">iu_nc_c</a> )&amp;!<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#184">fill_cyc_active</a> ;
+<a name="385"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#314">any_store_c</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a> |  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a> ;
+<a name="386"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#125">miss_store</a>	=  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[3] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a>[1] ;
+<a name="387"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#130">nc_xaction</a> 	=  !<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#181">dc_idle</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[4]&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[3] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[2]) | 
+			   <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[7]&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[3]		|	<span class=C>// Nonallocating store
+</span>			   <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a>[2]&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a>[1] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a>[0])) ; 
+<a name="390"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#333">non_cacheable_c_vld</a> =  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#402">iu_ld_st_c</a>&amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#506">iu_nc_c</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#403">smu_ld_st_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#540">smu_nc_c</a>;
+<a name="391"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#132">non_cacheable_c</a> = (<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#508">iu_ld_c</a>|<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a>)&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#506">iu_nc_c</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#403">smu_ld_st_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#540">smu_nc_c</a>;
+<a name="392"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#232">non_cacheable_e</a>	=  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#426">iu_nc_e</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#364">smu_nc_e</a> ;		<span class=C>// what if standby is high
+</span>
+<span class=C>// iu_valid_c only applies to iu_ld_st_c, however, since other instructions will not cause &quot;trap&quot;, we simply
+</span><span class=C>// use the dont care for logic minimization. 
+</span><a name="396"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#167">iu_req_c</a> = ( <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#508">iu_ld_c</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#559">zeroline_c_raw</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#568">iu_flush_c</a>[2] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#568">iu_flush_c</a>[0] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#568">iu_flush_c</a>[1] );
+<a name="397"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#168">smu_req_c</a> = <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#538">smu_ld_c</a>;
+<a name="398"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#126">dc_inst_c</a> =  <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#396">iu_req_c</a> | <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#397">smu_req_c</a>;
+
+
+<a name="401"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#311">iu_inst_c_vld</a>   =       <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#508">iu_ld_c</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#559">zeroline_c_raw</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#568">iu_flush_c</a>[0] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#568">iu_flush_c</a>[1] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#568">iu_flush_c</a>[2] | <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#420">diagnostic_c</a> ;
+<a name="402"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#235">iu_ld_st_c</a>	=	(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#508">iu_ld_c</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a> )&amp;<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#511">iu_valid_c</a>;
+<a name="403"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#236">smu_ld_st_c</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#538">smu_ld_c</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a> ;
+<a name="404"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#237">smu_ld_st</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#362">smu_ld</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#363">smu_st</a> ;
+<a name="405"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#238">iu_anyinst_e</a>	=   <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#379">iu_ld_st_e</a> | <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#157">special_raw_e</a> ;
+<span class=C>// Created this signal just to prevent smu_stall from getting asserted incase
+</span><span class=C>// of smu_hold and any special insturction in E-stage
+</span>
+<a name="409"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#239">iu_anyinst_e_smu</a> =   <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#379">iu_ld_st_e</a> | <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#356">iu_special_e</a> ;
+
+<span class=C>// Since we introduced non_allocating store , dc_idle will be true even
+</span><span class=C>// a line replacement is going on. 
+</span><a name="413"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#151">req_outstanding</a> =  !<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#180">wb_idle</a> | !<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#181">dc_idle</a> | <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#182">repl_busy</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#642">smu_na_st_miss_cyc</a>;
+
+<span class=C>// we need req_outstanding so that only if there are no pending requests, the nc store is 
+</span><span class=C>// dispatched. 
+</span><span class=C>// convert Non-allocating store into noncacheable instruction on a cache miss.
+</span><a name="418"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#160">nc_write_c</a> 	=  (<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#540">smu_nc_c</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a> &amp; <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#511">iu_valid_c</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#506">iu_nc_c</a> | <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#503">iu_na_st_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#186">dcu_miss_c</a>) ) &amp; !<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a>;
+
+<a name="420"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#133">diagnostic_c</a>	= <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#580">iu_diag_c</a>[0] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#580">iu_diag_c</a>[1] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#580">iu_diag_c</a>[2] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#580">iu_diag_c</a>[3] ;
+<a name="421"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#299">iu_flush_e</a>[2:0] =  {<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#360">iu_flush_inv_e</a>,<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#359">iu_flush_cmp_e</a>,<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#358">iu_flush_index_e</a>} ;
+
+<a name="423"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#310">diag_ld_c</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#580">iu_diag_c</a>[0] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#580">iu_diag_c</a>[2] ;
+<a name="424"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#289">iu_ld_e</a>		=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#350">iu_inst_e</a>[2];
+<a name="425"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#290">iu_st_e</a>		=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#350">iu_inst_e</a>[3];
+<a name="426"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#291">iu_nc_e</a>		=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#350">iu_inst_e</a>[4];
+<a name="427"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#292">iu_oppend_e</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#350">iu_inst_e</a>[6];
+<a name="428"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#325">iu_na_st_e</a>      =       <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#350">iu_inst_e</a>[7];    
+<a name="429"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#254">iu_size_e</a>[1:0]	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#350">iu_inst_e</a>[1:0];
+<a name="430"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#293">iu_sign_e</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#350">iu_inst_e</a>[5];
+
+
+ 
+<a name="434"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#221">dcu_no_inst</a>	= !<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a> &amp;!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#532">stall_valid</a> &amp; !<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#398">dc_inst_c</a> &amp;!<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#182">repl_busy</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#185">zeroline_busy</a>&amp; <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>;
+<a name="435"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#332">ram_st_rdy_e_in</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#351">iu_diag_e</a>[3] &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#434">dcu_no_inst</a>;
+<a name="436"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#298">ram_ld_rdy_e</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#351">iu_diag_e</a>[2] &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#434">dcu_no_inst</a>;
+<a name="437"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#295">tag_st_rdy_e_in</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#351">iu_diag_e</a>[1] &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#434">dcu_no_inst</a>;
+
+<span class=C>// Used to generate tag write enables
+</span><a name="440"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#159">tag_st_rdy_e</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#437">tag_st_rdy_e_in</a> &amp;~<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#201">smu_prty</a>;
+<a name="441"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#297">ram_st_rdy_e</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#435">ram_st_rdy_e_in</a> &amp;~<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#201">smu_prty</a>;
+
+<a name="443"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#296">tag_ld_rdy_e</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#351">iu_diag_e</a>[0] &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#434">dcu_no_inst</a>;
+<a name="444"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#158">diag_rdy_e</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#435">ram_st_rdy_e_in</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#437">tag_st_rdy_e_in</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#436">ram_ld_rdy_e</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#443">tag_ld_rdy_e</a>;
+
+
+<a name="447"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#241">smu_inst_e</a>[3:0] = { (<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#200">smu_na_st</a>&amp;~<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#364">smu_nc_e</a>),<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#364">smu_nc_e</a>,<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#363">smu_st</a>,<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#362">smu_ld</a>} ;
+<a name="448"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#322">raw_iu_ld_e</a>	=	<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#194">iu_raw_diag_e</a>[2] | <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#194">iu_raw_diag_e</a>[0] | <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#192">iu_raw_inst_e</a>[2] ;
+
+<span class=C>/*******************************  Pipeline Flow of Instructions ***********************************/</span>
+<span class=C>// Instructions come to the DCU in the E stage. They go thru C and C2 stages.
+</span><span class=C>// Trap is used in C stage to cancel instruction.
+</span><span class=C>// When in Error state, the instruction is squashed from miss state register.
+</span><span class=C>// If an instruction is ready to be executed, it passes into the C stage.
+</span><span class=C>// In the C stage, if there is a miss and no outstanding request, the inst moves into the miss inst
+</span><span class=C>// reg. If there already exists an outstanding request, the inst moves into miss stall reg. on a 
+</span><span class=C>// store hit, the inst moves into the C2 register. Data is written into the cache in C2 stage.
+</span>
+<span class=C>// Priority of Functions in DCU
+</span><span class=C>//1. Replace Dirty line
+</span><span class=C>//2. Cache fill Data
+</span><span class=C>//3. Store hit in C stage
+</span><span class=C>//4. Missed Stalled Instruction - another miss during a miss
+</span><span class=C>//5. IU ld/st inst in E
+</span><span class=C>//6. SMU ld/st inst in E
+</span><span class=C>//9. write buffer complete
+</span><span class=C>//10. flush,Zeroline inst,diagnostic read/writes
+</span>
+
+<span class=C>// IU ld/st/flush ready to goto C stage
+</span><span class=C>// Valid IU ld/st inst  in C stage 
+</span><span class=C>// Do not dispatch a IU ld/st inst if
+</span><span class=C>// a.	replacing a dirty line, 
+</span><span class=C>// b. 	cache fill cycle
+</span><span class=C>// c.	store in C and iu load in E (bubble),
+</span><span class=C>// d. 	cache miss in C stage
+</span><span class=C>// e. 	miss occurs while processing another miss, 
+</span><span class=C>// f.	noncacheable ld or st in E and there is a inst in C or a memory request is outstanding.
+</span><span class=C>// g.	zeroline inst or flush inst in C stage, 
+</span><span class=C>// h. 	special inst in E and there is another inst in C stage or request pending. 
+</span>  
+
+<span class=C>// Since iu cannot provide back to back loads or stores , we need to ignore E stage instruction when
+</span><span class=C>// there is a valid iu inst in C stage or a iu inst miss request is being processed.
+</span><span class=C>// This is because, iu_inst_e is recirculated for an extra cycle bcos there is no C stage and we
+</span><span class=C>// dont want to execute the same instruction twice.
+</span>
+<a name="488"></a><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#242">iu_ready</a> = !(<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.p2.html#1013">iu_stall</a> | !<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a> | <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#191">kill_inst_e</a> ) ;
+<a name="489"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#249">new_iu_inst_e</a>[7:0]	=  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#350">iu_inst_e</a>[7:0] &amp; {8{<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#488">iu_ready</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#201">smu_prty</a>}} ;
+<a name="490"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#329">iu_miss_stall_sel</a> = (<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#597">iu_miss_stall_valid</a> &amp;!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#691">iu_st_pending</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#184">fill_cyc_active</a> );
+<a name="491"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#250">iu_inst_valid_e</a>[7:0] 	=  (<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#490">iu_miss_stall_sel</a>) ?
+						<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#602">iu_miss_stall_inst</a>[7:0]:<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#489">new_iu_inst_e</a>[7:0] ;
+
+<a name="494"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#330">iu_recirculating_e</a> =  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#490">iu_miss_stall_sel</a>;
+
+<a name="dc_dec_iu_inst_c_reg"></a><a name="496"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s_8">ff_s_8</a>   iu_inst_c_reg(	<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2276">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#211">iu_inst_c</a>[7:0]),
+<a name="497"></a>        		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#491">iu_inst_valid_e</a>[7:0]),
+<a name="498"></a>        		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>));
+
+<span class=C>// kill any instruction which has trapped. also squash any iu load inst which has
+</span><span class=C>// has caused smu hold.
+</span>
+<a name="503"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#128">iu_na_st_c</a>     	=  	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[7]&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[3] ; <span class=C>//&amp; !iu_trap_c;
+</span><a name="504"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#251">iu_oppend_c</a>     =       <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[6] ; <span class=C>// &amp; !iu_trap_c ;
+</span><a name="505"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#252">iu_sign_c</a>       =       <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[5] ; <span class=C>// &amp; !iu_trap_c ;
+</span><a name="506"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#231">iu_nc_c</a>         =       <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[4] ; <span class=C>// &amp; !iu_trap_c ;
+</span><a name="507"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#228">iu_st_c</a>         =       <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[3] ; <span class=C>// &amp; !iu_trap_c ;
+</span><a name="508"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#227">iu_ld_c</a>         =       <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[2] ; <span class=C>//&amp; !iu_trap_c;
+</span><a name="509"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#253">iu_size_c</a>[1:0]  =       <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[1:0] ;
+ 
+<a name="511"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#116">iu_valid_c</a>      =       !<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#190">iu_trap_c</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#648">iu_recirculating_c</a> ;
+
+
+<span class=C>// SMU ld/st read to goto C stage
+</span><span class=C>// Do not dispatch a SMU ld/st inst if
+</span><span class=C>// a. 	replacing dirty line.
+</span><span class=C>// b.   cache fill cycle
+</span><span class=C>// b. 	store in C and smu load in E (bubble)
+</span><span class=C>// c. 	Cache miss in C stage
+</span><span class=C>// d.	Miss occurs while another miss is being processed
+</span><span class=C>// f. 	zeroline inst or flush in C stage
+</span><span class=C>// g.	iu inst, flush, zeroline inst , diagnostic read/wr in E stage.
+</span><span class=C>// h.   reset
+</span>
+
+<a name="526"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#243">smu_ready</a> =  !( <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.p2.html#1033">smu_stall</a> | !<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a> );
+<a name="527"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#256">new_smu_inst</a>[3:0]=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#447">smu_inst_e</a>[3:0] &amp;{4{<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#526">smu_ready</a>}} ;
+<a name="528"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#327">smu_miss_stall_sel</a> = <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#611">smu_miss_stall_valid</a>&amp;!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a>| <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#700">smu_st_pending</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#184">fill_cyc_active</a> ;
+<a name="529"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#257">smu_inst_valid_e</a>[3:0]=	(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#528">smu_miss_stall_sel</a>)?
+				<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#616">smu_miss_stall_inst</a>[3:0]:<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#527">new_smu_inst</a>[3:0];
+
+<a name="532"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#134">stall_valid</a> = (<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#597">iu_miss_stall_valid</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#611">smu_miss_stall_valid</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#691">iu_st_pending</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#700">smu_st_pending</a> ) | <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#184">fill_cyc_active</a> &amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#385">any_store_c</a>;
+
+<a name="dc_dec_smu_inst_c_reg"></a><a name="534"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s_4">ff_s_4</a>	smu_inst_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2218">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#215">smu_inst_c</a>[3:0]),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#529">smu_inst_valid_e</a>[3:0]),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>) );
+
+<a name="538"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#229">smu_ld_c</a>	= <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#534">smu_inst_c</a>[0];
+<a name="539"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#230">smu_st_c</a>	= <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#534">smu_inst_c</a>[1];
+<a name="540"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#305">smu_nc_c</a>	= <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#534">smu_inst_c</a>[2];
+<a name="541"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#127">smu_na_st_c</a>     = <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#534">smu_inst_c</a>[3] &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a>;
+
+
+<span class=C>// signalling SMU completion of store.
+</span><span class=C>// Need to nullify this store with smu_stall_store . This way
+</span><span class=C>// we dont count the store twice.
+</span><a name="547"></a> <span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#162">dcu_smu_st</a>	= <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#549">smu_stall_st</a>;
+
+<a name="dc_dec_smu_stall_store_reg"></a><a name="549"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	smu_stall_store_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#315">smu_stall_st</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#611">smu_miss_stall_valid</a>&amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#616">smu_miss_stall_inst</a>[1]),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>));
+
+<span class=C>// Valid zeroline inst in C stage
+</span><span class=C>// Dispatch zeroline inst only if there is no outstanding requests
+</span><span class=C>// to memory and no  ld/st inst in C stage 
+</span>
+<a name="558"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#258">new_zeroline_e</a>	= <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#357">iu_zero_e</a> &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#434">dcu_no_inst</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#201">smu_prty</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#191">kill_inst_e</a> ;
+<a name="dc_dec_zeroline_c_reg"></a><a name="559"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s">ff_s</a>   zeroline_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2137">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#333">zeroline_c_raw</a>),
+        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#558">new_zeroline_e</a>),
+        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>));
+<a name="562"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#131">zeroline_c</a> =	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#559">zeroline_c_raw</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#190">iu_trap_c</a>;
+
+<span class=C>// valid Flush inst in C stage
+</span><span class=C>// dispatch flush inst only if there is no instruction in C 
+</span><span class=C>// stage and there is no stalled instruction.
+</span><a name="567"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#259">new_flush_e</a>[2:0]	= <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#421">iu_flush_e</a>[2:0] &amp; {3{<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#434">dcu_no_inst</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#201">smu_prty</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#191">kill_inst_e</a>}};
+<a name="dc_dec_flush_c_reg"></a><a name="568"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s_3">ff_s_3</a>   	flush_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2206">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#234">iu_flush_c</a>[2:0]),
+        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#567">new_flush_e</a>[2:0]),
+        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>));
+
+<a name="572"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#136">iu_flush_inv_c</a>	= <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#568">iu_flush_c</a>[2];
+<a name="573"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#135">iu_flush_cmp_c</a>	= <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#568">iu_flush_c</a>[1];
+<a name="574"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#137">iu_flush_index_c</a>= <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#568">iu_flush_c</a>[0];
+
+<span class=C>// Valid diagnostic ld/st in C stage
+</span><span class=C>// dispatch diagnostic ld/st only if there are no outstanding
+</span><span class=C>// memory requests(miss is being processed) and no inst in C stage
+</span><a name="579"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#260">new_diag_e</a>[3:0] = <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#351">iu_diag_e</a>[3:0] &amp; {4{<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#434">dcu_no_inst</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#201">smu_prty</a>}};
+<a name="dc_dec_diag_c_reg"></a><a name="580"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s_4">ff_s_4</a>	diag_c_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2218">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#216">iu_diag_c</a>[3:0]),
+		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#579">new_diag_e</a>[3:0]),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>));
+
+<a name="584"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#152">dtag_rd_c</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#580">iu_diag_c</a>[0];
+
+
+<span class=C>/*********************  Generation of  Miss Instruction *********************/</span>
+<span class=C>//When an instruction in C stage misses the cache(not including diags/flushes)
+</span><span class=C>//and there is no outstanding requests to memory, the instruction is moved into
+</span><span class=C>// the miss register. If there is an outstanding request, move the instruction
+</span><span class=C>// into miss_stall register. This would be reexecuted once the older miss has
+</span><span class=C>// been completely processed. We also reexecute a store which is incomplete
+</span><span class=C>// when a cache fill is returned during the execution of first cycle of store.
+</span>
+	
+<a name="596"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#246">iu_miss_stall_set</a> 	=  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#402">iu_ld_st_c</a> &amp; <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#186">dcu_miss_c</a> &amp; <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a> | <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a> &amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#597">iu_miss_stall_valid</a> ;
+<a name="dc_dec_miss_stall_vld_reg"></a><a name="597"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	miss_stall_vld_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#244">iu_miss_stall_valid</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#596">iu_miss_stall_set</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>));
+
+<a name="dc_dec_iu_miss_stall_reg"></a><a name="602"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_8">ff_sre_8</a>	iu_miss_stall_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4770">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#212">iu_miss_stall_inst</a>[7:0]),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[7:0]),  
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+			<span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#186">dcu_miss_c</a> &amp; <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a>&amp;<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#511">iu_valid_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#184">fill_cyc_active</a> ));
+
+<a name="608"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#316">iu_miss_stall_ld</a> = <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#602">iu_miss_stall_inst</a>[2]&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#597">iu_miss_stall_valid</a> ;
+
+<a name="610"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#247">smu_miss_stall_set</a>       =  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#403">smu_ld_st_c</a> &amp; <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#186">dcu_miss_c</a> &amp; <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a> | <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a> &amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#611">smu_miss_stall_valid</a> ;
+<a name="dc_dec_smu_miss_stall_vld_reg"></a><a name="611"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>   smu_miss_stall_vld_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#245">smu_miss_stall_valid</a>),
+                        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#610">smu_miss_stall_set</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>));
+
+<a name="dc_dec_smu_miss_stall_reg"></a><a name="616"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_4">ff_sre_4</a>	smu_miss_stall_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4704">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#214">smu_miss_stall_inst</a>[3:0]),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#534">smu_inst_c</a>[3:0]),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+			<span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#186">dcu_miss_c</a> &amp; <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a>  | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#184">fill_cyc_active</a>));
+
+
+
+<span class=C>// On a d$ miss for a non-allocate smu store, we take 2 cycles
+</span><span class=C>// to remove the dirty line into the writebuffer and then complete
+</span><span class=C>// the store
+</span>
+<a name="628"></a><span class=K>assign</span>     <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#326">smu_na_st_miss_c</a> =  <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#541">smu_na_st_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#186">dcu_miss_c</a>&amp;~<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a>;
+<a name="dc_dec_smu_na_st_miss_reg"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>	   smu_na_st_miss_reg(
+<a name="630"></a>		<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#326">smu_na_st_miss_c1</a>),
+		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#628">smu_na_st_miss_c</a>),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>) );
+
+<a name="dc_dec_smu_na_st_miss_c2_reg"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>      smu_na_st_miss_c2_reg (
+<a name="636"></a>                <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#164">smu_na_st_fill</a>),
+                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#630">smu_na_st_miss_c1</a>),
+                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>) );
+
+<span class=C>// do not accept any new requests during handling na store miss.
+</span><a name="642"></a><span class=K>assign</span>	 <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#323">smu_na_st_miss_cyc</a> = <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#630">smu_na_st_miss_c1</a>|<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#636">smu_na_st_fill</a> ;
+
+
+<span class=C>// new one-bit register for recirculating instructions 
+</span>
+<a name="dc_dec_iu_reciculating_reg"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>      iu_reciculating_reg(
+<a name="648"></a>		<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>( <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#331">iu_recirculating_c</a>),
+		<span class=SI>.din</span>( <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#494">iu_recirculating_e</a>),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>) );
+
+<a name="dc_dec_smu_reciculating_reg"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>      smu_reciculating_reg(
+<a name="654"></a>                <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>( <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#327">smu_recirculating_c</a>),
+                <span class=SI>.din</span>( <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#528">smu_miss_stall_sel</a>),
+                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+                <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>) );
+ 
+
+
+
+ 
+<a name="dc_dec_iu_miss_reg"></a><a name="663"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_8">ff_sre_8</a>	iu_miss_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4770">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#210">iu_miss_inst</a>[7:0]),
+		<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[7:0]),
+		<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>),
+		<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+		<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a> ));
+
+<a name="669"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#278">iu_miss_ld</a>	= 	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[2] ;
+<a name="670"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#279">smu_miss_ld</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a>[0];
+
+<a name="dc_dec_smu_miss_reg"></a><a name="672"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p5.html#ff_sre_4">ff_sre_4</a>  smu_miss_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p5.html#4704">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#213">smu_miss_inst</a>[3:0]),
+                        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#534">smu_inst_c</a>[3:0]),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+                        <span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a>));
+
+<span class=C>/************  Store Pending Control ******************************/</span>
+<span class=C>// A store hit takes 2 cycles to complete. if after the first cycle,
+</span><span class=C>// there is a cache fill from memory, we need to complete cache fill first
+</span><span class=C>// and then complete the pending store.
+</span>
+<span class=C>// if there is store which misses the cache and there
+</span><span class=C>// is a cache fill happening, we consider it a missed store and raise stall.
+</span><span class=C>// we should not raise store pending. this should be done only for store hits.
+</span>
+<span class=C>// store pending could also happens for non_allocating store 
+</span><span class=C>//
+</span><a name="689"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#283">iu_st_pending_set</a>  =  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a> &amp;<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#511">iu_valid_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#187">dcu_hit_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#184">fill_cyc_active</a>|
+			      <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#691">iu_st_pending</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#184">fill_cyc_active</a> ;
+<a name="dc_dec_iu_pending_reg"></a><a name="691"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>    iu_pending_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#281">iu_st_pending</a>),
+                        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#689">iu_st_pending_set</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>));
+
+
+<a name="697"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#284">smu_st_pending_set</a>  =  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a> &amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#187">dcu_hit_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#184">fill_cyc_active</a>|
+			       <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#700">smu_st_pending</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#184">fill_cyc_active</a> ;
+
+<a name="dc_dec_smu_pending_reg"></a><a name="700"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>    smu_pending_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#282">smu_st_pending</a>),
+                        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#697">smu_st_pending_set</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>));
+
+<span class=C>/************ Cache Fill word offset calculation ******************/</span>
+
+<a name="dc_dec_nc_c2_reg"></a><a name="707"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sre">ff_sre</a>		nc_c2_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2151">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#306">noncacheable_c2</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#390">non_cacheable_c_vld</a> | <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#503">iu_na_st_c</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#186">dcu_miss_c</a>&amp;<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#511">iu_valid_c</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>),
+			<span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#186">dcu_miss_c</a>&amp;!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a>));
+
+<a name="713"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#161">fill_byte</a>	= (<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#707">noncacheable_c2</a>)?<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#178">cf_addr</a>[1:0]:2'b0 ;
+
+<span class=C>/******************************************************************************/</span>
+
+<span class=C>// Need to stall the pipe till the requested data is returned during miss handling.
+</span><a name="718"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#248">iu_miss_sustain</a> = 	<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#189">miss_wait</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[3] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[2]);
+<a name="719"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#255">smu_miss_sustain</a> =	<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#189">miss_wait</a> &amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a>[1] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a>[0]) ;
+
+<a name="dc_dec_miss_sustain_reg"></a><a name="721"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		miss_sustain_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#312">iu_miss_sustain_d1</a>),
+				<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#718">iu_miss_sustain</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#669">iu_miss_ld</a>),
+				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>));
+
+ 
+<span class=C>// fill data can be written into the cache if there is no valid ld/st in E stage or
+</span><span class=C>// store in C stage. Also if there is missed stall condition, filldata can be written.
+</span>
+ 
+<span class=C>/*************** For Generation of pj_type ****************************/</span>
+<span class=C>//	dc_type	    BIT 0	    BIT  1
+</span><span class=C>//	Bits
+</span><span class=C>//	_________________________________________
+</span><span class=C>//	|  0	|    Load	|   Store	|
+</span><span class=C>//	|_______|_______________|_______________|
+</span><span class=C>//	|  1	|   Cacheable	|  Noncacheable	|
+</span><span class=C>//	|_______|_______________|_______________|
+</span><span class=C>//	|  2	|   Icache	|   Dcache	|
+</span><span class=C>//	|_______|_______________|_______________|
+</span><span class=C>//	|  3	|     - 	|   Dribble	|
+</span><span class=C>//	|_______|_______________|_______________|
+</span><span class=C>//
+</span>
+
+<a name="746"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#154">dcu_type</a>[0] =  <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#176">wb_req</a> ;
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#154">dcu_type</a>[1] =  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[4]&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[3] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[2])
+		|	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[3]&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[7]
+        	|      <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a>[2] &amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a>[1] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a>[0]);
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#154">dcu_type</a>[2] =  <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#175">dc_req</a> | <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#176">wb_req</a> ;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#154">dcu_type</a>[3] =  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a>[1] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a>[0] ;
+
+<span class=C>// Generation of Dcache request
+</span><a name="754"></a><span class=K>assign</span>	 <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#153">dcu_req</a>   =  <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#175">dc_req</a> | <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#176">wb_req</a> ;
+
+<span class=C>// Size of request
+</span><a name="757"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#155">dcu_size</a>   = (<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[3]|<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[2])?<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[1:0]:2'b10 ;
+
+<span class=C>/*************   Merge data selects   ******************************/</span>
+<span class=C>// Various Scenarios
+</span><span class=C>// write data to be merged --&gt; w3 w2 w1 w0 (each 1 byte)
+</span><span class=C>// cache fill data         --&gt; c3 c2 c1 c0 (each 1 byte)
+</span><span class=C>//
+</span><span class=C>//      c3 c2 c1 c0     No data merge
+</span><span class=C>//      w0 c2 c1 c0     store byte in loc 0
+</span><span class=C>//      c3 w0 c1 c0     store byte in loc 1
+</span><span class=C>//      c3 c2 w0 c0     store byte in loc 2
+</span><span class=C>//      c3 c2 c1 w0     store byte in loc 3
+</span><span class=C>//      w1 w0 c1 c0     store half word in loc 0
+</span><span class=C>//      w0 w1 c1 c0     store half word in loc 0 - opp endianness
+</span><span class=C>//      c3 c2 w1 w0     store half word in loc 1
+</span><span class=C>//      c3 c2 w0 w1     store half word in loc 1 - opp endianness
+</span><span class=C>//      w3 w2 w1 w0     store word
+</span><span class=C>//      w0 w1 w2 w3     store word - opp endianess
+</span>
+<span class=C>// how do we deal with noncacheable insts?(same as others except bypass cache)
+</span><a name="777"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#261">wr_byte</a>		=  !<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[1] &amp; !<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[0] ;
+<a name="778"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#263">wr_short</a>	=  !<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[1] &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[0] ;
+<a name="779"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#262">wr_word</a>		=  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[1] &amp; !<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[0] ;
+<a name="780"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#264">wr_oppend</a>	=  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[6] ;
+
+<span class=C>// select swap_data[31:24]
+</span><a name="783"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#141">swap_sel_31_24</a>[2] =     <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a> | (<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#779">wr_word</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#780">wr_oppend</a>)  ;	
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#141">swap_sel_31_24</a>[1] =     (<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#778">wr_short</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#780">wr_oppend</a>)  ;	
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#141">swap_sel_31_24</a>[0] =    !<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#783">swap_sel_31_24</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#783">swap_sel_31_24</a>[1] ;	
+
+<span class=C>// select swap_data[23:15]
+</span><a name="788"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#140">swap_sel_23_16</a>[2] =	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a> | (<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#779">wr_word</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#780">wr_oppend</a>)  ; 
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#140">swap_sel_23_16</a>[1] =	(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#779">wr_word</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#780">wr_oppend</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#778">wr_short</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#780">wr_oppend</a>))  ;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#140">swap_sel_23_16</a>[0] =	!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#788">swap_sel_23_16</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#788">swap_sel_23_16</a>[1] ;
+
+<span class=C>// select swap_data[15:8]
+</span><a name="793"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#139">swap_sel_15_8</a>[2] =	(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a>&amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#780">wr_oppend</a> &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#779">wr_word</a> )  ;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#139">swap_sel_15_8</a>[1] =	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a> | (<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#780">wr_oppend</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#779">wr_word</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#778">wr_short</a>)) ;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#139">swap_sel_15_8</a>[0] =	!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#793">swap_sel_15_8</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#793">swap_sel_15_8</a>[1];
+
+<span class=C>// select swap_data[7:0]
+</span><a name="798"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#138">swap_sel_7_0</a>[2] =   	(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#780">wr_oppend</a> &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#779">wr_word</a> ) ;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#138">swap_sel_7_0</a>[1] =	(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a> &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#780">wr_oppend</a> &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#778">wr_short</a>) ;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#138">swap_sel_7_0</a>[0] =	!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#798">swap_sel_7_0</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#798">swap_sel_7_0</a>[1] ;
+				
+
+
+<span class=C>/************************ Generate Merge Data Mux selects ***************************/</span>
+
+<a name="806"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#265">smu_wr_miss</a>	=  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a>[1];
+<a name="807"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#266">iu_wr_miss</a>	=  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[3];
+<a name="808"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#301">ms_byte</a>		=   !<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[1] &amp; !<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[0] ;
+<a name="809"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#307">ms_short</a>        =  !<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[1] &amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[0] ;
+<a name="810"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#302">ms_word</a>         =  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[1] &amp; !<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[0] ;
+
+<span class=C>// select 31:24 of fill_data or swap data 
+</span><a name="813"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#142">merge_sel</a>[3]	=	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#636">smu_na_st_fill</a> | <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#183">first_fill_cyc</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#806">smu_wr_miss</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#807">iu_wr_miss</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#810">ms_word</a> |
+				<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#809">ms_short</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#178">cf_addr</a>[1] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#808">ms_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#178">cf_addr</a>[1:0] == 2'b00 )));
+
+<span class=C>// select 23:16 of filldata or swap data
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#142">merge_sel</a>[2]	=	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#636">smu_na_st_fill</a> | <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#183">first_fill_cyc</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#806">smu_wr_miss</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#807">iu_wr_miss</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#810">ms_word</a> |
+				<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#809">ms_short</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#178">cf_addr</a>[1] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#808">ms_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#178">cf_addr</a>[1:0] ==2'b01 )));
+
+<span class=C>// select 15:8 of filldata or swap data
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#142">merge_sel</a>[1]	=	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#636">smu_na_st_fill</a> | <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#183">first_fill_cyc</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#806">smu_wr_miss</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#807">iu_wr_miss</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#810">ms_word</a> |
+				<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#809">ms_short</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#178">cf_addr</a>[1] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#808">ms_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#178">cf_addr</a>[1:0] == 2'b10 )));
+
+<span class=C>// select 7:0 of filldata or swap data
+</span><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#142">merge_sel</a>[0]	=	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#636">smu_na_st_fill</a> | <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#183">first_fill_cyc</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#806">smu_wr_miss</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#807">iu_wr_miss</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#810">ms_word</a> |
+				<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#809">ms_short</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#178">cf_addr</a>[1] | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#808">ms_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#178">cf_addr</a>[1:0] == 2'b11 )));
+
+
+<span class=C>/*********************** Generate  Write Enables for the Data RAM **********************/</span>
+<a name="830"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#267">word_we</a>	=		<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#184">fill_cyc_active</a>&amp;!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#387">nc_xaction</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#441">ram_st_rdy_e</a> | <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#636">smu_na_st_fill</a> ;
+
+<a name="832"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#268">hit_we</a>[3]	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#540">smu_nc_c</a>| <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#511">iu_valid_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#506">iu_nc_c</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#779">wr_word</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#778">wr_short</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#179">dcu_addr_c</a>[1] | 
+				<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#777">wr_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#179">dcu_addr_c</a>[1:0] == 2'b00) );	
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#268">hit_we</a>[2]	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#540">smu_nc_c</a> | <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#511">iu_valid_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#506">iu_nc_c</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#779">wr_word</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#778">wr_short</a>&amp;!<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#179">dcu_addr_c</a>[1] |
+				<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#777">wr_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#179">dcu_addr_c</a>[1:0] == 2'b01) );
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#268">hit_we</a>[1]	= 	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#540">smu_nc_c</a> | <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#511">iu_valid_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#506">iu_nc_c</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#779">wr_word</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#778">wr_short</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#179">dcu_addr_c</a>[1] |
+                                <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#777">wr_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#179">dcu_addr_c</a>[1:0] == 2'b10) );
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#268">hit_we</a>[0]	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#539">smu_st_c</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#540">smu_nc_c</a> | <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#511">iu_valid_c</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#507">iu_st_c</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#506">iu_nc_c</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#779">wr_word</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#778">wr_short</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#179">dcu_addr_c</a>[1] |     
+                                <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#777">wr_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#179">dcu_addr_c</a>[1:0] == 2'b11) ); 	
+
+<a name="841"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#143">dcu_ram_we</a>[3:0]	=   (<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#187">dcu_hit_c</a> &amp; !<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#184">fill_cyc_active</a>)   ? <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#832">hit_we</a>[3:0]  :   {4{<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#830">word_we</a>}} ;	
+
+<span class=C>// Bypass cache only for noncacheable loads,first fill cycle of lds or erroneous transactions
+</span><a name="844"></a><span class=K>assign</span>		<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#144">dcu_bypass</a>	=  <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#183">first_fill_cyc</a>;
+
+
+<span class=C>/***************** Sign Select For Aligner *******************************/</span>
+<span class=C>// For sign selection, for unsigned loads, higher bits are set to zero.
+</span><span class=C>// For signed loads, higher bits are set to bit 7 or 15 or 23 or 31 depending
+</span><span class=C>// on  addr
+</span> 
+<span class=C>// 1'b0         -       ld character, unsigned byte
+</span><span class=C>// bit 7        -       load byte, addr[1:0] 11/ load short addr[1] 1 - opp endianness
+</span><span class=C>// bit 15       -       load byte addr1:0] 10 / load short addr[1] 1
+</span><span class=C>// bit 23       -       load byte, addr[1:0] 01/ load short addr[1] 0 - opp endianness
+</span><span class=C>// bit 31       -       load byte addr[1:0] 00 / load short addr[1] 0
+</span>
+<a name="dc_dec_fill_cyc_d1reg"></a><a name="858"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>		fill_cyc_d1reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#300">first_fill_cyc_d1</a>),
+			<span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#183">first_fill_cyc</a>),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>));
+
+<span class=C>// Need to select which inst is being completed. (miss_inst or inst_c )
+</span><a name="864"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#269">align_inst</a>[6:0]		=	(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#858">first_fill_cyc_d1</a>)?<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#663">iu_miss_inst</a>[6:0]:<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#496">iu_inst_c</a>[6:0];
+<a name="865"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#270">align_smu_inst</a>[1:0]	=	(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#858">first_fill_cyc_d1</a>)?<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#672">smu_miss_inst</a>[1:0]:<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#534">smu_inst_c</a>[1:0];
+<a name="866"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#271">algn_addr</a>[1:0]		=	(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#858">first_fill_cyc_d1</a>)?<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#178">cf_addr</a>[1:0]:<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#179">dcu_addr_c</a>[1:0] ;
+
+<a name="868"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#272">algn_size</a>[1:0]	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#864">align_inst</a>[1:0] ;	
+<a name="869"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#273">algn_sign</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#864">align_inst</a>[5];
+<a name="870"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#274">algn_oppend</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#864">align_inst</a>[6];
+<a name="871"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#275">algn_iu_ld</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#864">align_inst</a>[2];
+<a name="872"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#276">algn_byte</a>	=  	!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#868">algn_size</a>[1]&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#868">algn_size</a>[0] ;
+<a name="873"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#277">algn_short</a>	=  	!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#868">algn_size</a>[1]&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#868">algn_size</a>[0] ;
+<a name="874"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#280">algn_word</a>	=  	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#868">algn_size</a>[1]&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#868">algn_size</a>[0] ;
+<a name="875"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#285">algn_smu_ld</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#865">align_smu_inst</a>[0];
+
+<a name="877"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#145">algn_sign_sel</a>[4]	=	!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#877">algn_sign_sel</a>[3]&amp; !<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#877">algn_sign_sel</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#877">algn_sign_sel</a>[1] &amp;!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#877">algn_sign_sel</a>[0] ;
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#145">algn_sign_sel</a>[3]	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#869">algn_sign</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#872">algn_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1:0] == 2'b11) |
+					<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#869">algn_sign</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#873">algn_short</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1]) ;
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#145">algn_sign_sel</a>[2]	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#869">algn_sign</a> &amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#872">algn_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1:0] == 2'b10) |
+					<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#869">algn_sign</a> &amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#873">algn_short</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1]) ;
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#145">algn_sign_sel</a>[1]	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#869">algn_sign</a> &amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#872">algn_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1:0] == 2'b01) |
+					<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#869">algn_sign</a> &amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#873">algn_short</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1]);
+
+<span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#145">algn_sign_sel</a>[0]	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#869">algn_sign</a> &amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#872">algn_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1:0] == 2'b00) |
+					<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#869">algn_sign</a> &amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#873">algn_short</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1]);
+
+<span class=C>/**************************************************************************/</span>
+
+<span class=C>/******************** Aligner Mux  Selects *************************************/</span>
+<span class=C>// D3 D2 D1 D0 -- &gt; 4 bytes of data out of the cache
+</span><span class=C>// Various Scenarios
+</span> 
+<span class=C>//      d3 d2 d1 d0     load word
+</span><span class=C>//      d0 d1 d2 d3     load word - opp endianness
+</span><span class=C>//      _  _  _  d0     load byte , addr[1:0] 11
+</span><span class=C>//      _  _  _  d1     load byte , addr[1:0] 10
+</span><span class=C>//      _  _  _  d2     load byte , addr[1:0] 01
+</span><span class=C>//      _  _  _  d3     load byte , addr[1:0] 00
+</span><span class=C>//      -  -  d1 d0     load half word, addr[1] 1
+</span><span class=C>//      -  -  d0 d1     load half word, addr[1] 1 , opp endianness
+</span><span class=C>//      -  -  d3 d2     load half word, addr[1] 0
+</span><span class=C>//      -  -  d2 d3     load half word, addr[1] 0 , opp endianness
+</span>
+
+<span class=C>// algn_sel_7_0 mux selects
+</span><a name="910"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#146">algn_sel_7_0</a>[3]	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#874">algn_word</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#872">algn_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1:0] == 2'b00) |
+				<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#873">algn_short</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1]&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a> ) ;
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#146">algn_sel_7_0</a>[2]	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#872">algn_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1:0] == 2'b01) | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#873">algn_short</a>&amp; !<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a>&amp;
+				!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1] );
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#146">algn_sel_7_0</a>[1]	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#872">algn_byte</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1:0] == 2'b10) |<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#873">algn_short</a>&amp; <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a>&amp;
+				<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1]);	
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#146">algn_sel_7_0</a>[0]	=	!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#910">algn_sel_7_0</a>[3] &amp; !<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#910">algn_sel_7_0</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#910">algn_sel_7_0</a>[1] ;
+			
+
+<span class=C>// algn_sel_15_8 mux selects	
+</span><a name="923"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#147">algn_sel_15_8</a>[3] =	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#873">algn_short</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1]&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a> ;
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#147">algn_sel_15_8</a>[2] =	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#873">algn_short</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1]&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#874">algn_word</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a>) ;
+
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#147">algn_sel_15_8</a>[1] =	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#875">algn_smu_ld</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#874">algn_word</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a> |
+				<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#873">algn_short</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#866">algn_addr</a>[1]&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a>) ; 
+<span class=K>assign</span> 	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#147">algn_sel_15_8</a>[0] = 	!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#923">algn_sel_15_8</a>[3] &amp; !<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#923">algn_sel_15_8</a>[2] &amp; !<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#923">algn_sel_15_8</a>[1] ;
+
+
+<span class=C>// algn_sel_23_16 mux selects
+</span><a name="933"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#148">algn_sel_23_16</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#875">algn_smu_ld</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#874">algn_word</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a> ;
+
+<span class=C>// algn_sel_31_24 mux select
+</span><a name="936"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#149">algn_sel_31_24</a>	=	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#875">algn_smu_ld</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#874">algn_word</a>&amp;!<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#870">algn_oppend</a> ;
+
+<span class=C>// aligner size selects
+</span><a name="939"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#150">algn_size_sel</a>[1] =	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#875">algn_smu_ld</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#874">algn_word</a> ;
+<span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#150">algn_size_sel</a>[0] =	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#875">algn_smu_ld</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#871">algn_iu_ld</a>&amp;(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#874">algn_word</a>|<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#873">algn_short</a> );
+
+
+<span class=C>/****** Error ack generation for iu *************************************************/</span>
+<span class=C>// Memory error - ack = 10  ;  I/O error - ack = 11 ;
+</span><span class=C>// error triggered only for reads. erroneous stores silently dropped.
+</span><span class=C>// for smu read errors, both mem and i/o error triggered.
+</span>
+<a name="948"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#319">mem_error</a> =  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#669">iu_miss_ld</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#188">biu_dcu_ack</a>[1] &amp; !<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#188">biu_dcu_ack</a>[0] ;
+<a name="949"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#320">io_error</a>  =  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#669">iu_miss_ld</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#188">biu_dcu_ack</a>[1] &amp;  <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#188">biu_dcu_ack</a>[0] ;
+<a name="950"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#321">async_err</a> =  ~<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#669">iu_miss_ld</a>&amp;<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#188">biu_dcu_ack</a>[1];
+
+<a name="dc_dec_error_reg"></a><a name="952"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_3">ff_sr_3</a>		error_reg(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3851">.out</a>(<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#163">dcu_err_ack</a>[2:0]),
+			<span class=SI>.din</span>({<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#950">async_err</a>,<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#949">io_error</a>,<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#948">mem_error</a>}),
+			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+			<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>));
+
+<span class=C>/******* Generation of Powerdown Signal  *********************************************/</span>
+<span class=C>// Internal Powerdown of caches when there are no instructions. Powerdown if
+</span><span class=C>//a. no instructions in E stage
+</span><span class=C>//b. no instruction in C stage ( can be more aggressive . (not needed for load hits)
+</span><span class=C>//c. no cache fill cycle
+</span><span class=C>//d. not replacing dirty lines
+</span><span class=C>//e. not executing zeroline instruction.
+</span><span class=C>//f. not when a stalled instruction is present.
+</span><span class=C>//g. there is a pending store.
+</span><span class=C>//h. there is no nonallocate store in progress.
+</span>
+<a name="968"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#317">int_pwrdown</a> = !(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#405">iu_anyinst_e</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#404">smu_ld_st</a> | <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#184">fill_cyc_active</a> | <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#398">dc_inst_c</a> | <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#182">repl_busy</a> | 
+			<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#185">zeroline_busy</a> | <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#636">smu_na_st_fill</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#691">iu_st_pending</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#700">smu_st_pending</a> |
+		      (<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#611">smu_miss_stall_valid</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#597">iu_miss_stall_valid</a>)&amp;!<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#413">req_outstanding</a>);
+
+<span class=C>// Active low signal - acts as enable to rams.
+</span><a name="973"></a><span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#165">dcu_pwrdown</a>  = !(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#968">int_pwrdown</a> | <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#981">dcu_in_powerdown</a> &amp; !(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#405">iu_anyinst_e</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#404">smu_ld_st</a> )) ;
+
+<span class=C>// When pcsu_powerdown signal is  recd from PCSU, wait till no inst in E and beyond and then
+</span><span class=C>// go into powerdown.
+</span> 
+<a name="978"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#318">set_pwrdown</a> = <a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#174">pcsu_powerdown</a>&amp;<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#434">dcu_no_inst</a> &amp;!(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#405">iu_anyinst_e</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#404">smu_ld_st</a>) |
+			 <a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#981">dcu_in_powerdown</a>&amp;!(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#405">iu_anyinst_e</a> | <a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#404">smu_ld_st</a> ) ; 
+
+<a name="dc_dec_pwrdown_reg"></a><a name="981"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_sr">ff_sr</a>           pwrdown_reg (<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2181">.out</a>(<a  onClick="return qs(event,this)" class=SO href="dc_dec.v.html#166">dcu_in_powerdown</a>),
+                        <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="dc_dec.v.html#978">set_pwrdown</a>),
+                        <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#202">clk</a>),
+                        <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="dc_dec.v.html#203">reset_l</a>) );
+
+
+<span class=C>/*************************************************************************************/</span>
+
+<span class=C>// we have separate stall and data valid signals bcos, there are some cases where
+</span><span class=C>// iu_stall = 1 and data valid = 1. but,in general, if iu_stall=1 data valid = 0;
+</span><span class=C>// scenario 1: if there a cache fill going on, and the cycle before data is
+</span><span class=C>// back, we process another load request and it is a cache hit. data is back
+</span><span class=C>// in the cycle cache fill is taking place. thus,we cant service any new 
+</span><span class=C>// requests but, data is available. 
+</span><span class=C>// scenario 2: if there is a ld cache hit followed immediately by ld miss,
+</span><span class=C>// stall goes up in the second cycle and data is not being latched.
+</span><span class=C>// thus we need two signals. iu_stall and iu_data_vld
+</span><span class=C>// iu_data_vld is used to latch data from DCU into W stage of IU.
+</span><span class=C>// iu_stall is used exclusively for holding new instructions flowing into the dcu.
+</span><span class=C>// we squash iu_stall when there is a data valid signal .
+</span></pre>
+<center><table class=NB cols=3 nosave><tr><td align="center"><a  href="dc_dec.v.p2.html">Next</a></td><td align="center"><font color="#808080">1</font></td><td align="center"><a  href="dc_dec.v.p2.html">2</a></td></tr></table></center>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return "dc_dec.v.p2.html"; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:14 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/dcu/rtl/dc_dec.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

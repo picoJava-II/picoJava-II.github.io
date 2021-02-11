@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/fpu/rtl/rsadd.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "rsadd.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+
+<a name="rsadd"></a><a  href="f_fpu.v.html#fpu_rsa"><IMG alt="[Up: fpu rsa]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>rsadd</span><a  href="hierarchy-m.p4.html#rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a> (	<a  onClick="return qs(event,this)" class=SI href="#57">saout</a>, 
+	<span class=C>//	a2, 
+</span>	<span class=C>//	a1, 
+</span>		<a  onClick="return qs(event,this)" class=SI href="#63">r1out</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#63">r0out</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#59">a0</a>, 
+		<a  onClick="return qs(event,this)" class=SI href="#64">rsfunc</a>, 
+	<span class=C>//	nx_rsfunc_rom0,
+</span>	<span class=C>//	nx_rsfunc_rom1,
+</span>	<span class=C>//	romsel,
+</span>		<a  onClick="return qs(event,this)" class=SI href="#67">reset_l</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#67">eadd</a>, 
+		<a  onClick="return qs(event,this)" class=SO href="#68">rsout</a>, 
+		<a  onClick="return qs(event,this)" class=SO href="#69">rsovfi</a>, 
+		<a  onClick="return qs(event,this)" class=SO href="#69">rsneg</a>, 
+		<a  onClick="return qs(event,this)" class=SO href="#69">rs2zero</a>, 
+               	<a  onClick="return qs(event,this)" class=SI href="#67">lsround</a>, 
+		<a  onClick="return qs(event,this)" class=SI href="#66">b0</a>, 
+		<a  onClick="return qs(event,this)" class=SI href="#65">b1</a>, 
+		<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>, 
+		<a  onClick="return qs(event,this)" class=SI href="#67">sm</a>, 
+		<a  onClick="return qs(event,this)" class=SI href="#67">sin</a>,
+		<a  onClick="return qs(event,this)" class=SO href="#70">so</a>, 
+		<a  onClick="return qs(event,this)" class=SO href="#69">incin</a>, 
+		<a  onClick="return qs(event,this)" class=SO href="#69">stin</a>, 
+		<a  onClick="return qs(event,this)" class=SI href="#67">rs32</a>,
+               	<a  onClick="return qs(event,this)" class=SI href="#60">incinfunc</a>, 
+		<a  onClick="return qs(event,this)" class=SO href="#69">rsovf</a>, 
+		<a  onClick="return qs(event,this)" class=SI href="#67">erop</a>,
+		<a  onClick="return qs(event,this)" class=SI href="#67">fpuhold</a> 
+		);
+
+<a name="57"></a><span class=K>input</span>  [4:0]  <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#149">saout</a><a  href="hierarchy-s.p16.html#saout___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=C>//input  [31:0] a1;
+</span><a name="59"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#152">a0</a><a  href="hierarchy-s.html#a0___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="60"></a><span class=K>input</span>  [2:0]  <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#175">incinfunc</a><a  href="hierarchy-s.p9.html#incinfunc___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=C>//input  [1:0]  romsel;
+</span><span class=C>//input  [2:0]  rsfunc, nx_rsfunc_rom0, nx_rsfunc_rom1;
+</span><a name="63"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#158">r0out</a><a  href="hierarchy-s.p15.html#r0out___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#157">r1out</a><a  href="hierarchy-s.p15.html#r1out___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="64"></a><span class=K>input</span>  [2:0]  <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#153">rsfunc</a><a  href="hierarchy-s.p15.html#rsfunc___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="65"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#167">b1</a><a  href="hierarchy-s.p2.html#b1___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="66"></a><span class=K>input</span>  [31:0] <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#166">b0</a><a  href="hierarchy-s.p2.html#b0___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="67"></a><span class=K>input</span>  <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#159">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#160">eadd</a><a  href="hierarchy-s.p5.html#eadd___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#165">lsround</a><a  href="hierarchy-s.p10.html#lsround___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#168">clk</a><a  href="hierarchy-s.p3.html#clk___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#67">sin</a><a  href="hierarchy-s.p16.html#sin___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#67">sm</a><a  href="hierarchy-s.p16.html#sm___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#174">rs32</a><a  href="hierarchy-s.p15.html#rs32___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#178">erop</a><a  href="hierarchy-s.p5.html#erop___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>,<a  onClick="return qs(event,this)" class=SI href="f_fpu.v.html#177">fpuhold</a><a  href="hierarchy-s.p6.html#fpuhold___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="68"></a><span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="#91">rsout</a><a  href="hierarchy-s.p15.html#rsout___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="69"></a><span class=K>output</span>        <a  onClick="return qs(event,this)" class=SO href="#92">rsovfi</a><a  href="hierarchy-s.p15.html#rsovfi___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#115">rsneg</a><a  href="hierarchy-s.p15.html#rsneg___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#118">rs2zero</a><a  href="hierarchy-s.p15.html#rs2zero___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#105">incin</a><a  href="hierarchy-s.p9.html#incin___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#105">stin</a><a  href="hierarchy-s.p16.html#stin___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#105">rsovf</a><a  href="hierarchy-s.p15.html#rsovf___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="70"></a><span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#70">so</a><a  href="hierarchy-s.p16.html#so___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="72"></a><span class=K>wire</span>          <a  onClick="return qs(event,this)" class=SW href="#76">a0zero</a><a  href="hierarchy-s.html#a0zero___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#113">aqcin</a><a  href="hierarchy-s.html#aqcin___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#85">sticky</a><a  href="hierarchy-s.p16.html#sticky___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="73"></a><span class=K>wire</span>   [1:0]  <a  onClick="return qs(event,this)" class=SW href="#97">bsmd</a><a  href="hierarchy-s.p2.html#bsmd___rsadd"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=C>//wire   [1:0]  r0md, r1md;
+</span>
+<a name="rsadd_p_rsadd_dp"></a><a name="76"></a> <a  onClick="return qs(event,this)" class=MM href="rsadd_dp.v.html#rsadd_dp">rsadd_dp</a> p_rsadd_dp ( 		<a  onClick="return qs(event,this)" class=SO href="rsadd_dp.v.html#85">.a0zero</a>(<a  onClick="return qs(event,this)" class=SW href="#72">a0zero</a>),
+<a name="77"></a>	                	<span class=SI>.a0</span>(<a  onClick="return qs(event,this)" class=SI href="#59">a0</a>),
+                       	<span class=C>//	.a1(a1), 
+</span>                       	<span class=C>//	.r0md(r0md),
+</span>			<span class=C>//	.r1md(r0md),
+</span>                       	<span class=C>//	.a2(a2), 
+</span><a name="82"></a>				<span class=SI>.r1out</span>(<a  onClick="return qs(event,this)" class=SI href="#63">r1out</a>),
+<a name="83"></a>				<span class=SI>.r0out</span>(<a  onClick="return qs(event,this)" class=SI href="#63">r0out</a>),
+<a name="84"></a>                      		<span class=SI>.stin</span>(<a  onClick="return qs(event,this)" class=SO href="#105">stin</a>),
+<a name="85"></a>                      		<a  onClick="return qs(event,this)" class=SO href="rsadd_dp.v.html#95">.sticky</a>(<a  onClick="return qs(event,this)" class=SW href="#72">sticky</a>),
+<a name="86"></a>                      		<span class=SI>.saout</span>(<a  onClick="return qs(event,this)" class=SI href="#57">saout</a>), 
+<a name="87"></a>                      		<span class=SI>.b1</span>(<a  onClick="return qs(event,this)" class=SI href="#65">b1</a>),
+<a name="88"></a>                      		<span class=SI>.b0</span>(<a  onClick="return qs(event,this)" class=SI href="#66">b0</a>),
+<a name="89"></a>                      		<span class=SI>.bsmd</span>(<a  onClick="return qs(event,this)" class=SW href="#97">bsmd</a>[1:0]), 
+<a name="90"></a>                      		<span class=SI>.aqcin</span>(<a  onClick="return qs(event,this)" class=SW href="#113">aqcin</a>), 
+<a name="91"></a>                      		<a  onClick="return qs(event,this)" class=SO href="rsadd_dp.v.html#103">.rsout</a>(<a  onClick="return qs(event,this)" class=SO href="#68">rsout</a>), 
+<a name="92"></a>                      		<a  onClick="return qs(event,this)" class=SO href="rsadd_dp.v.html#104">.rsovfi</a>(<a  onClick="return qs(event,this)" class=SO href="#69">rsovfi</a>)
+                     		);
+
+<a name="rsadd_p_rsadd_cntl"></a> <a  onClick="return qs(event,this)" class=MM href="rsadd_cntl.v.html#rsadd_cntl">rsadd_cntl</a> p_rsadd_cntl ( 	
+			<span class=C>//	.r0md(r0md), 
+</span><a name="97"></a>				<a  onClick="return qs(event,this)" class=SO href="rsadd_cntl.v.html#75">.bsmd</a>(<a  onClick="return qs(event,this)" class=SW href="#73">bsmd</a>[1:0]),
+<a name="98"></a>				<span class=SI>.rsfunc</span>(<a  onClick="return qs(event,this)" class=SI href="#64">rsfunc</a>),
+			<span class=C>//	.nx_rsfunc_rom0(nx_rsfunc_rom0),
+</span>			<span class=C>//	.nx_rsfunc_rom1(nx_rsfunc_rom1),
+</span>			<span class=C>//	.romsel(romsel),
+</span><a name="102"></a>				<span class=SI>.sticky</span>(<a  onClick="return qs(event,this)" class=SW href="#85">sticky</a>),
+<a name="103"></a>				<span class=SI>.a0zero</span>(<a  onClick="return qs(event,this)" class=SW href="#76">a0zero</a>), 
+<a name="104"></a>				<span class=SI>.rs32</span>(<a  onClick="return qs(event,this)" class=SI href="#67">rs32</a>), 
+<a name="105"></a>				<a  onClick="return qs(event,this)" class=SO href="rsadd_cntl.v.html#104">.out</a>({<a  onClick="return qs(event,this)" class=SO href="#69">incin</a>, <a  onClick="return qs(event,this)" class=SO href="#69">stin</a>, <a  onClick="return qs(event,this)" class=SO href="#69">rsovf</a>}),
+<a name="106"></a>				<span class=SI>.erop</span>(<a  onClick="return qs(event,this)" class=SI href="#67">erop</a>),
+<a name="107"></a>			        <span class=SI>.rsout_11_0</span>(<a  onClick="return qs(event,this)" class=SO href="#91">rsout</a>[11:0]),
+<a name="108"></a>			        <span class=SI>.incinfunc</span>(<a  onClick="return qs(event,this)" class=SI href="#60">incinfunc</a>),
+<a name="109"></a>				<span class=SI>.lsround</span>(<a  onClick="return qs(event,this)" class=SI href="#67">lsround</a>),
+<a name="110"></a>				<span class=SI>.rsovfi</span>(<a  onClick="return qs(event,this)" class=SO href="#92">rsovfi</a>), 
+<a name="111"></a>				<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#67">clk</a>),
+<a name="112"></a>				<span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#67">reset_l</a>),
+<a name="113"></a>				<a  onClick="return qs(event,this)" class=SO href="rsadd_cntl.v.html#114">.aqcin</a>(<a  onClick="return qs(event,this)" class=SW href="#72">aqcin</a>), 
+<a name="114"></a>				<span class=SI>.rsout_31_30</span>(<a  onClick="return qs(event,this)" class=SO href="#91">rsout</a>[31:30]),
+<a name="115"></a>				<a  onClick="return qs(event,this)" class=SO href="rsadd_cntl.v.html#115">.rsneg</a>(<a  onClick="return qs(event,this)" class=SO href="#69">rsneg</a>),
+<a name="116"></a>				<span class=SI>.eadd</span>(<a  onClick="return qs(event,this)" class=SI href="#67">eadd</a>), 
+<a name="117"></a>				<span class=SI>.fpuhold</span>(<a  onClick="return qs(event,this)" class=SI href="#67">fpuhold</a>),
+<a name="118"></a>				<a  onClick="return qs(event,this)" class=SO href="rsadd_cntl.v.html#116">.rs2zero</a>(<a  onClick="return qs(event,this)" class=SO href="#69">rs2zero</a>),
+		 		<span class=SI>.sm</span>(),
+				<span class=SI>.sin</span>(),
+				<a  onClick="return qs(event,this)" class=SO href="rsadd_cntl.v.html#67">.so</a>() 
+				);
+<span class=K>endmodule</span>
+
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:45:53 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/fpu/rtl/rsadd.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

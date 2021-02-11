@@ -1,0 +1,386 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/iu/pipe/rtl/pipe.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "pipe.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<a name="pipe"></a><a  href="iu.v.html#iu_pipe"><IMG alt="[Up: iu pipe]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span>	<span class=MM>pipe</span><a  href="hierarchy-m.p4.html#pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+
+	<span class=C>// OUTPUTS
+</span>	<a  onClick="return qs(event,this)" class=SO href="#99">arch_pc</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#100">pc_r</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#101">opcode_pc_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#102">arch_optop</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#103">iu_optop_din</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#104">optop_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#105">optop_e_v1</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#106">optop_e_v2</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#107">inst_vld</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#108">inst_vld_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#109">iu_optop_int_we</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#123">reissue_c</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#124">fold_c</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#125">fold_sc_miss_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#111">squash_fold</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#117">lduse_bypass</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#118">rs1_bypass_hold</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#119">rs2_bypass_hold</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#112">sc_dcache_req</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#113">sc_data_vld</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#114">icu_data_vld</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#163">icu_diag_ld_c</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#116">sc_rd_miss_sel</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#120">kill_inst_d</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#121">kill_inst_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#122">kill_inst_e_int</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#130">hold_ucode</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#126">hold_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#127">hold_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#128">hold_c</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#129">hold_c_int</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#131">iu_perf_sgnl</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#132">rs1_mux_sel_din</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#133">forward_c_sel_din</a>,
+	
+ 	<span class=C>// INPUTS
+</span>        <a  onClick="return qs(event,this)" class=SI href="#140">icu_pc_d</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#141">optop_shft_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#142">pc_offset_r</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#165">fold_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#143">iu_brtaken_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#144">iu_trap_c</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#145">async_error</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#146">iu_trap_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#147">trap_vld_r</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#148">trap_vld_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#149">trap_in_progress</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#150">inst_vld_r</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#166">wr_optop_e</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#151">iu_data_e</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#152">icu_hold</a>,      
+        <a  onClick="return qs(event,this)" class=SI href="#154">first_cyc_r</a>,     
+        <a  onClick="return qs(event,this)" class=SI href="#155">load_c</a>,         
+	<a  onClick="return qs(event,this)" class=SI href="#153">ucode_stk_rd</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#156">ucode_done</a>,     
+	<a  onClick="return qs(event,this)" class=SI href="#157">ucode_last</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#158">ru_byp_rs1_e_hit</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#159">ru_byp_rs2_e_hit</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#160">rs2_bypass_vld</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#161">rs1_bypass_vld</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#162">scache_rd_miss_e</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#135">scache_miss</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#136">lduse_hold</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#164">iu_data_vld</a>, 
+	<a  onClick="return qs(event,this)" class=SI href="#167">powerdown_op_e</a>,
+
+	<a  onClick="return qs(event,this)" class=SI href="#168">clk</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#169">reset_l</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#170">sm</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#171">sin</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#172">so</a>
+
+);
+
+<a name="99"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#181">arch_pc</a><a  href="hierarchy-s.html#arch_pc___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Architectural PC
+</span><a name="100"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#182">pc_r</a><a  href="hierarchy-s.p14.html#pc_r___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;			<span class=C>// PC R stage
+</span><a name="101"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#183">opcode_pc_e</a><a  href="hierarchy-s.p13.html#opcode_pc_e___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// PC of opcode in E stage
+</span><a name="102"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#184">arch_optop</a><a  href="hierarchy-s.html#arch_optop___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 		<span class=C>// Architectural OPTOP
+</span><a name="103"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#185">iu_optop_din</a><a  href="hierarchy-s.p9.html#iu_optop_din___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 		<span class=C>// Signal at the din input of arch optop flop
+</span><a name="104"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#186">optop_e</a><a  href="hierarchy-s.p13.html#optop_e___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Temporary Optop used by following inst
+</span><a name="105"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#187">optop_e_v1</a><a  href="hierarchy-s.p13.html#optop_e_v1___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Temporary Optop used by following inst
+</span><a name="106"></a><span class=K>output</span>	[31:0]		<a  onClick="return qs(event,this)" class=SO href="#188">optop_e_v2</a><a  href="hierarchy-s.p13.html#optop_e_v2___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// Temporary Optop used by following inst
+</span><a name="107"></a><span class=K>output</span>	[2:0]		<a  onClick="return qs(event,this)" class=SO href="#206">inst_vld</a><a  href="hierarchy-s.p9.html#inst_vld___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Valid bits for the pipe to keep track of instructions
+</span><a name="108"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#207">inst_vld_e</a><a  href="hierarchy-s.p9.html#inst_vld_e___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="109"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#211">iu_optop_int_we</a><a  href="hierarchy-s.p9.html#iu_optop_int_we___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// This is the write enable for the flop
+</span>						<span class=C>// in SMU to generate it's own version of optop
+</span><a name="111"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#210">squash_fold</a><a  href="hierarchy-s.p16.html#squash_fold___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// disable folding. folded group has trapped
+</span><a name="112"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#208">sc_dcache_req</a><a  href="hierarchy-s.p16.html#sc_dcache_req___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// stack miss dcache request
+</span><a name="113"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#209">sc_data_vld</a><a  href="hierarchy-s.p16.html#sc_data_vld___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// dcache data available is due to S$ read miss
+</span><a name="114"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#254">icu_data_vld</a><a  href="hierarchy-s.p9.html#icu_data_vld___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// icu diagnostic data available
+</span>
+<a name="116"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#212">sc_rd_miss_sel</a><a  href="hierarchy-s.p16.html#sc_rd_miss_sel___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// used to select D$ data for S$ read misses
+</span><a name="117"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#213">lduse_bypass</a><a  href="hierarchy-s.p10.html#lduse_bypass___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// bypass data from DCU on load-use case
+</span><a name="118"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#222">rs1_bypass_hold</a><a  href="hierarchy-s.p15.html#rs1_bypass_hold___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// hold rs1 data
+</span><a name="119"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#223">rs2_bypass_hold</a><a  href="hierarchy-s.p15.html#rs2_bypass_hold___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// hold rs2 data
+</span><a name="120"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#218">kill_inst_d</a><a  href="hierarchy-s.p10.html#kill_inst_d___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// kill instruction in D stage
+</span><a name="121"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#219">kill_inst_e</a><a  href="hierarchy-s.p10.html#kill_inst_e___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// kill DCU requests/priv writes in E stage
+</span><a name="122"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#220">kill_inst_e_int</a><a  href="hierarchy-s.p10.html#kill_inst_e_int___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// kill DCU requests/priv writes in E stage
+</span><a name="123"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#221">reissue_c</a><a  href="hierarchy-s.p15.html#reissue_c___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// reissue the instruction which is in C stage
+</span><a name="124"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#224">fold_c</a><a  href="hierarchy-s.p6.html#fold_c___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// folded group in C stage
+</span><a name="125"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#225">fold_sc_miss_e</a><a  href="hierarchy-s.p6.html#fold_sc_miss_e___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// folded group misses S$ 
+</span><a name="126"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#852">hold_r</a><a  href="hierarchy-s.p8.html#hold_r___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// hold contents of R stage
+</span><a name="127"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#853">hold_e</a><a  href="hierarchy-s.p8.html#hold_e___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// hold contents of E stage 
+</span><a name="128"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#854">hold_c</a><a  href="hierarchy-s.p8.html#hold_c___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// hold contents of C stage 
+</span><a name="129"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#856">hold_c_int</a><a  href="hierarchy-s.p8.html#hold_c_int___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// hold contents of C stage 
+</span><a name="130"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#855">hold_ucode</a><a  href="hierarchy-s.p8.html#hold_ucode___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="131"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#231">iu_perf_sgnl</a><a  href="hierarchy-s.p9.html#iu_perf_sgnl___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// performance monitor signals
+</span><a name="132"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#232">rs1_mux_sel_din</a><a  href="hierarchy-s.p15.html#rs1_mux_sel_din___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// This signal selects scache data in case of s$ misses
+</span><a name="133"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#233">forward_c_sel_din</a><a  href="hierarchy-s.p6.html#forward_c_sel_din___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// This signal selects DCU data for forward data_c
+</span>					<span class=C>// for RS1
+</span><a name="135"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#252">scache_miss</a><a  href="hierarchy-s.p16.html#scache_miss___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="136"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#253">lduse_hold</a><a  href="hierarchy-s.p10.html#lduse_hold___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+
+<a name="140"></a><span class=K>input</span>	[31:0]		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#858">icu_pc_d</a><a  href="hierarchy-s.p9.html#icu_pc_d___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// PC of first instruction of Ibuffer
+</span><a name="141"></a><span class=K>input</span>	[31:0]		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#859">optop_shft_r</a><a  href="hierarchy-s.p13.html#optop_shft_r___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Shift in optop due to instructions dispatched.
+</span><a name="142"></a><span class=K>input</span>	[2:0]		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#860">pc_offset_r</a><a  href="hierarchy-s.p14.html#pc_offset_r___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// pc offset to calculate PC of branching instr.
+</span><a name="143"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#862">iu_brtaken_e</a><a  href="hierarchy-s.p9.html#iu_brtaken_e___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Branch has been taken. need to squash vld bits
+</span><a name="144"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#863">iu_trap_c</a><a  href="hierarchy-s.p9.html#iu_trap_c___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Trap has been taken need to squash valid bits.
+</span><a name="145"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#864">async_error</a><a  href="hierarchy-s.html#async_error___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// asynchronous error in C stage
+</span><a name="146"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#865">iu_trap_r</a><a  href="hierarchy-s.p9.html#iu_trap_r___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Trap in R stage.need to start trapframe building
+</span><a name="147"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#867">trap_vld_r</a><a  href="hierarchy-s.p17.html#trap_vld_r___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// possible trap in R stage
+</span><a name="148"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#868">trap_vld_e</a><a  href="hierarchy-s.p17.html#trap_vld_e___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// possible trap in E stage
+</span><a name="149"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#866">trap_in_progress</a><a  href="hierarchy-s.p17.html#trap_in_progress___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// trap frame building in R stage
+</span><a name="150"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#869">inst_vld_r</a><a  href="hierarchy-s.p9.html#inst_vld_r___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Instruction in R stage is valid
+</span><a name="151"></a><span class=K>input</span>	[31:0]		<a  onClick="return qs(event,this)" class=SI href="iu.v.html#871">iu_data_e</a><a  href="hierarchy-s.p9.html#iu_data_e___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// Data bus for write to optop on priv_write_optop
+</span><a name="152"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#872">icu_hold</a><a  href="hierarchy-s.p9.html#icu_hold___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// icu unable to service request.
+</span><a name="153"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#882">ucode_stk_rd</a><a  href="hierarchy-s.p18.html#ucode_stk_rd___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// ucode reading stackcache
+</span><a name="154"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#873">first_cyc_r</a><a  href="hierarchy-s.p6.html#first_cyc_r___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// first cycle of a 2 cycle op
+</span><a name="155"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#874">load_c</a><a  href="hierarchy-s.p10.html#load_c___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// load instruction in C stage
+</span><a name="156"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#876">ucode_done</a><a  href="hierarchy-s.p18.html#ucode_done___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// ucode is free accept new instruction
+</span><a name="157"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#877">ucode_last</a><a  href="hierarchy-s.p18.html#ucode_last___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// ucode's last  cycle
+</span><a name="158"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#878">ru_byp_rs1_e_hit</a><a  href="hierarchy-s.p15.html#ru_byp_rs1_e_hit___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// rs1 bypass hit e stage destination
+</span><a name="159"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#879">ru_byp_rs2_e_hit</a><a  href="hierarchy-s.p15.html#ru_byp_rs2_e_hit___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// rs2 bypass hit e stage destination
+</span><a name="160"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#880">rs2_bypass_vld</a><a  href="hierarchy-s.p15.html#rs2_bypass_vld___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>//  instruction uses RS2 bypass
+</span><a name="161"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#881">rs1_bypass_vld</a><a  href="hierarchy-s.p15.html#rs1_bypass_vld___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>//  instruction uses RS1 bypass
+</span><a name="162"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#883">scache_rd_miss_e</a><a  href="hierarchy-s.p16.html#scache_rd_miss_e___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// stack cache read miss
+</span><a name="163"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#886">icu_diag_ld_c</a><a  href="hierarchy-s.p9.html#icu_diag_ld_c___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// diagnostic load in C stage
+</span><a name="164"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#884">iu_data_vld</a><a  href="hierarchy-s.p9.html#iu_data_vld___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// data from dcache valid.
+</span><a name="165"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#861">fold_r</a><a  href="hierarchy-s.p6.html#fold_r___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		<span class=C>// folded group in R stage
+</span><a name="166"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#870">wr_optop_e</a><a  href="hierarchy-s.p20.html#wr_optop_e___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// write to optop register
+</span><a name="167"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#887">powerdown_op_e</a><a  href="hierarchy-s.p14.html#powerdown_op_e___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;	<span class=C>// powerdown inst in E
+</span><a name="168"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#889">clk</a><a  href="hierarchy-s.p3.html#clk___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;		
+<a name="169"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="iu.v.html#888">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="170"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#170">sm</a><a  href="hierarchy-s.p16.html#sm___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="171"></a><span class=K>input</span>			<a  onClick="return qs(event,this)" class=SI href="#171">sin</a><a  href="hierarchy-s.p16.html#sin___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="172"></a><span class=K>output</span>			<a  onClick="return qs(event,this)" class=SO href="#172">so</a><a  href="hierarchy-s.p16.html#so___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="174"></a><span class=K>wire</span>	[3:0]		<a  onClick="return qs(event,this)" class=SW href="#214">optop_sel_e</a><a  href="hierarchy-s.p13.html#optop_sel_e___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="175"></a><span class=K>wire</span>	[3:0]		<a  onClick="return qs(event,this)" class=SW href="#215">optop_sel_c</a><a  href="hierarchy-s.p13.html#optop_sel_c___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="176"></a><span class=K>wire</span>	[2:0]		<a  onClick="return qs(event,this)" class=SW href="#216">optop_enable</a><a  href="hierarchy-s.p13.html#optop_enable___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="177"></a><span class=K>wire</span>	[2:0]		<a  onClick="return qs(event,this)" class=SW href="#217">pc_enable</a><a  href="hierarchy-s.p14.html#pc_enable___pipe"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<a name="pipe_pipe_dpath"></a><a  onClick="return qs(event,this)" class=MM href="pipe_dpath.v.html#pipe_dpath">pipe_dpath</a>	pipe_dpath(
+<a name="181"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_dpath.v.html#120">.arch_pc</a>		(<a  onClick="return qs(event,this)" class=SO href="#99">arch_pc</a>[31:0]),
+<a name="182"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_dpath.v.html#83">.pc_r</a>			(<a  onClick="return qs(event,this)" class=SO href="#100">pc_r</a>[31:0]),
+<a name="183"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_dpath.v.html#103">.opcode_pc_e</a>		(<a  onClick="return qs(event,this)" class=SO href="#101">opcode_pc_e</a>[31:0]),
+<a name="184"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_dpath.v.html#174">.arch_optop</a>		(<a  onClick="return qs(event,this)" class=SO href="#102">arch_optop</a>[31:0]),
+<a name="185"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_dpath.v.html#166">.iu_optop_din</a>		(<a  onClick="return qs(event,this)" class=SO href="#103">iu_optop_din</a>[31:0]),
+<a name="186"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_dpath.v.html#150">.optop_e</a>		(<a  onClick="return qs(event,this)" class=SO href="#104">optop_e</a>[31:0]),
+<a name="187"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_dpath.v.html#152">.optop_e_v1</a>		(<a  onClick="return qs(event,this)" class=SO href="#105">optop_e_v1</a>[31:0]),
+<a name="188"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_dpath.v.html#153">.optop_e_v2</a>		(<a  onClick="return qs(event,this)" class=SO href="#106">optop_e_v2</a>[31:0]),
+<a name="189"></a>			<span class=SI>.optop_sel_e</span>		(<a  onClick="return qs(event,this)" class=SW href="#214">optop_sel_e</a>[3:0]),
+<a name="190"></a>			<span class=SI>.optop_sel_c</span>		(<a  onClick="return qs(event,this)" class=SW href="#215">optop_sel_c</a>[3:0]),
+<a name="191"></a>			<span class=SI>.optop_enable</span>		(<a  onClick="return qs(event,this)" class=SW href="#216">optop_enable</a>[2:0]),
+<a name="192"></a>			<span class=SI>.pc_enable</span>		(<a  onClick="return qs(event,this)" class=SW href="#217">pc_enable</a>[2:0]),
+<a name="193"></a>			<span class=SI>.optop_shft_r</span>		(<a  onClick="return qs(event,this)" class=SI href="#141">optop_shft_r</a>[31:0]),
+<a name="194"></a>			<span class=SI>.pc_offset_r</span>		(<a  onClick="return qs(event,this)" class=SI href="#142">pc_offset_r</a>[2:0]),
+<a name="195"></a>			<span class=SI>.iu_data_e</span>		(<a  onClick="return qs(event,this)" class=SI href="#151">iu_data_e</a>[31:0]),
+<a name="196"></a>			<span class=SI>.icu_pc_d</span>		(<a  onClick="return qs(event,this)" class=SI href="#140">icu_pc_d</a>[31:0]),
+<a name="197"></a>			<span class=SI>.trap_in_progress</span>	(<a  onClick="return qs(event,this)" class=SI href="#149">trap_in_progress</a>),
+<a name="198"></a>			<span class=SI>.clk</span>			(<a  onClick="return qs(event,this)" class=SI href="#168">clk</a>),
+<a name="199"></a>			<span class=SI>.reset_l</span>			(<a  onClick="return qs(event,this)" class=SI href="#169">reset_l</a>),
+			<span class=SI>.sm</span>			(),
+			<span class=SI>.sin</span>			(),
+			<a  onClick="return qs(event,this)" class=SO href="pipe_dpath.v.html#73">.so</a>			());
+
+
+<a name="pipe_pipe_cntl"></a><a  onClick="return qs(event,this)" class=MM href="pipe_cntl.v.html#pipe_cntl">pipe_cntl</a>	pipe_cntl(
+<a name="206"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#226">.inst_vld</a>		(<a  onClick="return qs(event,this)" class=SO href="#107">inst_vld</a>[2:0]),
+<a name="207"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#192">.inst_vld_e_v1</a>		(<a  onClick="return qs(event,this)" class=SO href="#108">inst_vld_e</a>),
+<a name="208"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#387">.sc_dcache_req</a>		(<a  onClick="return qs(event,this)" class=SO href="#112">sc_dcache_req</a>),
+<a name="209"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#388">.sc_data_vld</a>		(<a  onClick="return qs(event,this)" class=SO href="#113">sc_data_vld</a>),
+<a name="210"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#632">.squash_fold</a>		(<a  onClick="return qs(event,this)" class=SO href="#111">squash_fold</a>),
+<a name="211"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#547">.iu_optop_int_we</a>	(<a  onClick="return qs(event,this)" class=SO href="#109">iu_optop_int_we</a>),
+<a name="212"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#389">.sc_rd_miss_sel</a>		(<a  onClick="return qs(event,this)" class=SO href="#116">sc_rd_miss_sel</a>),
+<a name="213"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#408">.lduse_bypass</a>		(<a  onClick="return qs(event,this)" class=SO href="#117">lduse_bypass</a>),
+<a name="214"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#515">.optop_sel_e</a>		(<a  onClick="return qs(event,this)" class=SW href="#174">optop_sel_e</a>[3:0]),
+<a name="215"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#521">.optop_sel_c</a>		(<a  onClick="return qs(event,this)" class=SW href="#175">optop_sel_c</a>[3:0]),
+<a name="216"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#538">.optop_enable</a>           (<a  onClick="return qs(event,this)" class=SW href="#176">optop_enable</a>[2:0]),
+<a name="217"></a>                        <a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#552">.pc_enable</a>              (<a  onClick="return qs(event,this)" class=SW href="#177">pc_enable</a>[2:0]),
+<a name="218"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#215">.kill_inst_d</a>		(<a  onClick="return qs(event,this)" class=SO href="#120">kill_inst_d</a>),
+<a name="219"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#220">.kill_inst_e</a>		(<a  onClick="return qs(event,this)" class=SO href="#121">kill_inst_e</a>),
+<a name="220"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#224">.kill_inst_e_int</a>	(<a  onClick="return qs(event,this)" class=SO href="#122">kill_inst_e_int</a>),
+<a name="221"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#605">.reissue_c</a>		(<a  onClick="return qs(event,this)" class=SO href="#123">reissue_c</a>),
+<a name="222"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#250">.rs1_bypass_hold</a>	(<a  onClick="return qs(event,this)" class=SO href="#118">rs1_bypass_hold</a>),
+<a name="223"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#261">.rs2_bypass_hold</a>	(<a  onClick="return qs(event,this)" class=SO href="#119">rs2_bypass_hold</a>),
+<a name="224"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#573">.fold_c</a>			(<a  onClick="return qs(event,this)" class=SO href="#124">fold_c</a>),
+<a name="225"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#594">.fold_sc_miss_e</a>		(<a  onClick="return qs(event,this)" class=SO href="#125">fold_sc_miss_e</a>),
+<a name="226"></a>			<span class=SI>.hold_r</span>			(<a  onClick="return qs(event,this)" class=SI href="#126">hold_r</a>),
+<a name="227"></a>			<span class=SI>.hold_e</span>			(<a  onClick="return qs(event,this)" class=SI href="#127">hold_e</a>),
+<a name="228"></a>			<span class=SI>.hold_c</span>			(<a  onClick="return qs(event,this)" class=SI href="#128">hold_c</a>),
+<a name="229"></a>			<span class=SI>.hold_c_int</span>		(<a  onClick="return qs(event,this)" class=SI href="#129">hold_c_int</a>),
+<a name="230"></a>			<span class=SI>.hold_ucode</span>		(<a  onClick="return qs(event,this)" class=SI href="#130">hold_ucode</a>),
+<a name="231"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#507">.iu_perf_sgnl</a>		(<a  onClick="return qs(event,this)" class=SO href="#131">iu_perf_sgnl</a>),
+<a name="232"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#304">.rs1_mux_sel_din</a>	(<a  onClick="return qs(event,this)" class=SO href="#132">rs1_mux_sel_din</a>),
+<a name="233"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#303">.forward_c_sel_din</a>	(<a  onClick="return qs(event,this)" class=SO href="#133">forward_c_sel_din</a>),
+<a name="234"></a>			<span class=SI>.iu_brtaken_e</span>		(<a  onClick="return qs(event,this)" class=SI href="#143">iu_brtaken_e</a>),
+<a name="235"></a>			<span class=SI>.iu_trap_c</span>		(<a  onClick="return qs(event,this)" class=SI href="#144">iu_trap_c</a>),
+<a name="236"></a>			<span class=SI>.async_error</span>		(<a  onClick="return qs(event,this)" class=SI href="#145">async_error</a>),
+<a name="237"></a>			<span class=SI>.iu_trap_r</span>		(<a  onClick="return qs(event,this)" class=SI href="#146">iu_trap_r</a>),
+<a name="238"></a>			<span class=SI>.trap_vld_r</span>		(<a  onClick="return qs(event,this)" class=SI href="#147">trap_vld_r</a>),
+<a name="239"></a>			<span class=SI>.trap_vld_e</span>		(<a  onClick="return qs(event,this)" class=SI href="#148">trap_vld_e</a>),
+<a name="240"></a>			<span class=SI>.trap_in_progress</span>	(<a  onClick="return qs(event,this)" class=SI href="#149">trap_in_progress</a>),
+<a name="241"></a>			<span class=SI>.icu_hold</span>		(<a  onClick="return qs(event,this)" class=SI href="#152">icu_hold</a>),
+<a name="242"></a>			<span class=SI>.first_cyc_r</span>		(<a  onClick="return qs(event,this)" class=SI href="#154">first_cyc_r</a>),
+<a name="243"></a>			<span class=SI>.load_c</span>			(<a  onClick="return qs(event,this)" class=SI href="#155">load_c</a>),
+<a name="244"></a>			<span class=SI>.ucode_done</span>		(<a  onClick="return qs(event,this)" class=SI href="#156">ucode_done</a>),
+<a name="245"></a>			<span class=SI>.ucode_stk_rd</span>		(<a  onClick="return qs(event,this)" class=SI href="#153">ucode_stk_rd</a>),
+<a name="246"></a>			<span class=SI>.ucode_last</span>		(<a  onClick="return qs(event,this)" class=SI href="#157">ucode_last</a>),
+<a name="247"></a>			<span class=SI>.ru_byp_rs1_e_hit</span>	(<a  onClick="return qs(event,this)" class=SI href="#158">ru_byp_rs1_e_hit</a>),
+<a name="248"></a>			<span class=SI>.ru_byp_rs2_e_hit</span>	(<a  onClick="return qs(event,this)" class=SI href="#159">ru_byp_rs2_e_hit</a>),
+<a name="249"></a>			<span class=SI>.rs1_bypass_vld</span>		(<a  onClick="return qs(event,this)" class=SI href="#161">rs1_bypass_vld</a>),
+<a name="250"></a>			<span class=SI>.rs2_bypass_vld</span>		(<a  onClick="return qs(event,this)" class=SI href="#160">rs2_bypass_vld</a>),
+<a name="251"></a>			<span class=SI>.scache_rd_miss_e</span>	(<a  onClick="return qs(event,this)" class=SI href="#162">scache_rd_miss_e</a>),
+<a name="252"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#386">.scache_miss</a>		(<a  onClick="return qs(event,this)" class=SO href="#135">scache_miss</a>),
+<a name="253"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#409">.lduse_hold</a>		(<a  onClick="return qs(event,this)" class=SO href="#136">lduse_hold</a>),
+<a name="254"></a>			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#423">.icu_data_vld</a>		(<a  onClick="return qs(event,this)" class=SO href="#114">icu_data_vld</a>),
+<a name="255"></a>			<span class=SI>.icu_diag_ld_c</span>		(<a  onClick="return qs(event,this)" class=SI href="#163">icu_diag_ld_c</a>),
+<a name="256"></a>			<span class=SI>.iu_data_vld</span>		(<a  onClick="return qs(event,this)" class=SI href="#164">iu_data_vld</a>),
+<a name="257"></a>			<span class=SI>.powerdown_op_e</span>		(<a  onClick="return qs(event,this)" class=SI href="#167">powerdown_op_e</a>),
+<a name="258"></a>			<span class=SI>.fold_r</span>			(<a  onClick="return qs(event,this)" class=SI href="#165">fold_r</a>),
+<a name="259"></a>			<span class=SI>.wr_optop_e</span>		(<a  onClick="return qs(event,this)" class=SI href="#166">wr_optop_e</a>),
+<a name="260"></a>			<span class=SI>.inst_vld_r</span>		(<a  onClick="return qs(event,this)" class=SI href="#150">inst_vld_r</a>),
+<a name="261"></a>			<span class=SI>.clk</span>			(<a  onClick="return qs(event,this)" class=SI href="#168">clk</a>),
+			<span class=SI>.sm</span>			(),
+<a name="263"></a>			<span class=SI>.reset_l</span>			(<a  onClick="return qs(event,this)" class=SI href="#169">reset_l</a>),
+			<span class=SI>.sin</span>			(),
+			<a  onClick="return qs(event,this)" class=SO href="pipe_cntl.v.html#155">.so</a>			());
+
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:45:53 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/iu/pipe/rtl/pipe.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/pcsu/rtl/pcsu.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "pcsu.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+
+<span class=C>/* **********************************************************************
+ *								        *	
+ *                     Powerdown, Clock, Scan Unit                      *
+ *									*     
+ *  The PCSU performs three functions including power management, clock *
+ *  management, and scan interfacing. The implementation of these       *
+ *  functions and the interaction with other function units are         *
+ *  described in the MicroArchitecture Specification                    *
+ *   						                	*
+ * 									*
+ * ******************************************************************** */</span>
+
+
+
+<span class=C>// triquest fsm_begin
+</span><a name="pcsu"></a><a  href="cpu.v.html#cpu_pcsu"><IMG alt="[Up: cpu pcsu]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>pcsu</span><a  href="hierarchy-m.p4.html#pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>(
+   	<span class=C>// OUTPUTS
+</span>
+	<a  onClick="return qs(event,this)" class=SO href="#62">pj_clk_out</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#63">pj_standby_out</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#64">pcsu_powerdown</a>,
+        <a  onClick="return qs(event,this)" class=SO href="#65">so</a>,   
+	<a  onClick="return qs(event,this)" class=SI href="#77">reset_l</a>,
+       	<a  onClick="return qs(event,this)" class=SO href="#66">pj_irl_sync</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#67">pj_nmi_sync</a>,
+
+	<span class=C>// INPUTS
+</span>	<a  onClick="return qs(event,this)" class=SI href="#69">clk</a>,
+       	<a  onClick="return qs(event,this)" class=SI href="#70">pj_irl</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#71">pj_nmi</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#72">dcu_in_powerdown</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#73">icu_in_powerdown</a>,
+	<a  onClick="return qs(event,this)" class=SI href="#74">iu_powerdown_e</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#75">sin</a>, 
+        <a  onClick="return qs(event,this)" class=SI href="#76">sm</a>
+);
+
+<a name="62"></a><span class=K>output</span>	<a  onClick="return qs(event,this)" class=SO href="#113">pj_clk_out</a><a  href="hierarchy-s.p14.html#pj_clk_out___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;<span class=C>// free running pj_clk out to external system
+</span><a name="63"></a><span class=K>output</span>	<a  onClick="return qs(event,this)" class=SO href="#108">pj_standby_out</a><a  href="hierarchy-s.p14.html#pj_standby_out___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a> 	;<span class=C>// indicates PCSU is in standby mode
+</span><a name="64"></a><span class=K>output</span>	<a  onClick="return qs(event,this)" class=SO href="#96">pcsu_powerdown</a><a  href="hierarchy-s.p14.html#pcsu_powerdown___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a> 	;<span class=C>// standby mode request to the units
+</span><a name="65"></a><span class=K>output</span>	<a  onClick="return qs(event,this)" class=SO href="#65">so</a><a  href="hierarchy-s.p16.html#so___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>	  	;<span class=C>// scan output to external system 
+</span><a name="66"></a><span class=K>output</span>	[3:0] <a  onClick="return qs(event,this)" class=SO href="#124">pj_irl_sync</a><a  href="hierarchy-s.p14.html#pj_irl_sync___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;<span class=C>// synchronized interrupt request line
+</span><a name="67"></a><span class=K>output</span>	<a  onClick="return qs(event,this)" class=SO href="#125">pj_nmi_sync</a><a  href="hierarchy-s.p14.html#pj_nmi_sync___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;<span class=C>// synchronized non-maskable interrupt
+</span>
+<a name="69"></a><span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#628">clk</a><a  href="hierarchy-s.p3.html#clk___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>		;<span class=C>// 
+</span><a name="70"></a><span class=K>input</span>	[3:0] <a  onClick="return qs(event,this)" class=SI href="cpu.v.html#629">pj_irl</a><a  href="hierarchy-s.p14.html#pj_irl___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;<span class=C>// interrupt request line
+</span><a name="71"></a><span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#630">pj_nmi</a><a  href="hierarchy-s.p14.html#pj_nmi___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>		;<span class=C>// non-maskable interrupt
+</span><a name="72"></a><span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#631">dcu_in_powerdown</a><a  href="hierarchy-s.p4.html#dcu_in_powerdown___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// dcu is ready for standby mode
+</span><a name="73"></a><span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#632">icu_in_powerdown</a><a  href="hierarchy-s.p9.html#icu_in_powerdown___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;<span class=C>// icu is ready for standby mode
+</span><a name="74"></a><span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#633">iu_powerdown_e</a><a  href="hierarchy-s.p9.html#iu_powerdown_e___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;<span class=C>// ieu executes priv_shutdown instruction 
+</span><a name="75"></a><span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="#75">sin</a><a  href="hierarchy-s.p16.html#sin___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>		;<span class=C>// scan input from external system 
+</span><a name="76"></a><span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="#76">sm</a><a  href="hierarchy-s.p16.html#sm___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>		;<span class=C>// scan mode input from external system 
+</span><a name="77"></a><span class=K>input</span>	<a  onClick="return qs(event,this)" class=SI href="cpu.v.html#623">reset_l</a><a  href="hierarchy-s.p15.html#reset_l___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>	;
+
+
+<span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SO href="#62">pj_clk_out</a>	;
+<span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SO href="#63">pj_standby_out</a> 	;
+<span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SO href="#64">pcsu_powerdown</a> 	;
+<span class=K>wire</span>	<a  onClick="return qs(event,this)" class=SO href="#65">so</a> 	 	;
+
+<a name="85"></a><span class=K>wire</span> [2:0] <a  onClick="return qs(event,this)" class=SW href="#173">cur_pcsu_state</a><a  href="hierarchy-s.p3.html#cur_pcsu_state___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="86"></a><span class=K>wire</span> [2:0] <a  onClick="return qs(event,this)" class=SW href="#165">next_pcsu_state</a><a  href="hierarchy-s.p12.html#next_pcsu_state___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="87"></a><span class=K>wire</span> [4:0] <a  onClick="return qs(event,this)" class=SW href="#129">sync_int</a><a  href="hierarchy-s.p16.html#sync_int___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="88"></a><span class=K>wire</span> [4:0] <a  onClick="return qs(event,this)" class=SW href="#133">sync_1st</a><a  href="hierarchy-s.p16.html#sync_1st___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span> [3:0] <a  onClick="return qs(event,this)" class=SO href="#66">pj_irl_sync</a>;
+<span class=K>wire</span>       <a  onClick="return qs(event,this)" class=SO href="#67">pj_nmi_sync</a>;
+<a name="91"></a><span class=K>wire</span>       <a  onClick="return qs(event,this)" class=SW href="#138">pcsu_wakeup</a><a  href="hierarchy-s.p14.html#pcsu_wakeup___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<span class=C>// Powerdown signals
+</span>
+<a name="96"></a> <span class=K>assign</span>	<a  onClick="return qs(event,this)" class=SO href="#64">pcsu_powerdown</a> = <a  onClick="return qs(event,this)" class=SI href="#74">iu_powerdown_e</a> &amp; !<a  onClick="return qs(event,this)" class=SW href="#138">pcsu_wakeup</a>;	
+ 
+<span class=C>/* ****************************************************** 
+ * Generation of pj_standby_out:
+ *  
+ * The pj_standby_out is equal to
+ * cur_pcsu_state[2] delayed by one clock.  
+ * It is delayed by one clock because it needs to be in
+ * sync with the shutoff of pj_internal_clk.
+ *
+ * **************************************************** */</span>
+
+<a name="108"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#63">pj_standby_out</a> = <a  onClick="return qs(event,this)" class=SW href="#173">cur_pcsu_state</a>[2] ;
+
+
+<span class=C>// Clock outputs
+</span>
+<a name="113"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#62">pj_clk_out</a>     = <a  onClick="return qs(event,this)" class=SI href="#69">clk</a>;
+
+<span class=C>/* ****************************************************** 
+ * Generation of pj_internal_clk:
+ *  
+ * The picoJava-II core runs off a single clock source, 
+ * pj_clk. The pj_clk, negated by halt_clock becomes 
+ * the pj_internal_clk to all function units.
+ *
+ ******************************************************* */</span>
+
+<a name="124"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#66">pj_irl_sync</a>[3:0] = <a  onClick="return qs(event,this)" class=SW href="#129">sync_int</a>[4:1]; 
+<a name="125"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SO href="#67">pj_nmi_sync</a> = <a  onClick="return qs(event,this)" class=SW href="#129">sync_int</a>[0]; 
+
+<span class=C>// synchronizer
+</span>
+<a name="pcsu_sync1_reg_4_0"></a><a name="129"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s_5">ff_s_5</a>    sync1_reg_4_0(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2231">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#87">sync_int</a>[4:0]),
+                   <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#133">sync_1st</a>[4:0]),
+                   <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#69">clk</a>));
+
+<a name="pcsu_sync0_reg_4_0"></a><a name="133"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s_5">ff_s_5</a>    sync0_reg_4_0(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2231">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#88">sync_1st</a>[4:0]),
+                   <span class=SI>.din</span>({<a  onClick="return qs(event,this)" class=SI href="#70">pj_irl</a>[3:0],<a  onClick="return qs(event,this)" class=SI href="#71">pj_nmi</a>}),
+                   <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#69">clk</a>));
+
+
+<a name="138"></a><span class=K>assign</span>    <a  onClick="return qs(event,this)" class=SW href="#91">pcsu_wakeup</a> = |<a  onClick="return qs(event,this)" class=SW href="#129">sync_int</a> ;
+
+
+<span class=C>/* **************************************************
+ * Standby state machine:
+ * 
+ * The core can be put in standby mode by executing 
+ * powerdown instruction. 
+ *
+ * When the powerdown instruction is executed the PCSU 
+ * asserts pcsu_powerdown to all function units and 
+ * waits until all function units are ready. It then 
+ * enters the standby state and stops the clock, 
+ * pj_internal_clk to all units. PCSU indicates this 
+ * state to the system with the pj_standby_out pin. 
+ *
+ * The pj_nmi or pj_irl can make the core exit the 
+ * standby mode caused by the powerdown instruction.
+ *
+ * The Reset can make the core exit the standby mode 
+ * without any quetion.
+ *
+ * ************************************************* */</span> 
+
+<a name="162"></a><span class=K>wire</span>    <a  onClick="return qs(event,this)" class=SW href="#162">ready_to_powerdown</a><a  href="hierarchy-s.p15.html#ready_to_powerdown___pcsu"><IMG align=top border=0 SRC="v2html-i.gif"></a> = <a  onClick="return qs(event,this)" class=SI href="#72">dcu_in_powerdown</a> &amp; 
+                             <a  onClick="return qs(event,this)" class=SI href="#73">icu_in_powerdown</a>;
+
+<a name="165"></a><span class=K>assign</span>  <a  onClick="return qs(event,this)" class=SW href="#86">next_pcsu_state</a>[2:0] =  <a  onClick="return qs(event,this)" class=F href="#pcsu_pcsu_state">pcsu_state</a>(
+			 	<a  onClick="return qs(event,this)" class=SW href="#173">cur_pcsu_state</a>[2:0],
+ 			 	<a  onClick="return qs(event,this)" class=SW href="#162">ready_to_powerdown</a>,           	
+				<a  onClick="return qs(event,this)" class=SI href="#74">iu_powerdown_e</a>,
+				<a  onClick="return qs(event,this)" class=SW href="#138">pcsu_wakeup</a>	
+				           );
+
+<span class=C>// triquest state_vector {cur_pcsu_state[2:1] cur_pcsu_state[0]} PCSU_STATE enum PCSU_STATE_ENUM
+</span><a name="pcsu_pcsu_reg_2_1"></a><a name="173"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p4.html#ff_sr_2">ff_sr_2</a>	pcsu_reg_2_1(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p4.html#3839">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#85">cur_pcsu_state</a>[2:1]),
+                   <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SW href="#165">next_pcsu_state</a>[2:1]),
+                   <span class=SI>.reset_l</span>(<a  onClick="return qs(event,this)" class=SI href="#77">reset_l</a>),
+                   <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#69">clk</a>));
+
+<a name="pcsu_pcsu_reg_0"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.p3.html#ff_s">ff_s</a>    pcsu_reg_0(<a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.p3.html#2137">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#85">cur_pcsu_state</a>[0]),
+                   <span class=SI>.din</span>(~<a  onClick="return qs(event,this)" class=SI href="#77">reset_l</a> | <a  onClick="return qs(event,this)" class=SW href="#165">next_pcsu_state</a>[0]),
+                   <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#69">clk</a>));
+
+
+<a name="pcsu_pcsu_state"></a><span class=K>function</span> [2:0] 	<a  onClick="return qs(event,this)" class=F href="#pcsu_pcsu_state">pcsu_state</a> ;
+ 
+<a name="185"></a><span class=K>input</span>    [2:0]  <a  onClick="return qs(event,this)" class=SI href="#185">cur_state</a>;
+<a name="186"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="#186">ready_to_powerdown</a>;        
+<a name="187"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="#187">iu_powerdown_e</a>;
+<a name="188"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="#188">pcsu_wakeup</a>;     
+
+<a name="190"></a><span class=K>reg</span>      [2:0]  <a  onClick="return qs(event,this)" class=SR href="#204">next_state</a>;
+
+<span class=K>parameter</span> <span class=C>// triquest enum PCSU_STATE_ENUM
+</span>
+<a name="194"></a>        <a  onClick="return qs(event,this)" class=PA href="#194">NORMAL_MODE</a>     = 3'b001,
+<a name="195"></a>        <a  onClick="return qs(event,this)" class=PA href="#195">WAIT_STATE</a>      = 3'b010,
+<a name="196"></a>        <a  onClick="return qs(event,this)" class=PA href="#196">STANDBY_MODE</a>    = 3'b100;
+
+<span class=K>begin</span>
+
+  <span class=K>case</span> (<a  onClick="return qs(event,this)" class=SI href="#185">cur_state</a>)
+
+        <a  onClick="return qs(event,this)" class=PA href="#194">NORMAL_MODE</a>: 	<span class=K>begin</span>
+			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#187">iu_powerdown_e</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#188">pcsu_wakeup</a>) 
+<a name="204"></a>                                 <a  onClick="return qs(event,this)" class=SR href="#190">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#195">WAIT_STATE</a>;
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#190">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#185">cur_state</a>; 
+        <span class=K>end</span>	
+
+        <a  onClick="return qs(event,this)" class=PA href="#195">WAIT_STATE</a>:	<span class=K>begin</span>
+			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#188">pcsu_wakeup</a>) <a  onClick="return qs(event,this)" class=SR href="#190">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#194">NORMAL_MODE</a>;
+			<span class=K>else</span> <span class=K>if</span>(<a  onClick="return qs(event,this)" class=SI href="#186">ready_to_powerdown</a>) <a  onClick="return qs(event,this)" class=SR href="#190">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#196">STANDBY_MODE</a>; 
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#190">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#185">cur_state</a>;	
+        <span class=K>end</span>
+
+        <a  onClick="return qs(event,this)" class=PA href="#196">STANDBY_MODE</a>:	<span class=K>begin</span>
+ 			<span class=K>if</span> (<a  onClick="return qs(event,this)" class=SI href="#188">pcsu_wakeup</a>)  <a  onClick="return qs(event,this)" class=SR href="#190">next_state</a> = <a  onClick="return qs(event,this)" class=PA href="#194">NORMAL_MODE</a>;
+			<span class=K>else</span> <a  onClick="return qs(event,this)" class=SR href="#190">next_state</a> = <a  onClick="return qs(event,this)" class=SI href="#185">cur_state</a>;	
+	<span class=K>end</span>
+
+        <span class=K>default</span>:        <a  onClick="return qs(event,this)" class=SR href="#190">next_state</a> = 3'bx;
+ <span class=K>endcase</span>
+
+ <a  onClick="return qs(event,this)" class=F href="#pcsu_pcsu_state">pcsu_state</a> = <a  onClick="return qs(event,this)" class=SR href="#204">next_state</a>;
+<span class=K>end</span>
+
+<span class=K>endfunction</span>
+
+<span class=C>/* ******************************************************
+ * Generation of halt_clock:
+ *  
+ * A positive-edge triggered flip-flop fed with an 
+ * inverted clock is used to latch early_pj_standby_out
+ * and thus keeps the pj_internal_clk from the glitch.
+ *
+ * **************************************************** */</span>
+
+
+
+
+<span class=K>endmodule</span>
+<span class=C>// triquest fsm_end
+</span>
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:46:11 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/pcsu/rtl/pcsu.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

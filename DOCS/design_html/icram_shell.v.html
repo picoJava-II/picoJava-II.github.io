@@ -1,0 +1,484 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/icram/rtl/icram_shell.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "icram_shell.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+
+<span class=M>`include</span>        <a  onClick="return qs(event,this)" class=S href="defines.h.html">&quot;defines.h&quot;</a>
+
+<a name="icram_shell"></a><span class=K>module</span>  <span class=MM>icram_shell</span><a  href="hierarchy-m.p3.html#icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>(   <a  onClick="return qs(event,this)" class=SI href="#42">icu_din</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#43">icu_ram_we</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#44">enable</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#45">icu_addr</a>,
+                        <a  onClick="return qs(event,this)" class=SO href="#46">icram_dout</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#47">clk</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#49">bist_mode</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#50">bist_reset</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#48">test_mode</a>,
+                        <a  onClick="return qs(event,this)" class=SO href="#51">icache_test_err_l</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#52">sin</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#53">sm</a>,
+                        <a  onClick="return qs(event,this)" class=SO href="#54">so</a>
+                        );
+
+<a name="42"></a><span class=K>input</span>       [31:0]      <a  onClick="return qs(event,this)" class=SI href="#42">icu_din</a><a  href="hierarchy-s.p9.html#icu_din___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// Write data_in port
+</span><a name="43"></a><span class=K>input</span>        [1:0]      <a  onClick="return qs(event,this)" class=SI href="#43">icu_ram_we</a><a  href="hierarchy-s.p9.html#icu_ram_we___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// Write enable
+</span><a name="44"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#44">enable</a><a  href="hierarchy-s.p5.html#enable___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;              <span class=C>// Power down mode. Active-low
+</span><a name="45"></a><span class=K>input</span>  [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:3]      <a  onClick="return qs(event,this)" class=SI href="#45">icu_addr</a><a  href="hierarchy-s.p9.html#icu_addr___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;            <span class=C>// Address inputs
+</span><a name="46"></a><span class=K>output</span>      [63:0]      <a  onClick="return qs(event,this)" class=SO href="#71">icram_dout</a><a  href="hierarchy-s.p9.html#icram_dout___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// data output
+</span><a name="47"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#47">clk</a><a  href="hierarchy-s.p3.html#clk___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                 <span class=C>// Clock
+</span><a name="48"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#48">test_mode</a><a  href="hierarchy-s.p17.html#test_mode___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// BIST enable
+</span><a name="49"></a><span class=K>input</span>        [1:0]      <a  onClick="return qs(event,this)" class=SI href="#49">bist_mode</a><a  href="hierarchy-s.p2.html#bist_mode___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// BIST mode
+</span><a name="50"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#50">bist_reset</a><a  href="hierarchy-s.p2.html#bist_reset___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// BIST reset
+</span><a name="51"></a><span class=K>output</span>                  <a  onClick="return qs(event,this)" class=SO href="#70">icache_test_err_l</a><a  href="hierarchy-s.p9.html#icache_test_err_l___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="52"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#52">sin</a><a  href="hierarchy-s.p16.html#sin___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="53"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#53">sm</a><a  href="hierarchy-s.p16.html#sm___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="54"></a><span class=K>output</span>                  <a  onClick="return qs(event,this)" class=SO href="#54">so</a><a  href="hierarchy-s.p16.html#so___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="56"></a><span class=K>wire</span>        [31:0]      <a  onClick="return qs(event,this)" class=SW href="#56">bist_icu_din</a><a  href="hierarchy-s.p2.html#bist_icu_din___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;        <span class=C>// BIST Write data_in port
+</span><a name="57"></a><span class=K>wire</span>         [1:0]      <a  onClick="return qs(event,this)" class=SW href="#57">bist_icu_ram_we</a><a  href="hierarchy-s.p2.html#bist_icu_ram_we___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// BIST Write enable
+</span><a name="58"></a><span class=K>wire</span>   [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:3]      <a  onClick="return qs(event,this)" class=SW href="#58">bist_icu_addr</a><a  href="hierarchy-s.p2.html#bist_icu_addr___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       <span class=C>// BIST Address inputs
+</span><a name="59"></a><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SW href="#59">bist_enable</a><a  href="hierarchy-s.p2.html#bist_enable___icram_shell"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<span class=K>wire</span>        [63:0]      <a  onClick="return qs(event,this)" class=SO href="#46">icram_dout</a>;          <span class=C>// data output =&gt; icram_bist
+</span>
+<a name="icram_shell_icram_top"></a><a name="62"></a><a  onClick="return qs(event,this)" class=MM href="#icram_top">icram_top</a> icram_top (	<span class=SI>.bist_reset</span>(<a  onClick="return qs(event,this)" class=SI href="#50">bist_reset</a>),
+<a name="63"></a>			<span class=SI>.bist_mode</span>(<a  onClick="return qs(event,this)" class=SI href="#49">bist_mode</a>), 
+<a name="64"></a>			<span class=SI>.icu_addr</span>(<a  onClick="return qs(event,this)" class=SI href="#45">icu_addr</a>), 
+<a name="65"></a>			<span class=SI>.icu_din</span>(<a  onClick="return qs(event,this)" class=SI href="#42">icu_din</a>), 
+<a name="66"></a>			<span class=SI>.icu_ram_we</span>(<a  onClick="return qs(event,this)" class=SI href="#43">icu_ram_we</a>), 
+<a name="67"></a>			<span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#47">clk</a>), 
+<a name="68"></a>			<span class=SI>.test_mode</span>(<a  onClick="return qs(event,this)" class=SI href="#48">test_mode</a>), 
+<a name="69"></a>			<span class=SI>.enable</span>(!<a  onClick="return qs(event,this)" class=SI href="#44">enable</a>), 
+<a name="70"></a>			<a  onClick="return qs(event,this)" class=SO href="#125">.ERROR</a>(<a  onClick="return qs(event,this)" class=SO href="#51">icache_test_err_l</a>), 
+<a name="71"></a>			<a  onClick="return qs(event,this)" class=SO href="#119">.icram_dout</a>(<a  onClick="return qs(event,this)" class=SO href="#46">icram_dout</a>)
+			);
+
+<a name="icram_shell_i_icram_misc"></a><a name="74"></a><a  onClick="return qs(event,this)" class=MM href="#icram_misc">icram_misc</a>  i_icram_misc (      <span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="#44">enable</a>),
+<a name="75"></a>                                <span class=SI>.icu_din</span>(<a  onClick="return qs(event,this)" class=SI href="#42">icu_din</a>),
+<a name="76"></a>                                <span class=SI>.icu_ram_we</span>(<a  onClick="return qs(event,this)" class=SI href="#43">icu_ram_we</a>),
+<a name="77"></a>                                <span class=SI>.icu_addr</span>(<a  onClick="return qs(event,this)" class=SI href="#45">icu_addr</a>),
+<a name="78"></a>                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#47">clk</a>)
+                                );
+<span class=K>endmodule</span>
+
+
+<a name="icram_top"></a><a  href="icram_shell.v.html#icram_shell_icram_top"><IMG alt="[Up: icram_shell icram_top]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>icram_top</span><a  href="hierarchy-m.p3.html#icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a> (	<a  onClick="return qs(event,this)" class=SI href="#95">bist_reset</a>,
+			<a  onClick="return qs(event,this)" class=SI href="#96">bist_mode</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#98">icu_addr</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#99">icu_din</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#100">icu_ram_we</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#101">clk</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#97">test_mode</a>, 
+			<a  onClick="return qs(event,this)" class=SI href="#102">enable</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#103">ERROR</a>, 
+			<a  onClick="return qs(event,this)" class=SO href="#104">icram_dout</a>
+			);
+
+<a name="95"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="#62">bist_reset</a><a  href="hierarchy-s.p2.html#bist_reset___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="96"></a>   <span class=K>input</span> [1:0] <a  onClick="return qs(event,this)" class=SI href="#63">bist_mode</a><a  href="hierarchy-s.p2.html#bist_mode___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="97"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="#68">test_mode</a><a  href="hierarchy-s.p17.html#test_mode___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="98"></a>   <span class=K>input</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>-3:0] <a  onClick="return qs(event,this)" class=SI href="#64">icu_addr</a><a  href="hierarchy-s.p9.html#icu_addr___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="99"></a>   <span class=K>input</span> [31:0] <a  onClick="return qs(event,this)" class=SI href="#65">icu_din</a><a  href="hierarchy-s.p9.html#icu_din___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="100"></a>   <span class=K>input</span> [1:0] <a  onClick="return qs(event,this)" class=SI href="#66">icu_ram_we</a><a  href="hierarchy-s.p9.html#icu_ram_we___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="101"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="#67">clk</a><a  href="hierarchy-s.p3.html#clk___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="102"></a>   <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="#69">enable</a><a  href="hierarchy-s.p5.html#enable___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="103"></a>   <span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#125">ERROR</a><a  href="hierarchy-s.p5.html#ERROR___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="104"></a>   <span class=K>output</span> [63:0] <a  onClick="return qs(event,this)" class=SO href="#119">icram_dout</a><a  href="hierarchy-s.p9.html#icram_dout___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+
+<a name="106"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#124">BACKGROUND</a><a  href="hierarchy-s.p2.html#BACKGROUND___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="107"></a>   <span class=K>wire</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>-3:0] <a  onClick="return qs(event,this)" class=SW href="#122">BIST_ADR</a><a  href="hierarchy-s.p2.html#BIST_ADR___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="108"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#108">BIST_CLK</a><a  href="hierarchy-s.p2.html#BIST_CLK___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="109"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#123">BIST_ON</a><a  href="hierarchy-s.p2.html#BIST_ON___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="110"></a>   <span class=K>wire</span> [1:0] <a  onClick="return qs(event,this)" class=SW href="#122">BIST_WE</a><a  href="hierarchy-s.p2.html#BIST_WE___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="111"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#123">END_SEQ</a><a  href="hierarchy-s.p5.html#END_SEQ___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="112"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#123">ERRN_ON</a><a  href="hierarchy-s.p5.html#ERRN_ON___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="113"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#123">INVERSE</a><a  href="hierarchy-s.p9.html#INVERSE___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="114"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#124">NO_COMP</a><a  href="hierarchy-s.p12.html#NO_COMP___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="115"></a>   <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#144">rricache_ERROR</a><a  href="hierarchy-s.p15.html#rricache_ERROR___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="116"></a>   <span class=K>wire</span> [63:0] <a  onClick="return qs(event,this)" class=SW href="#138">int_do</a><a  href="hierarchy-s.p9.html#int_do___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  
+<a name="117"></a>   <span class=K>wire</span> [31:0] <a  onClick="return qs(event,this)" class=SW href="#143">PATTERN</a><a  href="hierarchy-s.p14.html#PATTERN___icram_top"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="119"></a>   <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#104">icram_dout</a> = <a  onClick="return qs(event,this)" class=SW href="#138">int_do</a>;
+
+<a name="icram_top_Controller_Ins"></a><a name="121"></a>   <a  onClick="return qs(event,this)" class=MM href="#icram_Controller">icram_Controller</a>  Controller_Ins(<span class=SI>.TCLK</span>(<a  onClick="return qs(event,this)" class=SI href="#101">clk</a>), <span class=SI>.TRESET</span>(<a  onClick="return qs(event,this)" class=SI href="#95">bist_reset</a>), <span class=SI>.MODE</span>(<a  onClick="return qs(event,this)" class=SI href="#96">bist_mode</a>), 
+<a name="122"></a>        <span class=SI>.rricache_ERROR</span>(<a  onClick="return qs(event,this)" class=SW href="#144">rricache_ERROR</a>), <a  onClick="return qs(event,this)" class=SO href="#305">.BIST_ADR</a>(<a  onClick="return qs(event,this)" class=SW href="#107">BIST_ADR</a>), <a  onClick="return qs(event,this)" class=SO href="#306">.BIST_WE</a>(<a  onClick="return qs(event,this)" class=SW href="#110">BIST_WE</a>),
+<a name="123"></a>        <a  onClick="return qs(event,this)" class=SO href="#308">.INVERSE</a>(<a  onClick="return qs(event,this)" class=SW href="#113">INVERSE</a>), <a  onClick="return qs(event,this)" class=SO href="#308">.END_SEQ</a>(<a  onClick="return qs(event,this)" class=SW href="#111">END_SEQ</a>), <a  onClick="return qs(event,this)" class=SO href="#308">.BIST_ON</a>(<a  onClick="return qs(event,this)" class=SW href="#109">BIST_ON</a>), <a  onClick="return qs(event,this)" class=SO href="#308">.ERRN_ON</a>(<a  onClick="return qs(event,this)" class=SW href="#112">ERRN_ON</a>), 
+<a name="124"></a>        <a  onClick="return qs(event,this)" class=SO href="#308">.NO_COMP</a>(<a  onClick="return qs(event,this)" class=SW href="#114">NO_COMP</a>), <a  onClick="return qs(event,this)" class=SO href="#308">.BACKGROUND</a>(<a  onClick="return qs(event,this)" class=SW href="#106">BACKGROUND</a>),
+<a name="125"></a>        <a  onClick="return qs(event,this)" class=SO href="#308">.DONE</a>(), <a  onClick="return qs(event,this)" class=SO href="#308">.ERROR</a>(<a  onClick="return qs(event,this)" class=SO href="#103">ERROR</a>), <a  onClick="return qs(event,this)" class=SO href="#308">.FAIL</a>(), <span class=SI>.test_mode</span>(<a  onClick="return qs(event,this)" class=SI href="#97">test_mode</a>) );
+
+<a name="icram_top_icram"></a>   <a  onClick="return qs(event,this)" class=MM href="#icram">icram</a> icram   ( 
+<a name="128"></a>                <span class=SI>.icu_din</span>(<a  onClick="return qs(event,this)" class=SI href="#99">icu_din</a>),
+<a name="129"></a>                <span class=SI>.icu_ram_we</span>(<a  onClick="return qs(event,this)" class=SI href="#100">icu_ram_we</a>),
+<a name="130"></a>                <span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SI href="#102">enable</a>),
+<a name="131"></a>                <span class=SI>.icu_addr</span>(<a  onClick="return qs(event,this)" class=SI href="#98">icu_addr</a>),
+<a name="132"></a>                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#101">clk</a>),
+                <span class=SI>.bist_enable</span>(1'b1),
+<a name="134"></a>                <span class=SI>.test_mode</span>(<a  onClick="return qs(event,this)" class=SI href="#97">test_mode</a>),
+<a name="135"></a>                <span class=SI>.bist_icu_din</span>(<a  onClick="return qs(event,this)" class=SW href="#143">PATTERN</a>),
+<a name="136"></a>                <span class=SI>.bist_icu_ram_we</span>(<a  onClick="return qs(event,this)" class=SW href="#122">BIST_WE</a>),
+<a name="137"></a>                <span class=SI>.bist_icu_addr</span>(<a  onClick="return qs(event,this)" class=SW href="#122">BIST_ADR</a>),
+<a name="138"></a>                <a  onClick="return qs(event,this)" class=SO href="#208">.icram_dout</a>(<a  onClick="return qs(event,this)" class=SW href="#116">int_do</a>)
+        );
+
+<a name="icram_top_rricache_Bist_Ins"></a>    <a  onClick="return qs(event,this)" class=MM href="#rricache_LocalBist">rricache_LocalBist</a>  rricache_Bist_Ins(
+<a name="142"></a>      <span class=SI>.func_do</span>(<a  onClick="return qs(event,this)" class=SW href="#138">int_do</a>), <span class=SI>.BIST_ADR</span>(<a  onClick="return qs(event,this)" class=SW href="#122">BIST_ADR</a>), <span class=SI>.BIST_WE</span>(<a  onClick="return qs(event,this)" class=SW href="#122">BIST_WE</a>), 
+<a name="143"></a>      <span class=SI>.ERRN_ON</span>(<a  onClick="return qs(event,this)" class=SW href="#123">ERRN_ON</a>), <span class=SI>.INVERSE</span>(<a  onClick="return qs(event,this)" class=SW href="#123">INVERSE</a>), <span class=SI>.NO_COMP</span>(<a  onClick="return qs(event,this)" class=SW href="#124">NO_COMP</a>), <a  onClick="return qs(event,this)" class=SO href="#294">.PATTERN</a>(<a  onClick="return qs(event,this)" class=SW href="#117">PATTERN</a>),  
+<a name="144"></a>      <span class=SI>.END_SEQ</span>(<a  onClick="return qs(event,this)" class=SW href="#123">END_SEQ</a>), <span class=SI>.BACKGROUND</span>(<a  onClick="return qs(event,this)" class=SW href="#124">BACKGROUND</a>), <a  onClick="return qs(event,this)" class=SO href="#296">.rricache_ERROR</a>(<a  onClick="return qs(event,this)" class=SW href="#115">rricache_ERROR</a>));
+
+<span class=K>endmodule</span>
+
+
+<span class=C>// synopsys translate_off
+</span>
+<a name="icram"></a><a  href="icram_shell.v.html#icram_top_icram"><IMG alt="[Up: icram_top icram]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span>  <span class=MM>icram</span><a  href="hierarchy-m.p3.html#icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>      (
+                <a  onClick="return qs(event,this)" class=SI href="#165">icu_din</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#166">icu_ram_we</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#167">enable</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#169">icu_addr</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#170">clk</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#168">test_mode</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#171">bist_enable</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#172">bist_icu_din</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#173">bist_icu_ram_we</a>,
+                <a  onClick="return qs(event,this)" class=SI href="#174">bist_icu_addr</a>,
+                <a  onClick="return qs(event,this)" class=SO href="#175">icram_dout</a>
+        );
+
+<a name="165"></a><span class=K>input</span>   [31:0]  <a  onClick="return qs(event,this)" class=SI href="#128">icu_din</a><a  href="hierarchy-s.p9.html#icu_din___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;             <span class=C>// Write data_in port
+</span><a name="166"></a><span class=K>input</span>   [1:0]   <a  onClick="return qs(event,this)" class=SI href="#129">icu_ram_we</a><a  href="hierarchy-s.p9.html#icu_ram_we___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// Write enable
+</span><a name="167"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="#130">enable</a><a  href="hierarchy-s.p5.html#enable___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;           <span class=C>// Power down mode. Active-low
+</span><a name="168"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="#134">test_mode</a><a  href="hierarchy-s.p17.html#test_mode___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="169"></a><span class=K>input</span>   [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:3]  <a  onClick="return qs(event,this)" class=SI href="#131">icu_addr</a><a  href="hierarchy-s.p9.html#icu_addr___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       <span class=C>// Address inputs
+</span><a name="170"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="#132">clk</a><a  href="hierarchy-s.p3.html#clk___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;                 <span class=C>// Clock
+</span><a name="171"></a><span class=K>input</span>           <a  onClick="return qs(event,this)" class=SI href="#171">bist_enable</a><a  href="hierarchy-s.p2.html#bist_enable___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// BIST enable
+</span><a name="172"></a><span class=K>input</span>   [31:0]  <a  onClick="return qs(event,this)" class=SI href="#135">bist_icu_din</a><a  href="hierarchy-s.p2.html#bist_icu_din___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;        <span class=C>// BIST Write data_in port
+</span><a name="173"></a><span class=K>input</span>   [1:0]   <a  onClick="return qs(event,this)" class=SI href="#136">bist_icu_ram_we</a><a  href="hierarchy-s.p2.html#bist_icu_ram_we___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// BIST Write enable
+</span><a name="174"></a><span class=K>input</span>   [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:3]  <a  onClick="return qs(event,this)" class=SI href="#137">bist_icu_addr</a><a  href="hierarchy-s.p2.html#bist_icu_addr___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;  <span class=C>// BIST Address inputs
+</span><a name="175"></a><span class=K>output</span>  [63:0]  <a  onClick="return qs(event,this)" class=SO href="#208">icram_dout</a><a  href="hierarchy-s.p9.html#icram_dout___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;          <span class=C>// data output
+</span>
+
+<a name="178"></a><span class=K>reg</span> [31:0]      <a  onClick="return qs(event,this)" class=SR href="#198">data_in_q</a><a  href="hierarchy-s.p4.html#data_in_q___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="179"></a><span class=K>reg</span> [1:0]       <a  onClick="return qs(event,this)" class=SR href="#199">write_en_q</a><a  href="hierarchy-s.p20.html#write_en_q___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="180"></a><span class=K>reg</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:3] <a  onClick="return qs(event,this)" class=SR href="#200">addr_q</a><a  href="hierarchy-s.html#addr_q___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="181"></a><span class=K>reg</span>             <a  onClick="return qs(event,this)" class=SR href="#201">enable_q</a><a  href="hierarchy-s.p5.html#enable_q___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="182"></a><span class=K>reg</span>             <a  onClick="return qs(event,this)" class=SR href="#197">test_mode_q</a><a  href="hierarchy-s.p17.html#test_mode_q___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="184"></a><span class=K>wire</span>             <a  onClick="return qs(event,this)" class=SW href="#190">icram_enable</a><a  href="hierarchy-s.p9.html#icram_enable___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="185"></a><span class=K>wire</span> [31:0]      <a  onClick="return qs(event,this)" class=SW href="#192">sel_data_in</a><a  href="hierarchy-s.p16.html#sel_data_in___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="186"></a><span class=K>wire</span> [1:0]       <a  onClick="return qs(event,this)" class=SW href="#193">sel_write_en</a><a  href="hierarchy-s.p16.html#sel_write_en___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="187"></a><span class=K>wire</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:3] <a  onClick="return qs(event,this)" class=SW href="#191">sel_addr</a><a  href="hierarchy-s.p16.html#sel_addr___icram"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+
+
+<a name="190"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#184">icram_enable</a> = (<a  onClick="return qs(event,this)" class=SR href="#197">test_mode_q</a>)?<a  onClick="return qs(event,this)" class=SI href="#171">bist_enable</a>:<a  onClick="return qs(event,this)" class=SI href="#167">enable</a>;
+<a name="191"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#187">sel_addr</a> = (<a  onClick="return qs(event,this)" class=SR href="#197">test_mode_q</a>)?<a  onClick="return qs(event,this)" class=SI href="#174">bist_icu_addr</a>:<a  onClick="return qs(event,this)" class=SI href="#169">icu_addr</a>;
+<a name="192"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#185">sel_data_in</a> = (<a  onClick="return qs(event,this)" class=SR href="#197">test_mode_q</a>)?<a  onClick="return qs(event,this)" class=SI href="#172">bist_icu_din</a>:<a  onClick="return qs(event,this)" class=SI href="#165">icu_din</a>;
+<a name="193"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#186">sel_write_en</a> = (<a  onClick="return qs(event,this)" class=SR href="#197">test_mode_q</a>)?<a  onClick="return qs(event,this)" class=SI href="#173">bist_icu_ram_we</a>:<a  onClick="return qs(event,this)" class=SI href="#166">icu_ram_we</a>;
+
+<span class=C>// latching all the inputs 
+</span><span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#170">clk</a>) <span class=K>fork</span>
+<a name="197"></a>        <a  onClick="return qs(event,this)" class=SR href="#182">test_mode_q</a> = #1.0 <a  onClick="return qs(event,this)" class=SI href="#168">test_mode</a>;
+<a name="198"></a>        <a  onClick="return qs(event,this)" class=SR href="#178">data_in_q</a>  &lt;= #1.0 <a  onClick="return qs(event,this)" class=SW href="#192">sel_data_in</a>;
+<a name="199"></a>        <a  onClick="return qs(event,this)" class=SR href="#179">write_en_q</a> &lt;= #1.0 <a  onClick="return qs(event,this)" class=SW href="#193">sel_write_en</a>;
+<a name="200"></a>        <a  onClick="return qs(event,this)" class=SR href="#180">addr_q</a>     &lt;= #1.0 <a  onClick="return qs(event,this)" class=SW href="#191">sel_addr</a>;
+<a name="201"></a>        <a  onClick="return qs(event,this)" class=SR href="#181">enable_q</a>  &lt;= #1.0 <a  onClick="return qs(event,this)" class=SW href="#190">icram_enable</a>;
+   <span class=K>join</span>
+
+
+
+<a name="icram_iram"></a><a  onClick="return qs(event,this)" class=MM href="#iram">iram</a>  iram(
+<a name="207"></a>                <span class=SI>.adr</span>(<a  onClick="return qs(event,this)" class=SR href="#200">addr_q</a>[<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:3]),
+<a name="208"></a>                <a  onClick="return qs(event,this)" class=SO href="#248">.do</a> (<a  onClick="return qs(event,this)" class=SO href="#175">icram_dout</a>[63:0]),
+<a name="209"></a>                <span class=SI>.di</span> (<a  onClick="return qs(event,this)" class=SR href="#198">data_in_q</a>[31:0]),
+<a name="210"></a>                <span class=SI>.we</span> (<a  onClick="return qs(event,this)" class=SR href="#199">write_en_q</a>),
+<a name="211"></a>                <span class=SI>.enable</span>(<a  onClick="return qs(event,this)" class=SR href="#201">enable_q</a>),
+<a name="212"></a>                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#170">clk</a>)
+                );
+
+<span class=K>endmodule</span>
+
+<span class=C>// RAM  MODULE
+</span><a name="iram"></a><a  href="icram_shell.v.html#icram_iram"><IMG alt="[Up: icram iram]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>iram</span><a  href="hierarchy-m.p3.html#iram"><IMG align=top border=0 SRC="v2html-i.gif"></a> (
+        <a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,
+        <a  onClick="return qs(event,this)" class=SO href="#232">do</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#228">di</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#229">we</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#231">enable</a>,
+        <a  onClick="return qs(event,this)" class=SI href="#230">clk</a>
+        );
+ 
+<a name="227"></a>        <span class=K>input</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:3] <a  onClick="return qs(event,this)" class=SI href="#207">adr</a><a  href="hierarchy-s.html#adr___iram"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="228"></a>        <span class=K>input</span> [31:0] <a  onClick="return qs(event,this)" class=SI href="#209">di</a><a  href="hierarchy-s.p4.html#di___iram"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="229"></a>        <span class=K>input</span> [1:0] <a  onClick="return qs(event,this)" class=SI href="#210">we</a><a  href="hierarchy-s.p20.html#we___iram"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="230"></a>        <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="#212">clk</a><a  href="hierarchy-s.p3.html#clk___iram"><IMG align=top border=0 SRC="v2html-i.gif"></a> ;
+<a name="231"></a>        <span class=K>input</span> <a  onClick="return qs(event,this)" class=SI href="#211">enable</a><a  href="hierarchy-s.p5.html#enable___iram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="232"></a>        <span class=K>output</span>[63:0] <a  onClick="return qs(event,this)" class=SO href="#248">do</a><a  href="hierarchy-s.p4.html#do___iram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+        <span class=C>// ram instantiated
+</span><a name="235"></a>        <span class=K>reg</span> [7:0] <a  onClick="return qs(event,this)" class=SR href="#270">ic_ram</a><a  href="hierarchy-s.p9.html#ic_ram___iram"><IMG align=top border=0 SRC="v2html-i.gif"></a> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#133">ic_size</a>:0] ;
+ 
+        <span class=C>// Derive an active low WE pulse
+</span><a name="238"></a>        <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#242">low_we_</a><a  href="hierarchy-s.p10.html#low_we____iram"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SW href="#243">upper_we_</a><a  href="hierarchy-s.p18.html#upper_we____iram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="239"></a>        <span class=K>wire</span> <a  onClick="return qs(event,this)" class=SW href="#244">unknown_adr</a><a  href="hierarchy-s.p18.html#unknown_adr___iram"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+
+<a name="242"></a>        <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#238">low_we_</a> = ~(<a  onClick="return qs(event,this)" class=SI href="#229">we</a>[0]&amp;<a  onClick="return qs(event,this)" class=SI href="#231">enable</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#230">clk</a>);
+<a name="243"></a>        <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#238">upper_we_</a> = ~(<a  onClick="return qs(event,this)" class=SI href="#229">we</a>[1]&amp;<a  onClick="return qs(event,this)" class=SI href="#231">enable</a>&amp;~<a  onClick="return qs(event,this)" class=SI href="#230">clk</a>);
+<a name="244"></a>        <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SW href="#239">unknown_adr</a> = (^<a  onClick="return qs(event,this)" class=SI href="#227">adr</a> === 1'bx);
+ 
+        <span class=C>// Read Dcache 
+</span>
+<a name="248"></a>        <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#232">do</a>[63:56] = ( !<a  onClick="return qs(event,this)" class=SI href="#231">enable</a> )? <a  onClick="return qs(event,this)" class=SO href="#248">do</a>[63:56] :
+                           ((<a  onClick="return qs(event,this)" class=SW href="#244">unknown_adr</a>)?8'bx:<a  onClick="return qs(event,this)" class=SR href="#270">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b000}]);
+        <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#232">do</a>[55:48] = ( !<a  onClick="return qs(event,this)" class=SI href="#231">enable</a> )? <a  onClick="return qs(event,this)" class=SO href="#248">do</a>[55:48] :
+                           ((<a  onClick="return qs(event,this)" class=SW href="#244">unknown_adr</a>)?8'bx:<a  onClick="return qs(event,this)" class=SR href="#270">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b001}]);
+        <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#232">do</a>[47:40] = ( !<a  onClick="return qs(event,this)" class=SI href="#231">enable</a> )? <a  onClick="return qs(event,this)" class=SO href="#248">do</a>[47:40] :
+                           ((<a  onClick="return qs(event,this)" class=SW href="#244">unknown_adr</a>)?8'bx:<a  onClick="return qs(event,this)" class=SR href="#270">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b010}]);
+        <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#232">do</a>[39:32] = ( !<a  onClick="return qs(event,this)" class=SI href="#231">enable</a> )? <a  onClick="return qs(event,this)" class=SO href="#248">do</a>[39:32] :
+                           ((<a  onClick="return qs(event,this)" class=SW href="#244">unknown_adr</a>)?8'bx:<a  onClick="return qs(event,this)" class=SR href="#270">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b011}]);
+        <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#232">do</a>[31:24] = ( !<a  onClick="return qs(event,this)" class=SI href="#231">enable</a> )? <a  onClick="return qs(event,this)" class=SO href="#248">do</a>[31:24] :
+                           ((<a  onClick="return qs(event,this)" class=SW href="#244">unknown_adr</a>)?8'bx:<a  onClick="return qs(event,this)" class=SR href="#270">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b100}]);
+        <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#232">do</a>[23:16] = ( !<a  onClick="return qs(event,this)" class=SI href="#231">enable</a> )? <a  onClick="return qs(event,this)" class=SO href="#248">do</a>[23:16] :
+                           ((<a  onClick="return qs(event,this)" class=SW href="#244">unknown_adr</a>)?8'bx:<a  onClick="return qs(event,this)" class=SR href="#270">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b101}]);
+        <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#232">do</a>[15:8]  = ( !<a  onClick="return qs(event,this)" class=SI href="#231">enable</a> )? <a  onClick="return qs(event,this)" class=SO href="#248">do</a>[15:8] :
+                           ((<a  onClick="return qs(event,this)" class=SW href="#244">unknown_adr</a>)?8'bx:<a  onClick="return qs(event,this)" class=SR href="#270">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b110}]);
+        <span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#232">do</a>[7:0]   = ( !<a  onClick="return qs(event,this)" class=SI href="#231">enable</a> )? <a  onClick="return qs(event,this)" class=SO href="#248">do</a>[7:0] :
+                           ((<a  onClick="return qs(event,this)" class=SW href="#244">unknown_adr</a>)?8'bx:<a  onClick="return qs(event,this)" class=SR href="#270">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b111}]);
+
+
+        <span class=C>// Write Dcache
+</span>
+        <span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SW href="#238">upper_we_</a>)
+          <span class=K>begin</span>
+<a name="270"></a>                <a  onClick="return qs(event,this)" class=SR href="#235">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b000}] = <a  onClick="return qs(event,this)" class=SI href="#228">di</a>[31:24] ;
+                <a  onClick="return qs(event,this)" class=SR href="#235">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b001}] = <a  onClick="return qs(event,this)" class=SI href="#228">di</a>[23:16] ;
+                <a  onClick="return qs(event,this)" class=SR href="#235">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b010}] = <a  onClick="return qs(event,this)" class=SI href="#228">di</a>[15:8] ;
+                <a  onClick="return qs(event,this)" class=SR href="#235">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b011}] = <a  onClick="return qs(event,this)" class=SI href="#228">di</a>[7:0] ;
+          <span class=K>end</span>
+
+        <span class=K>always</span> @(<span class=K>negedge</span> <a  onClick="return qs(event,this)" class=SW href="#238">low_we_</a>) 
+          <span class=K>begin</span>
+                <a  onClick="return qs(event,this)" class=SR href="#235">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b100}] = <a  onClick="return qs(event,this)" class=SI href="#228">di</a>[31:24] ;
+                <a  onClick="return qs(event,this)" class=SR href="#235">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b101}] = <a  onClick="return qs(event,this)" class=SI href="#228">di</a>[23:16] ;
+                <a  onClick="return qs(event,this)" class=SR href="#235">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b110}] = <a  onClick="return qs(event,this)" class=SI href="#228">di</a>[15:8] ;
+                <a  onClick="return qs(event,this)" class=SR href="#235">ic_ram</a>[{<a  onClick="return qs(event,this)" class=SI href="#227">adr</a>,3'b111}] = <a  onClick="return qs(event,this)" class=SI href="#228">di</a>[7:0] ;
+          <span class=K>end</span>
+ 
+<span class=K>endmodule</span>
+
+<span class=C>// synopsys translate_on
+</span>
+
+<a name="rricache_LocalBist"></a><a  href="icram_shell.v.html#icram_top_rricache_Bist_Ins"><IMG alt="[Up: icram_top rricache_Bist_Ins]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>rricache_LocalBist</span><a  href="hierarchy-m.p4.html#rricache_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a> ( <a  onClick="return qs(event,this)" class=SI href="#291">BIST_ADR</a>, <a  onClick="return qs(event,this)" class=SI href="#292">BIST_WE</a>, <a  onClick="return qs(event,this)" class=SI href="#293">func_do</a>, <a  onClick="return qs(event,this)" class=SI href="#295">ERRN_ON</a>, <a  onClick="return qs(event,this)" class=SI href="#295">INVERSE</a>, 
+    <a  onClick="return qs(event,this)" class=SI href="#295">NO_COMP</a>, <a  onClick="return qs(event,this)" class=SI href="#295">END_SEQ</a>, <a  onClick="return qs(event,this)" class=SO href="#294">PATTERN</a>, <a  onClick="return qs(event,this)" class=SI href="#295">BACKGROUND</a>, <a  onClick="return qs(event,this)" class=SO href="#296">rricache_ERROR</a> );
+<a name="291"></a><span class=K>input</span>  [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>-3:0] <a  onClick="return qs(event,this)" class=SI href="#142">BIST_ADR</a><a  href="hierarchy-s.p2.html#BIST_ADR___rricache_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="292"></a><span class=K>input</span>  [1:0] <a  onClick="return qs(event,this)" class=SI href="#142">BIST_WE</a><a  href="hierarchy-s.p2.html#BIST_WE___rricache_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="293"></a><span class=K>input</span>  [63:0] <a  onClick="return qs(event,this)" class=SI href="#142">func_do</a><a  href="hierarchy-s.p6.html#func_do___rricache_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="294"></a><span class=K>output</span> [31:0] <a  onClick="return qs(event,this)" class=SO href="#294">PATTERN</a><a  href="hierarchy-s.p14.html#PATTERN___rricache_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="295"></a><span class=K>input</span>  <a  onClick="return qs(event,this)" class=SI href="#143">ERRN_ON</a><a  href="hierarchy-s.p5.html#ERRN_ON___rricache_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#143">INVERSE</a><a  href="hierarchy-s.p9.html#INVERSE___rricache_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#143">NO_COMP</a><a  href="hierarchy-s.p12.html#NO_COMP___rricache_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#144">END_SEQ</a><a  href="hierarchy-s.p5.html#END_SEQ___rricache_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#144">BACKGROUND</a><a  href="hierarchy-s.p2.html#BACKGROUND___rricache_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="296"></a><span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#296">rricache_ERROR</a><a  href="hierarchy-s.p15.html#rricache_ERROR___rricache_LocalBist"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>endmodule</span>
+
+
+<a name="icram_Controller"></a><a  href="icram_shell.v.html#icram_top_Controller_Ins"><IMG alt="[Up: icram_top Controller_Ins]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>icram_Controller</span><a  href="hierarchy-m.p3.html#icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a> ( <a  onClick="return qs(event,this)" class=SI href="#307">TCLK</a>, <a  onClick="return qs(event,this)" class=SI href="#307">TRESET</a>, <a  onClick="return qs(event,this)" class=SI href="#304">MODE</a>, <a  onClick="return qs(event,this)" class=SI href="#307">rricache_ERROR</a>, <a  onClick="return qs(event,this)" class=SO href="#305">BIST_ADR</a>, <a  onClick="return qs(event,this)" class=SO href="#306">BIST_WE</a>, 
+    <a  onClick="return qs(event,this)" class=SO href="#308">INVERSE</a>, <a  onClick="return qs(event,this)" class=SO href="#308">END_SEQ</a>, <a  onClick="return qs(event,this)" class=SO href="#308">BIST_ON</a>, <a  onClick="return qs(event,this)" class=SO href="#308">ERRN_ON</a>, <a  onClick="return qs(event,this)" class=SO href="#308">NO_COMP</a>, <a  onClick="return qs(event,this)" class=SO href="#308">BACKGROUND</a>, <a  onClick="return qs(event,this)" class=SO href="#308">DONE</a>, <a  onClick="return qs(event,this)" class=SO href="#308">ERROR</a>, <a  onClick="return qs(event,this)" class=SO href="#308">FAIL</a>, 
+    <a  onClick="return qs(event,this)" class=SI href="#307">test_mode</a> );
+<a name="304"></a><span class=K>input</span>  [1:0] <a  onClick="return qs(event,this)" class=SI href="#121">MODE</a><a  href="hierarchy-s.p11.html#MODE___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="305"></a><span class=K>output</span> [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>-3:0] <a  onClick="return qs(event,this)" class=SO href="#305">BIST_ADR</a><a  href="hierarchy-s.p2.html#BIST_ADR___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="306"></a><span class=K>output</span> [1:0] <a  onClick="return qs(event,this)" class=SO href="#306">BIST_WE</a><a  href="hierarchy-s.p2.html#BIST_WE___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="307"></a><span class=K>input</span>  <a  onClick="return qs(event,this)" class=SI href="#121">TCLK</a><a  href="hierarchy-s.p17.html#TCLK___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#121">TRESET</a><a  href="hierarchy-s.p17.html#TRESET___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#122">rricache_ERROR</a><a  href="hierarchy-s.p15.html#rricache_ERROR___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SI href="#125">test_mode</a><a  href="hierarchy-s.p17.html#test_mode___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="308"></a><span class=K>output</span> <a  onClick="return qs(event,this)" class=SO href="#308">INVERSE</a><a  href="hierarchy-s.p9.html#INVERSE___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#308">END_SEQ</a><a  href="hierarchy-s.p5.html#END_SEQ___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#308">BIST_ON</a><a  href="hierarchy-s.p2.html#BIST_ON___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#308">ERRN_ON</a><a  href="hierarchy-s.p5.html#ERRN_ON___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#308">NO_COMP</a><a  href="hierarchy-s.p12.html#NO_COMP___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#308">BACKGROUND</a><a  href="hierarchy-s.p2.html#BACKGROUND___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#308">DONE</a><a  href="hierarchy-s.p4.html#DONE___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#308">ERROR</a><a  href="hierarchy-s.p5.html#ERROR___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>, <a  onClick="return qs(event,this)" class=SO href="#308">FAIL</a><a  href="hierarchy-s.p6.html#FAIL___icram_Controller"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=K>endmodule</span>
+
+
+<a name="icram_misc"></a><a  href="icram_shell.v.html#icram_shell_i_icram_misc"><IMG alt="[Up: icram_shell i_icram_misc]" align=bottom border=0 SRC="v2html-up.gif"></a>
+<span class=K>module</span> <span class=MM>icram_misc</span><a  href="hierarchy-m.p3.html#icram_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a> (     <a  onClick="return qs(event,this)" class=SI href="#323">enable</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#320">icu_din</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#321">icu_ram_we</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#322">icu_addr</a>,
+                        <a  onClick="return qs(event,this)" class=SI href="#324">clk</a>
+                        );
+
+<a name="320"></a><span class=K>input</span>        [31:0]     <a  onClick="return qs(event,this)" class=SI href="#75">icu_din</a><a  href="hierarchy-s.p9.html#icu_din___icram_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;        <span class=C>// Write data_in port
+</span><a name="321"></a><span class=K>input</span>         [1:0]     <a  onClick="return qs(event,this)" class=SI href="#76">icu_ram_we</a><a  href="hierarchy-s.p9.html#icu_ram_we___icram_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;     <span class=C>// Write enable
+</span><a name="322"></a><span class=K>input</span>   [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:3]     <a  onClick="return qs(event,this)" class=SI href="#77">icu_addr</a><a  href="hierarchy-s.p9.html#icu_addr___icram_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;       <span class=C>// Address inputs
+</span><a name="323"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#74">enable</a><a  href="hierarchy-s.p5.html#enable___icram_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="324"></a><span class=K>input</span>                   <a  onClick="return qs(event,this)" class=SI href="#78">clk</a><a  href="hierarchy-s.p3.html#clk___icram_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="326"></a><span class=K>wire</span>         [31:0]     <a  onClick="return qs(event,this)" class=SW href="#331">icu_din_q</a><a  href="hierarchy-s.p9.html#icu_din_q___icram_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="327"></a><span class=K>wire</span>          [1:0]     <a  onClick="return qs(event,this)" class=SW href="#351">icu_ram_we_q</a><a  href="hierarchy-s.p9.html#icu_ram_we_q___icram_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="328"></a><span class=K>reg</span>    [<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="defines.h.html#134">ic_msb</a>:3]     <a  onClick="return qs(event,this)" class=SR href="#347">icu_addr_q</a><a  href="hierarchy-s.p9.html#icu_addr_q___icram_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>; 
+<a name="329"></a><span class=K>wire</span>                    <a  onClick="return qs(event,this)" class=SW href="#356">enable_q</a><a  href="hierarchy-s.p5.html#enable_q___icram_misc"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="icram_misc_i_icu_din_ff"></a><a name="331"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_s_d_32">mj_s_ff_s_d_32</a> i_icu_din_ff (   <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#922">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#326">icu_din_q</a>), 
+                                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#320">icu_din</a>),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#324">clk</a>)
+                                );
+
+<span class=C>// Replacing hardcoded flops with configurable (depending on cache size) code.
+</span>
+<span class=C>/*
+mj_s_ff_s_d_11 i_icu_addr_ff (  .out(icu_addr_q), 
+                                .din(icu_addr),
+                                .clk(clk)
+                                );
+*/</span>
+
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SI href="#324">clk</a>) <span class=K>begin</span>
+
+<a name="347"></a>	<a  onClick="return qs(event,this)" class=SR href="#328">icu_addr_q</a> = #1 <a  onClick="return qs(event,this)" class=SI href="#322">icu_addr</a>;
+
+<span class=K>end</span>
+
+<a name="icram_misc_i_icu_ram_we_ff"></a><a name="351"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_s_d_2">mj_s_ff_s_d_2</a> i_icu_ram_we_ff ( <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#94">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#327">icu_ram_we_q</a>), 
+                                <span class=SI>.din</span>(<a  onClick="return qs(event,this)" class=SI href="#321">icu_ram_we</a>),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#324">clk</a>)
+                                );
+
+<a name="icram_misc_i_enable_ff"></a><a name="356"></a><a  onClick="return qs(event,this)" class=MM href="mj_ffs_behv.v.html#mj_s_ff_s_d">mj_s_ff_s_d</a> i_enable_ff (       <a  onClick="return qs(event,this)" class=SO href="mj_ffs_behv.v.html#32">.out</a>(<a  onClick="return qs(event,this)" class=SW href="#329">enable_q</a>), 
+                                <span class=SI>.in</span>(<a  onClick="return qs(event,this)" class=SI href="#323">enable</a>),
+                                <span class=SI>.clk</span>(<a  onClick="return qs(event,this)" class=SI href="#324">clk</a>)
+                                );
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:44:19 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/icram/rtl/icram_shell.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

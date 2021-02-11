@@ -1,0 +1,455 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/sim/env/monitor.v</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "monitor.v.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+
+
+
+<a name="monitor"></a><a  href="sys.v.p2.html#picoJavaII_monitor"><IMG alt="[Up: picoJavaII monitor]" align=bottom border=0 SRC="v2html-up.gif"></a>
+ <span class=K>module</span> <span class=MM>monitor</span><a  href="hierarchy-m.p3.html#monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>(
+	<a  onClick="return qs(event,this)" class=SO href="#36">pj_standby</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#37">pj_nmi</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#38">pj_irl</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#41">pj_halt</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#42">pj_resume</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#43">pj_clk</a>,
+	<a  onClick="return qs(event,this)" class=SO href="#46">monitor_end_sim</a>
+	);
+
+<span class=C>// driven by powerdown_monitor
+</span><a name="36"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#93">pj_standby</a><a  href="hierarchy-s.p14.html#pj_standby___monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="37"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#92">pj_nmi</a><a  href="hierarchy-s.p14.html#pj_nmi___monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="38"></a><span class=K>output</span>	[3:0]	<a  onClick="return qs(event,this)" class=SO href="#91">pj_irl</a><a  href="hierarchy-s.p14.html#pj_irl___monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// driven by trace_debug_monitor
+</span><a name="41"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#110">pj_halt</a><a  href="hierarchy-s.p14.html#pj_halt___monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="42"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#111">pj_resume</a><a  href="hierarchy-s.p14.html#pj_resume___monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="43"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#116">pj_clk</a><a  href="hierarchy-s.p14.html#pj_clk___monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<span class=C>// end of simulation driven by monitors
+</span><a name="46"></a><span class=K>output</span>		<a  onClick="return qs(event,this)" class=SO href="#51">monitor_end_sim</a><a  href="hierarchy-s.p11.html#monitor_end_sim___monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="48"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#156">smu_monitor_end_sim</a><a  href="hierarchy-s.p16.html#smu_monitor_end_sim___monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+<a name="49"></a><span class=K>wire</span>		<a  onClick="return qs(event,this)" class=SW href="#285">instr_monitor_end_sim</a><a  href="hierarchy-s.p9.html#instr_monitor_end_sim___monitor"><IMG align=top border=0 SRC="v2html-i.gif"></a>;
+
+<a name="51"></a><span class=K>assign</span> <a  onClick="return qs(event,this)" class=SO href="#46">monitor_end_sim</a> = <a  onClick="return qs(event,this)" class=SW href="#156">smu_monitor_end_sim</a> | <a  onClick="return qs(event,this)" class=SW href="#285">instr_monitor_end_sim</a>;
+
+<span class=K>always</span> @(<span class=K>posedge</span> <a  onClick="return qs(event,this)" class=SO href="#46">monitor_end_sim</a>) <span class=K>begin</span>
+  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SW href="#48">smu_monitor_end_sim</a> === 1'b1)
+    <span class=ST>$display</span>(<span class=S>&quot;smu monitor is ending the simulation now.&quot;</span>);
+  <span class=K>if</span> (<a  onClick="return qs(event,this)" class=SW href="#49">instr_monitor_end_sim</a> === 1'b1)
+    <span class=ST>$display</span>(<span class=S>&quot;instruction monitor is ending the simulation now.&quot;</span>);
+<span class=K>end</span>
+
+<span class=C>/* *******************************************
+ * IBUFFER MONITOR:
+ *
+ * If +ibuf_mon option is used the ibuffer
+ * state will be monitored.
+ *
+ * ***************************************** */</span>
+ 
+<span class=C>// ibuf_monitor
+</span> 
+<a name="monitor_ibuf_monitor"></a><a  onClick="return qs(event,this)" class=MM href="ibuf_monitor.v.html#ibuf_monitor">ibuf_monitor</a> ibuf_monitor(
+<a name="71"></a>	<span class=SI>.clk</span>			(<span class=D>`PICOJAVAII</span>.pj_clk),
+<a name="72"></a>	<span class=SI>.num_val_byte</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.icu.icctl.ibuf_ctl.valid[15:0]),
+<a name="73"></a>	<span class=SI>.num_rd_byte</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu_shift_d[7:0]),
+<a name="74"></a>	<span class=SI>.nth_wr_byte_input</span>	(~<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.icu.icctl.ibuf_ctl.ic_fill_sel[15:0]),
+<a name="75"></a>	<span class=SI>.reset</span>			(<span class=D>`PICOJAVAII</span>.pj_reset)
+	);
+
+
+<span class=C>/* *******************************************
+ * POWERDOWN MONITOR:
+ *
+ * The powerdown_monitor drives the pj_nmi,
+ * pj_irl, and pj_standy signals.
+ *
+ * ***************************************** */</span>
+<span class=C>// powerdown monitor
+</span> 
+<a name="monitor_powerdown_monitor"></a><a  onClick="return qs(event,this)" class=MM href="powerdown_monitor.v.html#powerdown_monitor">powerdown_monitor</a> powerdown_monitor(
+<a name="89"></a>	<span class=SI>.pj_clk</span>			(<span class=D>`PICOJAVAII</span><span class=SI>.pj_clk</span>),
+<a name="90"></a>	<span class=SI>.pj_standby_out</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_standby_out</span>),
+<a name="91"></a>	<a  onClick="return qs(event,this)" class=SO href="powerdown_monitor.v.html#174">.pj_irl</a>			(<a  onClick="return qs(event,this)" class=SO href="#38">pj_irl</a>[3:0]),
+<a name="92"></a>	<a  onClick="return qs(event,this)" class=SO href="powerdown_monitor.v.html#173">.pj_nmi</a>			(<a  onClick="return qs(event,this)" class=SO href="#37">pj_nmi</a>),
+<a name="93"></a>	<a  onClick="return qs(event,this)" class=SO href="powerdown_monitor.v.html#172">.pj_standby</a>		(<a  onClick="return qs(event,this)" class=SO href="#36">pj_standby</a>),
+<a name="94"></a>	<span class=SI>.pj_address</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_address</span>),
+<a name="95"></a>	<span class=SI>.pj_tv</span>			(<span class=D>`PICOJAVAII</span><span class=SI>.pj_tv</span>),
+<a name="96"></a>	<span class=SI>.pj_reset</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_reset</span>)
+	);
+ 
+<span class=C>/* *******************************************
+ * Trace and Debug signals MONITOR:
+ *
+ * The trace_debug_monitor drives the pj_halt,
+ * pj_resume, and pj_clk signals.
+ *
+ * ***************************************** */</span>
+<span class=C>// trace_debug_monitor monitor
+</span> 
+<a name="monitor_trace_debug_monitor"></a><a  onClick="return qs(event,this)" class=MM href="trace_debug_monitor.v.html#trace_debug_monitor">trace_debug_monitor</a> trace_debug_monitor(
+<a name="109"></a>	<span class=SI>.sys_clk</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.sys_clk</span>),
+<a name="110"></a>	<a  onClick="return qs(event,this)" class=SO href="trace_debug_monitor.v.html#80">.pj_halt</a>		(<a  onClick="return qs(event,this)" class=SO href="#41">pj_halt</a>),
+<a name="111"></a>	<a  onClick="return qs(event,this)" class=SO href="trace_debug_monitor.v.html#81">.pj_resume</a>		(<a  onClick="return qs(event,this)" class=SO href="#42">pj_resume</a>),
+<a name="112"></a>	<span class=SI>.pj_brk1_sync</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_brk1_sync</span>),
+<a name="113"></a>	<span class=SI>.pj_brk2_sync</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_brk2_sync</span>),
+<a name="114"></a>	<span class=SI>.pj_in_halt</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_in_halt</span>),
+<a name="115"></a>	<span class=SI>.pj_inst_complete</span>	(<span class=D>`PICOJAVAII</span><span class=SI>.pj_inst_complete</span>),
+<a name="116"></a>	<a  onClick="return qs(event,this)" class=SO href="trace_debug_monitor.v.html#125">.pj_clk</a>			(<a  onClick="return qs(event,this)" class=SO href="#43">pj_clk</a>)
+	);
+ 
+<a name="monitor_bus_monitor"></a><a  onClick="return qs(event,this)" class=MM href="bus_monitor.v.html#bus_monitor">bus_monitor</a>  bus_monitor(
+<a name="120"></a>	<span class=SI>.clk</span>			(<a  onClick="return qs(event,this)" class=SO href="#116">pj_clk</a>),
+<a name="121"></a>	<span class=SI>.reset</span>			(<span class=D>`PICOJAVAII</span>.pj_reset),
+<a name="122"></a>	<span class=SI>.pj_tv</span>			(<span class=D>`PICOJAVAII</span><span class=SI>.pj_tv</span>),
+<a name="123"></a>	<span class=SI>.pj_type</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_type</span>[3:0]),
+<a name="124"></a>	<span class=SI>.pj_size</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_size</span>),
+<a name="125"></a>	<span class=SI>.pj_ack</span>			(<span class=D>`PICOJAVAII</span><span class=SI>.pj_ack</span>),
+<a name="126"></a>	<span class=SI>.pj_data_in</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_data_in</span>),
+<a name="127"></a>	<span class=SI>.pj_data_out</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_data_out</span>),
+<a name="128"></a>	<span class=SI>.pj_standby_out</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_standby_out</span>),
+<a name="129"></a>	<span class=SI>.pj_address</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_address</span>)
+	);
+ 
+
+ 
+<a name="monitor_smu_monitor"></a><a  onClick="return qs(event,this)" class=MM href="smu_monitor.v.html#smu_monitor">smu_monitor</a> smu_monitor(
+<a name="135"></a>	<span class=SI>.pj_clk</span>			(<a  onClick="return qs(event,this)" class=SO href="#116">pj_clk</a>),
+<a name="136"></a>	<span class=SI>.pj_reset</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_reset</span>),
+<a name="137"></a>	<span class=SI>.und_flw_bit</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_dpath<span class=SI>.und_flw_bit</span>),
+<a name="138"></a>	<span class=SI>.num_entries</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.num_entries</span>[29:0]),
+<a name="139"></a>	<span class=SI>.fill_d</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.fill_d</span>),
+<a name="140"></a>	<span class=SI>.spill_d</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.spill_d</span>),
+<a name="141"></a>	<span class=SI>.und_flw_d</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.und_flw_d</span>),
+<a name="142"></a>	<span class=SI>.ovr_flw_d</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.ovr_flw_d</span>),
+<a name="143"></a>	<span class=SI>.low_mark</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.low_mark</span>[5:0]),
+<a name="144"></a>	<span class=SI>.high_mark</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.high_mark</span>[5:0]),
+<a name="145"></a>	<span class=SI>.less_than_6</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.less_than_6</span>),
+<a name="146"></a>	<span class=SI>.dribble_stall</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.dribble_stall</span>),
+<a name="147"></a>	<span class=SI>.smu_st</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu<span class=SI>.smu_st</span>),
+<a name="148"></a>	<span class=SI>.smu_data</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu<span class=SI>.smu_data</span>[31:0]),
+<a name="149"></a>	<span class=SI>.smu_data_vld</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu<span class=SI>.smu_data_vld</span>),
+<a name="150"></a>	<span class=SI>.dcu_data</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu<span class=SI>.dcu_data</span>[31:0]),
+<a name="151"></a>	<span class=SI>.spill</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.spill</span>),
+<a name="152"></a>	<span class=SI>.fill</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.fill</span>),
+<a name="153"></a>	<span class=SI>.iu_int</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.iu_int</span>),
+<a name="154"></a>	<span class=SI>.dcu_smu_st</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.dcu<span class=SI>.smu_st</span>),
+<a name="155"></a>	<span class=SI>.dcu_smu_data</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.dcu<span class=SI>.smu_data</span>[31:0]),
+<a name="156"></a>	<a  onClick="return qs(event,this)" class=SO href="smu_monitor.v.html#83">.smu_monitor_end_sim</a>	(<a  onClick="return qs(event,this)" class=SW href="#48">smu_monitor_end_sim</a>),
+<a name="157"></a>	<span class=SI>.smu_sbase_we</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.smu_sbase_we</span>),
+<a name="158"></a>	<span class=SI>.smu_we</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.smu_we</span>),
+<a name="159"></a>	<span class=SI>.load_w</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.load_w</span>),
+<a name="160"></a>	<span class=SI>.squash_fill</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.squash_fill</span>),
+<a name="161"></a>	<span class=SI>.smu_sbase</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_dpath<span class=SI>.smu_sbase</span>)
+);
+ 
+<span class=C>// Module FPU Monitor
+</span><a name="monitor_fpu_mon"></a><a  onClick="return qs(event,this)" class=MM href="fpu_mon.v.html#fpu_mon">fpu_mon</a> fpu_mon (
+<a name="166"></a>	<span class=SI>.pj_clk</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.fpu.clk),
+<a name="167"></a>	<span class=SI>.fpain</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.fpu<span class=SI>.fpain</span>[31:0]),
+<a name="168"></a>	<span class=SI>.fpbin</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.fpu<span class=SI>.fpbin</span>[31:0]),
+<a name="169"></a>	<span class=SI>.fpop</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.fpu<span class=SI>.fpop</span>[7:0]),
+<a name="170"></a>	<span class=SI>.fpbusyn</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.fp_rdy_e),
+<a name="171"></a>	<span class=SI>.fpkill</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.fpu<span class=SI>.fpkill</span>),
+<a name="172"></a>	<span class=SI>.fpout</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.fpu_data_e[31:0]),
+<a name="173"></a>	<span class=SI>.fphold</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.fpu<span class=SI>.fphold</span>),
+<a name="174"></a>	<span class=SI>.fpop_valid</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.fpu<span class=SI>.fpop_valid</span>)
+);
+ 
+<span class=C>// Instn. Folding Monitor
+</span><a name="monitor_fold_monitor"></a><a  onClick="return qs(event,this)" class=MM href="fold_mon.v.html#fold_monitor">fold_monitor</a>	fold_monitor(
+<a name="179"></a>	<span class=SI>.clk</span>			(<a  onClick="return qs(event,this)" class=SO href="#116">pj_clk</a>)
+);
+ 
+<span class=C>// DCU  Monitor
+</span><a name="monitor_dcu_mon"></a><a  onClick="return qs(event,this)" class=MM href="dcu_mon.v.html#dcu_mon">dcu_mon</a>  dcu_mon(
+<a name="184"></a>        <span class=SI>.clk</span>                    (<a  onClick="return qs(event,this)" class=SO href="#116">pj_clk</a>),
+<a name="185"></a>        <span class=SI>.clk_count</span>              (<span class=D>`PICOJAVAII</span><span class=SI>.clk_count</span>),
+<a name="186"></a>        <span class=SI>.dc_inst_c</span>              (<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.dcu.dcctl<span class=SI>.dc_inst_c</span>),
+<a name="187"></a>        <span class=SI>.iu_inst_c</span>              (<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.dcu.dcctl.dc_dec<span class=SI>.iu_inst_c</span>[7:0]),
+<a name="188"></a>        <span class=SI>.smu_inst_c</span>             (<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.dcu.dcctl.dc_dec<span class=SI>.smu_inst_c</span>[3:0]),
+<a name="189"></a>        <span class=SI>.dcu_addr_c</span>             (<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.dcu.dcu_dpath<span class=SI>.dcu_addr_c</span>[31:0]),
+<a name="190"></a>        <span class=SI>.dcu_data_c</span>             (<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.dcu.dcu_dpath<span class=SI>.dcu_data_c</span>[31:0]),
+<a name="191"></a>        <span class=SI>.dcu_data</span>               (<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.dcu<span class=SI>.dcu_data</span>[31:0]),
+<a name="192"></a>        <span class=SI>.iu_data_vld</span>            (<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.dcu<span class=SI>.iu_data_vld</span>),
+<a name="193"></a>        <span class=SI>.smu_data_vld</span>           (<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.dcu<span class=SI>.smu_data_vld</span>)
+);
+
+<span class=C>// Statistics Monitor
+</span><a name="monitor_statistics_monitor"></a><a  onClick="return qs(event,this)" class=MM href="statistics_monitor.v.html#statistics_monitor">statistics_monitor</a>	statistics_monitor(
+<a name="198"></a>	<span class=SI>.pj_clk</span>			(<a  onClick="return qs(event,this)" class=SO href="#116">pj_clk</a>),
+<a name="199"></a>	<span class=SI>.num_entries</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.smu.smu_ctl<span class=SI>.num_entries</span>[29:0]),
+<a name="200"></a>	<span class=SI>.smu_hold</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span><span class=SI>.smu_hold</span>),
+	<span class=C>// .pj_hold		(`PICOJAVAII.`DESIGN.iu.pj_hold),
+</span><a name="202"></a>	<span class=SI>.endsim</span>			(<span class=D>`PICOJAVAII</span>.end_of_simulation)
+);
+ 
+<span class=C>// Microcode monitor
+</span>
+<a name="207"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>		<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ucode
+
+<a name="monitor_ucode_monitor"></a><a  onClick="return qs(event,this)" class=MM href="ucode_monitor.v.html#ucode_monitor">ucode_monitor</a> 		ucode_monitor(
+<a name="210"></a>	<span class=SI>.clk</span>			(<a  onClick="return qs(event,this)" class=SO href="#116">pj_clk</a>),
+<a name="211"></a>	<span class=SI>.reset_l</span>		(<span class=D>`PICOJAVAII</span>.biu<span class=SI>.reset_l</span>),
+<a name="212"></a>	<span class=SI>.u_addr_st_wt</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.rcu.rcu_dpath.dest_addr_e[31:0]),
+<a name="213"></a>	<span class=SI>.u_addr_st_rd</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_addr_st_rd</span>[31:0]),
+<a name="214"></a>	<span class=SI>.dreg_data</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.dreg[31:0]),
+<a name="215"></a>	<span class=SI>.ucode_addr_d</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.ucode_addr_d</span>[31:0]),
+<a name="216"></a>	<span class=SI>.u_f01_wt_stk</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_f01_wt_stk</span>),
+<a name="217"></a>	<span class=SI>.u_f02_rd_stk</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_f02_rd_stk</span>),
+<a name="218"></a>	<span class=SI>.u_f00</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_f00</span>),
+<a name="219"></a>	<span class=SI>.u_f01</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_f01</span>[2:0]),
+<a name="220"></a>	<span class=SI>.u_f02</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_f02</span>[1:0]),
+<a name="221"></a>	<span class=SI>.u_f03</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_f03</span>[1:0]),
+<a name="222"></a>	<span class=SI>.u_f04</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_f04</span>[6:0]),
+<a name="223"></a>	<span class=SI>.u_f05</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_f05</span>[2:0]),
+<a name="224"></a>	<span class=SI>.u_f06</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0<span class=SI>.u_f06</span>[3:0]),
+<a name="225"></a>	<span class=SI>.u_f07</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0<span class=SI>.u_f07</span>[1:0]),
+<a name="226"></a>	<span class=SI>.u_f08</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0<span class=SI>.u_f08</span>[2:0]),
+<a name="227"></a>	<span class=SI>.u_f09</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0<span class=SI>.u_f09</span>[2:0]),
+<a name="228"></a>	<span class=SI>.u_f10</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0<span class=SI>.u_f10</span>[2:0]),
+<a name="229"></a>	<span class=SI>.u_f11</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0<span class=SI>.u_f11</span>[2:0]),
+<a name="230"></a>	<span class=SI>.u_f12</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0<span class=SI>.u_f12</span>[1:0]),
+<a name="231"></a>	<span class=SI>.u_f13</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0<span class=SI>.u_f13</span>[1:0]),
+<a name="232"></a>	<span class=SI>.u_f14</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0<span class=SI>.u_f14</span>[1:0]),
+<a name="233"></a>	<span class=SI>.u_f15</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0<span class=SI>.u_f15</span>),
+<a name="234"></a>	<span class=SI>.u_f16</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0<span class=SI>.u_f16</span>[1:0]),
+<a name="235"></a>	<span class=SI>.u_f17</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_f17</span>[1:0]),
+<a name="236"></a>	<span class=SI>.u_f18</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_f18</span>[11:0]),
+<a name="237"></a>	<span class=SI>.u_f19</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0<span class=SI>.u_f19</span>[3:0]),
+<a name="238"></a>	<span class=SI>.u_f20</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0<span class=SI>.u_f20</span>[3:0]),
+<a name="239"></a>	<span class=SI>.u_f21</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_f21</span>[1:0]),
+<a name="240"></a>	<span class=SI>.u_f22</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0<span class=SI>.u_f22</span>),
+<a name="241"></a>	<span class=SI>.u_done</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_done</span>),
+<a name="242"></a>	<span class=SI>.u_last</span>			(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_last</span>),
+<a name="243"></a>	<span class=SI>.ucode_porta</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.ucode_porta</span>[31:0]),
+<a name="244"></a>	<span class=SI>.ucode_portc</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.ucode_portc</span>[31:0]),
+<a name="245"></a>	<span class=SI>.u_ref_null_c</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu<span class=SI>.u_ref_null_c</span>),
+<a name="246"></a>	<span class=SI>.u_ary_ovf_c</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu<span class=SI>.u_ary_ovf_c</span>),
+<a name="247"></a>	<span class=SI>.gc_trap_c</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu<span class=SI>.gc_trap_c</span>),
+<a name="248"></a>	<span class=SI>.u_ptr_un_eq_c</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu<span class=SI>.u_ptr_un_eq_c</span>),
+<a name="249"></a>	<span class=SI>.u_abt_rdwt</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.u_abt_rdwt</span>),
+<a name="250"></a>	<span class=SI>.ie_stall_ucode</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.ie_stall_ucode</span>),
+<a name="251"></a>	<span class=SI>.u_exception</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_ctrl_0.ucode_seq_0<span class=SI>.u_exception</span>),
+<a name="252"></a>	<span class=SI>.nxt_ucode_last</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_ctrl_0.ucode_seq_0<span class=SI>.nxt_ucode_last</span>),
+<a name="253"></a>	<span class=SI>.reg_enable</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_ctrl_0.ucode_seq_0<span class=SI>.reg_enable</span>),
+<a name="254"></a>	<span class=SI>.optop</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.optop_w[31:0]),
+<a name="255"></a>	<span class=SI>.vars</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.lvars[31:0]),
+<a name="256"></a>	<span class=SI>.ucode_cnt</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a>.ucode_dpath_0.nxt_ucode_cnt[8:0]),
+<a name="257"></a>	<span class=SI>.iu_trap_r</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.iu_trap_r</span>),
+<a name="258"></a>	<span class=SI>.ifu_op_valid_r</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.valid_op_r</span>),
+<a name="259"></a>	<span class=SI>.frame</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.frame_w[31:0]),
+<a name="260"></a>	<span class=SI>.cp</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_regs.const_pool_w[31:0]),
+<a name="261"></a>	<span class=SI>.invokestatic_quick</span>	(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_ctl<span class=SI>.invokestatic_quick</span>),
+<a name="262"></a>	<span class=SI>.invokenonvirtual_quick</span>	(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_ctl<span class=SI>.invokenonvirtual_quick</span>),
+<a name="263"></a>	<span class=SI>.invokevirtual_quick</span>	(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_ctl<span class=SI>.invokevirtualobject_quick</span>),
+	<span class=SI>.invokevirtualobject_quick</span>	(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_ctl<span class=SI>.invokevirtualobject_quick</span>),
+<a name="265"></a>	<span class=SI>.invokevirtual_quick_w</span>	(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_ctl<span class=SI>.invokevirtual_quick_w</span>),
+<a name="266"></a>	<span class=SI>.invokesuper_quick</span>	(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_ctl<span class=SI>.invokesuper_quick</span>),
+<a name="267"></a>	<span class=SI>.soft_trap</span>		(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.ex.ex_ctl<span class=SI>.soft_trap</span>),
+	<span class=SI>.se</span>			(1'b0),
+<a name="269"></a>	<span class=SI>.hold_e</span>			(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.hold_logic<span class=SI>.hold_e</span>),
+<a name="270"></a>	<span class=SI>.opcode_1_op_r</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.opcode_1_op_r</span>[7:0]),
+	<span class=SI>.valid_op_r</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.valid_op_r</span>),
+<a name="272"></a>	<span class=SI>.iu_hold_e</span>		(<span class=D>`</span><a  onClick="return qs(event,this)" class=D href="#207">UCODE</a><span class=SI>.iu_hold_e</span>)
+);
+
+
+
+
+
+<span class=C>// instruction monitor
+</span><a name="monitor_instruction_monitor"></a><a  onClick="return qs(event,this)" class=MM href="instruction_monitor.v.html#instruction_monitor">instruction_monitor</a>	instruction_monitor(
+<a name="281"></a>	<span class=SI>.clk</span>		(<a  onClick="return qs(event,this)" class=SO href="#116">pj_clk</a>),
+<a name="282"></a>	<span class=SI>.opcode_1</span>	(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.opcode_1_op_r[7:0]),
+<a name="283"></a>	<span class=SI>.opcode_2</span>	(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.opcode_2_op_r[7:0]),
+<a name="284"></a>	<span class=SI>.valid_op</span>	(<span class=D>`PICOJAVAII</span>.<span class=D>`DESIGN</span>.iu.pipe.pipe_cntl.valid_r),
+<a name="285"></a>	<a  onClick="return qs(event,this)" class=SO href="instruction_monitor.v.html#46">.endsim</a>		(<a  onClick="return qs(event,this)" class=SW href="#49">instr_monitor_end_sim</a>)
+);
+
+<span class=C>// trap monitor
+</span><a name="monitor_trap_monitor"></a><a  onClick="return qs(event,this)" class=MM href="trap_monitor.v.html#trap_monitor">trap_monitor</a>		trap_monitor();
+
+<span class=C>// i/o pin monitor
+</span><a name="monitor_io_pin_monitor"></a><a  onClick="return qs(event,this)" class=MM href="io_pin_monitor.v.html#io_pin_monitor">io_pin_monitor</a>		io_pin_monitor(
+<a name="293"></a>	<span class=SI>.pj_reset</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_reset</span>),
+<a name="294"></a>	<span class=SI>.pj_reset_out</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_reset_out</span>),
+<a name="295"></a>	<span class=SI>.pj_clk</span>			(<a  onClick="return qs(event,this)" class=SO href="#116">pj_clk</a>),
+<a name="296"></a>	<span class=SI>.pj_clk_out</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_clk_out</span>),
+<a name="297"></a>	<span class=SI>.pj_irl</span>			(<span class=D>`PICOJAVAII</span><span class=SI>.pj_irl</span>[3:0]),
+<a name="298"></a>	<span class=SI>.pj_nmi</span>			(<span class=D>`PICOJAVAII</span><span class=SI>.pj_nmi</span>),
+<a name="299"></a>	<span class=SI>.pj_boot8</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_boot8</span>),
+<a name="300"></a>	<span class=SI>.pj_su</span>			(<span class=D>`PICOJAVAII</span><span class=SI>.pj_su</span>),
+<a name="301"></a>	<span class=SI>.pj_standby</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_standby</span>),
+<a name="302"></a>	<span class=SI>.pj_standby_out</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_standby_out</span>),
+<a name="303"></a>	<span class=SI>.pj_no_fpu</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_no_fpu</span>),
+<a name="304"></a>	<span class=SI>.pj_scan_out</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_scan_out</span>),
+<a name="305"></a>	<span class=SI>.pj_scan_mode</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_scan_mode</span>),
+<a name="306"></a>	<span class=SI>.pj_scan_in</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_scan_in</span>),
+<a name="307"></a>	<span class=SI>.pj_data_in</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_data_in</span>[31:0]),
+<a name="308"></a>	<span class=SI>.pj_data_out</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_data_out</span>[31:0]),
+<a name="309"></a>	<span class=SI>.pj_address</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_address</span>[29:0]),
+<a name="310"></a>	<span class=SI>.pj_size</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_size</span>[1:0]),
+<a name="311"></a>	<span class=SI>.pj_type</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_type</span>[3:0]),
+<a name="312"></a>	<span class=SI>.pj_tv</span>			(<span class=D>`PICOJAVAII</span><span class=SI>.pj_tv</span>),
+<a name="313"></a>	<span class=SI>.pj_ale</span>			(<span class=D>`PICOJAVAII</span><span class=SI>.pj_ale</span>),
+<a name="314"></a>	<span class=SI>.pj_ack</span>			(<span class=D>`PICOJAVAII</span><span class=SI>.pj_ack</span>),
+<a name="315"></a>	<span class=SI>.pj_halt</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_halt</span>),
+<a name="316"></a>	<span class=SI>.pj_resume</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_resume</span>),
+<a name="317"></a>	<span class=SI>.pj_brk1_sync</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_brk1_sync</span>),
+<a name="318"></a>	<span class=SI>.pj_brk2_sync</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_brk2_sync</span>),
+<a name="319"></a>	<span class=SI>.pj_in_halt</span>		(<span class=D>`PICOJAVAII</span><span class=SI>.pj_in_halt</span>),
+<a name="320"></a>	<span class=SI>.pj_inst_complete</span>	(<span class=D>`PICOJAVAII</span><span class=SI>.pj_inst_complete</span>),
+<a name="321"></a>	<span class=SI>.end_of_simulation</span>	(<span class=D>`PICOJAVAII</span><span class=SI>.end_of_simulation</span>)
+);
+ 
+<span class=C>// performance analysis monitor
+</span><a name="monitor_performance_monitor"></a><a  onClick="return qs(event,this)" class=MM href="performance_monitor.v.html#performance_monitor">performance_monitor</a> performance_monitor (
+<a name="326"></a>         <span class=SI>.pj_clk</span> (<span class=D>`PICOJAVAII</span><span class=SI>.pj_clk</span>),
+<a name="327"></a>         <span class=SI>.end_of_simulation</span> (<span class=D>`PICOJAVAII</span><span class=SI>.end_of_simulation</span>)
+);
+<span class=C>// activity analysis monitor
+</span><a name="monitor_activity_monitor"></a><a  onClick="return qs(event,this)" class=MM href="activity_monitor.v.html#activity_monitor">activity_monitor</a> activity_monitor (
+<a name="331"></a>         <span class=SI>.pj_clk</span> (<span class=D>`PICOJAVAII</span><span class=SI>.pj_clk</span>),
+<a name="332"></a>         <span class=SI>.end_of_simulation</span> (<span class=D>`PICOJAVAII</span><span class=SI>.end_of_simulation</span>)
+);
+
+
+
+<span class=K>endmodule</span>
+
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:45:51 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/sim/env/monitor.v</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>

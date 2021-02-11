@@ -1,0 +1,356 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<title>/import/jet-pj2-sim/rahim/picoJava-II/design/rtl/defines.h</title>
+<LINK REL="Stylesheet" TITLE="v2html stylesheet" MEDIA="Screen" HREF="v2html.css">
+</head>
+<script language="JavaScript"><!--
+if (!((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4))) {
+  var event=false; // prevent from dieing in other browsers
+}
+var last_link=-1; // a cache of the last link found to speed up searching in the common case
+
+function qs(e,t) {
+  var inc=0,i;
+
+  if ((navigator.appName == "Netscape") && 
+      (navigator.appVersion.substring(0,1) >= 4)) {
+
+    if (((e.which==2) && (!(e.modifiers&Event.SHIFT_MASK))) ||
+	((e.which==1) &&  (e.modifiers&Event.CONTROL_MASK)))   inc = 1;
+    else if (((e.which==2) && (e.modifiers&Event.SHIFT_MASK)) ||
+	     ((e.which==1) && (e.modifiers&Event.SHIFT_MASK))) inc = -1;
+    else return true;
+
+    window.status="Searching...";
+    if ((last_link!=-1) && (document.links[last_link]==t)) // try previous link first
+      i=last_link;
+    else // search for the link that was clicked
+      for (i=0;i<document.links.length;i++) 
+	if (document.links[i] == t)  
+	  break;
+    // once the link has been found search for the text starting at this link
+    return search(t.text,t.y,i,inc);
+  }
+  return true;
+}
+
+function search(text,y,i,inc) {
+  var nextpage,wrappage;
+  while (1) {
+    for (i+=inc;i<document.links.length && i>=0;i+=inc) {
+      if ((document.links[i].text == text) && 
+	  (document.links[i].y    != y)) {
+	window.status="";
+	window.scrollBy(0,document.links[i].y - y);
+	last_link=i;
+	return false;
+      }
+    }
+    nextpage = (inc==1) ? next_page() : prev_page();
+    wrappage = (inc==1) ? first_page() : last_page();
+    if (nextpage!="" || wrappage!="") {
+      if (nextpage=="") { // only ask when wrapping around
+	if (!confirm(text + " not found. Search again from "+((inc==1)?"first":"last")+" page?"))
+	  return false;
+	nextpage=wrappage;
+      }
+      location=nextpage+ "?" + escape(text) + "&" + ( y - window.pageYOffset ) + "&" + inc;
+      return false;
+    }
+    if (confirm(text + " not found. Search again from "+((inc==1)?"start":"end")+"?")) {
+      if (inc==1) i=-1;
+      else i=document.links.length;
+    } else return false;
+  }
+  return true;
+}
+
+function loadqs() {
+  var opt=location.search, text="", s="", y=0, si=0, inc=1;
+
+  if (opt.length==0) return true;  // no query string
+  window.status="Searching...";
+  for (var i=1;i<opt.length;i++) { // parse query string: search_text&y_pos&direction
+    if (opt.charAt(i) != "&") 
+      s += opt.charAt(i);
+    else {
+      if (text=="") text=unescape(s);
+      else             y=s;
+      s="";
+    }
+  }
+  if (text=="") return true;
+  if (s == "-1") { si=document.links.length; inc=-1; }
+  window.scrollTo(0,0);
+  search(text,y,si,inc);
+  return true;
+}
+// -->
+</script>
+<body onload='loadqs();'>
+<script language="JavaScript"><!--
+function prev_page() { return ""; }
+function last_page() { return "defines.h.html"; }
+// -->
+</script>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<pre>
+<span class=C>/****************************************************************
+ ---------------------------------------------------------------
+     Copyright 1999 Sun Microsystems, Inc., 901 San Antonio
+     Road, Palo Alto, CA 94303, U.S.A.  All Rights Reserved.
+     The contents of this file are subject to the current
+     version of the Sun Community Source License, picoJava-II
+     Core (&quot;the License&quot;).  You may not use this file except
+     in compliance with the License.  You may obtain a copy
+     of the License by searching for &quot;Sun Community Source
+     License&quot; on the World Wide Web at <A CLASS=C href="http://www.sun.com">http://www.sun.com</A>.
+     See the License for the rights, obligations, and
+     limitations governing use of the contents of this file.
+
+     Sun, Sun Microsystems, the Sun logo, and all Sun-based
+     trademarks and logos, Java, picoJava, and all Java-based
+     trademarks and logos are trademarks or registered trademarks 
+     of Sun Microsystems, Inc. in the United States and other
+     countries.
+ ----------------------------------------------------------------
+******************************************************************/</span>
+
+<span class=C>/*
+ * D cache Definitions
+ * By default, Dcache size is 16KB. Since it is a 2way set associative cache,
+ * it can be considered as 2 8KB caches. By changing the definitions below,
+ * the cache sizes can be changed depending on user's requirements.
+ */</span>
+
+<span class=C>/* dt_addr_msb is the msb of the tag which is stored in the tag rams for
+   the D$ and I$ (see also it_addr_msb below)
+   the tag rams are actually required to store only bit 29 downwards of the address  
+   since the address space for pico is only 30 bits wide. to avoid storing 2 extra bits
+   in the tag ram, the dr_addr_msb and it_addr_msb shd ideally be set to 29.
+
+   however, in order to retain compatibility with earlier picojava megacell specs, 
+   the default continues to be dt_addr_msb = it_addr_msb = 31. We recommend that 
+   new implementations based on picoJava set these defines to 29 and reduce the size
+   of the tag rams.
+
+   the priv_read/write_icache/dcache_tag instructions are not affected by not
+   storing address bits 31 and 30 in the tags, since the top 2 bits of data 
+   read/written by these instructions is specified as undefined by the PRM.
+*/</span>
+
+<a name="45"></a><span class=M>`define</span>		<a  onClick="return qs(event,this)" class=D href="#45">dt_addr_msb</a>	31	<span class=C>// MSB of DCU address being stored in Tag RAM. 
+</span><span class=C>// `define		dt_addr_msb	29	// MSB of DCU address being stored in Tag RAM. 
+</span>
+
+<span class=C>/**
+  The following five variables are used to defined D cache size.
+  dc_size         Size of 1 way of Cache Ram
+  dc_msb          MSB of Address Bus needed to index into the cache .
+  dt_msb          MSB of Dcache Tag Field (Used for storing tag of a cache line)
+  dt_index        MSB of Tag address used to index tag of a cache.
+  dt_mxblks       Number of Blocks in the cache
+**/</span>
+
+<span class=C>// 16KB D-cache:
+</span><a name="59"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#59">dc_size</a>		8191
+<a name="60"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#60">dc_msb</a>		12
+<a name="61"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#61">dt_msb</a>		18
+<a name="62"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#62">dt_index</a>	8	
+<a name="63"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#63">dt_mxblks</a>	511
+<a name="64"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#64">HCR_DCS_POR_VALUE</a>	3'h5
+
+<span class=C>// 8KB D-cache:
+</span><span class=C>//`define	dc_size		4095
+</span><span class=C>//`define	dc_msb		11
+</span><span class=C>//`define	dt_msb		19
+</span><span class=C>//`define	dt_index	7
+</span><span class=C>//`define	dt_mxblks	255
+</span><span class=C>//`define	HCR_DCS_POR_VALUE	3'h4
+</span>
+<span class=C>// 4KB D-cache:
+</span><span class=C>//`define	dc_size		2047
+</span><span class=C>//`define	dc_msb		10
+</span><span class=C>//`define	dt_msb		20
+</span><span class=C>//`define	dt_index	6
+</span><span class=C>//`define	dt_mxblks	127
+</span><span class=C>//`define	HCR_DCS_POR_VALUE	3'h3
+</span>
+<span class=C>// 2KB D-cache:
+</span><span class=C>//`define	dc_size		1023
+</span><span class=C>//`define	dc_msb		9
+</span><span class=C>//`define	dt_msb		21
+</span><span class=C>//`define	dt_index	5
+</span><span class=C>//`define	dt_mxblks	63
+</span><span class=C>//`define	HCR_DCS_POR_VALUE	3'h2
+</span>
+<span class=C>// 1KB D-cache:
+</span><span class=C>//`define	dc_size		511
+</span><span class=C>//`define	dc_msb		8
+</span><span class=C>//`define	dt_msb		22
+</span><span class=C>//`define	dt_index	4
+</span><span class=C>//`define	dt_mxblks	31
+</span><span class=C>//`define	HCR_DCS_POR_VALUE	3'h1
+</span>
+<span class=C>// Comment out the next 3 defines if not using a D cache and uncomment
+</span><span class=C>// all 10 defines under 0KB D-cache 
+</span><a name="100"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#100">DCU_MODULE</a> dcu
+<a name="101"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#101">DTAG_MODULE</a> dtag_shell
+<a name="102"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#102">DCRAM_MODULE</a> dcram_shell
+
+<span class=C>// 0KB D-cache:
+</span><span class=C>//`define	dc_size		0
+</span><span class=C>//`define	dc_msb		4	// needs to be 4
+</span><span class=C>//`define	dt_msb		0
+</span><span class=C>//`define	dt_index	0
+</span><span class=C>//`define	dt_mxblks	0
+</span><span class=C>//`define	HCR_DCS_POR_VALUE	3'h0
+</span><span class=C>//`define NO_DCACHE
+</span><span class=C>//`define DCU_MODULE dcu_nocache
+</span><span class=C>//`define DTAG_MODULE dtag_dummy
+</span><span class=C>//`define DCRAM_MODULE dcram_dummy
+</span>
+<span class=C>// I cache Definitions
+</span>
+<span class=C>// see note for dt_addr_msb above
+</span><a name="119"></a><span class=M>`define</span>		<a  onClick="return qs(event,this)" class=D href="#119">it_addr_msb</a>	31	<span class=C>// MSB of ICU address being stored in Tag RAM. 
+</span><span class=C>// `define		it_addr_msb	29	// MSB of ICU address being stored in Tag RAM. 
+</span>
+<span class=C>/*
+  By default, Icache size is 16KB. it is a direct mapped cache. 
+  The following five variables are used to defined I cache size.
+  ic_size         Size of 1 way of Cache Ram
+  ic_msb          MSB of Address Bus needed to index into the cache .
+  it_msb          MSB of Icache Tag Field (Used for storing tag of a cache line)
+  it_index        MSB of Tag address used to index tag of a cache.
+  it_mxblks       Number of Blocks in the cache
+*/</span>
+
+<span class=C>// 16KB I-cache:
+</span><a name="133"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#133">ic_size</a>		16383
+<a name="134"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#134">ic_msb</a>		13
+<a name="135"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#135">it_msb</a>		17
+<a name="136"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#136">it_index</a>	9	
+<a name="137"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#137">it_mxblks</a>	1023
+<a name="138"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#138">HCR_ICS_POR_VALUE</a>	3'h5
+
+<span class=C>// 8KB I-cache:
+</span><span class=C>//`define	ic_size		8192
+</span><span class=C>//`define	ic_msb		12
+</span><span class=C>//`define	it_msb		18
+</span><span class=C>//`define	it_index	8
+</span><span class=C>//`define	it_mxblks	511
+</span><span class=C>//`define	HCR_ICS_POR_VALUE	3'h4
+</span>
+<span class=C>// 4KB I-cache:
+</span><span class=C>//`define	ic_size	  	4095
+</span><span class=C>//`define	ic_msb	  	11
+</span><span class=C>//`define	it_msb	  	19
+</span><span class=C>//`define	it_index	 7
+</span><span class=C>//`define	it_mxblks	255
+</span><span class=C>//`define	HCR_ICS_POR_VALUE	3'h3
+</span>
+<span class=C>// 2KB I-cache:
+</span><span class=C>//`define	ic_size	  	2048
+</span><span class=C>//`define	ic_msb	  	10
+</span><span class=C>//`define	it_msb	  	20
+</span><span class=C>//`define	it_index	 6
+</span><span class=C>//`define	it_mxblks	127
+</span><span class=C>//`define	HCR_ICS_POR_VALUE	3'h2
+</span>
+<span class=C>// 1KB I-cache:
+</span><span class=C>//`define	ic_size	  	1024
+</span><span class=C>//`define	ic_msb	  	9
+</span><span class=C>//`define	it_msb	  	21
+</span><span class=C>//`define	it_index	 5
+</span><span class=C>//`define	it_mxblks	63
+</span><span class=C>//`define	HCR_ICS_POR_VALUE	3'h1
+</span>
+<span class=C>// Comment out the next 3 defines if not using an I cache and uncomment
+</span><span class=C>// all 10 defines under 0KB I-cache 
+</span><a name="174"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#174">ICU_MODULE</a> icu
+<a name="175"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#175">ITAG_MODULE</a> itag_shell
+<a name="176"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#176">ICRAM_MODULE</a> icram_shell
+
+<span class=C>// 0KB I-cache:
+</span><span class=C>//`define	ic_size	  	0
+</span><span class=C>//`define	ic_msb	  	4	// needs to be 4
+</span><span class=C>//`define	it_msb	  	0
+</span><span class=C>//`define	it_index	0
+</span><span class=C>//`define	it_mxblks	0
+</span><span class=C>//`define	HCR_ICS_POR_VALUE	3'h0
+</span><span class=C>//`define NO_ICACHE
+</span><span class=C>//`define ICU_MODULE icu_nocache
+</span><span class=C>//`define ITAG_MODULE itag_dummy
+</span><span class=C>//`define ICRAM_MODULE icram_dummy
+</span>
+<span class=C>// High and low water marks for the dribbler
+</span>
+<a name="192"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#192">high_mark</a>	6'b110000
+<a name="193"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#193">low_mark</a>	6'b001000
+<a name="194"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#194">stack_size</a>	7'b1000000
+
+<span class=C>// Some constants used by EX in RTL
+</span><a name="197"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#197">VARS_POR_VALUE</a>		30'h003ffffc
+<a name="198"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#198">OPLIM_POR_VALUE</a>		29'h00000000
+<a name="199"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#199">OPLIM_ENABLE_POR_VALUE</a>	1'b0
+<a name="200"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#200">PSR_CAC_POR_VALUE</a>	1'b0
+<a name="201"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#201">PSR_DRT_POR_VALUE</a>	1'b0
+<a name="202"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#202">PSR_ACE_POR_VALUE</a>	1'b0
+<a name="203"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#203">PSR_GCE_POR_VALUE</a>	1'b0
+<a name="204"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#204">PSR_FPE_POR_VALUE</a>	1'b0
+<a name="205"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#205">PSR_DCE_POR_VALUE</a>	1'b0
+<a name="206"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#206">PSR_ICE_POR_VALUE</a>	1'b0
+<a name="207"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#207">PSR_AEM_POR_VALUE</a>	1'b0
+<a name="208"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#208">PSR_DRE_POR_VALUE</a>	1'b0
+<a name="209"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#209">PSR_FLE_POR_VALUE</a>	1'b0
+<a name="210"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#210">PSR_SU_POR_VALUE</a>	1'b1
+<a name="211"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#211">PSR_IE_POR_VALUE</a>	1'b0
+<a name="212"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#212">GC_CONFIG_POR_VALUE</a>	32'h0
+<a name="213"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#213">BRK12C_HALT_POR_VALUE</a>	1'b0
+<a name="214"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#214">BRK12C_BRKM2_POR_VALUE</a>	7'h0
+<a name="215"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#215">BRK12C_BRKM1_POR_VALUE</a>	7'h0
+<a name="216"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#216">BRK12C_SUBK2_POR_VALUE</a>	1'b0
+<a name="217"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#217">BRK12C_SRCBK2_POR_VALUE</a>	2'b00
+<a name="218"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#218">BRK12C_BRKEN2_POR_VALUE</a>	1'b0
+<a name="219"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#219">BRK12C_SUBK1_POR_VALUE</a>	1'b0
+<a name="220"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#220">BRK12C_SRCBK1_POR_VALUE</a>	2'b00
+<a name="221"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#221">BRK12C_BRKEN1_POR_VALUE</a>	1'b0
+<a name="222"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#222">VERSIONID_POR_VALUE</a>	32'hffffffff
+<a name="223"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#223">HCR_DCL_POR_VALUE</a>	3'h2
+<a name="224"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#224">HCR_ICL_POR_VALUE</a>	3'h2
+<a name="225"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#225">HCR_SRN_POR_VALUE</a>	8'h21
+<a name="226"></a><span class=M>`define</span>	<a  onClick="return qs(event,this)" class=D href="#226">SC_BOTTOM_POR_VALUE</a>	30'h003ffffc
+
+
+<span class=C>// FPU_MODULE needs to be set to either
+</span><span class=C>// fpu - when the FPU is used in the core
+</span><span class=C>// fpu_dummy - when no FPU is used in the core
+</span><span class=C>// Also, NO_FPU has to be defined when no FPU is used
+</span>
+<span class=C>// When using the fpu in simulations:
+</span><a name="235"></a><span class=M>`define</span> <a  onClick="return qs(event,this)" class=D href="#235">FPU_MODULE</a> fpu
+
+<span class=C>// When NOT using the fpu in simulations:
+</span><span class=C>//`define FPU_MODULE fpu_dummy
+</span><span class=C>//`define NO_FPU
+</span>
+</pre>
+<center><table class=NB cols=7 nosave><tr><td align="center"><a  href="hierarchy.html">Hierarchy</a></td><td align="center"><a  href="hierarchy-f.html">Files</a></td><td align="center"><a  href="hierarchy-m.html">Modules</a></td><td align="center"><a  href="hierarchy-s.html">Signals</a></td><td align="center"><a  href="hierarchy-t.html">Tasks</a></td><td align="center"><a  href="hierarchy-fn.html">Functions</a></td><td align="center"><a  href="http://www.abrizio.com/v2html/help_5_0.html?">Help</a></td></tr></table></center>
+<script language="JavaScript"><!--
+function next_page() { return ""; }
+function first_page() { return ""; }
+// -->
+</script>
+<hr>
+<table>
+ <tr><td><i>This page:</td>
+  <td><i>Created:</td><td><i>Wed Mar 24 09:43:58 1999</td></tr>
+  <td></td><td><i>From:</td><td><i>
+/import/jet-pj2-sim/rahim/picoJava-II/design/rtl/defines.h</tr>
+</table>
+<hr>
+<table width="100%"><tr><td><i>Verilog converted to html by  <A target="_top" href="http://www.abrizio.com/v2html/v2html.html">  v2html 5.0</A> 
+ (written by <A href="mailto:v2html@iname.com">Costas Calamvokis</A>).</i></td><td align="right"><B><A href="http://www.abrizio.com/v2html/help_5_0.html?">Help</A></B></td></tr></table></body>
+</html>
