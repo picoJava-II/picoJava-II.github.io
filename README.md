@@ -1,9 +1,4 @@
-<html>
-<head>
-<TITLE>Welcome to picoJava(TM)-II README</TITLE>
-</head>
-<body bgcolor="white">
-
+# Welcome to picoJava(TM)-II README
 
 <FONT FACE="arial, helvetica">
 <center>
